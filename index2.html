@@ -763,10 +763,10 @@
         /* Sidebar toggle button for mobile */
         .sidebar-toggle {
             display: none;
-            position: absolute;
+            position: fixed;
             top: 1rem;
             left: 1rem;
-            z-index: 100;
+            z-index: 101;
             background: var(--neon-blue);
             color: white;
             border: none;
@@ -779,10 +779,26 @@
 
         .chat-toggle {
             display: none;
-            position: absolute;
+            position: fixed;
             top: 1rem;
             right: 1rem;
-            z-index: 100;
+            z-index: 101;
+            background: var(--neon-pink);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 0.5rem 0.8rem;
+            cursor: pointer;
+            font-size: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .close-chat {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 102;
             background: var(--neon-pink);
             color: white;
             border: none;
@@ -1150,6 +1166,23 @@
         .sidebar-overlay.active {
             display: block;
         }
+
+        /* Mobile API Settings */
+        .mobile-api-btn {
+            display: none;
+            background: var(--neon-purple);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 0.8rem 1.2rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin: 1rem 0;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(181, 55, 255, 0.3);
+        }
         
         @media (max-width: 768px) {
             header {
@@ -1354,6 +1387,11 @@
             
             .api-settings {
                 margin-bottom: 1rem;
+                display: none;
+            }
+
+            .mobile-api-btn {
+                display: block;
             }
             
             .api-header h3 {
@@ -1386,6 +1424,10 @@
             }
 
             .chat-toggle {
+                display: block;
+            }
+
+            .close-chat {
                 display: block;
             }
             
@@ -1563,6 +1605,10 @@
             <button class="chat-toggle" id="chatToggle">
                 <i class="fas fa-comments"></i> Chat
             </button>
+
+            <button class="close-chat" id="closeChat">
+                <i class="fas fa-times"></i> Close
+            </button>
             
             <div class="sidebar-overlay" id="sidebarOverlay"></div>
             
@@ -1674,11 +1720,20 @@
                         </div>
                     </div>
                 </div>
+
+                <button class="mobile-api-btn" id="mobileApiBtn">
+                    <i class="fas fa-cog"></i> API Settings
+                </button>
             </aside>
             
             <main class="chat-area" id="chatArea">
+                <!-- Mobile API Settings Button -->
+                <button class="mobile-api-btn" id="mobileApiBtnMain">
+                    <i class="fas fa-cog"></i> API Settings
+                </button>
+
                 <!-- Collapsible API Settings -->
-                <div class="api-settings">
+                <div class="api-settings" id="apiSettings">
                     <div class="api-header collapsed" id="apiHeader">
                         <h3>
                             <i class="fas fa-cog"></i> 
@@ -2266,7 +2321,7 @@
                 <h3><i class="fas fa-exclamation-triangle"></i> Connection Issue</h3>
                 <p>${errorMessage}</p>
                 <div class="error-actions">
-                    <button class="error-action-btn" onclick="document.getElementById('apiHeader').click()">
+                    <button class="error-action-btn" onclick="toggleApiSettings()">
                         <i class="fas fa-cog"></i> Check API Settings
                     </button>
                     <button class="error-action-btn" onclick="window.open('https://openrouter.ai/keys', '_blank')">
@@ -2400,7 +2455,29 @@ real estate law, family law, criminal law, business law, tax law, and related ar
 
         function toggleFullScreenChat() {
             const chatArea = document.getElementById('chatArea');
-            chatArea.classList.toggle('full-screen');
+            const chatToggle = document.getElementById('chatToggle');
+            const closeChat = document.getElementById('closeChat');
+            
+            if (chatArea.classList.contains('full-screen')) {
+                chatArea.classList.remove('full-screen');
+                chatToggle.style.display = 'block';
+                closeChat.style.display = 'none';
+            } else {
+                chatArea.classList.add('full-screen');
+                chatToggle.style.display = 'none';
+                closeChat.style.display = 'block';
+            }
+        }
+
+        function toggleApiSettings() {
+            const apiSettings = document.getElementById('apiSettings');
+            if (apiSettings.style.display === 'none' || apiSettings.style.display === '') {
+                apiSettings.style.display = 'block';
+                document.getElementById('apiHeader').classList.remove('collapsed');
+                document.getElementById('apiContent').classList.remove('collapsed');
+            } else {
+                apiSettings.style.display = 'none';
+            }
         }
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -2420,12 +2497,16 @@ real estate law, family law, criminal law, business law, tax law, and related ar
             const mainNav = document.getElementById('mainNav');
             const sidebarToggle = document.getElementById('sidebarToggle');
             const chatToggle = document.getElementById('chatToggle');
+            const closeChat = document.getElementById('closeChat');
             const sidebar = document.getElementById('sidebar');
             const sidebarOverlay = document.getElementById('sidebarOverlay');
             const searchInput = document.getElementById('searchInput');
             const searchResults = document.getElementById('searchResults');
             const ctaButton = document.getElementById('cta-button');
             const chatArea = document.getElementById('chatArea');
+            const mobileApiBtn = document.getElementById('mobileApiBtn');
+            const mobileApiBtnMain = document.getElementById('mobileApiBtnMain');
+            const apiSettings = document.getElementById('apiSettings');
             
             let apiKey = localStorage.getItem('openrouterApiKey');
             let currentModel = localStorage.getItem('openrouterModel') || 'mistralai/mistral-7b-instruct:free';
@@ -2495,8 +2576,15 @@ real estate law, family law, criminal law, business law, tax law, and related ar
             // Chat toggle for mobile
             chatToggle.addEventListener('click', toggleFullScreenChat);
             
+            // Close chat for mobile
+            closeChat.addEventListener('click', toggleFullScreenChat);
+            
             // Close sidebar when clicking overlay
             sidebarOverlay.addEventListener('click', toggleSidebarMobile);
+            
+            // Mobile API buttons
+            mobileApiBtn.addEventListener('click', toggleApiSettings);
+            mobileApiBtnMain.addEventListener('click', toggleApiSettings);
             
             // Save API key
             saveApiButton.addEventListener('click', function() {
@@ -2507,6 +2595,7 @@ real estate law, family law, criminal law, business law, tax law, and related ar
                     apiKeyInput.value = '••••••••••••••••';
                     updateApiStatus();
                     addMessage('OpenRouter API key saved successfully! You can now ask legal questions.', false);
+                    showToast('API key saved successfully!');
                 } else if (key.startsWith('••••')) {
                     apiKeyInput.value = '';
                     addMessage('Please enter your new API key.', false);
@@ -2544,6 +2633,7 @@ real estate law, family law, criminal law, business law, tax law, and related ar
                     // Close sidebar on mobile after selecting a topic
                     if (window.innerWidth <= 768) {
                         toggleSidebarMobile();
+                        toggleFullScreenChat();
                     }
                 });
             });
@@ -2664,6 +2754,16 @@ real estate law, family law, criminal law, business law, tax law, and related ar
             if (window.innerWidth > 768) {
                 sidebarToggle.style.display = 'none';
                 chatToggle.style.display = 'none';
+                closeChat.style.display = 'none';
+                mobileApiBtn.style.display = 'none';
+                mobileApiBtnMain.style.display = 'none';
+                apiSettings.style.display = 'block';
+            } else {
+                sidebarToggle.style.display = 'block';
+                chatToggle.style.display = 'block';
+                mobileApiBtn.style.display = 'block';
+                mobileApiBtnMain.style.display = 'block';
+                apiSettings.style.display = 'none';
             }
 
             // Update on resize
@@ -2671,12 +2771,19 @@ real estate law, family law, criminal law, business law, tax law, and related ar
                 if (window.innerWidth > 768) {
                     sidebarToggle.style.display = 'none';
                     chatToggle.style.display = 'none';
+                    closeChat.style.display = 'none';
+                    mobileApiBtn.style.display = 'none';
+                    mobileApiBtnMain.style.display = 'none';
+                    apiSettings.style.display = 'block';
                     sidebar.classList.remove('mobile-hidden', 'mobile-visible');
                     sidebarOverlay.classList.remove('active');
                     chatArea.classList.remove('full-screen');
                 } else {
                     sidebarToggle.style.display = 'block';
                     chatToggle.style.display = 'block';
+                    mobileApiBtn.style.display = 'block';
+                    mobileApiBtnMain.style.display = 'block';
+                    apiSettings.style.display = 'none';
                     sidebar.classList.add('mobile-hidden');
                 }
             });
