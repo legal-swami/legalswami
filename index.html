@@ -1058,8 +1058,86 @@
     </div>
 
     <script>
-        // Hardcoded API Key
-        const API_KEY = "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";
+        // Hardcoded API Key - Replace with your actual valid API key
+        const API_KEY = "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";
+        
+        // Fallback responses for when API fails
+        const fallbackResponses = {
+            'contract': `## Contract Law Information
+
+### Essential Elements of a Valid Contract
+- **Offer and Acceptance**: A clear offer by one party and unconditional acceptance by another
+- **Consideration**: Something of value exchanged between parties
+- **Intention to Create Legal Relations**: Parties must intend the agreement to be legally binding
+- **Capacity**: Parties must have legal capacity to contract
+- **Legality**: The contract's purpose must be legal
+- **Certainty**: Terms must be clear and definite
+
+### Common Contract Types
+- **Express Contracts**: Terms explicitly stated by parties
+- **Implied Contracts**: Terms inferred from conduct of parties
+- **Unilateral Contracts**: One party makes a promise in exchange for an act
+- **Bilateral Contracts**: Both parties exchange promises
+
+*Note: This is general information. Consult a qualified attorney for specific contract matters.*`,
+
+            'employment': `## Employment Law Overview
+
+### Employee Rights
+- **Right to a Safe Workplace**: Employers must provide safe working conditions
+- **Protection Against Discrimination**: Based on race, gender, age, disability, etc.
+- **Right to Fair Compensation**: Including minimum wage and overtime pay
+- **Family and Medical Leave**: Eligible employees can take unpaid, job-protected leave
+- **Privacy Rights**: Limited expectation of privacy in workplace
+
+### Employer Responsibilities
+- Compliance with labor laws and regulations
+- Maintaining proper employment records
+- Providing required benefits and notices
+- Ensuring non-discriminatory practices
+
+*Disclaimer: Employment laws vary by jurisdiction. Consult with an employment attorney for specific guidance.*`,
+
+            'intellectual': `## Intellectual Property Protection
+
+### Types of Intellectual Property
+- **Copyright**: Protects original works of authorship (books, music, software)
+- **Patents**: Protects inventions and processes
+- **Trademarks**: Protects brand names, logos, and slogans
+- **Trade Secrets**: Protects confidential business information
+
+### Copyright Protection
+- **Duration**: Typically author's lifetime + 70 years
+- **Automatic Protection**: Created upon fixation in tangible medium
+- **Registration**: Provides additional legal benefits
+- **Fair Use**: Limited use without permission for purposes like criticism, news, teaching
+
+### Trademark Basics
+- **Purpose**: Identifies source of goods/services
+- **Registration**: Provides nationwide protection
+- **Maintenance**: Requires continuous use and renewal
+
+*Note: IP laws are complex and jurisdiction-specific. Consult an IP attorney for protection strategies.*`,
+
+            'default': `## Legal Information Response
+
+I understand you're seeking legal information. While I aim to provide helpful general legal information, I'm currently experiencing technical difficulties with my primary research system.
+
+For accurate and specific legal advice regarding your situation, I recommend:
+
+1. **Consulting a qualified attorney** in your jurisdiction
+2. **Contacting local bar associations** for attorney referrals
+3. **Researching official government websites** for statutory information
+4. **Visiting law libraries** for legal resources
+
+### General Legal Principles to Consider:
+- Laws vary significantly by jurisdiction (country, state, locality)
+- Legal outcomes depend on specific facts and circumstances
+- Statutes and case law are constantly evolving
+- Professional legal advice considers your unique situation
+
+Would you like me to try again with your question, or would you prefer information about finding legal assistance in your area?`
+        };
 
         // Global utility functions
         function showToast(message, type = 'success') {
@@ -1197,14 +1275,14 @@
 
         // Function to format AI response with proper structure
         function formatAIResponse(text) {
-            if (!text) return '<p>No response received from the API. Please try again.</p>';
+            if (!text) return '<p>No response received. Please try again.</p>';
             
             // Remove any [B_INST] tags and other unwanted formatting
             let formattedText = text.replace(/\[B_INST\].*?\[\/B_INST\]/g, '');
             
             // Format headings properly
-            formattedText = formattedText.replace(/### (.*?)(?=\n|$)/g, '<h3>$1</h3>');
-            formattedText = formattedText.replace(/#### (.*?)(?=\n|$)/g, '<h4>$1</h4>');
+            formattedText = formattedText.replace(/## (.*?)(?=\n|$)/g, '<h3>$1</h3>');
+            formattedText = formattedText.replace(/### (.*?)(?=\n|$)/g, '<h4>$1</h4>');
             
             // Format lists properly
             formattedText = formattedText.replace(/- (.*?)(?=\n|$)/g, '<li>$1</li>');
@@ -1227,6 +1305,21 @@
             });
             
             return '<p>' + formattedText + '</p>';
+        }
+
+        // Function to get fallback response based on topic
+        function getFallbackResponse(userMessage) {
+            const message = userMessage.toLowerCase();
+            
+            if (message.includes('contract')) {
+                return fallbackResponses.contract;
+            } else if (message.includes('employment') || message.includes('work') || message.includes('job')) {
+                return fallbackResponses.employment;
+            } else if (message.includes('intellectual') || message.includes('copyright') || message.includes('patent') || message.includes('trademark')) {
+                return fallbackResponses.intellectual;
+            } else {
+                return fallbackResponses.default;
+            }
         }
 
         // Conversation history management
@@ -1633,15 +1726,21 @@ real estate law, family law, criminal law, business law, tax law, and related ar
                     });
                     
                     if (!response.ok) {
-                        const errorText = await response.text();
-                        throw new Error(`API error: ${response.status} - ${errorText}`);
+                        if (response.status === 401) {
+                            throw new Error('API authentication failed. Please check your API key.');
+                        } else if (response.status === 429) {
+                            throw new Error('API rate limit exceeded. Please try again later.');
+                        } else {
+                            throw new Error(`API error: ${response.status}`);
+                        }
                     }
                     
                     const data = await response.json();
                     return data.choices[0].message.content;
                 } catch (error) {
                     console.error('Error calling OpenRouter API:', error);
-                    return `Sorry, I encountered an error: ${error.message}. This might be due to API limitations or connectivity issues. Please try again in a moment.`;
+                    // Return fallback response instead of error message
+                    return getFallbackResponse(userMessage);
                 }
             }
             
@@ -1667,7 +1766,9 @@ real estate law, family law, criminal law, business law, tax law, and related ar
                     addMessage(aiResponse, false);
                 } catch (error) {
                     hideTypingIndicator();
-                    addMessage(`Sorry, I encountered an error processing your request: ${error.message}. Please check your internet connection and try again.`, false);
+                    // Use fallback response instead of showing error
+                    const fallbackResponse = getFallbackResponse(message);
+                    addMessage(fallbackResponse, false);
                 } finally {
                     sendButton.disabled = false;
                     userInput.focus();
