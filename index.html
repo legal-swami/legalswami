@@ -33,6 +33,7 @@
             color: var(--dark);
             line-height: 1.6;
             min-height: 100vh;
+            padding: 0.5rem;
         }
         
         .container {
@@ -40,23 +41,24 @@
             flex-direction: column;
             height: 100vh;
             width: 100%;
+            max-width: 1400px;
             margin: 0 auto;
             background: white;
             box-shadow: 0 0 30px rgba(0, 0, 0, 0.2);
             border-radius: 12px;
             overflow: hidden;
-            margin-top: 0.5rem;
-            margin-bottom: 0.5rem;
         }
         
         header {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             color: white;
-            padding: 1rem 2rem;
+            padding: 1rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            flex-wrap: wrap;
+            gap: 1rem;
         }
         
         .logo {
@@ -66,11 +68,11 @@
         }
         
         .logo-icon {
-            font-size: 2rem;
+            font-size: 1.5rem;
             background: white;
             color: var(--primary);
-            width: 50px;
-            height: 50px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             display: flex;
             align-items: center;
@@ -79,7 +81,7 @@
         }
         
         .logo h1 {
-            font-size: 1.8rem;
+            font-size: 1.5rem;
             font-weight: 700;
         }
         
@@ -91,7 +93,8 @@
         nav ul {
             display: flex;
             list-style: none;
-            gap: 25px;
+            gap: 15px;
+            flex-wrap: wrap;
         }
         
         nav a {
@@ -99,8 +102,9 @@
             text-decoration: none;
             font-weight: 500;
             transition: all 0.3s;
-            padding: 0.5rem 1rem;
+            padding: 0.5rem 0.8rem;
             border-radius: 6px;
+            font-size: 0.9rem;
         }
         
         nav a:hover {
@@ -123,15 +127,16 @@
             border-right: 1px solid var(--gray-light);
             display: flex;
             flex-direction: column;
+            transition: all 0.3s ease;
         }
         
         .sidebar-section {
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
         }
         
         .sidebar h2 {
-            font-size: 1.1rem;
-            margin-bottom: 1rem;
+            font-size: 1rem;
+            margin-bottom: 0.8rem;
             color: var(--primary);
             display: flex;
             align-items: center;
@@ -151,7 +156,7 @@
         }
         
         .topic-item, .history-item, .action-item {
-            padding: 0.9rem;
+            padding: 0.8rem;
             background: white;
             border-radius: 8px;
             cursor: pointer;
@@ -208,6 +213,7 @@
             padding: 1rem;
             background: white;
             height: 100%;
+            overflow: hidden;
         }
         
         /* Collapsible API Settings */
@@ -276,12 +282,14 @@
             background: white;
             font-size: 0.9rem;
             min-width: 200px;
+            width: 100%;
         }
         
         .api-input-group {
             flex: 1;
             display: flex;
             gap: 10px;
+            width: 100%;
         }
         
         .api-input {
@@ -290,6 +298,7 @@
             border: 1px solid var(--gray-light);
             border-radius: 6px;
             font-size: 0.9rem;
+            width: 100%;
         }
         
         .save-btn {
@@ -301,6 +310,7 @@
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s;
+            white-space: nowrap;
         }
         
         .save-btn:hover {
@@ -311,19 +321,18 @@
         .chat-messages {
             flex: 1;
             overflow-y: auto;
-            padding: 1.5rem;
+            padding: 1rem;
             background: var(--light);
             border-radius: 10px;
             box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
             margin-bottom: 1rem;
             display: flex;
             flex-direction: column;
-            gap: 1.5rem;
-            height: calc(100vh - 280px);
+            gap: 1rem;
         }
         
         .message {
-            padding: 1.5rem;
+            padding: 1.2rem;
             border-radius: 12px;
             max-width: 90%;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
@@ -357,15 +366,15 @@
         }
         
         .message-header .avatar {
-            width: 36px;
-            height: 36px;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
             color: white;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
         }
         
         .user-message .avatar {
@@ -378,7 +387,7 @@
         
         .message-header .name {
             font-weight: 600;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
         
         .user-message .name {
@@ -392,7 +401,7 @@
         .message-content {
             line-height: 1.7;
             margin-bottom: 0.5rem;
-            font-size: 1rem;
+            font-size: 0.95rem;
         }
         
         /* Action buttons container */
@@ -404,6 +413,7 @@
             margin-top: 1rem;
             padding-top: 0.8rem;
             border-top: 1px solid var(--gray-light);
+            flex-wrap: wrap;
         }
         
         .action-btn {
@@ -412,7 +422,7 @@
             border-radius: 6px;
             padding: 0.5rem 0.8rem;
             cursor: pointer;
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             transition: all 0.3s;
             display: flex;
             align-items: center;
@@ -508,30 +518,30 @@
         /* Proper formatting for legal content */
         .message-content h3 {
             color: var(--primary);
-            margin: 1.2rem 0 0.7rem 0;
-            font-size: 1.3rem;
+            margin: 1rem 0 0.5rem 0;
+            font-size: 1.1rem;
             border-bottom: 2px solid var(--primary-light);
             padding-bottom: 0.3rem;
         }
         
         .message-content h4 {
             color: var(--primary-dark);
-            margin: 1rem 0 0.5rem 0;
-            font-size: 1.2rem;
+            margin: 0.8rem 0 0.4rem 0;
+            font-size: 1rem;
         }
         
         .message-content ul, .message-content ol {
-            margin: 0.8rem 0 0.8rem 2rem;
+            margin: 0.6rem 0 0.6rem 1.5rem;
         }
         
         .message-content li {
-            margin-bottom: 0.6rem;
+            margin-bottom: 0.4rem;
             padding-left: 0.5rem;
         }
         
         .message-content p {
-            margin-bottom: 1rem;
-            font-size: 1.05rem;
+            margin-bottom: 0.8rem;
+            font-size: 0.95rem;
         }
         
         .message-content strong {
@@ -542,8 +552,8 @@
         .legal-section {
             background: #f8fafc;
             border-left: 4px solid var(--primary-light);
-            padding: 1.2rem;
-            margin: 1.2rem 0;
+            padding: 1rem;
+            margin: 1rem 0;
             border-radius: 0 8px 8px 0;
         }
         
@@ -551,36 +561,36 @@
             background: white;
             border: 1px solid #e2e8f0;
             border-radius: 6px;
-            padding: 1.2rem;
-            margin: 1rem 0;
+            padding: 1rem;
+            margin: 0.8rem 0;
             box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
         }
         
         .legal-clause h5 {
             color: var(--primary);
             margin-bottom: 0.5rem;
-            font-size: 1.1rem;
+            font-size: 1rem;
         }
         
         .input-area {
             display: flex;
-            gap: 12px;
+            gap: 10px;
             align-items: flex-end;
             background: white;
-            padding: 1.2rem;
+            padding: 1rem;
             border-radius: 10px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
         
         .input-area textarea {
             flex: 1;
-            padding: 1.2rem;
+            padding: 1rem;
             border: 1px solid var(--gray-light);
             border-radius: 8px;
             resize: none;
-            font-size: 1.1rem;
-            min-height: 70px;
-            max-height: 200px;
+            font-size: 1rem;
+            min-height: 60px;
+            max-height: 150px;
             transition: all 0.3s;
             line-height: 1.5;
         }
@@ -596,7 +606,7 @@
             color: white;
             border: none;
             border-radius: 8px;
-            padding: 1.2rem 1.8rem;
+            padding: 1rem 1.5rem;
             cursor: pointer;
             font-weight: 600;
             transition: all 0.3s;
@@ -604,7 +614,7 @@
             align-items: center;
             gap: 8px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            font-size: 1rem;
+            font-size: 0.9rem;
         }
         
         .send-button:hover {
@@ -623,9 +633,9 @@
             background: #fffbeb;
             border: 1px solid #fcd34d;
             border-radius: 8px;
-            padding: 1.2rem;
+            padding: 1rem;
             margin-top: 1rem;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
             color: #92400e;
         }
         
@@ -635,13 +645,14 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            font-size: 0.9rem;
         }
         
         .typing-indicator {
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 1.2rem;
+            padding: 1rem;
             color: var(--gray);
             font-style: italic;
         }
@@ -686,77 +697,26 @@
             background: #ecfdf5;
             padding: 0.7rem;
             border-radius: 6px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             margin-bottom: 0.8rem;
             border-left: 4px solid var(--success);
         }
         
-        @media (max-width: 1024px) {
-            .main-content {
-                flex-direction: column;
-            }
-            
-            .sidebar {
-                width: 100%;
-                max-height: 300px;
-            }
-            
-            .api-controls {
-                flex-direction: column;
-                align-items: stretch;
-            }
-            
-            .api-input-group {
-                flex-direction: column;
-            }
-        }
-        
-        @media (max-width: 768px) {
-            header {
-                flex-direction: column;
-                gap: 1rem;
-                padding: 1rem;
-            }
-            
-            nav ul {
-                gap: 10px;
-            }
-            
-            .message {
-                max-width: 95%;
-                padding: 1.2rem;
-            }
-            
-            .container {
-                margin: 0;
-                border-radius: 0;
-                height: 100vh;
-            }
-            
-            .message-actions {
-                flex-wrap: wrap;
-                justify-content: center;
-            }
-            
-            .action-btn {
-                flex: 1;
-                min-width: 80px;
-                justify-content: center;
-            }
-            
-            .delete-btn {
-                opacity: 1;
-            }
-            
-            .chat-messages {
-                padding: 1rem;
-                gap: 1rem;
-            }
+        /* Mobile menu toggle */
+        .mobile-menu-toggle {
+            display: none;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 0.5rem 0.8rem;
+            cursor: pointer;
+            font-size: 1rem;
         }
         
         .legal-resource {
             margin-top: 1rem;
-            padding: 1.2rem;
+            padding: 1rem;
             background: #f0f9ff;
             border-radius: 8px;
             border-left: 4px solid var(--primary-light);
@@ -765,7 +725,7 @@
         .legal-resource h4 {
             color: var(--primary);
             margin-bottom: 0.5rem;
-            font-size: 1.1rem;
+            font-size: 1rem;
         }
         
         /* Remove any strikethrough styles */
@@ -783,11 +743,11 @@
         .code-block {
             background: #1e293b;
             color: #e2e8f0;
-            padding: 1.2rem;
+            padding: 1rem;
             border-radius: 6px;
-            margin: 1rem 0;
+            margin: 0.8rem 0;
             font-family: 'Courier New', monospace;
-            font-size: 0.95rem;
+            font-size: 0.85rem;
             overflow-x: auto;
         }
         
@@ -795,8 +755,8 @@
             background: #f1f5f9;
             border: 1px solid #cbd5e1;
             border-radius: 8px;
-            padding: 1.2rem;
-            margin: 1.2rem 0;
+            padding: 1rem;
+            margin: 1rem 0;
         }
         
         .template-section h4 {
@@ -804,7 +764,7 @@
             border-bottom: 1px solid #cbd5e1;
             padding-bottom: 0.5rem;
             margin-bottom: 0.8rem;
-            font-size: 1.1rem;
+            font-size: 1rem;
         }
         
         /* Toast notifications */
@@ -842,7 +802,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
-            font-size: 0.85rem;
+            font-size: 0.8rem;
             margin-top: 0.5rem;
         }
         
@@ -864,13 +824,13 @@
         /* Empty state for history */
         .empty-history {
             text-align: center;
-            padding: 2rem 1rem;
+            padding: 1.5rem 1rem;
             color: var(--gray);
         }
         
         .empty-history i {
-            font-size: 2rem;
-            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            margin-bottom: 0.8rem;
             opacity: 0.5;
         }
         
@@ -903,11 +863,11 @@
         .conversation-title {
             font-weight: 600;
             color: var(--primary);
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
         
         .conversation-date {
-            font-size: 0.8rem;
+            font-size: 0.75rem;
             color: var(--gray);
         }
         
@@ -963,6 +923,177 @@
             background: var(--error);
             border-color: var(--error);
         }
+        
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .sidebar {
+                width: 280px;
+            }
+            
+            .api-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .api-input-group {
+                flex-direction: column;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 0;
+            }
+            
+            .container {
+                border-radius: 0;
+                height: 100vh;
+            }
+            
+            header {
+                padding: 0.8rem;
+            }
+            
+            .logo h1 {
+                font-size: 1.3rem;
+            }
+            
+            nav {
+                width: 100%;
+                display: none;
+            }
+            
+            nav.active {
+                display: block;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                gap: 5px;
+            }
+            
+            nav a {
+                display: block;
+                padding: 0.5rem;
+                text-align: center;
+            }
+            
+            .mobile-menu-toggle {
+                display: block;
+            }
+            
+            .main-content {
+                flex-direction: column;
+                height: auto;
+            }
+            
+            .sidebar {
+                width: 100%;
+                max-height: 300px;
+                padding: 1rem;
+            }
+            
+            .chat-container {
+                padding: 0.8rem;
+            }
+            
+            .message {
+                max-width: 95%;
+                padding: 1rem;
+            }
+            
+            .message-actions {
+                justify-content: center;
+            }
+            
+            .action-btn {
+                flex: 1;
+                min-width: 70px;
+                justify-content: center;
+                font-size: 0.7rem;
+                padding: 0.4rem 0.6rem;
+            }
+            
+            .delete-btn {
+                opacity: 1;
+            }
+            
+            .chat-messages {
+                padding: 0.8rem;
+                gap: 0.8rem;
+            }
+            
+            .input-area {
+                padding: 0.8rem;
+            }
+            
+            .input-area textarea {
+                padding: 0.8rem;
+            }
+            
+            .send-button {
+                padding: 0.8rem 1.2rem;
+            }
+            
+            .api-header h3 {
+                font-size: 0.9rem;
+            }
+            
+            .disclaimer {
+                padding: 0.8rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .logo {
+                flex: 1;
+            }
+            
+            .logo h1 {
+                font-size: 1.2rem;
+            }
+            
+            .logo-icon {
+                width: 35px;
+                height: 35px;
+                font-size: 1.2rem;
+            }
+            
+            .message {
+                max-width: 100%;
+            }
+            
+            .message-content {
+                font-size: 0.9rem;
+            }
+            
+            .message-header .avatar {
+                width: 28px;
+                height: 28px;
+            }
+            
+            .message-header .name {
+                font-size: 0.8rem;
+            }
+            
+            .action-btn {
+                min-width: 60px;
+                font-size: 0.65rem;
+                padding: 0.3rem 0.5rem;
+            }
+            
+            .api-controls {
+                gap: 10px;
+            }
+            
+            .model-select, .api-input {
+                font-size: 0.85rem;
+            }
+            
+            .save-btn {
+                padding: 0.6rem 1rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -974,7 +1105,10 @@
                 </div>
                 <h1>Legal<span>Swami</span></h1>
             </div>
-            <nav>
+            <button class="mobile-menu-toggle" id="mobileMenuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <nav id="mainNav">
                 <ul>
                     <li><a href="#"><i class="fas fa-home"></i> Home</a></li>
                     <li><a href="https://openrouter.ai/keys" target="_blank"><i class="fas fa-key"></i> Get API Key</a></li>
@@ -1094,7 +1228,7 @@
                                 </button>
                             </div>
                         </div>
-                        <p style="margin-top: 0.8rem; font-size: 0.85rem; color: var(--gray);">
+                        <p style="margin-top: 0.8rem; font-size: 0.8rem; color: var(--gray);">
                             <i class="fas fa-info-circle"></i> Get your free API key from <a href="https://openrouter.ai/keys" target="_blank" style="color: var(--primary);">OpenRouter</a>
                         </p>
                     </div>
@@ -1515,6 +1649,8 @@ Important Notice: I provide general legal information only, not legal advice. Fo
             const apiContent = document.getElementById('apiContent');
             const statusDot = document.getElementById('statusDot');
             const statusText = document.getElementById('statusText');
+            const mobileMenuToggle = document.getElementById('mobileMenuToggle');
+            const mainNav = document.getElementById('mainNav');
             
             let apiKey = localStorage.getItem('openrouterApiKey');
             let currentModel = localStorage.getItem('openrouterModel') || 'mistralai/mistral-7b-instruct:free';
@@ -1560,6 +1696,11 @@ Important Notice: I provide general legal information only, not legal advice. Fo
                 }
             }
             
+            // Toggle mobile menu
+            function toggleMobileMenu() {
+                mainNav.classList.toggle('active');
+            }
+            
             // Load saved settings
             if (apiKey) {
                 apiKeyInput.value = '••••••••••••••••';
@@ -1569,6 +1710,9 @@ Important Notice: I provide general legal information only, not legal advice. Fo
             
             // API section toggle
             apiHeader.addEventListener('click', toggleApiSection);
+            
+            // Mobile menu toggle
+            mobileMenuToggle.addEventListener('click', toggleMobileMenu);
             
             // Save API key
             saveApiButton.addEventListener('click', function() {
