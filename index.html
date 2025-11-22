@@ -924,7 +924,24 @@
             border-color: var(--error);
         }
         
-        /* Responsive Design */
+        /* Sidebar toggle button for mobile */
+        .sidebar-toggle {
+            display: none;
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            z-index: 100;
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 0.5rem 0.8rem;
+            cursor: pointer;
+            font-size: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
+        
+        /* Responsive Design - IMPROVED FOR MOBILE */
         @media (max-width: 1024px) {
             .sidebar {
                 width: 280px;
@@ -985,16 +1002,37 @@
             .main-content {
                 flex-direction: column;
                 height: auto;
+                position: relative;
             }
             
+            /* Sidebar improvements for mobile */
             .sidebar {
                 width: 100%;
-                max-height: 300px;
+                max-height: 40vh;
                 padding: 1rem;
+                position: absolute;
+                top: 0;
+                left: 0;
+                z-index: 50;
+                background: white;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+                transform: translateY(-100%);
+                transition: transform 0.3s ease;
             }
             
+            .sidebar.active {
+                transform: translateY(0);
+            }
+            
+            .sidebar-toggle {
+                display: block;
+            }
+            
+            /* Chat container improvements for mobile */
             .chat-container {
                 padding: 0.8rem;
+                height: 100%;
+                width: 100%;
             }
             
             .message {
@@ -1021,10 +1059,19 @@
             .chat-messages {
                 padding: 0.8rem;
                 gap: 0.8rem;
+                height: calc(100vh - 300px);
             }
             
             .input-area {
                 padding: 0.8rem;
+                position: fixed;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                background: white;
+                border-radius: 0;
+                box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+                z-index: 40;
             }
             
             .input-area textarea {
@@ -1041,6 +1088,30 @@
             
             .disclaimer {
                 padding: 0.8rem;
+                margin-bottom: 70px; /* Space for fixed input area */
+            }
+            
+            /* Hide API settings by default on mobile */
+            .api-settings {
+                margin-bottom: 0.5rem;
+            }
+            
+            .api-header.collapsed .toggle-icon {
+                transform: rotate(0deg);
+            }
+            
+            .api-content {
+                max-height: 0;
+                padding-top: 0;
+                padding-bottom: 0;
+                opacity: 0;
+                overflow: hidden;
+            }
+            
+            .api-header.collapsed + .api-content {
+                max-height: 500px;
+                padding: 1rem;
+                opacity: 1;
             }
         }
         
@@ -1093,6 +1164,14 @@
             .save-btn {
                 padding: 0.6rem 1rem;
             }
+            
+            .sidebar {
+                max-height: 50vh;
+            }
+            
+            .chat-messages {
+                height: calc(100vh - 350px);
+            }
         }
     </style>
 </head>
@@ -1119,7 +1198,11 @@
         </header>
         
         <div class="main-content">
-            <aside class="sidebar">
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <i class="fas fa-bars"></i> Menu
+            </button>
+            
+            <aside class="sidebar" id="sidebar">
                 <div class="sidebar-section">
                     <h2><i class="fas fa-book"></i> Legal Topics</h2>
                     <div class="topic-list">
@@ -1195,7 +1278,7 @@
             <main class="chat-container">
                 <!-- Collapsible API Settings -->
                 <div class="api-settings">
-                    <div class="api-header" id="apiHeader">
+                    <div class="api-header collapsed" id="apiHeader">
                         <h3>
                             <i class="fas fa-cog"></i> 
                             API Configuration
@@ -1651,6 +1734,8 @@ Important Notice: I provide general legal information only, not legal advice. Fo
             const statusText = document.getElementById('statusText');
             const mobileMenuToggle = document.getElementById('mobileMenuToggle');
             const mainNav = document.getElementById('mainNav');
+            const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebar = document.getElementById('sidebar');
             
             let apiKey = localStorage.getItem('openrouterApiKey');
             let currentModel = localStorage.getItem('openrouterModel') || 'mistralai/mistral-7b-instruct:free';
@@ -1701,6 +1786,18 @@ Important Notice: I provide general legal information only, not legal advice. Fo
                 mainNav.classList.toggle('active');
             }
             
+            // Toggle sidebar
+            function toggleSidebar() {
+                sidebar.classList.toggle('active');
+            }
+            
+            // Close sidebar when clicking outside
+            function closeSidebarOnClickOutside(e) {
+                if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target) && sidebar.classList.contains('active')) {
+                    sidebar.classList.remove('active');
+                }
+            }
+            
             // Load saved settings
             if (apiKey) {
                 apiKeyInput.value = '••••••••••••••••';
@@ -1713,6 +1810,12 @@ Important Notice: I provide general legal information only, not legal advice. Fo
             
             // Mobile menu toggle
             mobileMenuToggle.addEventListener('click', toggleMobileMenu);
+            
+            // Sidebar toggle
+            sidebarToggle.addEventListener('click', toggleSidebar);
+            
+            // Close sidebar when clicking outside
+            document.addEventListener('click', closeSidebarOnClickOutside);
             
             // Save API key
             saveApiButton.addEventListener('click', function() {
@@ -1756,6 +1859,11 @@ Important Notice: I provide general legal information only, not legal advice. Fo
                     
                     userInput.value = questions[topic] || `Tell me about ${topic} law.`;
                     userInput.focus();
+                    
+                    // Close sidebar on mobile after selecting a topic
+                    if (window.innerWidth <= 768) {
+                        sidebar.classList.remove('active');
+                    }
                 });
             });
             
@@ -1772,6 +1880,11 @@ Important Notice: I provide general legal information only, not legal advice. Fo
                         showLegalResources();
                     } else if (action === 'clear-history') {
                         clearAllHistory();
+                    }
+                    
+                    // Close sidebar on mobile after selecting an action
+                    if (window.innerWidth <= 768) {
+                        sidebar.classList.remove('active');
                     }
                 });
             });
