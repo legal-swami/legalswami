@@ -134,17 +134,28 @@
             display: flex;
             flex: 1;
             overflow: hidden;
+            position: relative;
         }
         
         .sidebar {
             width: 350px;
-            background: rgba(21, 27, 61, 0.5);
+            background: rgba(21, 27, 61, 0.95);
             backdrop-filter: blur(10px);
             padding: 2rem;
             overflow-y: auto;
             border-right: 1px solid var(--glass-border);
             display: flex;
             flex-direction: column;
+            transition: transform 0.3s ease;
+            z-index: 50;
+        }
+
+        .sidebar.mobile-hidden {
+            transform: translateX(-100%);
+        }
+        
+        .sidebar.mobile-visible {
+            transform: translateX(0);
         }
 
         .search-container {
@@ -343,6 +354,17 @@
             flex-direction: column;
             background: var(--dark-bg);
             overflow: hidden;
+            position: relative;
+        }
+
+        .chat-area.full-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 100;
+            background: var(--dark-bg);
         }
         
         .hero-section {
@@ -754,6 +776,22 @@
             font-size: 1rem;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
         }
+
+        .chat-toggle {
+            display: none;
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            z-index: 100;
+            background: var(--neon-pink);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            padding: 0.5rem 0.8rem;
+            cursor: pointer;
+            font-size: 1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+        }
         
         /* Toast notifications */
         .toast {
@@ -1047,6 +1085,71 @@
             gap: 8px;
             font-size: 0.9rem;
         }
+
+        /* Error message styling */
+        .error-message {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.3);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            text-align: center;
+        }
+
+        .error-message h3 {
+            color: #ef4444;
+            margin-bottom: 0.8rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .error-message p {
+            margin-bottom: 1rem;
+            color: rgba(255, 255, 255, 0.8);
+        }
+
+        .error-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .error-action-btn {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid rgba(239, 68, 68, 0.5);
+            border-radius: 6px;
+            padding: 0.6rem 1.2rem;
+            cursor: pointer;
+            color: white;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .error-action-btn:hover {
+            background: rgba(239, 68, 68, 0.4);
+            transform: translateY(-2px);
+        }
+
+        /* Mobile overlay for sidebar */
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 40;
+        }
+
+        .sidebar-overlay.active {
+            display: block;
+        }
         
         @media (max-width: 768px) {
             header {
@@ -1092,6 +1195,18 @@
                 border-right: none;
                 border-bottom: 2px solid var(--glass-border);
                 padding: 1.5rem 1rem;
+                position: fixed;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                z-index: 50;
+                max-height: 100vh;
+                transform: translateX(-100%);
+            }
+
+            .sidebar.mobile-visible {
+                transform: translateX(0);
             }
             
             .search-container {
@@ -1269,6 +1384,10 @@
             .sidebar-toggle {
                 display: block;
             }
+
+            .chat-toggle {
+                display: block;
+            }
             
             .welcome-message {
                 padding: 1.5rem 0.8rem;
@@ -1280,6 +1399,21 @@
             
             .welcome-message p {
                 font-size: 0.9rem;
+            }
+
+            .error-message {
+                padding: 1.2rem;
+                margin: 0.8rem 0;
+            }
+
+            .error-actions {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .error-action-btn {
+                width: 100%;
+                justify-content: center;
             }
         }
         
@@ -1426,7 +1560,13 @@
                 <i class="fas fa-bars"></i> Menu
             </button>
             
-            <aside class="sidebar" id="sidebar">
+            <button class="chat-toggle" id="chatToggle">
+                <i class="fas fa-comments"></i> Chat
+            </button>
+            
+            <div class="sidebar-overlay" id="sidebarOverlay"></div>
+            
+            <aside class="sidebar mobile-hidden" id="sidebar">
                 <div class="search-container">
                     <i class="fas fa-search search-icon"></i>
                     <input type="text" class="search-input" id="searchInput" placeholder="Search legal topics, services...">
@@ -1536,7 +1676,7 @@
                 </div>
             </aside>
             
-            <main class="chat-area">
+            <main class="chat-area" id="chatArea">
                 <!-- Collapsible API Settings -->
                 <div class="api-settings">
                     <div class="api-header collapsed" id="apiHeader">
@@ -2117,6 +2257,30 @@
             document.getElementById('userInput').focus();
         }
 
+        // Function to show error message when API fails
+        function showApiError(errorMessage) {
+            const chatMessages = document.getElementById('chatMessages');
+            const errorDiv = document.createElement('div');
+            errorDiv.className = 'error-message';
+            errorDiv.innerHTML = `
+                <h3><i class="fas fa-exclamation-triangle"></i> Connection Issue</h3>
+                <p>${errorMessage}</p>
+                <div class="error-actions">
+                    <button class="error-action-btn" onclick="document.getElementById('apiHeader').click()">
+                        <i class="fas fa-cog"></i> Check API Settings
+                    </button>
+                    <button class="error-action-btn" onclick="window.open('https://openrouter.ai/keys', '_blank')">
+                        <i class="fas fa-key"></i> Get API Key
+                    </button>
+                    <button class="error-action-btn" onclick="this.closest('.error-message').remove()">
+                        <i class="fas fa-times"></i> Dismiss
+                    </button>
+                </div>
+            `;
+            chatMessages.appendChild(errorDiv);
+            scrollToBottom();
+        }
+
         // Function to call OpenRouter API
         async function callOpenRouterAPI(userMessage) {
             const apiKey = localStorage.getItem('openrouterApiKey');
@@ -2185,7 +2349,7 @@ real estate law, family law, criminal law, business law, tax law, and related ar
                 return data.choices[0].message.content;
             } catch (error) {
                 console.error('Error calling OpenRouter API:', error);
-                return `Sorry, I encountered an error: ${error.message}. Please check your API key and try again.`;
+                throw error;
             }
         }
 
@@ -2211,11 +2375,32 @@ real estate law, family law, criminal law, business law, tax law, and related ar
                 addMessage(aiResponse, false);
             } catch (error) {
                 hideTypingIndicator();
-                addMessage(`Sorry, I encountered an error processing your request: ${error.message}`, false);
+                showApiError(`Sorry, I encountered an error: ${error.message}. Please check your API key and try again.`);
             } finally {
                 document.getElementById('sendButton').disabled = false;
                 document.getElementById('userInput').focus();
             }
+        }
+
+        // Mobile view functions
+        function toggleSidebarMobile() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.getElementById('sidebarOverlay');
+            
+            if (sidebar.classList.contains('mobile-visible')) {
+                sidebar.classList.remove('mobile-visible');
+                sidebar.classList.add('mobile-hidden');
+                overlay.classList.remove('active');
+            } else {
+                sidebar.classList.remove('mobile-hidden');
+                sidebar.classList.add('mobile-visible');
+                overlay.classList.add('active');
+            }
+        }
+
+        function toggleFullScreenChat() {
+            const chatArea = document.getElementById('chatArea');
+            chatArea.classList.toggle('full-screen');
         }
 
         document.addEventListener('DOMContentLoaded', function() {
@@ -2234,10 +2419,13 @@ real estate law, family law, criminal law, business law, tax law, and related ar
             const mobileMenuToggle = document.getElementById('mobileMenuToggle');
             const mainNav = document.getElementById('mainNav');
             const sidebarToggle = document.getElementById('sidebarToggle');
+            const chatToggle = document.getElementById('chatToggle');
             const sidebar = document.getElementById('sidebar');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
             const searchInput = document.getElementById('searchInput');
             const searchResults = document.getElementById('searchResults');
             const ctaButton = document.getElementById('cta-button');
+            const chatArea = document.getElementById('chatArea');
             
             let apiKey = localStorage.getItem('openrouterApiKey');
             let currentModel = localStorage.getItem('openrouterModel') || 'mistralai/mistral-7b-instruct:free';
@@ -2288,18 +2476,6 @@ real estate law, family law, criminal law, business law, tax law, and related ar
                 mainNav.classList.toggle('active');
             }
             
-            // Toggle sidebar
-            function toggleSidebar() {
-                sidebar.classList.toggle('active');
-            }
-            
-            // Close sidebar when clicking outside
-            function closeSidebarOnClickOutside(e) {
-                if (!sidebar.contains(e.target) && !sidebarToggle.contains(e.target) && sidebar.classList.contains('active')) {
-                    sidebar.classList.remove('active');
-                }
-            }
-            
             // Load saved settings
             if (apiKey) {
                 apiKeyInput.value = '••••••••••••••••';
@@ -2314,10 +2490,13 @@ real estate law, family law, criminal law, business law, tax law, and related ar
             mobileMenuToggle.addEventListener('click', toggleMobileMenu);
             
             // Sidebar toggle
-            sidebarToggle.addEventListener('click', toggleSidebar);
+            sidebarToggle.addEventListener('click', toggleSidebarMobile);
             
-            // Close sidebar when clicking outside
-            document.addEventListener('click', closeSidebarOnClickOutside);
+            // Chat toggle for mobile
+            chatToggle.addEventListener('click', toggleFullScreenChat);
+            
+            // Close sidebar when clicking overlay
+            sidebarOverlay.addEventListener('click', toggleSidebarMobile);
             
             // Save API key
             saveApiButton.addEventListener('click', function() {
@@ -2364,7 +2543,7 @@ real estate law, family law, criminal law, business law, tax law, and related ar
                     
                     // Close sidebar on mobile after selecting a topic
                     if (window.innerWidth <= 768) {
-                        sidebar.classList.remove('active');
+                        toggleSidebarMobile();
                     }
                 });
             });
@@ -2386,7 +2565,7 @@ real estate law, family law, criminal law, business law, tax law, and related ar
                     
                     // Close sidebar on mobile after selecting an action
                     if (window.innerWidth <= 768) {
-                        sidebar.classList.remove('active');
+                        toggleSidebarMobile();
                     }
                 });
             });
@@ -2478,6 +2657,27 @@ real estate law, family law, criminal law, business law, tax law, and related ar
                 const searchContainer = document.querySelector('.search-container');
                 if (!searchContainer.contains(e.target)) {
                     searchResults.classList.remove('active');
+                }
+            });
+
+            // Hide mobile buttons on desktop
+            if (window.innerWidth > 768) {
+                sidebarToggle.style.display = 'none';
+                chatToggle.style.display = 'none';
+            }
+
+            // Update on resize
+            window.addEventListener('resize', function() {
+                if (window.innerWidth > 768) {
+                    sidebarToggle.style.display = 'none';
+                    chatToggle.style.display = 'none';
+                    sidebar.classList.remove('mobile-hidden', 'mobile-visible');
+                    sidebarOverlay.classList.remove('active');
+                    chatArea.classList.remove('full-screen');
+                } else {
+                    sidebarToggle.style.display = 'block';
+                    chatToggle.style.display = 'block';
+                    sidebar.classList.add('mobile-hidden');
                 }
             });
         });
