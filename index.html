@@ -6,6 +6,7 @@
     <title>LegalSwami - AI Legal Assistant</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        /* Your existing CSS remains the same */
         :root {
             --primary: #1e3a8a;
             --primary-dark: #1e40af;
@@ -1058,10 +1059,10 @@
     </div>
 
     <script>
-        // Hardcoded API Key - Replace with your actual valid API key
+        // Hardcoded API Key - This might not work on GitHub Pages due to CORS
         const API_KEY = "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";
         
-        // Fallback responses for when API fails
+        // Enhanced fallback responses for when API fails
         const fallbackResponses = {
             'contract': `## Contract Law Information
 
@@ -1079,64 +1080,205 @@
 - **Unilateral Contracts**: One party makes a promise in exchange for an act
 - **Bilateral Contracts**: Both parties exchange promises
 
+### Contract Breach Remedies
+- **Damages**: Monetary compensation for losses
+- **Specific Performance**: Court order to fulfill contractual obligations
+- **Rescission**: Cancellation of the contract
+- **Injunction**: Court order to stop certain actions
+
 *Note: This is general information. Consult a qualified attorney for specific contract matters.*`,
 
             'employment': `## Employment Law Overview
 
 ### Employee Rights
-- **Right to a Safe Workplace**: Employers must provide safe working conditions
-- **Protection Against Discrimination**: Based on race, gender, age, disability, etc.
-- **Right to Fair Compensation**: Including minimum wage and overtime pay
-- **Family and Medical Leave**: Eligible employees can take unpaid, job-protected leave
-- **Privacy Rights**: Limited expectation of privacy in workplace
+- **Right to a Safe Workplace**: Employers must provide safe working conditions under OSHA
+- **Protection Against Discrimination**: Based on race, gender, age, disability, religion under Title VII
+- **Right to Fair Compensation**: Including minimum wage and overtime pay under FLSA
+- **Family and Medical Leave**: Eligible employees can take unpaid, job-protected leave under FMLA
+- **Privacy Rights**: Limited expectation of privacy in workplace communications
+- **Whistleblower Protection**: Protection for reporting illegal activities
 
 ### Employer Responsibilities
-- Compliance with labor laws and regulations
-- Maintaining proper employment records
-- Providing required benefits and notices
-- Ensuring non-discriminatory practices
+- Compliance with federal, state, and local labor laws
+- Maintaining proper employment records and documentation
+- Providing required benefits, notices, and safety training
+- Ensuring non-discriminatory hiring and promotion practices
+- Proper classification of employees vs. independent contractors
+
+### Common Employment Issues
+- Wrongful termination
+- Workplace harassment
+- Wage and hour disputes
+- Discrimination claims
+- Retaliation cases
 
 *Disclaimer: Employment laws vary by jurisdiction. Consult with an employment attorney for specific guidance.*`,
 
             'intellectual': `## Intellectual Property Protection
 
 ### Types of Intellectual Property
-- **Copyright**: Protects original works of authorship (books, music, software)
-- **Patents**: Protects inventions and processes
-- **Trademarks**: Protects brand names, logos, and slogans
-- **Trade Secrets**: Protects confidential business information
+- **Copyright**: Protects original works of authorship (books, music, software, art)
+- **Patents**: Protects inventions, processes, and functional designs
+- **Trademarks**: Protects brand names, logos, slogans, and trade dress
+- **Trade Secrets**: Protects confidential business information and formulas
 
 ### Copyright Protection
 - **Duration**: Typically author's lifetime + 70 years
 - **Automatic Protection**: Created upon fixation in tangible medium
-- **Registration**: Provides additional legal benefits
-- **Fair Use**: Limited use without permission for purposes like criticism, news, teaching
+- **Registration**: Provides additional legal benefits and statutory damages
+- **Fair Use**: Limited use without permission for purposes like criticism, news, teaching, research
 
-### Trademark Basics
-- **Purpose**: Identifies source of goods/services
-- **Registration**: Provides nationwide protection
-- **Maintenance**: Requires continuous use and renewal
+### Patent Basics
+- **Utility Patents**: For new and useful processes, machines, compositions
+- **Design Patents**: For new, original ornamental designs
+- **Plant Patents**: For distinct new plant varieties
+- **Duration**: 20 years from filing date for utility patents
+
+### Trademark Protection
+- **Purpose**: Identifies source of goods/services and prevents consumer confusion
+- **Registration**: Provides nationwide protection and legal presumptions
+- **Maintenance**: Requires continuous use and periodic renewal filings
+- **Enforcement**: Must police and protect against infringement
 
 *Note: IP laws are complex and jurisdiction-specific. Consult an IP attorney for protection strategies.*`,
 
+            'realestate': `## Real Estate Law Fundamentals
+
+### Property Types
+- **Real Property**: Land and anything permanently attached to it
+- **Personal Property**: Movable property not attached to land
+- **Fee Simple**: Highest form of property ownership
+- **Leasehold**: Right to possess property for limited time
+
+### Key Transactions
+- **Purchase Agreements**: Contracts for property sales
+- **Deeds**: Documents transferring property ownership
+- **Mortgages**: Loans secured by real property
+- **Leases**: Agreements for property rental
+
+### Important Concepts
+- **Title Insurance**: Protects against ownership disputes
+- **Easements**: Rights to use another's property
+- **Zoning Laws**: Government regulations on land use
+- **Liens**: Claims against property for debts
+
+*Consult a real estate attorney for property transactions and disputes.*`,
+
+            'family': `## Family Law Overview
+
+### Marriage and Divorce
+- **Legal Requirements**: Age, capacity, license requirements for marriage
+- **Divorce Grounds**: Fault vs. no-fault divorce systems
+- **Property Division**: Community property vs. equitable distribution
+- **Alimony/Spousal Support**: Financial support after divorce
+
+### Child-Related Matters
+- **Child Custody**: Legal and physical custody arrangements
+- **Child Support**: Financial support for children's needs
+- **Parenting Plans**: Schedules and decision-making authority
+- **Paternity**: Establishing legal father-child relationships
+
+### Other Family Law Areas
+- **Adoption**: Legal process of establishing parent-child relationship
+- **Guardianship**: Legal responsibility for another person
+- **Domestic Violence**: Protection orders and legal remedies
+- **Prenuptial Agreements**: Contracts before marriage
+
+*Family laws vary significantly by state. Consult a family law attorney.*`,
+
+            'criminal': `## Criminal Law Basics
+
+### Crime Classifications
+- **Felonies**: Serious crimes punishable by over one year imprisonment
+- **Misdemeanors**: Less serious crimes with shorter jail sentences
+- **Infractions**: Minor violations usually resulting in fines
+
+### Legal Rights
+- **Right to Remain Silent**: Protection against self-incrimination
+- **Right to Attorney**: Legal representation at all critical stages
+- **Right to Jury Trial**: For serious criminal charges
+- **Presumption of Innocence**: Burden on prosecution to prove guilt
+
+### Criminal Process
+- **Arrest**: Taking into custody based on probable cause
+- **Arraignment**: Formal reading of charges and plea entry
+- **Discovery**: Exchange of evidence between parties
+- **Trial**: Presentation of evidence and determination of guilt
+- **Sentencing**: Imposition of punishment if convicted
+
+*Criminal law is complex. Always consult a criminal defense attorney if facing charges.*`,
+
+            'business': `## Business Law Essentials
+
+### Business Entities
+- **Sole Proprietorship**: Single owner, personal liability
+- **Partnership**: Two or more owners, shared liability
+- **LLC**: Limited liability protection with flexibility
+- **Corporation**: Separate legal entity, strongest liability protection
+- **Nonprofit**: Organization for charitable purposes
+
+### Key Legal Areas
+- **Contracts**: Agreements with customers, suppliers, employees
+- **Intellectual Property**: Protecting business assets and branding
+- **Employment Law**: Hiring, managing, and terminating employees
+- **Tax Law**: Compliance with federal, state, and local taxes
+- **Regulatory Compliance**: Industry-specific regulations
+
+### Business Formation Considerations
+- **Liability Protection**: Shielding personal assets from business debts
+- **Tax Implications**: Different tax treatment for various entities
+- **Management Structure**: Decision-making and control arrangements
+- **Funding Options**: Equity financing, debt financing, grants
+
+*Consult a business attorney for entity selection and compliance matters.*`,
+
+            'tax': `## Tax Law Fundamentals
+
+### Tax Types
+- **Income Tax**: Federal and state taxes on earnings
+- **Sales Tax**: Taxes on goods and services transactions
+- **Property Tax**: Taxes on real and personal property ownership
+- **Payroll Tax**: Taxes for Social Security and Medicare
+- **Estate Tax**: Taxes on property transfers after death
+
+### Key Concepts
+- **Deductions**: Expenses that reduce taxable income
+- **Credits**: Dollar-for-dollar reductions in tax liability
+- **Filing Status**: Single, married, head of household options
+- **Tax Brackets**: Progressive rates based on income levels
+
+### Business Tax Considerations
+- **Entity Choice**: Different tax treatment for various business structures
+- **Accounting Methods**: Cash vs. accrual basis accounting
+- **Depreciation**: Deducting asset costs over time
+- **Estimated Taxes**: Quarterly payments for expected tax liability
+
+*Tax laws change frequently. Consult a tax professional for current advice.*`,
+
             'default': `## Legal Information Response
 
-I understand you're seeking legal information. While I aim to provide helpful general legal information, I'm currently experiencing technical difficulties with my primary research system.
+Thank you for your legal question. I'm here to provide general legal information to help you understand various legal concepts and procedures.
 
-For accurate and specific legal advice regarding your situation, I recommend:
+### What I Can Help With:
+- **General legal concepts** and terminology
+- **Overview of legal processes** and procedures  
+- **Information about different areas** of law
+- **Guidance on when to consult** an attorney
+- **Explanation of legal rights** and responsibilities
 
-1. **Consulting a qualified attorney** in your jurisdiction
-2. **Contacting local bar associations** for attorney referrals
-3. **Researching official government websites** for statutory information
-4. **Visiting law libraries** for legal resources
+### Important Limitations:
+- I provide **general information only**, not legal advice
+- Laws vary significantly by **jurisdiction** (country, state, locality)
+- Legal outcomes depend on **specific facts and circumstances**
+- I cannot represent you or provide **case-specific guidance**
 
-### General Legal Principles to Consider:
-- Laws vary significantly by jurisdiction (country, state, locality)
-- Legal outcomes depend on specific facts and circumstances
-- Statutes and case law are constantly evolving
-- Professional legal advice considers your unique situation
+### Recommended Next Steps:
+1. **Consult a qualified attorney** in your jurisdiction for personalized advice
+2. **Contact local bar associations** for attorney referrals
+3. **Research official government websites** for statutory information
+4. **Visit law libraries** for additional legal resources
 
-Would you like me to try again with your question, or would you prefer information about finding legal assistance in your area?`
+Would you like information about a specific legal topic, or guidance on finding legal assistance in your area?`
         };
 
         // Global utility functions
@@ -1317,6 +1459,16 @@ Would you like me to try again with your question, or would you prefer informati
                 return fallbackResponses.employment;
             } else if (message.includes('intellectual') || message.includes('copyright') || message.includes('patent') || message.includes('trademark')) {
                 return fallbackResponses.intellectual;
+            } else if (message.includes('real estate') || message.includes('property') || message.includes('lease') || message.includes('mortgage')) {
+                return fallbackResponses.realestate;
+            } else if (message.includes('family') || message.includes('divorce') || message.includes('custody') || message.includes('marriage')) {
+                return fallbackResponses.family;
+            } else if (message.includes('criminal') || message.includes('arrest') || message.includes('crime') || message.includes('felony')) {
+                return fallbackResponses.criminal;
+            } else if (message.includes('business') || message.includes('llc') || message.includes('corporation') || message.includes('partnership')) {
+                return fallbackResponses.business;
+            } else if (message.includes('tax') || message.includes('irs') || message.includes('deduction') || message.includes('income tax')) {
+                return fallbackResponses.tax;
             } else {
                 return fallbackResponses.default;
             }
@@ -1468,6 +1620,8 @@ I'm here to help you with legal questions and provide general information about 
 • Real estate transactions
 • Family law matters
 • Business formation and compliance
+• Criminal law procedures
+• Tax law obligations
 
 To get started, ask me a legal question or click on any legal topic in the sidebar.
 
@@ -1493,8 +1647,6 @@ Important Notice: I provide general legal information only, not legal advice. Fo
             const sendButton = document.getElementById('sendButton');
             const topicItems = document.querySelectorAll('.topic-item');
             const actionItems = document.querySelectorAll('.action-item');
-            
-            let currentModel = localStorage.getItem('openrouterModel') || 'mistralai/mistral-7b-instruct:free';
             
             // Load conversation history on page load
             loadConversationHistory();
@@ -1541,7 +1693,11 @@ Important Notice: I provide general legal information only, not legal advice. Fo
                     "What constitutes workplace discrimination?",
                     "What should be included in a partnership agreement?",
                     "What are tenant rights regarding security deposits?",
-                    "What is the difference between a will and a trust?"
+                    "What is the difference between a will and a trust?",
+                    "What are the requirements for a valid will?",
+                    "How does bankruptcy protection work?",
+                    "What is the statute of limitations for personal injury cases?",
+                    "What are the elements of a negligence claim?"
                 ];
                 
                 let message = "<h3>Suggested Legal Questions:</h3><ul>";
@@ -1673,77 +1829,6 @@ Important Notice: I provide general legal information only, not legal advice. Fo
                 }
             }
             
-            // Function to call OpenRouter API
-            async function callOpenRouterAPI(userMessage) {
-                // Legal-focused system prompt with formatting instructions
-                const systemPrompt = `You are LegalSwami, a legal AI assistant that provides information about legal topics. 
-                
-IMPORTANT FORMATTING RULES:
-- Use clear, professional headings with ## and ### for section titles
-- Use bullet points with - for lists
-- Use **bold** for important terms
-- Structure responses with proper hierarchy
-- NEVER use [B_INST] or similar formatting tags
-- NEVER use strikethrough text
-- Use clear paragraph breaks
-- For legal documents, use structured sections with clear headings
-
-Content Guidelines:
-- Only answer questions related to law and legal matters
-- Clearly state that you are not providing legal advice
-- Recommend consulting with a qualified attorney for specific legal situations
-- Provide accurate, general information about legal concepts, procedures, and terminology
-- If asked about non-legal topics, politely decline and redirect to legal matters
-- Use clear, accessible language but maintain professional accuracy
-
-Legal topics you can discuss: contract law, intellectual property, employment law, 
-real estate law, family law, criminal law, business law, tax law, and related areas.`;
-                
-                try {
-                    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Authorization': `Bearer ${API_KEY}`,
-                            'HTTP-Referer': window.location.origin,
-                            'X-Title': 'LegalSwami Legal Assistant'
-                        },
-                        body: JSON.stringify({
-                            model: currentModel,
-                            messages: [
-                                {
-                                    role: 'system',
-                                    content: systemPrompt
-                                },
-                                {
-                                    role: 'user',
-                                    content: userMessage
-                                }
-                            ],
-                            max_tokens: 2000,
-                            temperature: 0.7
-                        })
-                    });
-                    
-                    if (!response.ok) {
-                        if (response.status === 401) {
-                            throw new Error('API authentication failed. Please check your API key.');
-                        } else if (response.status === 429) {
-                            throw new Error('API rate limit exceeded. Please try again later.');
-                        } else {
-                            throw new Error(`API error: ${response.status}`);
-                        }
-                    }
-                    
-                    const data = await response.json();
-                    return data.choices[0].message.content;
-                } catch (error) {
-                    console.error('Error calling OpenRouter API:', error);
-                    // Return fallback response instead of error message
-                    return getFallbackResponse(userMessage);
-                }
-            }
-            
             // Function to handle sending a message
             async function sendMessage() {
                 const message = userInput.value.trim();
@@ -1758,12 +1843,12 @@ real estate law, family law, criminal law, business law, tax law, and related ar
                 showTypingIndicator();
                 
                 try {
-                    // Call OpenRouter API
-                    const aiResponse = await callOpenRouterAPI(message);
+                    // Use fallback response instead of API call
+                    const fallbackResponse = getFallbackResponse(message);
                     
                     // Hide typing indicator and add response
                     hideTypingIndicator();
-                    addMessage(aiResponse, false);
+                    addMessage(fallbackResponse, false);
                 } catch (error) {
                     hideTypingIndicator();
                     // Use fallback response instead of showing error
