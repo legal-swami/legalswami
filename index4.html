@@ -67,7 +67,7 @@
             background: var(--light-bg);
         }
         
-        /* Header */
+        /* Header - FIXED FOR MOBILE */
         header {
             background: var(--dark-surface);
             padding: 0.8rem 1rem;
@@ -80,6 +80,8 @@
             z-index: 100;
             min-height: 64px;
             transition: all 0.3s ease;
+            width: 100%;
+            flex-shrink: 0;
         }
         
         .light-mode header {
@@ -91,6 +93,7 @@
             display: flex;
             align-items: center;
             gap: 10px;
+            flex-shrink: 0;
         }
         
         .logo-icon {
@@ -137,6 +140,7 @@
             gap: 6px;
             white-space: nowrap;
             min-height: 40px;
+            flex-shrink: 0;
         }
         
         .light-mode .header-btn {
@@ -164,6 +168,7 @@
             border-radius: 20px;
             font-size: 0.8rem;
             white-space: nowrap;
+            flex-shrink: 0;
         }
         
         .light-mode .status-indicator {
@@ -229,6 +234,7 @@
             cursor: pointer;
             transition: all 0.3s;
             position: relative;
+            flex-shrink: 0;
         }
         
         .light-mode .voice-search-btn {
@@ -269,6 +275,7 @@
             border-radius: 8px;
             width: 44px;
             height: 44px;
+            flex-shrink: 0;
         }
         
         .light-mode .sidebar-toggle {
@@ -288,6 +295,8 @@
             flex: 1;
             overflow: hidden;
             position: relative;
+            width: 100%;
+            min-height: 0;
         }
         
         /* Sidebar */
@@ -719,14 +728,16 @@
             font-size: 0.9rem;
         }
         
-        /* Chat Container */
+        /* Chat Container - FIXED FOR RESPONSIVE */
         .chat-container {
             flex: 1;
             display: flex;
             flex-direction: column;
             background: var(--dark-bg);
             width: 100%;
-            transition: margin-left 0.3s ease;
+            height: 100%;
+            min-height: 0;
+            overflow: hidden;
         }
         
         .light-mode .chat-container {
@@ -743,6 +754,8 @@
             gap: 1.2rem;
             scroll-behavior: smooth;
             -webkit-overflow-scrolling: touch;
+            min-height: 0;
+            width: 100%;
         }
         
         .message {
@@ -784,6 +797,7 @@
         .message-content {
             max-width: 85%;
             position: relative;
+            width: 100%;
         }
         
         .user-message .message-content {
@@ -797,6 +811,7 @@
             line-height: 1.6;
             word-wrap: break-word;
             overflow-wrap: break-word;
+            overflow: hidden;
         }
         
         .ai-message .message-text {
@@ -818,7 +833,7 @@
             border-bottom-right-radius: 4px;
         }
         
-        /* Message Actions - UPDATED with document button */
+        /* Message Actions */
         .message-actions {
             display: flex;
             gap: 8px;
@@ -927,6 +942,7 @@
             border-radius: 12px;
             padding: 1.5rem;
             margin: 1rem 0;
+            overflow: hidden;
         }
         
         .light-mode .document-template {
@@ -945,6 +961,7 @@
             font-size: 1.5rem;
             color: var(--primary);
             margin-bottom: 0.5rem;
+            word-wrap: break-word;
         }
         
         .document-subtitle {
@@ -966,6 +983,7 @@
             margin-bottom: 0.8rem;
             padding-bottom: 0.5rem;
             border-bottom: 1px solid var(--dark-border);
+            word-wrap: break-word;
         }
         
         .light-mode .document-section-title {
@@ -982,6 +1000,7 @@
             font-weight: 600;
             color: var(--dark-text);
             margin-bottom: 0.5rem;
+            word-wrap: break-word;
         }
         
         .light-mode .clause-title {
@@ -991,6 +1010,7 @@
         .clause-content {
             color: var(--dark-text-secondary);
             line-height: 1.6;
+            word-wrap: break-word;
         }
         
         .light-mode .clause-content {
@@ -1011,11 +1031,13 @@
             display: flex;
             justify-content: space-between;
             margin-top: 2rem;
+            flex-wrap: wrap;
         }
         
         .signature-block {
             flex: 1;
             padding: 1rem;
+            min-width: 150px;
         }
         
         .signature-name {
@@ -1062,6 +1084,7 @@
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
+            word-wrap: break-word;
         }
         
         .welcome-message p {
@@ -1069,6 +1092,7 @@
             font-size: 1rem;
             margin-bottom: 1.2rem;
             line-height: 1.5;
+            word-wrap: break-word;
         }
         
         .light-mode .welcome-message p {
@@ -1091,6 +1115,7 @@
             flex-direction: column;
             align-items: center;
             text-align: center;
+            word-wrap: break-word;
         }
         
         .light-mode .feature {
@@ -1123,7 +1148,7 @@
             color: var(--light-text-secondary);
         }
         
-        /* Input Area */
+        /* Input Area - FIXED POSITIONING */
         .input-container {
             padding: 1rem;
             background: var(--dark-bg);
@@ -1132,6 +1157,8 @@
             bottom: 0;
             z-index: 10;
             transition: all 0.3s ease;
+            width: 100%;
+            flex-shrink: 0;
         }
         
         .light-mode .input-container {
@@ -1690,6 +1717,7 @@
             margin: 0.8rem 0;
             font-size: 0.85rem;
             color: var(--warning);
+            word-wrap: break-word;
         }
         
         .light-mode .legal-note {
@@ -1699,12 +1727,14 @@
         
         .legal-content {
             line-height: 1.7;
+            word-wrap: break-word;
         }
         
         .legal-content h3 {
             color: var(--primary);
             margin: 1.2rem 0 0.6rem 0;
             font-size: 1.1rem;
+            word-wrap: break-word;
         }
         
         .legal-content ul {
@@ -1714,6 +1744,7 @@
         
         .legal-content li {
             margin-bottom: 0.4rem;
+            word-wrap: break-word;
         }
         
         .legal-content strong {
@@ -1745,6 +1776,7 @@
             align-items: center;
             text-align: center;
             gap: 10px;
+            word-wrap: break-word;
         }
         
         .light-mode .draft-template {
@@ -1792,6 +1824,7 @@
         @media (max-width: 480px) {
             header {
                 padding: 0.8rem 0.8rem;
+                min-height: 60px;
             }
             
             .logo h1 {
@@ -1868,7 +1901,8 @@
             }
             
             .sidebar {
-                width: 260px;
+                width: 85vw;
+                max-width: 300px;
             }
             
             .download-options {
@@ -1887,6 +1921,10 @@
             .signature-line {
                 flex-direction: column;
                 gap: 1rem;
+            }
+            
+            .message-text {
+                padding: 0.8rem 1rem;
             }
         }
         
@@ -1921,6 +1959,11 @@
             .input-area textarea {
                 padding: 1rem 7rem 1rem 1.2rem;
             }
+            
+            .sidebar {
+                width: 85vw;
+                max-width: 320px;
+            }
         }
         
         /* Tablet (768px to 1023px) */
@@ -1928,6 +1971,7 @@
             .sidebar {
                 position: fixed;
                 transform: translateX(-100%);
+                width: 320px;
             }
             
             .sidebar.active {
@@ -1949,6 +1993,10 @@
             .welcome-features {
                 grid-template-columns: repeat(3, 1fr);
             }
+            
+            .message-content {
+                max-width: 80%;
+            }
         }
         
         /* Desktop (1024px and above) */
@@ -1956,6 +2004,7 @@
             .sidebar {
                 position: relative;
                 transform: translateX(0);
+                flex-shrink: 0;
             }
             
             .sidebar-toggle {
@@ -1985,6 +2034,10 @@
             
             .welcome-message h2 {
                 font-size: 2.2rem;
+            }
+            
+            .main-content {
+                overflow: hidden;
             }
         }
         
@@ -2047,6 +2100,7 @@
             padding: 1.5rem;
             margin: 1rem 0;
             transition: all 0.3s;
+            word-wrap: break-word;
         }
         
         .light-mode .legal-card {
@@ -2084,6 +2138,7 @@
             padding: 1rem;
             margin: 1rem 0;
             border-radius: 0 8px 8px 0;
+            word-wrap: break-word;
         }
         
         .light-mode .law-reference {
@@ -2231,6 +2286,44 @@
                 transform: scale(1.1);
             }
         }
+        
+        /* Improved responsive behavior */
+        @media (max-height: 600px) {
+            header {
+                min-height: 56px;
+                padding: 0.6rem 1rem;
+            }
+            
+            .header-btn {
+                min-height: 36px;
+                padding: 0.4rem 0.6rem;
+            }
+            
+            .voice-search-btn,
+            .theme-toggle,
+            .sidebar-toggle {
+                width: 40px;
+                height: 40px;
+            }
+            
+            .chat-messages {
+                padding: 0.6rem;
+            }
+            
+            .input-container {
+                padding: 0.6rem;
+            }
+            
+            .input-area textarea {
+                min-height: 48px;
+                padding: 0.8rem 6rem 0.8rem 1rem;
+            }
+            
+            .send-button {
+                min-height: 36px;
+                padding: 0.4rem 0.8rem;
+            }
+        }
     </style>
 </head>
 <body class="dark-mode">
@@ -2249,7 +2342,7 @@
             <div class="header-actions">
                 <div class="status-indicator">
                     <div class="status-dot"></div>
-                    <span>AI Assistant Ready</span>
+                    <span class="hide-on-mobile">AI Assistant Ready</span>
                 </div>
                 <button class="header-btn voice-search-btn" id="voiceSearchBtn" title="Voice Search">
                     <i class="fas fa-microphone"></i>
@@ -2636,62 +2729,65 @@
         // Theme management
         let isLightMode = false;
         
-        // Enhanced language detection for Marathi
+        // Enhanced language detection with priority for English
         function detectLanguage(text) {
-            // Enhanced Marathi detection
-            const marathiPatterns = [
-                /मला/i, /पाहिजे/i, /होय/i, /नाही/i, /कसा/i, /काय/i, /कोण/i,
-                /आहे/i, /आहेत/i, /असणे/i, /करणे/i, /जाणे/i, /येणे/i,
-                /\bमी\b/i, /\bतू\b/i, /\bती\b/i, /\bते\b/i, /\bआपण\b/i,
-                /\bकोणी\b/i, /\bकाही\b/i, /\bसगळे\b/i, /\bएक\b/i, /\bदोन\b/i
-            ];
+            // First, check if the text contains any non-English script
+            const hasNonEnglishScript = /[\u0900-\u097F\u0B80-\u0BFF\u0C00-\u0C7F\u0C80-\u0CFF\u0A00-\u0A7F\u0A80-\u0AFF\u0980-\u09FF]/.test(text);
             
-            const hindiPatterns = [
-                /\bक्या\b/i, /\bक्यों\b/i, /\bकैसे\b/i, /\bमुझे\b/i, /\bतुम्हें\b/i,
-                /\bहम\b/i, /\bतुम\b/i, /\bआप\b/i, /\bहै\b/i, /\bहैं\b/i,
-                /\bथा\b/i, /\bथे\b/i, /\bहो\b/i, /\bजो\b/i, /\bजिस\b/i
-            ];
+            // If no non-English script, default to English
+            if (!hasNonEnglishScript) {
+                // Check for common Hindi/Marathi words in Roman script
+                const hindiMarathiWords = [
+                    /\bmujhe\b/i, /\btumhe\b/i, /\bhindi\b/i, /\bmarathi\b/i,
+                    /\bkya\b/i, /\bkyu\b/i, /\bkaise\b/i, /\bkab\b/i,
+                    /\bmala\b/i, /\bmahiti\b/i, /\bsahayata\b/i, /\bkich\b/i
+                ];
+                
+                let hindiMarathiScore = 0;
+                hindiMarathiWords.forEach(pattern => {
+                    if (pattern.test(text)) hindiMarathiScore++;
+                });
+                
+                // If enough Hindi/Marathi words, detect language
+                if (hindiMarathiScore >= 2) {
+                    // Check for specific Marathi words
+                    if (/\bmala\b/i.test(text) || /\bmahiti\b/i.test(text) || /\bsahayata\b/i.test(text)) {
+                        return 'marathi';
+                    }
+                    // Check for specific Hindi words
+                    if (/\bmujhe\b/i.test(text) || /\bkya\b/i.test(text) || /\bkyu\b/i.test(text)) {
+                        return 'hindi';
+                    }
+                }
+                
+                return 'english';
+            }
             
-            const lowerText = text.toLowerCase();
-            
-            // Check for Marathi Devanagari script
+            // If there's non-English script, detect specific language
             if (/[\u0900-\u097F]/.test(text)) {
+                // Devanagari script (Hindi, Marathi, Sanskrit, etc.)
                 let marathiScore = 0;
                 let hindiScore = 0;
                 
-                // Check for specific Marathi words
-                const marathiWords = ['आहे', 'मी', 'तू', 'आपण', 'होय', 'नाही', 'मला', 'पाहिजे', 'कृपया', 'धन्यवाद'];
+                // Check for Marathi specific words
+                const marathiWords = ['आहे', 'मी', 'तू', 'आपण', 'होय', 'नाही', 'मला', 'पाहिजे', 'कृपया', 'धन्यवाद', 'महाराष्ट्र', 'मराठी'];
                 marathiWords.forEach(word => {
                     if (text.includes(word)) marathiScore++;
                 });
                 
-                // Check for Hindi words
-                const hindiWords = ['क्या', 'क्यों', 'कैसे', 'मुझे', 'तुम्हें', 'आप', 'है', 'हैं'];
+                // Check for Hindi specific words
+                const hindiWords = ['क्या', 'क्यों', 'कैसे', 'मुझे', 'तुम्हें', 'आप', 'है', 'हैं', 'हिन्दी', 'भारत'];
                 hindiWords.forEach(word => {
                     if (text.includes(word)) hindiScore++;
                 });
                 
-                return marathiScore >= hindiScore ? 'marathi' : 'hindi';
-            }
-            
-            // Check for Marathi in Roman script
-            let marathiScore = 0;
-            marathiPatterns.forEach(pattern => {
-                if (pattern.test(text)) marathiScore++;
-            });
-            
-            let hindiScore = 0;
-            hindiPatterns.forEach(pattern => {
-                if (pattern.test(text)) hindiScore++;
-            });
-            
-            // Special case for "Mala" which is Marathi
-            if (/\bmala\b/i.test(text)) marathiScore += 2;
-            if (/\bmujhe\b/i.test(text)) hindiScore += 2;
-            
-            if (marathiScore > hindiScore && marathiScore > 0) {
-                return 'marathi';
-            } else if (hindiScore > 0) {
+                if (marathiScore > hindiScore) {
+                    return 'marathi';
+                } else if (hindiScore > 0) {
+                    return 'hindi';
+                }
+                
+                // Default to Hindi if we can't determine
                 return 'hindi';
             }
             
@@ -2703,7 +2799,31 @@
             if (/[\u0A80-\u0AFF]/.test(text)) return 'gujarati';
             if (/[\u0980-\u09FF]/.test(text)) return 'bengali';
             
+            // Default to English
             return 'english';
+        }
+        
+        // Get response language based on query and preferences
+        function getResponseLanguage(detectedLanguage, userMessage) {
+            // Priority: English > Hindi > Marathi > other languages
+            // But respond in same language as query if detected
+            
+            // If user explicitly asks in a language, use that
+            if (userMessage.toLowerCase().includes('english mein') || 
+                userMessage.toLowerCase().includes('in english')) {
+                return 'english';
+            }
+            if (userMessage.toLowerCase().includes('hindi mein') || 
+                userMessage.toLowerCase().includes('in hindi')) {
+                return 'hindi';
+            }
+            if (userMessage.toLowerCase().includes('marathi mein') || 
+                userMessage.toLowerCase().includes('in marathi')) {
+                return 'marathi';
+            }
+            
+            // Otherwise use detected language
+            return detectedLanguage === 'english' ? 'english' : detectedLanguage;
         }
         
         // Initialize
@@ -3068,7 +3188,13 @@
                     sidebarOverlay.classList.remove('active');
                     document.body.style.overflow = '';
                 }
+                
+                // Adjust chat messages padding
+                adjustChatLayout();
             });
+            
+            // Adjust chat layout initially
+            setTimeout(adjustChatLayout, 100);
             
             // Focus input on load
             userInput.focus();
@@ -3079,6 +3205,39 @@
                 userInput.style.height = Math.min(userInput.scrollHeight, 200) + 'px';
             }, 100);
         });
+        
+        // Adjust chat layout based on screen size
+        function adjustChatLayout() {
+            const chatMessages = document.getElementById('chatMessages');
+            const chatContainer = document.getElementById('chatContainer');
+            const header = document.querySelector('header');
+            
+            // Calculate available height
+            const headerHeight = header.offsetHeight;
+            const inputContainer = document.querySelector('.input-container');
+            const inputContainerHeight = inputContainer.offsetHeight;
+            const windowHeight = window.innerHeight;
+            
+            // Set chat messages height
+            const availableHeight = windowHeight - headerHeight - inputContainerHeight;
+            chatMessages.style.height = availableHeight + 'px';
+            chatMessages.style.maxHeight = availableHeight + 'px';
+            
+            // Adjust message width on mobile
+            if (window.innerWidth < 768) {
+                document.querySelectorAll('.message-content').forEach(content => {
+                    content.style.maxWidth = '90%';
+                });
+            } else if (window.innerWidth < 1024) {
+                document.querySelectorAll('.message-content').forEach(content => {
+                    content.style.maxWidth = '80%';
+                });
+            } else {
+                document.querySelectorAll('.message-content').forEach(content => {
+                    content.style.maxWidth = '70%';
+                });
+            }
+        }
         
         // Toggle voice recognition (header button)
         function toggleVoiceRecognition() {
@@ -3315,6 +3474,9 @@
             
             // Focus input
             document.getElementById('userInput').focus();
+            
+            // Adjust layout
+            setTimeout(adjustChatLayout, 100);
         }
         
         // Save current chat to history
@@ -3416,6 +3578,9 @@
                 document.getElementById('sidebarOverlay').classList.remove('active');
                 document.body.style.overflow = '';
             }
+            
+            // Adjust layout
+            setTimeout(adjustChatLayout, 100);
         }
         
         // Load history list UI
@@ -3841,8 +4006,11 @@
                 recognition.stop();
             }
             
-            // Detect language with enhanced Marathi detection
+            // Detect language
             const detectedLanguage = detectLanguage(message);
+            // Get response language based on query and preferences
+            const responseLanguage = getResponseLanguage(detectedLanguage, message);
+            
             hideLanguageHint();
             
             // Add user message to chat
@@ -3862,7 +4030,7 @@
                 
                 if (isGeneralQuery) {
                     // For general queries, provide comprehensive legal information
-                    response = await callGroqAPI(message, detectedLanguage, false);
+                    response = await callGroqAPI(message, responseLanguage, false);
                 } else {
                     // For document requests, provide proper document
                     const requestedDocType = getRequestedDocumentType(message);
@@ -3872,7 +4040,7 @@
                         response = LEGAL_DOCUMENTS[requestedDocType].content;
                     } else {
                         // Call AI for other document requests
-                        response = await callGroqAPI(message, detectedLanguage, true);
+                        response = await callGroqAPI(message, responseLanguage, true);
                     }
                 }
                 
@@ -3898,7 +4066,7 @@
                     { 
                         role: 'assistant', 
                         content: response, 
-                        language: detectedLanguage,
+                        language: responseLanguage,
                         hasDownloadFlag: hasDownloadFlag,
                         isDocument: !isGeneralQuery
                     }
@@ -3923,7 +4091,7 @@
                 // Store the error in conversation history for context
                 conversationHistory.push(
                     { role: 'user', content: message, language: detectedLanguage },
-                    { role: 'assistant', content: friendlyMessage, language: detectedLanguage }
+                    { role: 'assistant', content: friendlyMessage, language: 'english' }
                 );
                 
                 console.error('AI Service Error:', error.message);
@@ -3933,13 +4101,16 @@
             } finally {
                 sendButton.disabled = false;
                 document.getElementById('userInput').focus();
+                
+                // Adjust layout
+                setTimeout(adjustChatLayout, 100);
             }
         }
         
         // Call Groq API with sequential model fallback
-        async function callGroqAPI(message, detectedLanguage, isDocumentRequest = false) {
-            // Get appropriate system prompt
-            const systemPrompt = getSystemPrompt(detectedLanguage, isDocumentRequest);
+        async function callGroqAPI(message, responseLanguage, isDocumentRequest = false) {
+            // Get appropriate system prompt based on response language
+            const systemPrompt = getSystemPrompt(responseLanguage, isDocumentRequest);
             
             const messages = [
                 { role: 'system', content: systemPrompt },
@@ -4030,11 +4201,12 @@
             throw new Error(`I'm having trouble connecting to my legal knowledge base. All available models failed. Please try again in a few moments or rephrase your question.`);
         }
         
-        // Get system prompt based on detected language
+        // Get system prompt based on response language
         function getSystemPrompt(language, isDocumentRequest = false) {
             if (isDocumentRequest) {
-                return `You are LegalSwami, an expert AI legal assistant specializing in Indian law.
-                
+                const documentPrompts = {
+                    'english': `You are LegalSwami, an expert AI legal assistant specializing in Indian law.
+                    
 IMPORTANT: When the user asks for a legal document draft, you MUST provide a complete, ready-to-use legal document template. Include:
 1. Proper document title and headings
 2. All necessary legal clauses
@@ -4054,10 +4226,59 @@ Format your response as a complete legal document.
 ALWAYS include this disclaimer at the end:
 "Disclaimer: This template is for educational purposes only. Consult a qualified attorney before use."
 
-[DOWNLOAD READY]`;
+[DOWNLOAD READY]`,
+
+                    'hindi': `आप LegalSwami हैं, भारतीय कानून में विशेषज्ञ AI कानूनी सहायक।
+
+महत्वपूर्ण: जब उपयोगकर्ता कानूनी दस्तावेज़ का मसौदा मांगता है, तो आपको एक पूर्ण, उपयोग के लिए तैयार कानूनी दस्तावेज़ टेम्पलेट प्रदान करना चाहिए। शामिल करें:
+1. उचित दस्तावेज़ शीर्षक और शीर्षलेख
+2. सभी आवश्यक कानूनी खंड
+3. व्यक्तिगत जानकारी के लिए प्लेसहोल्डर [इस तरह]
+4. हस्ताक्षर अनुभाग
+5. यदि लागू हो तो तारीख और गवाह अनुभाग
+6. अंत में [DOWNLOAD READY]
+
+सुनिश्चित करें कि दस्तावेज़:
+- भारतीय संदर्भ के लिए कानूनी रूप से सही है
+- पेशेवर रूप से स्वरूपित है
+- तत्काल डाउनलोड और उपयोग के लिए तैयार है
+- सभी मानक कानूनी खंड शामिल हैं
+
+अपनी प्रतिक्रिया को एक पूर्ण कानूनी दस्तावेज़ के रूप में स्वरूपित करें।
+
+अंत में हमेशा यह अस्वीकरण शामिल करें:
+"अस्वीकरण: यह टेम्पलेट केवल शैक्षिक उद्देश्यों के लिए है। उपयोग से पहले योग्य वकील से परामर्श करें।"
+
+[DOWNLOAD READY]`,
+
+                    'marathi': `तुम्ही LegalSwami आहात, भारतीय कायद्यात तज्ञ AI कायदेशीर सहाय्यक.
+
+महत्वाचे: जेव्हा वापरकर्ता कायदेशीर दस्तऐवजाचा मसौदा मागतो, तेव्हा तुम्ही एक संपूर्ण, वापरण्यासाठी तयार कायदेशीर दस्तऐवज टेम्पलेट प्रदान करणे आवश्यक आहे. समाविष्ट करा:
+1. योग्य दस्तऐवज शीर्षक आणि शीर्षलेख
+2. सर्व आवश्यक कायदेशीर कलमे
+3. वैयक्तिक माहितीसाठी प्लेसहोल्डर [अशा प्रकारे]
+4. सही विभाग
+5. लागू असल्यास तारीख आणि साक्षीदार विभाग
+6. शेवटी [DOWNLOAD READY]
+
+दस्तऐवज खालीलप्रमाणे असल्याचे सुनिश्चित करा:
+- भारतीय संदर्भासाठी कायदेशीरदृष्ट्या योग्य आहे
+- व्यावसायिकरित्या स्वरूपित आहे
+- तत्काळ डाउनलोड आणि वापरासाठी तयार आहे
+- सर्व मानक कायदेशीर कलमे समाविष्ट आहेत
+
+तुमचे उत्तर एक संपूर्ण कायदेशीर दस्तऐवज म्हणून स्वरूपित करा.
+
+शेवटी नेहमी ही सूचना समाविष्ट करा:
+"सूचना: हे टेम्पलेट केवळ शैक्षणिक हेतूंसाठी आहे. वापरण्यापूर्वी पात्र वकीलांचा सल्ला घ्या."
+
+[DOWNLOAD READY]`
+                };
+                
+                return documentPrompts[language] || documentPrompts['english'];
             }
             
-            const prompts = {
+            const generalPrompts = {
                 'english': `You are LegalSwami, an expert AI legal assistant specializing in Indian law. 
                 
 CRITICAL RULE: You MUST respond in English ONLY.
@@ -4122,7 +4343,7 @@ ALWAYS include this disclaimer at the end:
 "सूचना: ही माहिती केवळ शैक्षणिक हेतूंसाठी आहे आणि कायदेशीर सल्ला नाही. विशिष्ट कायदेशीर बाबींसाठी पात्र वकीलांचा सल्ला घ्या."`
             };
             
-            return prompts[language] || prompts['english'];
+            return generalPrompts[language] || generalPrompts['english'];
         }
         
         // Check if user is asking for document
