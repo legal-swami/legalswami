@@ -21,6 +21,14 @@
             --success: #10b981;
             --warning: #f59e0b;
             --error: #ef4444;
+            
+            /* Light mode variables */
+            --light-bg: #f8fafc;
+            --light-surface: #ffffff;
+            --light-surface-light: #f1f5f9;
+            --light-border: #e2e8f0;
+            --light-text: #0f172a;
+            --light-text-secondary: #475569;
         }
         
         * {
@@ -37,6 +45,12 @@
             line-height: 1.6;
             min-height: 100vh;
             overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        body.light-mode {
+            background: var(--light-bg);
+            color: var(--light-text);
         }
         
         .container {
@@ -46,6 +60,11 @@
             width: 100%;
             background: var(--dark-bg);
             overflow: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .light-mode .container {
+            background: var(--light-bg);
         }
         
         /* Header */
@@ -60,6 +79,12 @@
             top: 0;
             z-index: 100;
             min-height: 64px;
+            transition: all 0.3s ease;
+        }
+        
+        .light-mode header {
+            background: var(--light-surface);
+            border-bottom-color: var(--light-border);
         }
         
         .logo {
@@ -114,9 +139,19 @@
             min-height: 40px;
         }
         
+        .light-mode .header-btn {
+            background: var(--light-surface-light);
+            color: var(--light-text);
+            border-color: var(--light-border);
+        }
+        
         .header-btn:hover {
             background: var(--dark-border);
             transform: translateY(-1px);
+        }
+        
+        .light-mode .header-btn:hover {
+            background: var(--light-border);
         }
         
         .status-indicator {
@@ -131,6 +166,11 @@
             white-space: nowrap;
         }
         
+        .light-mode .status-indicator {
+            background: rgba(16, 163, 127, 0.08);
+            border-color: rgba(16, 163, 127, 0.2);
+        }
+        
         .status-dot {
             width: 8px;
             height: 8px;
@@ -142,6 +182,76 @@
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: 0.5; }
+        }
+        
+        /* Theme Toggle Button */
+        .theme-toggle {
+            background: var(--dark-surface-light);
+            border: 1px solid var(--dark-border);
+            border-radius: 8px;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .light-mode .theme-toggle {
+            background: var(--light-surface-light);
+            border-color: var(--light-border);
+        }
+        
+        .theme-toggle:hover {
+            transform: rotate(15deg);
+        }
+        
+        .theme-toggle i {
+            color: var(--dark-text);
+            transition: all 0.3s;
+        }
+        
+        .light-mode .theme-toggle i {
+            color: var(--light-text);
+        }
+        
+        /* Voice Search Button in Header */
+        .voice-search-btn {
+            background: var(--dark-surface-light);
+            border: 1px solid var(--dark-border);
+            border-radius: 8px;
+            width: 44px;
+            height: 44px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            position: relative;
+        }
+        
+        .light-mode .voice-search-btn {
+            background: var(--light-surface-light);
+            border-color: var(--light-border);
+        }
+        
+        .voice-search-btn:hover {
+            transform: translateY(-1px);
+        }
+        
+        .voice-search-btn.listening {
+            background: rgba(239, 68, 68, 0.1);
+            border-color: rgba(239, 68, 68, 0.3);
+            animation: pulse 1.5s infinite;
+        }
+        
+        .voice-search-btn i {
+            color: var(--dark-text);
+        }
+        
+        .light-mode .voice-search-btn i {
+            color: var(--light-text);
         }
         
         /* Sidebar Toggle Button */
@@ -161,8 +271,16 @@
             height: 44px;
         }
         
+        .light-mode .sidebar-toggle {
+            color: var(--light-text);
+        }
+        
         .sidebar-toggle:hover {
             background: var(--dark-surface-light);
+        }
+        
+        .light-mode .sidebar-toggle:hover {
+            background: var(--light-surface-light);
         }
         
         .main-content {
@@ -189,6 +307,11 @@
             transform: translateX(-100%);
         }
         
+        .light-mode .sidebar {
+            background: var(--light-surface);
+            border-right-color: var(--light-border);
+        }
+        
         .sidebar.active {
             transform: translateX(0);
         }
@@ -212,9 +335,19 @@
             height: 36px;
         }
         
+        .light-mode .sidebar-close {
+            background: var(--light-surface-light);
+            color: var(--light-text);
+            border-color: var(--light-border);
+        }
+        
         .sidebar-close:hover {
             background: var(--dark-border);
             transform: rotate(90deg);
+        }
+        
+        .light-mode .sidebar-close:hover {
+            background: var(--light-border);
         }
         
         /* Sidebar Tabs */
@@ -225,6 +358,11 @@
             position: sticky;
             top: 0;
             z-index: 20;
+        }
+        
+        .light-mode .sidebar-tabs {
+            background: var(--light-surface);
+            border-bottom-color: var(--light-border);
         }
         
         .sidebar-tab {
@@ -241,9 +379,18 @@
             position: relative;
         }
         
+        .light-mode .sidebar-tab {
+            color: var(--light-text-secondary);
+        }
+        
         .sidebar-tab:hover {
             color: var(--dark-text);
             background: var(--dark-surface-light);
+        }
+        
+        .light-mode .sidebar-tab:hover {
+            color: var(--light-text);
+            background: var(--light-surface-light);
         }
         
         .sidebar-tab.active {
@@ -283,6 +430,11 @@
             z-index: 10;
         }
         
+        .light-mode .sidebar-header {
+            background: var(--light-surface);
+            border-bottom-color: var(--light-border);
+        }
+        
         .sidebar-header h2 {
             font-size: 0.9rem;
             font-weight: 600;
@@ -292,6 +444,10 @@
             display: flex;
             align-items: center;
             gap: 10px;
+        }
+        
+        .light-mode .sidebar-header h2 {
+            color: var(--light-text-secondary);
         }
         
         .sidebar-section {
@@ -305,6 +461,10 @@
             display: flex;
             align-items: center;
             gap: 8px;
+        }
+        
+        .light-mode .sidebar-section h3 {
+            color: var(--light-text-secondary);
         }
         
         .topic-list, .quick-actions {
@@ -327,10 +487,21 @@
             min-height: 44px;
         }
         
+        .light-mode .topic-item,
+        .light-mode .action-item {
+            color: var(--light-text-secondary);
+        }
+        
         .topic-item:hover, .action-item:hover {
             background: var(--dark-surface-light);
             color: var(--dark-text);
             transform: translateX(5px);
+        }
+        
+        .light-mode .topic-item:hover,
+        .light-mode .action-item:hover {
+            background: var(--light-surface-light);
+            color: var(--light-text);
         }
         
         .topic-item i, .action-item i {
@@ -353,6 +524,11 @@
             z-index: 10;
         }
         
+        .light-mode .history-header {
+            background: var(--light-surface);
+            border-bottom-color: var(--light-border);
+        }
+        
         .history-header h2 {
             font-size: 0.9rem;
             font-weight: 600;
@@ -362,6 +538,10 @@
             display: flex;
             align-items: center;
             gap: 10px;
+        }
+        
+        .light-mode .history-header h2 {
+            color: var(--light-text-secondary);
         }
         
         .new-chat-btn {
@@ -403,15 +583,29 @@
             position: relative;
         }
         
+        .light-mode .history-item {
+            color: var(--light-text-secondary);
+        }
+        
         .history-item:hover {
             background: var(--dark-surface-light);
             color: var(--dark-text);
+        }
+        
+        .light-mode .history-item:hover {
+            background: var(--light-surface-light);
+            color: var(--light-text);
         }
         
         .history-item.active {
             background: rgba(16, 163, 127, 0.1);
             border-color: rgba(16, 163, 127, 0.3);
             color: var(--primary);
+        }
+        
+        .light-mode .history-item.active {
+            background: rgba(16, 163, 127, 0.08);
+            border-color: rgba(16, 163, 127, 0.2);
         }
         
         .history-title {
@@ -432,9 +626,17 @@
             padding-right: 60px;
         }
         
+        .light-mode .history-preview {
+            color: var(--light-text-secondary);
+        }
+        
         .history-date {
             font-size: 0.7rem;
             color: var(--dark-text-secondary);
+        }
+        
+        .light-mode .history-date {
+            color: var(--light-text-secondary);
         }
         
         /* History Item Actions */
@@ -450,6 +652,11 @@
             border-radius: 6px;
             border: 1px solid var(--dark-border);
             z-index: 5;
+        }
+        
+        .light-mode .history-item-actions {
+            background: var(--light-surface);
+            border-color: var(--light-border);
         }
         
         .history-item:hover .history-item-actions {
@@ -472,8 +679,16 @@
             height: 28px;
         }
         
+        .light-mode .history-item-btn {
+            color: var(--light-text-secondary);
+        }
+        
         .history-item-btn:hover {
             background: var(--dark-surface-light);
+        }
+        
+        .light-mode .history-item-btn:hover {
+            background: var(--light-surface-light);
         }
         
         .history-item-btn.delete:hover {
@@ -488,6 +703,10 @@
             text-align: center;
             padding: 3rem 1rem;
             color: var(--dark-text-secondary);
+        }
+        
+        .light-mode .empty-history {
+            color: var(--light-text-secondary);
         }
         
         .empty-history i {
@@ -508,6 +727,10 @@
             background: var(--dark-bg);
             width: 100%;
             transition: margin-left 0.3s ease;
+        }
+        
+        .light-mode .chat-container {
+            background: var(--light-bg);
         }
         
         /* Chat Messages */
@@ -583,6 +806,12 @@
             color: var(--dark-text);
         }
         
+        .light-mode .ai-message .message-text {
+            background: var(--light-surface);
+            border-color: var(--light-border);
+            color: var(--light-text);
+        }
+        
         .user-message .message-text {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             color: white;
@@ -612,9 +841,20 @@
             min-height: 32px;
         }
         
+        .light-mode .action-btn {
+            background: var(--light-surface-light);
+            color: var(--light-text-secondary);
+            border-color: var(--light-border);
+        }
+        
         .action-btn:hover {
             background: var(--dark-border);
             color: var(--dark-text);
+        }
+        
+        .light-mode .action-btn:hover {
+            background: var(--light-border);
+            color: var(--light-text);
         }
         
         .action-btn.copy:hover {
@@ -662,6 +902,12 @@
             transform: translateY(5px);
         }
         
+        .light-mode .document-download-btn {
+            background: var(--light-surface);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        
         .ai-message .message-content:hover .document-download-btn {
             opacity: 1;
             transform: translateY(0);
@@ -683,6 +929,11 @@
             margin: 1rem 0;
         }
         
+        .light-mode .document-template {
+            background: var(--light-surface);
+            border-color: var(--light-border);
+        }
+        
         .document-header {
             text-align: center;
             border-bottom: 2px solid var(--primary);
@@ -701,6 +952,10 @@
             font-size: 0.9rem;
         }
         
+        .light-mode .document-subtitle {
+            color: var(--light-text-secondary);
+        }
+        
         .document-section {
             margin-bottom: 1.5rem;
         }
@@ -711,6 +966,10 @@
             margin-bottom: 0.8rem;
             padding-bottom: 0.5rem;
             border-bottom: 1px solid var(--dark-border);
+        }
+        
+        .light-mode .document-section-title {
+            border-bottom-color: var(--light-border);
         }
         
         .document-clause {
@@ -725,15 +984,27 @@
             margin-bottom: 0.5rem;
         }
         
+        .light-mode .clause-title {
+            color: var(--light-text);
+        }
+        
         .clause-content {
             color: var(--dark-text-secondary);
             line-height: 1.6;
+        }
+        
+        .light-mode .clause-content {
+            color: var(--light-text-secondary);
         }
         
         .signature-section {
             margin-top: 2rem;
             padding-top: 1.5rem;
             border-top: 1px solid var(--dark-border);
+        }
+        
+        .light-mode .signature-section {
+            border-top-color: var(--light-border);
         }
         
         .signature-line {
@@ -754,9 +1025,17 @@
             min-height: 30px;
         }
         
+        .light-mode .signature-name {
+            border-bottom-color: var(--light-border);
+        }
+        
         .signature-label {
             font-size: 0.8rem;
             color: var(--dark-text-secondary);
+        }
+        
+        .light-mode .signature-label {
+            color: var(--light-text-secondary);
         }
         
         /* Welcome Message */
@@ -769,6 +1048,11 @@
             border: 1px solid var(--dark-border);
             border-radius: 16px;
             width: 90%;
+        }
+        
+        .light-mode .welcome-message {
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.08) 0%, rgba(30, 64, 175, 0.08) 100%);
+            border-color: var(--light-border);
         }
         
         .welcome-message h2 {
@@ -785,6 +1069,10 @@
             font-size: 1rem;
             margin-bottom: 1.2rem;
             line-height: 1.5;
+        }
+        
+        .light-mode .welcome-message p {
+            color: var(--light-text-secondary);
         }
         
         .welcome-features {
@@ -805,6 +1093,11 @@
             text-align: center;
         }
         
+        .light-mode .feature {
+            background: var(--light-surface);
+            border-color: var(--light-border);
+        }
+        
         .feature i {
             font-size: 1.5rem;
             color: var(--primary);
@@ -814,11 +1107,20 @@
         .feature h4 {
             font-size: 0.9rem;
             margin-bottom: 0.3rem;
+            color: var(--dark-text);
+        }
+        
+        .light-mode .feature h4 {
+            color: var(--light-text);
         }
         
         .feature p {
             font-size: 0.8rem;
             color: var(--dark-text-secondary);
+        }
+        
+        .light-mode .feature p {
+            color: var(--light-text-secondary);
         }
         
         /* Input Area */
@@ -829,6 +1131,12 @@
             position: sticky;
             bottom: 0;
             z-index: 10;
+            transition: all 0.3s ease;
+        }
+        
+        .light-mode .input-container {
+            background: var(--light-bg);
+            border-top-color: var(--light-border);
         }
         
         .input-area {
@@ -840,7 +1148,7 @@
         
         .input-area textarea {
             width: 100%;
-            padding: 1rem 5rem 1rem 1.2rem;
+            padding: 1rem 7.5rem 1rem 1.2rem;
             background: var(--dark-surface);
             border: 1px solid var(--dark-border);
             border-radius: 16px;
@@ -854,16 +1162,68 @@
             font-family: inherit;
         }
         
+        .light-mode .input-area textarea {
+            background: var(--light-surface);
+            border-color: var(--light-border);
+            color: var(--light-text);
+        }
+        
         .input-area textarea:focus {
             outline: none;
             border-color: var(--primary);
             box-shadow: 0 0 0 3px rgba(16, 163, 127, 0.1);
         }
         
-        .send-button {
+        /* Input buttons container */
+        .input-buttons {
             position: absolute;
             right: 0.8rem;
             bottom: 0.8rem;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        
+        /* Microphone button next to send button */
+        .input-microphone-btn {
+            background: transparent;
+            border: none;
+            color: var(--dark-text-secondary);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+        }
+        
+        .light-mode .input-microphone-btn {
+            color: var(--light-text-secondary);
+        }
+        
+        .input-microphone-btn:hover {
+            background: var(--dark-surface-light);
+            color: var(--dark-text);
+        }
+        
+        .light-mode .input-microphone-btn:hover {
+            background: var(--light-surface-light);
+            color: var(--light-text);
+        }
+        
+        .input-microphone-btn.listening {
+            color: var(--error);
+            animation: pulse 1.5s infinite;
+        }
+        
+        .input-microphone-btn.listening:hover {
+            background: rgba(239, 68, 68, 0.1);
+        }
+        
+        .send-button {
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             color: white;
             border: none;
@@ -890,6 +1250,30 @@
             opacity: 0.5;
         }
         
+        .light-mode .send-button:disabled {
+            background: var(--light-border);
+        }
+        
+        /* Voice input status */
+        .voice-input-status {
+            position: absolute;
+            left: 15px;
+            bottom: 10px;
+            background: rgba(239, 68, 68, 0.1);
+            color: var(--error);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            display: none;
+            align-items: center;
+            gap: 5px;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .voice-input-status.active {
+            display: flex;
+        }
+        
         /* Typing Indicator */
         .typing-indicator {
             display: flex;
@@ -902,6 +1286,11 @@
             max-width: fit-content;
             margin-left: 3rem;
             margin-top: 0.5rem;
+        }
+        
+        .light-mode .typing-indicator {
+            background: var(--light-surface);
+            border-color: var(--light-border);
         }
         
         .typing-dot {
@@ -952,6 +1341,13 @@
             max-width: 300px;
         }
         
+        .light-mode .toast {
+            background: var(--light-surface);
+            color: var(--light-text);
+            border-color: var(--light-border);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+        
         .toast.show {
             transform: translateY(0);
             opacity: 1;
@@ -985,6 +1381,10 @@
             z-index: 45;
         }
         
+        .light-mode .sidebar-overlay {
+            background: rgba(0, 0, 0, 0.3);
+        }
+        
         .sidebar-overlay.active {
             display: block;
         }
@@ -1004,6 +1404,10 @@
             padding: 20px;
         }
         
+        .light-mode .modal-overlay {
+            background: rgba(0, 0, 0, 0.5);
+        }
+        
         .modal-overlay.active {
             display: flex;
         }
@@ -1017,6 +1421,11 @@
             max-height: 90vh;
             overflow: hidden;
             animation: modalSlideIn 0.3s ease-out;
+        }
+        
+        .light-mode .modal {
+            background: var(--light-surface);
+            border-color: var(--light-border);
         }
         
         @keyframes modalSlideIn {
@@ -1038,10 +1447,18 @@
             align-items: center;
         }
         
+        .light-mode .modal-header {
+            border-bottom-color: var(--light-border);
+        }
+        
         .modal-header h2 {
             font-size: 1.2rem;
             font-weight: 600;
             color: var(--dark-text);
+        }
+        
+        .light-mode .modal-header h2 {
+            color: var(--light-text);
         }
         
         .modal-close {
@@ -1055,9 +1472,18 @@
             transition: all 0.3s;
         }
         
+        .light-mode .modal-close {
+            color: var(--light-text-secondary);
+        }
+        
         .modal-close:hover {
             background: var(--dark-surface-light);
             color: var(--dark-text);
+        }
+        
+        .light-mode .modal-close:hover {
+            background: var(--light-surface-light);
+            color: var(--light-text);
         }
         
         .modal-content {
@@ -1085,10 +1511,19 @@
             gap: 10px;
         }
         
+        .light-mode .download-option {
+            background: var(--light-surface-light);
+            border-color: var(--light-border);
+        }
+        
         .download-option:hover {
             background: var(--dark-border);
             border-color: var(--primary);
             transform: translateY(-2px);
+        }
+        
+        .light-mode .download-option:hover {
+            background: var(--light-border);
         }
         
         .download-option i {
@@ -1102,9 +1537,17 @@
             color: var(--dark-text);
         }
         
+        .light-mode .download-option h3 {
+            color: var(--light-text);
+        }
+        
         .download-option p {
             font-size: 0.85rem;
             color: var(--dark-text-secondary);
+        }
+        
+        .light-mode .download-option p {
+            color: var(--light-text-secondary);
         }
         
         .modal-footer {
@@ -1113,9 +1556,17 @@
             text-align: center;
         }
         
+        .light-mode .modal-footer {
+            border-top-color: var(--light-border);
+        }
+        
         .modal-footer p {
             font-size: 0.85rem;
             color: var(--dark-text-secondary);
+        }
+        
+        .light-mode .modal-footer p {
+            color: var(--light-text-secondary);
         }
         
         /* Progress indicator */
@@ -1138,6 +1589,10 @@
             border-top: 3px solid var(--primary);
             border-radius: 50%;
             animation: spin 1s linear infinite;
+        }
+        
+        .light-mode .progress-spinner {
+            border-color: var(--light-border);
         }
         
         @keyframes spin {
@@ -1183,8 +1638,18 @@
             border: 1px solid var(--dark-border);
         }
         
+        .light-mode .confirmation-btn.cancel {
+            background: var(--light-surface-light);
+            color: var(--light-text);
+            border-color: var(--light-border);
+        }
+        
         .confirmation-btn.cancel:hover {
             background: var(--dark-border);
+        }
+        
+        .light-mode .confirmation-btn.cancel:hover {
+            background: var(--light-border);
         }
         
         .confirmation-btn.delete {
@@ -1210,6 +1675,115 @@
             border: 1px solid var(--primary);
             z-index: 1;
             display: none;
+        }
+        
+        .light-mode .language-hint {
+            background: var(--light-surface);
+        }
+        
+        /* Legal Content */
+        .legal-note {
+            background: rgba(245, 158, 11, 0.1);
+            border: 1px solid rgba(245, 158, 11, 0.3);
+            border-radius: 8px;
+            padding: 0.8rem;
+            margin: 0.8rem 0;
+            font-size: 0.85rem;
+            color: var(--warning);
+        }
+        
+        .light-mode .legal-note {
+            background: rgba(245, 158, 11, 0.08);
+            border-color: rgba(245, 158, 11, 0.2);
+        }
+        
+        .legal-content {
+            line-height: 1.7;
+        }
+        
+        .legal-content h3 {
+            color: var(--primary);
+            margin: 1.2rem 0 0.6rem 0;
+            font-size: 1.1rem;
+        }
+        
+        .legal-content ul {
+            margin: 0.8rem 0 0.8rem 1.2rem;
+            list-style-type: disc;
+        }
+        
+        .legal-content li {
+            margin-bottom: 0.4rem;
+        }
+        
+        .legal-content strong {
+            color: var(--primary-light);
+        }
+        
+        /* Input area with language hint */
+        .input-area {
+            position: relative;
+        }
+        
+        /* Document Draft Templates */
+        .draft-templates {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        
+        .draft-template {
+            background: var(--dark-surface-light);
+            border: 1px solid var(--dark-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            gap: 10px;
+        }
+        
+        .light-mode .draft-template {
+            background: var(--light-surface-light);
+            border-color: var(--light-border);
+        }
+        
+        .draft-template:hover {
+            background: var(--dark-border);
+            border-color: var(--primary);
+            transform: translateY(-2px);
+        }
+        
+        .light-mode .draft-template:hover {
+            background: var(--light-border);
+        }
+        
+        .draft-template i {
+            font-size: 2rem;
+            color: var(--primary);
+        }
+        
+        .draft-template h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            color: var(--dark-text);
+        }
+        
+        .light-mode .draft-template h4 {
+            color: var(--light-text);
+        }
+        
+        .draft-template p {
+            font-size: 0.8rem;
+            color: var(--dark-text-secondary);
+        }
+        
+        .light-mode .draft-template p {
+            color: var(--light-text-secondary);
         }
         
         /* Responsive Breakpoints */
@@ -1271,15 +1845,26 @@
             }
             
             .input-area textarea {
-                padding: 0.8rem 4.5rem 0.8rem 1rem;
+                padding: 0.8rem 6.5rem 0.8rem 1rem;
                 font-size: 0.95rem;
                 min-height: 52px;
             }
             
-            .send-button {
-                padding: 0.5rem 0.8rem;
+            .input-buttons {
                 right: 0.6rem;
                 bottom: 0.6rem;
+                gap: 6px;
+            }
+            
+            .send-button {
+                padding: 0.5rem 0.8rem;
+                min-height: 40px;
+            }
+            
+            .input-microphone-btn {
+                width: 32px;
+                height: 32px;
+                padding: 0.4rem;
             }
             
             .sidebar {
@@ -1331,6 +1916,10 @@
             .history-item-actions {
                 display: flex !important;
                 opacity: 0.9;
+            }
+            
+            .input-area textarea {
+                padding: 1rem 7rem 1rem 1.2rem;
             }
         }
         
@@ -1429,72 +2018,102 @@
             background: var(--dark-bg);
         }
         
+        .light-mode ::-webkit-scrollbar-track {
+            background: var(--light-bg);
+        }
+        
         ::-webkit-scrollbar-thumb {
             background: var(--dark-border);
             border-radius: 4px;
+        }
+        
+        .light-mode ::-webkit-scrollbar-thumb {
+            background: var(--light-border);
         }
         
         ::-webkit-scrollbar-thumb:hover {
             background: var(--dark-surface-light);
         }
         
-        /* Legal Content */
-        .legal-note {
-            background: rgba(245, 158, 11, 0.1);
-            border: 1px solid rgba(245, 158, 11, 0.3);
-            border-radius: 8px;
-            padding: 0.8rem;
-            margin: 0.8rem 0;
-            font-size: 0.85rem;
-            color: var(--warning);
+        .light-mode ::-webkit-scrollbar-thumb:hover {
+            background: var(--light-surface-light);
         }
         
-        .legal-content {
-            line-height: 1.7;
+        /* Enhanced UI Elements */
+        .legal-card {
+            background: var(--dark-surface);
+            border: 1px solid var(--dark-border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            transition: all 0.3s;
         }
         
-        .legal-content h3 {
+        .light-mode .legal-card {
+            background: var(--light-surface);
+            border-color: var(--light-border);
+        }
+        
+        .legal-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .legal-card-title {
             color: var(--primary);
-            margin: 1.2rem 0 0.6rem 0;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         
-        .legal-content ul {
-            margin: 0.8rem 0 0.8rem 1.2rem;
-            list-style-type: disc;
+        .legal-card-content {
+            color: var(--dark-text-secondary);
+            line-height: 1.6;
         }
         
-        .legal-content li {
-            margin-bottom: 0.4rem;
+        .light-mode .legal-card-content {
+            color: var(--light-text-secondary);
         }
         
-        .legal-content strong {
-            color: var(--primary-light);
+        /* Law References */
+        .law-reference {
+            background: rgba(16, 163, 127, 0.1);
+            border-left: 4px solid var(--primary);
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
         }
         
-        /* Language-specific styles */
-        .hindi-text {
-            direction: ltr;
-            text-align: left;
-            font-family: inherit;
+        .light-mode .law-reference {
+            background: rgba(16, 163, 127, 0.08);
         }
         
-        .marathi-text {
-            direction: ltr;
-            text-align: left;
-            font-family: inherit;
+        .law-reference-title {
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 0.5rem;
         }
         
-        .tamil-text {
-            direction: ltr;
-            text-align: left;
-            font-family: inherit;
+        .law-reference-content {
+            color: var(--dark-text-secondary);
+            font-size: 0.9rem;
         }
         
-        .telugu-text {
-            direction: ltr;
-            text-align: left;
-            font-family: inherit;
+        .light-mode .law-reference-content {
+            color: var(--light-text-secondary);
+        }
+        
+        /* Professional UI Enhancements */
+        .section-divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--dark-border), transparent);
+            margin: 2rem 0;
+        }
+        
+        .light-mode .section-divider {
+            background: linear-gradient(90deg, transparent, var(--light-border), transparent);
         }
         
         /* Utility Classes */
@@ -1516,57 +2135,105 @@
             }
         }
         
-        /* Input area with language hint */
-        .input-area {
-            position: relative;
-        }
-        
-        /* Document Draft Templates */
-        .draft-templates {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-        
-        .draft-template {
-            background: var(--dark-surface-light);
-            border: 1px solid var(--dark-border);
-            border-radius: 12px;
-            padding: 1.5rem;
-            cursor: pointer;
-            transition: all 0.3s;
+        /* Voice Animation */
+        .voice-animation {
             display: flex;
-            flex-direction: column;
             align-items: center;
+            gap: 4px;
+            height: 20px;
+        }
+        
+        .voice-bar {
+            width: 3px;
+            background: var(--primary);
+            border-radius: 3px;
+            animation: voicePulse 0.8s ease-in-out infinite;
+        }
+        
+        .voice-bar:nth-child(1) {
+            height: 8px;
+            animation-delay: 0.1s;
+        }
+        
+        .voice-bar:nth-child(2) {
+            height: 12px;
+            animation-delay: 0.2s;
+        }
+        
+        .voice-bar:nth-child(3) {
+            height: 16px;
+            animation-delay: 0.3s;
+        }
+        
+        .voice-bar:nth-child(4) {
+            height: 12px;
+            animation-delay: 0.4s;
+        }
+        
+        .voice-bar:nth-child(5) {
+            height: 8px;
+            animation-delay: 0.5s;
+        }
+        
+        @keyframes voicePulse {
+            0%, 100% {
+                opacity: 0.4;
+                transform: scaleY(0.8);
+            }
+            50% {
+                opacity: 1;
+                transform: scaleY(1.2);
+            }
+        }
+        
+        /* Voice Input Text */
+        .voice-input-text {
+            position: absolute;
+            bottom: -25px;
+            left: 0;
+            right: 0;
             text-align: center;
-            gap: 10px;
-        }
-        
-        .draft-template:hover {
-            background: var(--dark-border);
-            border-color: var(--primary);
-            transform: translateY(-2px);
-        }
-        
-        .draft-template i {
-            font-size: 2rem;
+            font-size: 0.85rem;
             color: var(--primary);
+            font-style: italic;
+            padding: 5px;
+            background: rgba(16, 163, 127, 0.1);
+            border-radius: 8px;
+            animation: slideUp 0.3s ease;
+            display: none;
         }
         
-        .draft-template h4 {
-            font-size: 0.9rem;
-            font-weight: 600;
-            color: var(--dark-text);
+        .light-mode .voice-input-text {
+            background: rgba(16, 163, 127, 0.08);
         }
         
-        .draft-template p {
-            font-size: 0.8rem;
-            color: var(--dark-text-secondary);
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Input Microphone Animation */
+        .input-microphone-btn.listening .fa-microphone {
+            animation: micPulse 1.5s ease-in-out infinite;
+        }
+        
+        @keyframes micPulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
         }
     </style>
 </head>
-<body>
+<body class="dark-mode">
     <div class="container">
         <header>
             <div class="logo">
@@ -1584,6 +2251,12 @@
                     <div class="status-dot"></div>
                     <span>AI Assistant Ready</span>
                 </div>
+                <button class="header-btn voice-search-btn" id="voiceSearchBtn" title="Voice Search">
+                    <i class="fas fa-microphone"></i>
+                </button>
+                <button class="header-btn theme-toggle" id="themeToggle" title="Toggle Theme">
+                    <i class="fas fa-sun"></i>
+                </button>
                 <button class="header-btn" id="clearChatBtn">
                     <i class="fas fa-broom"></i>
                     <span class="hide-on-mobile">Clear Chat</span>
@@ -1676,6 +2349,16 @@
                             </div>
                         </div>
                     </div>
+                    
+                    <div class="sidebar-section">
+                        <h3><i class="fas fa-language"></i> Language Support</h3>
+                        <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px;">
+                            <span style="background: rgba(16, 163, 127, 0.1); padding: 4px 8px; border-radius: 6px; font-size: 0.8rem;">English</span>
+                            <span style="background: rgba(16, 163, 127, 0.1); padding: 4px 8px; border-radius: 6px; font-size: 0.8rem;">हिंदी</span>
+                            <span style="background: rgba(16, 163, 127, 0.1); padding: 4px 8px; border-radius: 6px; font-size: 0.8rem;">मराठी</span>
+                            <span style="background: rgba(16, 163, 127, 0.1); padding: 4px 8px; border-radius: 6px; font-size: 0.8rem;">தமிழ்</span>
+                        </div>
+                    </div>
                 </div>
                 
                 <!-- Chat History Tab Content -->
@@ -1706,7 +2389,7 @@
                         <h2>Welcome to LegalSwami</h2>
                         <p>Your AI-powered legal assistant for accurate, comprehensive legal information and guidance.</p>
                         <p style="color: var(--primary); margin-top: 10px; font-size: 0.9rem;">
-                            <i class="fas fa-language"></i> Supports multiple Indian languages!
+                            <i class="fas fa-language"></i> Supports multiple Indian languages including Marathi, Hindi, and more!
                         </p>
                         
                         <div style="margin-top: 2rem;">
@@ -1735,6 +2418,8 @@
                             </div>
                         </div>
                         
+                        <div class="section-divider"></div>
+                        
                         <div class="welcome-features">
                             <div class="feature">
                                 <i class="fas fa-bolt"></i>
@@ -1751,20 +2436,41 @@
                                 <h4>Multi-Language</h4>
                                 <p>Responds in same language as your query</p>
                             </div>
+                            <div class="feature">
+                                <i class="fas fa-microphone"></i>
+                                <h4>Voice Search</h4>
+                                <p>Speak your queries in natural language</p>
+                            </div>
                         </div>
                     </div>
                 </div>
                 
                 <div class="input-container">
                     <div class="input-area">
+                        <div class="voice-input-status" id="voiceInputStatus">
+                            <div class="voice-animation">
+                                <div class="voice-bar"></div>
+                                <div class="voice-bar"></div>
+                                <div class="voice-bar"></div>
+                                <div class="voice-bar"></div>
+                                <div class="voice-bar"></div>
+                            </div>
+                            <span>Listening... Speak now</span>
+                        </div>
                         <textarea 
                             id="userInput" 
                             placeholder="Ask any legal question or request a document draft... (Press Enter to send, Shift+Enter for new line)"
                             rows="1"
                         ></textarea>
-                        <button class="send-button" id="sendButton">
-                            <i class="fas fa-paper-plane"></i> <span class="hide-on-mobile">Send</span>
-                        </button>
+                        <div class="voice-input-text" id="voiceInputText"></div>
+                        <div class="input-buttons">
+                            <button class="input-microphone-btn" id="inputMicrophoneBtn" title="Voice input">
+                                <i class="fas fa-microphone"></i>
+                            </button>
+                            <button class="send-button" id="sendButton">
+                                <i class="fas fa-paper-plane"></i> <span class="hide-on-mobile">Send</span>
+                            </button>
+                        </div>
                     </div>
                 </div>
             </main>
@@ -1797,11 +2503,6 @@
                             <i class="fas fa-file-alt"></i>
                             <h3>Text File</h3>
                             <p>.txt format</p>
-                        </div>
-                        <div class="download-option" data-format="html">
-                            <i class="fas fa-code"></i>
-                            <h3>HTML File</h3>
-                            <p>.html format</p>
                         </div>
                     </div>
                     
@@ -1927,340 +2628,74 @@
         // Store message content for document download
         let messageContentForDownload = "";
         
-        // PRE-MADE LEGAL DOCUMENT TEMPLATES
-        const LEGAL_DOCUMENTS = {
-            'nda': {
-                title: "NON-DISCLOSURE AGREEMENT",
-                content: `NON-DISCLOSURE AGREEMENT
-
-This Non-Disclosure Agreement ("Agreement") is made on ${new Date().toLocaleDateString()} between:
-
-DISCLOSING PARTY:
-Name: ________________________________
-Address: _____________________________
-______________________________________
-
-RECEIVING PARTY:
-Name: ________________________________
-Address: _____________________________
-______________________________________
-
-1. DEFINITION OF CONFIDENTIAL INFORMATION
-For purposes of this Agreement, "Confidential Information" shall include all information or material that has or could have commercial value or other utility in the business in which Disclosing Party is engaged.
-
-2. OBLIGATIONS OF RECEIVING PARTY
-Receiving Party shall hold and maintain the Confidential Information in strictest confidence for the sole and exclusive benefit of the Disclosing Party.
-
-3. TIME PERIODS
-The nondisclosure provisions of this Agreement shall survive the termination of this Agreement and Receiving Party's duty to hold Confidential Information in confidence shall remain in effect until the Confidential Information no longer qualifies as a trade secret or until Disclosing Party sends Receiving Party written notice releasing Receiving Party from this Agreement.
-
-4. RELATIONSHIPS
-Nothing contained in this Agreement shall be deemed to constitute either party a partner, joint venturer or employee of the other party for any purpose.
-
-5. SEVERABILITY
-If a court finds any provision of this Agreement invalid or unenforceable, the remainder of this Agreement shall be interpreted so as best to effect the intent of the parties.
-
-6. INTEGRATION
-This Agreement expresses the complete understanding of the parties with respect to the subject matter and supersedes all prior proposals, agreements, representations and understandings.
-
-IN WITNESS WHEREOF, the parties have executed this Agreement as of the date first written above.
-
-DISCLOSING PARTY:
-___________________________
-Signature
-___________________________
-Name
-___________________________
-Title
-___________________________
-Date
-
-RECEIVING PARTY:
-___________________________
-Signature
-___________________________
-Name
-___________________________
-Title
-___________________________
-Date
-
-[DOWNLOAD READY]`
-            },
-            
-            'employment': {
-                title: "EMPLOYMENT AGREEMENT",
-                content: `EMPLOYMENT AGREEMENT
-
-This Employment Agreement ("Agreement") is made on ${new Date().toLocaleDateString()} between:
-
-EMPLOYER:
-Company Name: _________________________
-Address: ______________________________
-_______________________________________
-
-EMPLOYEE:
-Name: _________________________________
-Address: ______________________________
-_______________________________________
-
-1. POSITION AND DUTIES
-Employee shall serve as _________________________________. Employee shall perform all duties customary to such position and such other duties as may be assigned by Employer.
-
-2. TERM OF EMPLOYMENT
-Employee's employment shall commence on _________________ and shall continue until terminated as provided herein.
-
-3. COMPENSATION
-As full compensation for all services rendered, Employer shall pay Employee:
-- Base Salary: ₹__________ per month
-- Payment Date: 7th of each month
-
-4. WORKING HOURS
-Employee's normal working hours shall be from 9:00 AM to 6:00 PM, Monday through Friday, with one hour lunch break.
-
-5. LEAVE ENTITLEMENT
-Employee shall be entitled to:
-- Paid Leave: 12 days per year
-- Sick Leave: 12 days per year
-- National Holidays: As per Indian law
-
-6. CONFIDENTIALITY
-Employee agrees not to disclose any confidential information of Employer during or after employment.
-
-7. TERMINATION
-This Agreement may be terminated by either party giving 30 days written notice.
-
-8. GOVERNING LAW
-This Agreement shall be governed by the laws of India.
-
-IN WITNESS WHEREOF, the parties have executed this Agreement as of the date first written above.
-
-EMPLOYER:
-___________________________
-Signature
-___________________________
-Name
-___________________________
-Title
-___________________________
-Date
-
-EMPLOYEE:
-___________________________
-Signature
-___________________________
-Name
-___________________________
-Date
-
-[DOWNLOAD READY]`
-            },
-            
-            'rental': {
-                title: "RENTAL AGREEMENT",
-                content: `RENTAL AGREEMENT
-
-This Rental Agreement ("Agreement") is made on ${new Date().toLocaleDateString()} between:
-
-LANDLORD:
-Name: _________________________________
-Address: ______________________________
-_______________________________________
-
-TENANT:
-Name: _________________________________
-Address: ______________________________
-_______________________________________
-
-PROPERTY ADDRESS:
-_______________________________________
-_______________________________________
-
-1. TERM OF AGREEMENT
-This Agreement shall commence on _________________ and continue until _________________.
-
-2. RENT AMOUNT AND PAYMENT
-Tenant agrees to pay ₹__________ per month, payable in advance on the 1st day of each month.
-
-3. SECURITY DEPOSIT
-Tenant shall deposit ₹__________ as security deposit, refundable at the end of tenancy subject to deductions for damages.
-
-4. UTILITIES
-Tenant shall be responsible for payment of all electricity, water, and gas charges for the premises.
-
-5. MAINTENANCE
-Landlord shall be responsible for structural repairs. Tenant shall be responsible for minor repairs and maintenance.
-
-6. USE OF PREMISES
-The premises shall be used exclusively for residential purposes only.
-
-7. NOTICE PERIOD
-Either party may terminate this Agreement by giving one month's written notice.
-
-8. GOVERNING LAW
-This Agreement shall be governed by the laws of India.
-
-IN WITNESS WHEREOF, the parties have executed this Agreement as of the date first written above.
-
-LANDLORD:
-___________________________
-Signature
-___________________________
-Name
-___________________________
-Witness Name
-___________________________
-Witness Address
-___________________________
-Date
-
-TENANT:
-___________________________
-Signature
-___________________________
-Name
-___________________________
-Witness Name
-___________________________
-Witness Address
-___________________________
-Date
-
-[DOWNLOAD READY]`
-            },
-            
-            'loan': {
-                title: "LOAN AGREEMENT",
-                content: `LOAN AGREEMENT
-
-This Loan Agreement ("Agreement") is made on ${new Date().toLocaleDateString()} between:
-
-LENDER:
-Name: _________________________________
-Address: ______________________________
-_______________________________________
-
-BORROWER:
-Name: _________________________________
-Address: ______________________________
-_______________________________________
-
-1. LOAN AMOUNT
-Lender agrees to lend Borrower the sum of ₹__________ (Indian Rupees ___________________________).
-
-2. INTEREST RATE
-Interest shall be charged at the rate of ____% per annum.
-
-3. REPAYMENT TERMS
-The loan shall be repaid in __________ equal monthly installments of ₹__________ each, commencing on _________________.
-
-4. SECURITY
-[Describe any security provided for the loan]
-
-5. DEFAULT
-If Borrower fails to make any payment within 15 days of due date, the entire outstanding amount shall become immediately due.
-
-6. PREPAYMENT
-Borrower may prepay the loan in whole or in part without any prepayment penalty.
-
-7. GOVERNING LAW
-This Agreement shall be governed by the laws of India.
-
-8. JURISDICTION
-Any disputes shall be subject to the jurisdiction of courts in _________________.
-
-IN WITNESS WHEREOF, the parties have executed this Agreement as of the date first written above.
-
-LENDER:
-___________________________
-Signature
-___________________________
-Name
-___________________________
-Witness Name
-___________________________
-Witness Address
-___________________________
-Date
-
-BORROWER:
-___________________________
-Signature
-___________________________
-Name
-___________________________
-Witness Name
-___________________________
-Witness Address
-___________________________
-Date
-
-[DOWNLOAD READY]`
-            },
-            
-            'will': {
-                title: "LAST WILL AND TESTAMENT",
-                content: `LAST WILL AND TESTAMENT
-
-I, ___________________________, residing at ________________________________________, being of sound mind and memory, do hereby make, publish and declare this to be my Last Will and Testament.
-
-1. REVOCATION OF PRIOR WILLS
-I hereby revoke all former wills and codicils by me made.
-
-2. APPOINTMENT OF EXECUTOR
-I appoint ___________________________ as the Executor of this Will.
-
-3. PAYMENT OF DEBTS AND EXPENSES
-I direct that all my just debts, funeral expenses, and expenses of administration be paid as soon as practicable after my death.
-
-4. DISTRIBUTION OF ESTATE
-I give, devise and bequeath all my estate, both real and personal, as follows:
-
-a) To my spouse, ___________________________, I bequeath 50% of my estate.
-
-b) To my children, ___________________________, I bequeath the remaining 50% equally.
-
-5. GUARDIANSHIP
-If my spouse does not survive me, I appoint ___________________________ as guardian of my minor children.
-
-6. RESIDUARY CLAUSE
-All the rest, residue and remainder of my estate, I give to my spouse if living, otherwise to my children equally.
-
-IN WITNESS WHEREOF, I have hereunto set my hand this ______ day of _________________, 20____.
-
-___________________________
-Testator
-
-SIGNED in the presence of us, who at the request of the Testator and in the presence of each other, have subscribed our names as witnesses:
-
-WITNESS 1:
-___________________________
-Signature
-___________________________
-Name
-___________________________
-Address
-
-WITNESS 2:
-___________________________
-Signature
-___________________________
-Name
-___________________________
-Address
-
-[DOWNLOAD READY]`
-            }
-        };
+        // Voice recognition
+        let isListening = false;
+        let recognition = null;
+        let isInputMicrophoneActive = false;
         
-        // Simple language detection function
+        // Theme management
+        let isLightMode = false;
+        
+        // Enhanced language detection for Marathi
         function detectLanguage(text) {
-            // Check for Indian scripts
+            // Enhanced Marathi detection
+            const marathiPatterns = [
+                /मला/i, /पाहिजे/i, /होय/i, /नाही/i, /कसा/i, /काय/i, /कोण/i,
+                /आहे/i, /आहेत/i, /असणे/i, /करणे/i, /जाणे/i, /येणे/i,
+                /\bमी\b/i, /\bतू\b/i, /\bती\b/i, /\bते\b/i, /\bआपण\b/i,
+                /\bकोणी\b/i, /\bकाही\b/i, /\bसगळे\b/i, /\bएक\b/i, /\bदोन\b/i
+            ];
+            
+            const hindiPatterns = [
+                /\bक्या\b/i, /\bक्यों\b/i, /\bकैसे\b/i, /\bमुझे\b/i, /\bतुम्हें\b/i,
+                /\bहम\b/i, /\bतुम\b/i, /\bआप\b/i, /\bहै\b/i, /\bहैं\b/i,
+                /\bथा\b/i, /\bथे\b/i, /\bहो\b/i, /\bजो\b/i, /\bजिस\b/i
+            ];
+            
+            const lowerText = text.toLowerCase();
+            
+            // Check for Marathi Devanagari script
             if (/[\u0900-\u097F]/.test(text)) {
-                const marathiWords = ['आहे', 'मी', 'तू', 'आपण', 'होय', 'नाही'];
-                const hasMarathi = marathiWords.some(word => text.includes(word));
-                return hasMarathi ? 'marathi' : 'hindi';
+                let marathiScore = 0;
+                let hindiScore = 0;
+                
+                // Check for specific Marathi words
+                const marathiWords = ['आहे', 'मी', 'तू', 'आपण', 'होय', 'नाही', 'मला', 'पाहिजे', 'कृपया', 'धन्यवाद'];
+                marathiWords.forEach(word => {
+                    if (text.includes(word)) marathiScore++;
+                });
+                
+                // Check for Hindi words
+                const hindiWords = ['क्या', 'क्यों', 'कैसे', 'मुझे', 'तुम्हें', 'आप', 'है', 'हैं'];
+                hindiWords.forEach(word => {
+                    if (text.includes(word)) hindiScore++;
+                });
+                
+                return marathiScore >= hindiScore ? 'marathi' : 'hindi';
             }
+            
+            // Check for Marathi in Roman script
+            let marathiScore = 0;
+            marathiPatterns.forEach(pattern => {
+                if (pattern.test(text)) marathiScore++;
+            });
+            
+            let hindiScore = 0;
+            hindiPatterns.forEach(pattern => {
+                if (pattern.test(text)) hindiScore++;
+            });
+            
+            // Special case for "Mala" which is Marathi
+            if (/\bmala\b/i.test(text)) marathiScore += 2;
+            if (/\bmujhe\b/i.test(text)) hindiScore += 2;
+            
+            if (marathiScore > hindiScore && marathiScore > 0) {
+                return 'marathi';
+            } else if (hindiScore > 0) {
+                return 'hindi';
+            }
+            
+            // Check for other Indian languages
             if (/[\u0B80-\u0BFF]/.test(text)) return 'tamil';
             if (/[\u0C00-\u0C7F]/.test(text)) return 'telugu';
             if (/[\u0C80-\u0CFF]/.test(text)) return 'kannada';
@@ -2268,142 +2703,7 @@ Address
             if (/[\u0A80-\u0AFF]/.test(text)) return 'gujarati';
             if (/[\u0980-\u09FF]/.test(text)) return 'bengali';
             
-            const romanHindiPatterns = [
-                /\bkya\b/, /\bkyun\b/, /\bkaise\b/, /\bmujhe\b/, /\btujhe\b/, 
-                /\bhum\b/, /\btum\b/, /\baap\b/, /\bhai\b/, /\bhain\b/, /\bho\b/
-            ];
-            
-            const lowerText = text.toLowerCase();
-            const romanHindiCount = romanHindiPatterns.filter(pattern => pattern.test(lowerText)).length;
-            
-            if (romanHindiCount > 0) {
-                return 'hindi';
-            }
-            
             return 'english';
-        }
-        
-        // Get system prompt based on detected language
-        function getSystemPrompt(language, isDocumentRequest = false) {
-            if (isDocumentRequest) {
-                return `You are LegalSwami, an expert AI legal assistant specializing in Indian law.
-                
-IMPORTANT: When the user asks for a legal document draft, you MUST provide a complete, ready-to-use legal document template. Include:
-1. Proper document title and headings
-2. All necessary legal clauses
-3. Placeholders for personal information [like this]
-4. Signature sections
-5. Date and witness sections if applicable
-6. End with [DOWNLOAD READY]
-
-Make sure the document is:
-- Legally sound for Indian context
-- Professionally formatted
-- Ready for immediate download and use
-- Includes all standard legal clauses
-
-Format your response as a complete legal document.
-
-ALWAYS include this disclaimer at the end:
-"Disclaimer: This template is for educational purposes only. Consult a qualified attorney before use."
-
-[DOWNLOAD READY]`;
-            }
-            
-            const prompts = {
-                'english': `You are LegalSwami, an expert AI legal assistant specializing in Indian law. 
-                
-CRITICAL RULE: You MUST respond in English ONLY.
-
-Provide accurate legal information about Indian laws.
-Cite relevant Indian laws, acts, and sections when applicable.
-Mention important Indian legal precedents.
-Explain legal concepts clearly.
-Include practical implications for Indian context.
-
-When user asks for document drafts, provide complete legal document templates ready for download.
-
-Format your response with:
-- Clear headings
-- Bullet points for lists
-- Bold for important terms
-- Logical structure
-
-ALWAYS include this disclaimer at the end:
-"Disclaimer: This information is for educational purposes only and not legal advice. Consult a qualified attorney for specific legal matters."`,
-
-                'hindi': `आप LegalSwami हैं, भारतीय कानून में विशेषज्ञ AI कानूनी सहायक।
-
-महत्वपूर्ण नियम: आपको केवल हिंदी में ही जवाब देना चाहिए।
-
-भारतीय कानूनों के बारे में सटीक कानूनी जानकारी प्रदान करें।
-प्रासंगिक भारतीय कानूनों, अधिनियमों और धाराओं का उल्लेख करें।
-महत्वपूर्ण भारतीय कानूनी मिसालों का उल्लेख करें।
-कानूनी अवधारणाओं को स्पष्ट रूप से समझाएं।
-भारतीय संदर्भ के लिए व्यावहारिक निहितार्थ शामिल करें।
-
-जब उपयोगकर्ता दस्तावेज़ मसौदा मांगता है, तो डाउनलोड के लिए तैयार पूर्ण कानूनी दस्तावेज़ टेम्पलेट प्रदान करें।
-
-अपनी प्रतिक्रिया को इस प्रकार प्रारूपित करें:
-- स्पष्ट शीर्षक
-- सूचियों के लिए बुलेट पॉइंट
-- महत्वपूर्ण शब्दों के लिए बोल्ड
-- तार्किक संरचना
-
-अंत में हमेशा यह अस्वीकरण शामिल करें:
-"अस्वीकरण: यह जानकारी केवल शैक्षिक उद्देश्यों के लिए है और कानूनी सलाह नहीं है। विशिष्ट कानूनी मामलों के लिए योग्य वकील से परामर्श करें।"`
-            };
-            
-            return prompts[language] || prompts['english'];
-        }
-        
-        // Get language-specific disclaimer
-        function getDisclaimer(language) {
-            const disclaimers = {
-                'english': "\n\n**Disclaimer:** This information is for educational purposes only and not legal advice. Consult a qualified attorney for specific legal matters.",
-                'hindi': "\n\n**अस्वीकरण:** यह जानकारी केवल शैक्षिक उद्देश्यों के लिए है और कानूनी सलाह नहीं है। विशिष्ट कानूनी मामलों के लिए योग्य वकील से परामर्श करें।",
-                'marathi': "\n\n**सूचना:** ही माहिती केवळ शैक्षणिक हेतूंसाठी आहे आणि कायदेशीर सल्ला नाही. विशिष्ट कायदेशीर बाबींसाठी पात्र वकीलांचा सल्ला घ्या."
-            };
-            
-            return disclaimers[language] || disclaimers['english'];
-        }
-        
-        // Check if user is asking for document
-        function isDocumentRequest(message) {
-            const docKeywords = [
-                'draft', 'template', 'format', 'document', 'agreement', 
-                'contract', 'nda', 'non disclosure', 'employment', 
-                'rental', 'loan', 'will', 'testament', 'legal document',
-                'ready made', 'sample', 'example', 'form', 'प्रारूप',
-                'मसौदा', 'दस्तावेज़', 'समझौता', 'अनुबंध'
-            ];
-            
-            const lowerMessage = message.toLowerCase();
-            return docKeywords.some(keyword => lowerMessage.includes(keyword));
-        }
-        
-        // Check which document type is requested
-        function getRequestedDocumentType(message) {
-            const lowerMessage = message.toLowerCase();
-            
-            if (lowerMessage.includes('nda') || lowerMessage.includes('non disclosure') || lowerMessage.includes('confidentiality')) {
-                return 'nda';
-            } else if (lowerMessage.includes('employment') || lowerMessage.includes('job') || lowerMessage.includes('employee')) {
-                return 'employment';
-            } else if (lowerMessage.includes('rental') || lowerMessage.includes('tenancy') || lowerMessage.includes('lease')) {
-                return 'rental';
-            } else if (lowerMessage.includes('loan') || lowerMessage.includes('lending') || lowerMessage.includes('borrow')) {
-                return 'loan';
-            } else if (lowerMessage.includes('will') || lowerMessage.includes('testament') || lowerMessage.includes('inheritance')) {
-                return 'will';
-            }
-            
-            return null;
-        }
-        
-        // Get pre-made document
-        function getPreMadeDocument(docType) {
-            return LEGAL_DOCUMENTS[docType] || null;
         }
         
         // Initialize
@@ -2418,6 +2718,9 @@ ALWAYS include this disclaimer at the end:
             const clearChatBtn = document.getElementById('clearChatBtn');
             const downloadCurrentBtn = document.getElementById('downloadCurrentBtn');
             const suggestionsBtn = document.getElementById('suggestionsBtn');
+            const voiceSearchBtn = document.getElementById('voiceSearchBtn');
+            const inputMicrophoneBtn = document.getElementById('inputMicrophoneBtn');
+            const themeToggle = document.getElementById('themeToggle');
             const topicItems = document.querySelectorAll('.topic-item');
             const actionItems = document.querySelectorAll('.action-item');
             const sidebarTabs = document.querySelectorAll('.sidebar-tab');
@@ -2436,6 +2739,9 @@ ALWAYS include this disclaimer at the end:
             if (isDesktop) {
                 sidebar.classList.add('active');
             }
+            
+            // Load theme preference
+            loadThemePreference();
             
             // Load chat history from localStorage
             loadChatHistory();
@@ -2469,6 +2775,86 @@ ALWAYS include this disclaimer at the end:
                     hideLanguageHint();
                 }
             });
+            
+            // Voice search functionality
+            voiceSearchBtn.addEventListener('click', toggleVoiceRecognition);
+            inputMicrophoneBtn.addEventListener('click', toggleInputVoiceRecognition);
+            
+            // Initialize Speech Recognition
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = true;
+                recognition.lang = 'en-IN,hi-IN,mr-IN,ta-IN,te-IN';
+                
+                recognition.onstart = function() {
+                    isListening = true;
+                    if (isInputMicrophoneActive) {
+                        inputMicrophoneBtn.classList.add('listening');
+                    } else {
+                        voiceSearchBtn.classList.add('listening');
+                    }
+                    document.getElementById('voiceInputStatus').classList.add('active');
+                    showToast('Listening... Speak now', 'info');
+                };
+                
+                recognition.onresult = function(event) {
+                    const transcript = event.results[0][0].transcript;
+                    const voiceInputText = document.getElementById('voiceInputText');
+                    
+                    if (event.results[0].isFinal) {
+                        userInput.value = transcript;
+                        userInput.style.height = Math.min(userInput.scrollHeight, 200) + 'px';
+                        voiceInputText.style.display = 'none';
+                        
+                        // Auto-detect language and show hint
+                        const lang = detectLanguage(transcript);
+                        showLanguageHint(lang);
+                        
+                        // Auto-send after 1 second for short queries
+                        if (transcript.split(' ').length <= 10) {
+                            setTimeout(() => {
+                                sendMessage();
+                            }, 1000);
+                        }
+                    } else {
+                        voiceInputText.textContent = transcript;
+                        voiceInputText.style.display = 'block';
+                    }
+                };
+                
+                recognition.onerror = function(event) {
+                    console.error('Speech recognition error:', event.error);
+                    isListening = false;
+                    isInputMicrophoneActive = false;
+                    inputMicrophoneBtn.classList.remove('listening');
+                    voiceSearchBtn.classList.remove('listening');
+                    document.getElementById('voiceInputStatus').classList.remove('active');
+                    
+                    if (event.error === 'not-allowed') {
+                        showToast('Microphone access denied. Please allow microphone access.', 'error');
+                    } else {
+                        showToast('Voice recognition failed. Please try again.', 'error');
+                    }
+                };
+                
+                recognition.onend = function() {
+                    isListening = false;
+                    isInputMicrophoneActive = false;
+                    inputMicrophoneBtn.classList.remove('listening');
+                    voiceSearchBtn.classList.remove('listening');
+                    document.getElementById('voiceInputStatus').classList.remove('active');
+                    document.getElementById('voiceInputText').style.display = 'none';
+                };
+            } else {
+                voiceSearchBtn.style.display = 'none';
+                inputMicrophoneBtn.style.display = 'none';
+                showToast('Voice search not supported in your browser', 'warning');
+            }
+            
+            // Theme toggle
+            themeToggle.addEventListener('click', toggleTheme);
             
             // Sidebar toggle buttons
             sidebarToggle.addEventListener('click', function() {
@@ -2694,6 +3080,74 @@ ALWAYS include this disclaimer at the end:
             }, 100);
         });
         
+        // Toggle voice recognition (header button)
+        function toggleVoiceRecognition() {
+            if (!recognition) {
+                showToast('Voice recognition not supported', 'error');
+                return;
+            }
+            
+            if (isListening && !isInputMicrophoneActive) {
+                recognition.stop();
+            } else {
+                isInputMicrophoneActive = false;
+                try {
+                    recognition.start();
+                } catch (error) {
+                    console.error('Speech recognition start error:', error);
+                    showToast('Error starting voice recognition', 'error');
+                }
+            }
+        }
+        
+        // Toggle voice recognition (input microphone button)
+        function toggleInputVoiceRecognition() {
+            if (!recognition) {
+                showToast('Voice recognition not supported', 'error');
+                return;
+            }
+            
+            if (isListening && isInputMicrophoneActive) {
+                recognition.stop();
+            } else {
+                isInputMicrophoneActive = true;
+                try {
+                    recognition.start();
+                } catch (error) {
+                    console.error('Speech recognition start error:', error);
+                    showToast('Error starting voice recognition', 'error');
+                }
+            }
+        }
+        
+        // Toggle theme
+        function toggleTheme() {
+            isLightMode = !isLightMode;
+            
+            if (isLightMode) {
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                document.getElementById('themeToggle').innerHTML = '<i class="fas fa-moon"></i>';
+                localStorage.setItem('legalSwamiTheme', 'light');
+            } else {
+                document.body.classList.remove('light-mode');
+                document.body.classList.add('dark-mode');
+                document.getElementById('themeToggle').innerHTML = '<i class="fas fa-sun"></i>';
+                localStorage.setItem('legalSwamiTheme', 'dark');
+            }
+        }
+        
+        // Load theme preference
+        function loadThemePreference() {
+            const savedTheme = localStorage.getItem('legalSwamiTheme');
+            if (savedTheme === 'light') {
+                isLightMode = true;
+                document.body.classList.add('light-mode');
+                document.body.classList.remove('dark-mode');
+                document.getElementById('themeToggle').innerHTML = '<i class="fas fa-moon"></i>';
+            }
+        }
+        
         // Show language hint
         function showLanguageHint(language) {
             const inputArea = document.querySelector('.input-area');
@@ -2754,7 +3208,7 @@ ALWAYS include this disclaimer at the end:
                 <h2>Welcome to LegalSwami</h2>
                 <p>Your AI-powered legal assistant for accurate, comprehensive legal information and guidance.</p>
                 <p style="color: var(--primary); margin-top: 10px; font-size: 0.9rem;">
-                    <i class="fas fa-language"></i> Supports multiple Indian languages!
+                    <i class="fas fa-language"></i> Supports multiple Indian languages including Marathi, Hindi, and more!
                 </p>
                 
                 <div style="margin-top: 2rem;">
@@ -2783,6 +3237,8 @@ ALWAYS include this disclaimer at the end:
                     </div>
                 </div>
                 
+                <div class="section-divider"></div>
+                
                 <div class="welcome-features">
                     <div class="feature">
                         <i class="fas fa-bolt"></i>
@@ -2798,6 +3254,11 @@ ALWAYS include this disclaimer at the end:
                         <i class="fas fa-language"></i>
                         <h4>Multi-Language</h4>
                         <p>Responds in same language as your query</p>
+                    </div>
+                    <div class="feature">
+                        <i class="fas fa-microphone"></i>
+                        <h4>Voice Search</h4>
+                        <p>Speak your queries in natural language</p>
                     </div>
                 </div>
             `;
@@ -3077,9 +3538,6 @@ ALWAYS include this disclaimer at the end:
                     case 'txt':
                         downloadAsText(chat, true);
                         break;
-                    case 'html':
-                        downloadAsHTML(chat, true);
-                        break;
                 }
                 
                 showToast(`Chat downloaded as ${format.toUpperCase()} successfully!`, 'success');
@@ -3288,79 +3746,6 @@ ALWAYS include this disclaimer at the end:
             URL.revokeObjectURL(url);
         }
         
-        // Download as HTML
-        function downloadAsHTML(chat, isFullChat) {
-            let content = `<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LegalSwami ${isFullChat ? 'Chat' : 'Document'} - ${chat.title}</title>
-    <style>
-        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 40px; max-width: 800px; margin: 0 auto; padding: 20px; }
-        .header { text-align: center; border-bottom: 2px solid #10a37f; padding-bottom: 20px; margin-bottom: 30px; }
-        .title { color: #10a37f; font-size: 28px; margin-bottom: 10px; }
-        .chat-info { color: #666; font-size: 14px; margin-bottom: 30px; }
-        .message { margin-bottom: 25px; padding: 15px; border-radius: 8px; }
-        .user-message { background: #f0f9f7; border-left: 4px solid #10a37f; }
-        .ai-message { background: #f8f9fa; border-left: 4px solid #7e57c2; }
-        .role { font-weight: bold; color: #10a37f; margin-bottom: 5px; }
-        .timestamp { color: #999; font-size: 12px; float: right; }
-        .disclaimer { background: #fff3cd; border: 1px solid #ffc107; padding: 15px; border-radius: 8px; margin-top: 40px; font-size: 14px; }
-    </style>
-</head>
-<body>
-    <div class="header">
-        <h1 class="title">LegalSwami ${isFullChat ? 'Chat Document' : 'Document'}</h1>
-        <div class="chat-info">
-            <p><strong>Title:</strong> ${chat.title}</p>
-            <p><strong>Date:</strong> ${new Date(chat.date).toLocaleString()}</p>
-        </div>
-    </div>
-    
-    <div class="content">`;
-            
-            if (isFullChat) {
-                chat.messages.forEach((msg, index) => {
-                    const roleClass = msg.role === 'user' ? 'user-message' : 'ai-message';
-                    const roleText = msg.role === 'user' ? 'USER' : 'LEGALSWAMI AI ASSISTANT';
-                    
-                    content += `
-        <div class="message ${roleClass}">
-            <div class="role">${roleText}</div>
-            <div class="content">${msg.content.replace(/\n/g, '<br>')}</div>
-        </div>`;
-                });
-            } else {
-                content += `
-        <div class="message ai-message">
-            <div class="role">LEGALSWAMI AI ASSISTANT</div>
-            <div class="content">${chat.messages[0].content.replace(/\n/g, '<br>')}</div>
-        </div>`;
-            }
-            
-            content += `
-    </div>
-    
-    <div class="disclaimer">
-        <h3>Disclaimer</h3>
-        <p>This ${isFullChat ? 'chat transcript' : 'document'} is for reference purposes only. The information provided by LegalSwami AI Assistant is for educational and informational purposes only and should not be construed as legal advice. You should consult with a qualified attorney for advice regarding your individual legal situation.</p>
-        <p>Generated by LegalSwami AI Legal Assistant on ${new Date().toLocaleString()}</p>
-    </div>
-</body>
-</html>`;
-            
-            const blob = new Blob([content], { type: 'text/html' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `LegalSwami_${isFullChat ? 'Chat' : 'Document'}_${formatDateForFilename(chat.date)}.html`;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-        }
-        
         // Delete chat from history
         function deleteChatFromHistory() {
             const chatId = document.getElementById('deleteModal').dataset.chatId;
@@ -3451,13 +3836,14 @@ ALWAYS include this disclaimer at the end:
             const message = userInput.value.trim();
             if (!message) return;
             
-            // Detect language
+            // Stop voice recognition if active
+            if (isListening && recognition) {
+                recognition.stop();
+            }
+            
+            // Detect language with enhanced Marathi detection
             const detectedLanguage = detectLanguage(message);
             hideLanguageHint();
-            
-            // Check if this is a document request
-            const isDocRequest = isDocumentRequest(message);
-            const requestedDocType = getRequestedDocumentType(message);
             
             // Add user message to chat
             addMessageToChat(message, true);
@@ -3471,27 +3857,34 @@ ALWAYS include this disclaimer at the end:
             try {
                 let response;
                 
-                // Check if we have a pre-made document for this request
-                if (requestedDocType && LEGAL_DOCUMENTS[requestedDocType]) {
-                    // Use pre-made document
-                    response = LEGAL_DOCUMENTS[requestedDocType].content;
-                } else if (isDocRequest) {
-                    // Call AI for other document requests
-                    response = await callGroqAPI(message, detectedLanguage, true);
-                } else {
-                    // Regular query
+                // First, understand what the user needs
+                const isGeneralQuery = !isDocumentRequest(message);
+                
+                if (isGeneralQuery) {
+                    // For general queries, provide comprehensive legal information
                     response = await callGroqAPI(message, detectedLanguage, false);
+                } else {
+                    // For document requests, provide proper document
+                    const requestedDocType = getRequestedDocumentType(message);
+                    
+                    if (requestedDocType && LEGAL_DOCUMENTS[requestedDocType]) {
+                        // Use pre-made document
+                        response = LEGAL_DOCUMENTS[requestedDocType].content;
+                    } else {
+                        // Call AI for other document requests
+                        response = await callGroqAPI(message, detectedLanguage, true);
+                    }
                 }
                 
                 // Hide typing indicator and add response
                 hideTypingIndicator();
-                const messageId = addMessageToChat(response, false, false, isDocRequest || requestedDocType);
+                const messageId = addMessageToChat(response, false, false, !isGeneralQuery);
                 
                 // Check if response contains [DOWNLOAD READY] flag
                 const hasDownloadFlag = response.includes('[DOWNLOAD READY]');
                 
                 // If it's a document request or has download flag, add download button
-                if (isDocRequest || requestedDocType || hasDownloadFlag) {
+                if (!isGeneralQuery || hasDownloadFlag) {
                     addDocumentDownloadButton(messageId, response);
                 }
                 
@@ -3500,16 +3893,14 @@ ALWAYS include this disclaimer at the end:
                     { 
                         role: 'user', 
                         content: message, 
-                        language: detectedLanguage, 
-                        isDocumentRequest: isDocRequest,
-                        requestedDocType: requestedDocType
+                        language: detectedLanguage
                     },
                     { 
                         role: 'assistant', 
                         content: response, 
-                        language: detectedLanguage, 
+                        language: detectedLanguage,
                         hasDownloadFlag: hasDownloadFlag,
-                        isDocument: isDocRequest || requestedDocType
+                        isDocument: !isGeneralQuery
                     }
                 );
                 
@@ -3541,7 +3932,7 @@ ALWAYS include this disclaimer at the end:
                 showToast('Service temporarily unavailable', 'warning');
             } finally {
                 sendButton.disabled = false;
-                userInput.focus();
+                document.getElementById('userInput').focus();
             }
         }
         
@@ -3552,7 +3943,7 @@ ALWAYS include this disclaimer at the end:
             
             const messages = [
                 { role: 'system', content: systemPrompt },
-                ...conversationHistory.map(msg => ({
+                ...conversationHistory.slice(-6).map(msg => ({
                     role: msg.role,
                     content: msg.content
                 })),
@@ -3615,8 +4006,6 @@ ALWAYS include this disclaimer at the end:
                     if (modelsTried > 1) {
                         const modelName = modelToTry.split('/').pop() || modelToTry;
                         console.log(`Successfully switched to model: ${modelName}`);
-                        // Optional: Show subtle notification to user
-                        showToast(`Using ${modelName} model`, 'info');
                     }
                     
                     // For document requests, ensure download flag is included
@@ -3640,6 +4029,415 @@ ALWAYS include this disclaimer at the end:
             // If all models failed, provide a user-friendly error
             throw new Error(`I'm having trouble connecting to my legal knowledge base. All available models failed. Please try again in a few moments or rephrase your question.`);
         }
+        
+        // Get system prompt based on detected language
+        function getSystemPrompt(language, isDocumentRequest = false) {
+            if (isDocumentRequest) {
+                return `You are LegalSwami, an expert AI legal assistant specializing in Indian law.
+                
+IMPORTANT: When the user asks for a legal document draft, you MUST provide a complete, ready-to-use legal document template. Include:
+1. Proper document title and headings
+2. All necessary legal clauses
+3. Placeholders for personal information [like this]
+4. Signature sections
+5. Date and witness sections if applicable
+6. End with [DOWNLOAD READY]
+
+Make sure the document is:
+- Legally sound for Indian context
+- Professionally formatted
+- Ready for immediate download and use
+- Includes all standard legal clauses
+
+Format your response as a complete legal document.
+
+ALWAYS include this disclaimer at the end:
+"Disclaimer: This template is for educational purposes only. Consult a qualified attorney before use."
+
+[DOWNLOAD READY]`;
+            }
+            
+            const prompts = {
+                'english': `You are LegalSwami, an expert AI legal assistant specializing in Indian law. 
+                
+CRITICAL RULE: You MUST respond in English ONLY.
+
+Provide comprehensive, detailed legal information about Indian laws.
+Cite relevant Indian laws, acts, and sections when applicable.
+Mention important Indian legal precedents and case laws.
+Explain legal concepts clearly with practical examples.
+Include practical implications for Indian context.
+Provide actionable advice when appropriate.
+
+When answering:
+- Structure your response with clear headings
+- Use bullet points for lists
+- Bold important terms and sections
+- Include references to relevant laws
+- Provide practical next steps
+
+ALWAYS include this disclaimer at the end:
+"Disclaimer: This information is for educational purposes only and not legal advice. Consult a qualified attorney for specific legal matters."`,
+
+                'hindi': `आप LegalSwami हैं, भारतीय कानून में विशेषज्ञ AI कानूनी सहायक।
+
+महत्वपूर्ण नियम: आपको केवल हिंदी में ही जवाब देना चाहिए।
+
+भारतीय कानूनों के बारे में विस्तृत और व्यापक कानूनी जानकारी प्रदान करें।
+प्रासंगिक भारतीय कानूनों, अधिनियमों और धाराओं का उल्लेख करें।
+महत्वपूर्ण भारतीय कानूनी मिसालों और केस लॉ का उल्लेख करें।
+कानूनी अवधारणाओं को व्यावहारिक उदाहरणों के साथ स्पष्ट रूप से समझाएं।
+भारतीय संदर्भ के लिए व्यावहारिक निहितार्थ शामिल करें।
+उचित होने पर कार्रवाई योग्य सलाह प्रदान करें।
+
+जवाब देते समय:
+- स्पष्ट शीर्षकों के साथ अपनी प्रतिक्रिया को संरचित करें
+- सूचियों के लिए बुलेट पॉइंट का उपयोग करें
+- महत्वपूर्ण शब्दों और अनुभागों को बोल्ड करें
+- प्रासंगिक कानूनों के संदर्भ शामिल करें
+- व्यावहारिक अगले कदम प्रदान करें
+
+अंत में हमेशा यह अस्वीकरण शामिल करें:
+"अस्वीकरण: यह जानकारी केवल शैक्षिक उद्देश्यों के लिए है और कानूनी सलाह नहीं है। विशिष्ट कानूनी मामलों के लिए योग्य वकील से परामर्श करें।"`,
+
+                'marathi': `तुम्ही LegalSwami आहात, भारतीय कायद्यात तज्ञ AI कायदेशीर सहाय्यक.
+
+महत्वाचा नियम: तुम्ही केवळ मराठीतच उत्तर द्या.
+
+भारतीय कायद्यांबद्दल तपशीलवार आणि सर्वसमावेशक कायदेशीर माहिती प्रदान करा.
+संबंधित भारतीय कायदे, कायदे आणि कलमे यांचा उल्लेख करा.
+महत्वाच्या भारतीय कायदेशीर उदाहरणे आणि केस कायद्यांचा उल्लेख करा.
+व्यावहारिक उदाहरणांसह कायदेशीर संकल्पना स्पष्टपणे समजावून सांगा.
+भारतीय संदर्भासाठी व्यावहारिक परिणाम समाविष्ट करा.
+योग्य तेव्हा कृती करण्यायोग्य सल्ला द्या.
+
+उत्तर देताना:
+- स्पष्ट शीर्षकांसह तुमचे उत्तर संरचित करा
+- यादीसाठी बुलेट पॉइंट वापरा
+- महत्वाच्या शब्द आणि विभाग ठळक करा
+- संबंधित कायद्यांच्या संदर्भांचा समावेश करा
+- व्यावहारिक पुढील चरण प्रदान करा
+
+शेवटी नेहमी ही सूचना समाविष्ट करा:
+"सूचना: ही माहिती केवळ शैक्षणिक हेतूंसाठी आहे आणि कायदेशीर सल्ला नाही. विशिष्ट कायदेशीर बाबींसाठी पात्र वकीलांचा सल्ला घ्या."`
+            };
+            
+            return prompts[language] || prompts['english'];
+        }
+        
+        // Check if user is asking for document
+        function isDocumentRequest(message) {
+            const docKeywords = [
+                'draft', 'template', 'format', 'document', 'agreement', 
+                'contract', 'nda', 'non disclosure', 'employment', 
+                'rental', 'loan', 'will', 'testament', 'legal document',
+                'ready made', 'sample', 'example', 'form', 'प्रारूप',
+                'मसौदा', 'दस्तावेज़', 'समझौता', 'अनुबंध', 'करार',
+                'ड्राफ्ट', 'टेम्पलेट', 'फॉर्मेट', 'सैंपल'
+            ];
+            
+            const lowerMessage = message.toLowerCase();
+            return docKeywords.some(keyword => lowerMessage.includes(keyword));
+        }
+        
+        // Check which document type is requested
+        function getRequestedDocumentType(message) {
+            const lowerMessage = message.toLowerCase();
+            
+            if (lowerMessage.includes('nda') || lowerMessage.includes('non disclosure') || lowerMessage.includes('confidentiality')) {
+                return 'nda';
+            } else if (lowerMessage.includes('employment') || lowerMessage.includes('job') || lowerMessage.includes('employee')) {
+                return 'employment';
+            } else if (lowerMessage.includes('rental') || lowerMessage.includes('tenancy') || lowerMessage.includes('lease')) {
+                return 'rental';
+            } else if (lowerMessage.includes('loan') || lowerMessage.includes('lending') || lowerMessage.includes('borrow') || lowerMessage.includes('कर्ज')) {
+                return 'loan';
+            } else if (lowerMessage.includes('will') || lowerMessage.includes('testament') || lowerMessage.includes('inheritance')) {
+                return 'will';
+            }
+            
+            return null;
+        }
+        
+        // PRE-MADE LEGAL DOCUMENT TEMPLATES
+        const LEGAL_DOCUMENTS = {
+            'nda': {
+                title: "NON-DISCLOSURE AGREEMENT",
+                content: `NON-DISCLOSURE AGREEMENT
+
+This Non-Disclosure Agreement ("Agreement") is made on ${new Date().toLocaleDateString()} between:
+
+DISCLOSING PARTY:
+Name: ________________________________
+Address: _____________________________
+______________________________________
+
+RECEIVING PARTY:
+Name: ________________________________
+Address: _____________________________
+______________________________________
+
+1. DEFINITION OF CONFIDENTIAL INFORMATION
+For purposes of this Agreement, "Confidential Information" shall include all information or material that has or could have commercial value or other utility in the business in which Disclosing Party is engaged.
+
+2. OBLIGATIONS OF RECEIVING PARTY
+Receiving Party shall hold and maintain the Confidential Information in strictest confidence for the sole and exclusive benefit of the Disclosing Party.
+
+3. TIME PERIODS
+The nondisclosure provisions of this Agreement shall survive the termination of this Agreement and Receiving Party's duty to hold Confidential Information in confidence shall remain in effect until the Confidential Information no longer qualifies as a trade secret or until Disclosing Party sends Receiving Party written notice releasing Receiving Party from this Agreement.
+
+4. RELATIONSHIPS
+Nothing contained in this Agreement shall be deemed to constitute either party a partner, joint venturer or employee of the other party for any purpose.
+
+5. SEVERABILITY
+If a court finds any provision of this Agreement invalid or unenforceable, the remainder of this Agreement shall be interpreted so as best to effect the intent of the parties.
+
+6. INTEGRATION
+This Agreement expresses the complete understanding of the parties with respect to the subject matter and supersedes all prior proposals, agreements, representations and understandings.
+
+IN WITNESS WHEREOF, the parties have executed this Agreement as of the date first written above.
+
+DISCLOSING PARTY:
+___________________________
+Signature
+___________________________
+Name
+___________________________
+Title
+___________________________
+Date
+
+RECEIVING PARTY:
+___________________________
+Signature
+___________________________
+Name
+___________________________
+Title
+___________________________
+Date
+
+Disclaimer: This template is for educational purposes only. Consult a qualified attorney before use.
+
+[DOWNLOAD READY]`
+            },
+            
+            'employment': {
+                title: "EMPLOYMENT AGREEMENT",
+                content: `EMPLOYMENT AGREEMENT
+
+This Employment Agreement ("Agreement") is made on ${new Date().toLocaleDateString()} between:
+
+EMPLOYER:
+Company Name: _________________________
+Address: ______________________________
+_______________________________________
+
+EMPLOYEE:
+Name: _________________________________
+Address: ______________________________
+_______________________________________
+
+1. POSITION AND DUTIES
+Employee shall serve as _________________________________. Employee shall perform all duties customary to such position and such other duties as may be assigned by Employer.
+
+2. TERM OF EMPLOYMENT
+Employee's employment shall commence on _________________ and shall continue until terminated as provided herein.
+
+3. COMPENSATION
+As full compensation for all services rendered, Employer shall pay Employee:
+- Base Salary: ₹__________ per month
+- Payment Date: 7th of each month
+
+4. WORKING HOURS
+Employee's normal working hours shall be from 9:00 AM to 6:00 PM, Monday through Friday, with one hour lunch break.
+
+5. LEAVE ENTITLEMENT
+Employee shall be entitled to:
+- Paid Leave: 12 days per year
+- Sick Leave: 12 days per year
+- National Holidays: As per Indian law
+
+6. CONFIDENTIALITY
+Employee agrees not to disclose any confidential information of Employer during or after employment.
+
+7. TERMINATION
+This Agreement may be terminated by either party giving 30 days written notice.
+
+8. GOVERNING LAW
+This Agreement shall be governed by the laws of India.
+
+IN WITNESS WHEREOF, the parties have executed this Agreement as of the date first written above.
+
+EMPLOYER:
+___________________________
+Signature
+___________________________
+Name
+___________________________
+Title
+___________________________
+Date
+
+EMPLOYEE:
+___________________________
+Signature
+___________________________
+Name
+___________________________
+Date
+
+Disclaimer: This template is for educational purposes only. Consult a qualified attorney before use.
+
+[DOWNLOAD READY]`
+            },
+            
+            'rental': {
+                title: "RENTAL AGREEMENT",
+                content: `RENTAL AGREEMENT
+
+This Rental Agreement ("Agreement") is made on ${new Date().toLocaleDateString()} between:
+
+LANDLORD:
+Name: _________________________________
+Address: ______________________________
+_______________________________________
+
+TENANT:
+Name: _________________________________
+Address: ______________________________
+_______________________________________
+
+PROPERTY ADDRESS:
+_______________________________________
+_______________________________________
+
+1. TERM OF AGREEMENT
+This Agreement shall commence on _________________ and continue until _________________.
+
+2. RENT AMOUNT AND PAYMENT
+Tenant agrees to pay ₹__________ per month, payable in advance on the 1st day of each month.
+
+3. SECURITY DEPOSIT
+Tenant shall deposit ₹__________ as security deposit, refundable at the end of tenancy subject to deductions for damages.
+
+4. UTILITIES
+Tenant shall be responsible for payment of all electricity, water, and gas charges for the premises.
+
+5. MAINTENANCE
+Landlord shall be responsible for structural repairs. Tenant shall be responsible for minor repairs and maintenance.
+
+6. USE OF PREMISES
+The premises shall be used exclusively for residential purposes only.
+
+7. NOTICE PERIOD
+Either party may terminate this Agreement by giving one month's written notice.
+
+8. GOVERNING LAW
+This Agreement shall be governed by the laws of India.
+
+IN WITNESS WHEREOF, the parties have executed this Agreement as of the date first written above.
+
+LANDLORD:
+___________________________
+Signature
+___________________________
+Name
+___________________________
+Witness Name
+___________________________
+Witness Address
+___________________________
+Date
+
+TENANT:
+___________________________
+Signature
+___________________________
+Name
+___________________________
+Witness Name
+___________________________
+Witness Address
+___________________________
+Date
+
+Disclaimer: This template is for educational purposes only. Consult a qualified attorney before use.
+
+[DOWNLOAD READY]`
+            },
+            
+            'loan': {
+                title: "LOAN AGREEMENT",
+                content: `LOAN AGREEMENT
+
+This Loan Agreement ("Agreement") is made on ${new Date().toLocaleDateString()} between:
+
+LENDER:
+Name: _________________________________
+Address: ______________________________
+_______________________________________
+
+BORROWER:
+Name: _________________________________
+Address: ______________________________
+_______________________________________
+
+1. LOAN AMOUNT
+Lender agrees to lend Borrower the sum of ₹__________ (Indian Rupees ___________________________).
+
+2. INTEREST RATE
+Interest shall be charged at the rate of ____% per annum.
+
+3. REPAYMENT TERMS
+The loan shall be repaid in __________ equal monthly installments of ₹__________ each, commencing on _________________.
+
+4. SECURITY
+[Describe any security provided for the loan]
+
+5. DEFAULT
+If Borrower fails to make any payment within 15 days of due date, the entire outstanding amount shall become immediately due.
+
+6. PREPAYMENT
+Borrower may prepay the loan in whole or in part without any prepayment penalty.
+
+7. GOVERNING LAW
+This Agreement shall be governed by the laws of India.
+
+8. JURISDICTION
+Any disputes shall be subject to the jurisdiction of courts in _________________.
+
+IN WITNESS WHEREOF, the parties have executed this Agreement as of the date first written above.
+
+LENDER:
+___________________________
+Signature
+___________________________
+Name
+___________________________
+Witness Name
+___________________________
+Witness Address
+___________________________
+Date
+
+BORROWER:
+___________________________
+Signature
+___________________________
+Name
+___________________________
+Witness Name
+___________________________
+Witness Address
+___________________________
+Date
+
+Disclaimer: This template is for educational purposes only. Consult a qualified attorney before use.
+
+[DOWNLOAD READY]`
+            }
+        };
         
         // Add message to chat
         function addMessageToChat(content, isUser, fromHistory = false, isDocument = false) {
