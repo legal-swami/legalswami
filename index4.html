@@ -6,16 +6,110 @@
     <title>LegalSwami - AI Legal Assistant</title>
     
     <!-- jsPDF Library for PDF generation -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous"></script>
 
-<!-- Google Identity Services library -->
-<script src="https://accounts.google.com/gsi/client" async defer crossorigin="anonymous"></script>
+    <!-- Google Identity Services library - COMMENTED FOR FUTURE INTEGRATION -->
+    <!-- <script src="https://accounts.google.com/gsi/client" async defer crossorigin="anonymous"></script> -->
 
-<!-- Emoji Mart CSS -->
-<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@emoji-mart/css@latest/emoji-mart.css" crossorigin="anonymous">
-<script src="https://cdn.jsdelivr.net/npm/@emoji-mart/data@latest/emoji-mart-data.js" crossorigin="anonymous"></script>
-<script src="https://cdn.jsdelivr.net/npm/@emoji-mart/react@latest/dist/index.umd.js" crossorigin="anonymous"></script>
-	
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Simple emoji parsing without CORS issues -->
+    <script>
+    // Simple emoji parser for local files
+    function parseEmojis(element) {
+        if (!element) return;
+        
+        const emojiMap = {
+            // Legal emojis
+            '⚖️': '⚖️', '📝': '📝', '🤝': '🤝', '📄': '📄', '📚': '📚',
+            '🏛️': '🏛️', '👨‍⚖️': '👨‍⚖️', '👨‍💼': '👨‍💼', '👤': '👤', '🏠': '🏠',
+            '💰': '💰', '⏰': '⏰', '📅': '📅', '✍️': '✍️', '👀': '👀',
+            '🔍': '🔍', '📋': '📋', '✅': '✅', '❌': '❌', '⚠️': '⚠️',
+            
+            // Status emojis
+            '🔒': '🔒', '🌐': '🌐', '🎤': '🎤', '📎': '📎', '📥': '📥',
+            '📤': '📤', '🔄': '🔄', '👍': '👍', '👎': '👎', '💡': '💡',
+            '❓': '❓', '💬': '💬', '📊': '📊', '📑': '📑', '✖️': '✖️',
+            
+            // User interface emojis
+            '👋': '👋', '🎉': '🎉', '😔': '😔', '😞': '😞', '👌': '👌',
+            '🧹': '🧹', '✏️': '✏️', '📋': '📋', '⏸️': '⏸️', '▶️': '▶️',
+            '🔽': '🔽', '📷': '📷', '👁️': '👁️', '🗑️': '🗑️', '📭': '📭',
+            '📂': '📂', '👆': '👆', '🔑': '🔑', '🌙': '🌙', '☀️': '☀️',
+            
+            // Country flags
+            '🇮🇳': '🇮🇳', '🇬🇧': '🇬🇧',
+            
+            // AI and tech
+            '🤖': '🤖', '🔐': '🔐', '📱': '📱', '💻': '💻', '☁️': '☁️',
+            '💾': '💾', '🚀': '🚀', '💬': '💬'
+        };
+        
+        // Convert emoji shortcodes to actual emojis
+        const shortcodeMap = {
+            ':scales:': '⚖️', ':memo:': '📝', ':handshake:': '🤝',
+            ':page_facing_up:': '📄', ':books:': '📚', ':classical_building:': '🏛️',
+            ':man_judge:': '👨‍⚖️', ':man_in_business_suit_levitating:': '👨‍💼',
+            ':bust_in_silhouette:': '👤', ':house:': '🏠', ':money_bag:': '💰',
+            ':alarm_clock:': '⏰', ':calendar:': '📅', ':writing_hand:': '✍️',
+            ':eyes:': '👀', ':magnifying_glass:': '🔍', ':clipboard:': '📋',
+            ':white_check_mark:': '✅', ':x:': '❌', ':warning:': '⚠️',
+            ':lock:': '🔒', ':globe_showing_americas:': '🌐',
+            ':microphone:': '🎤', ':paperclip:': '📎', ':inbox_tray:': '📥',
+            ':outbox_tray:': '📤', ':arrows_counterclockwise:': '🔄',
+            ':thumbsup:': '👍', ':thumbsdown:': '👎', ':bulb:': '💡',
+            ':question:': '❓', ':speech_balloon:': '💬', ':bar_chart:': '📊',
+            ':bookmark_tabs:': '📑', ':heavy_multiplication_x:': '✖️',
+            ':wave:': '👋', ':tada:': '🎉', ':pensive:': '😔',
+            ':disappointed:': '😞', ':ok_hand:': '👌', ':broom:': '🧹',
+            ':pencil2:': '✏️', ':clipboard:': '📋', ':pause_button:': '⏸️',
+            ':play_button:': '▶️', ':down_arrow:': '🔽', ':camera:': '📷',
+            ':eye:': '👁️', ':wastebasket:': '🗑️', ':mailbox_closed:': '📭',
+            ':file_folder:': '📂', ':backhand_index_pointing_up:': '👆',
+            ':old_key:': '🔑', ':crescent_moon:': '🌙', ':sun:': '☀️',
+            ':flag_in:': '🇮🇳', ':flag_gb:': '🇬🇧', ':robot:': '🤖',
+            ':locked_with_key:': '🔐', ':mobile_phone:': '📱',
+            ':laptop:': '💻', ':cloud:': '☁️', ':floppy_disk:': '💾',
+            ':rocket:': '🚀', ':speech_balloon:': '💬'
+        };
+        
+        // Process text nodes
+        function processTextNode(node) {
+            if (node.nodeType === Node.TEXT_NODE) {
+                let text = node.textContent;
+                
+                // Replace shortcodes
+                Object.keys(shortcodeMap).forEach(shortcode => {
+                    const emoji = shortcodeMap[shortcode];
+                    text = text.replace(new RegExp(shortcode, 'g'), emoji);
+                });
+                
+                // Replace common emoji patterns
+                Object.keys(emojiMap).forEach(emoji => {
+                    text = text.replace(new RegExp(emoji, 'g'), emoji);
+                });
+                
+                if (text !== node.textContent) {
+                    const span = document.createElement('span');
+                    span.innerHTML = text;
+                    node.parentNode.replaceChild(span, node);
+                }
+            } else if (node.nodeType === Node.ELEMENT_NODE) {
+                // Process child nodes
+                Array.from(node.childNodes).forEach(processTextNode);
+            }
+        }
+        
+        processTextNode(element);
+    }
+    
+    // Parse all emojis in document
+    window.parseAllEmojis = function() {
+        parseEmojis(document.body);
+    };
+    </script>
+
 <style>
 :root {
     --primary: #10a37f;
@@ -100,7 +194,7 @@ body.light-mode {
     }
 }
 		
-/* Google Sign In Button Container - UPDATED FOR ANDROID */
+/* Google Sign In Button Container - COMMENTED FOR FUTURE INTEGRATION */
 .google-btn-container {
     width: 100%;
     margin: 1.5rem 0;
@@ -3929,6 +4023,321 @@ header {
     background: var(--light-border);
 }
 
+/* NEW: Emoji styles for messages */
+.message-text-with-emoji {
+    display: inline;
+}
+
+.emoji-in-message {
+    font-size: 1.2em;
+    vertical-align: middle;
+    margin: 0 2px;
+}
+
+/* Send button disabled state */
+.send-button:disabled {
+    background: var(--dark-border) !important;
+    cursor: not-allowed !important;
+    opacity: 0.5 !important;
+}
+
+/* Stop button style */
+.stop-button {
+    background: linear-gradient(135deg, var(--error) 0%, #dc2626 100%) !important;
+    color: white !important;
+}
+
+.stop-button:hover {
+    background: linear-gradient(135deg, var(--error) 0%, #b91c1c 100%) !important;
+}
+
+/* MOBILE VIEW HEADER FIX */
+@media (max-width: 767px) {
+    .header-actions {
+        flex-wrap: nowrap;
+        justify-content: flex-start;
+        gap: 5px;
+        padding-bottom: 5px;
+        -webkit-overflow-scrolling: touch;
+        overflow-x: auto;
+        overflow-y: hidden;
+        min-height: 44px;
+        align-items: center;
+    }
+    
+    .status-indicator {
+        display: flex;
+        white-space: nowrap;
+        padding: 6px 10px;
+        margin: 0;
+    }
+    
+    .search-counter {
+        display: flex;
+        white-space: nowrap;
+        padding: 6px 10px;
+        margin: 0;
+    }
+    
+    .header-btn {
+        flex-shrink: 0;
+        padding: 8px 10px;
+        min-height: 36px;
+    }
+    
+    .login-btn {
+        flex-shrink: 0;
+        padding: 8px 12px;
+        min-height: 36px;
+    }
+    
+    .logo {
+        min-width: auto;
+    }
+    
+    .logo h1 {
+        font-size: 1rem;
+    }
+    
+    /* Hide extra buttons in mobile view - show only essential */
+    .header-btn:not(.login-btn):not(.theme-toggle):not(.voice-search-btn) {
+        display: none;
+    }
+    
+    /* Show only AI Assistant Ready, Login button, and theme toggle */
+    .status-indicator span {
+        display: inline !important;
+        font-size: 0.75rem;
+    }
+    
+    .search-counter span {
+        display: inline !important;
+        font-size: 0.75rem;
+    }
+    
+    .login-btn span {
+        display: inline !important;
+        font-size: 0.75rem;
+    }
+    
+    /* Scroll to bottom button position fix for mobile */
+    .scroll-to-bottom-btn {
+        bottom: 80px;
+        right: 15px;
+        width: 36px;
+        height: 36px;
+    }
+}
+
+/* UNIVERSAL MOBILE UI FIXES */
+@media (max-width: 767px) {
+    /* Ensure all phones show same UI */
+    body, html {
+        -webkit-text-size-adjust: 100%;
+        -webkit-tap-highlight-color: rgba(0,0,0,0);
+    }
+    
+    .container {
+        width: 100%;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    header {
+        width: 100%;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+        background: var(--dark-surface);
+        padding: 10px 12px;
+        min-height: 60px;
+    }
+    
+    .chat-container {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        overflow: hidden;
+    }
+    
+    .chat-messages {
+        flex: 1;
+        width: 100%;
+        padding: 12px;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .message {
+        width: 100%;
+        max-width: 100%;
+        margin-bottom: 12px;
+    }
+    
+    .message-content {
+        max-width: 85%;
+    }
+    
+    .input-container {
+        width: 100%;
+        padding: 10px 12px;
+        background: var(--dark-bg);
+        border-top: 1px solid var(--dark-border);
+        position: sticky;
+        bottom: 0;
+        z-index: 100;
+    }
+    
+    .input-area {
+        width: 100%;
+        position: relative;
+    }
+    
+    textarea {
+        width: 100%;
+        padding-right: 100px !important;
+    }
+    
+    .input-buttons {
+        position: absolute;
+        right: 8px;
+        bottom: 8px;
+        display: flex;
+        gap: 6px;
+    }
+    
+    /* Fix for Samsung, Realme, Redmi specific issues */
+    * {
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+    }
+    
+    /* Fix for input box on different devices */
+    input, textarea, button {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+        border-radius: 8px;
+    }
+    
+    /* Fix for button tap highlight */
+    button {
+        -webkit-tap-highlight-color: transparent;
+    }
+    
+    /* Ensure sidebar works on all devices */
+    .sidebar {
+        width: 85%;
+        max-width: 300px;
+        z-index: 1001;
+    }
+    
+    /* Fix for modal display */
+    .modal-overlay {
+        padding: 10px;
+        align-items: center;
+        justify-content: center;
+    }
+    
+    .modal {
+        width: 95%;
+        max-width: 400px;
+        max-height: 80vh;
+    }
+}
+
+/* SPECIFIC FIX FOR SEND BUTTON HIDING ON SOME DEVICES */
+@media (max-width: 767px) {
+    .input-buttons {
+        right: 8px;
+        bottom: 8px;
+        gap: 6px;
+        z-index: 10;
+    }
+    
+    .send-button {
+        min-width: 60px;
+        padding: 8px 12px;
+        font-size: 0.85rem;
+    }
+    
+    .attachment-btn,
+    .input-microphone-btn,
+    .emoji-picker-btn {
+        width: 32px;
+        height: 32px;
+        padding: 6px;
+    }
+    
+    /* Ensure textarea has enough padding for buttons */
+    .input-area textarea {
+        padding-right: 110px !important;
+        min-height: 48px;
+        font-size: 0.95rem;
+    }
+}
+
+/* FIX FOR VERY SMALL SCREENS */
+@media (max-width: 360px) {
+    .header-actions {
+        gap: 4px;
+    }
+    
+    .status-indicator span,
+    .search-counter span,
+    .login-btn span {
+        font-size: 0.7rem;
+    }
+    
+    .status-indicator,
+    .search-counter {
+        padding: 5px 8px;
+    }
+    
+    .input-buttons {
+        right: 6px;
+        bottom: 6px;
+        gap: 4px;
+    }
+    
+    .send-button {
+        min-width: 55px;
+        padding: 7px 10px;
+        font-size: 0.8rem;
+    }
+    
+    .input-area textarea {
+        padding-right: 100px !important;
+    }
+}
+
+/* FIX FOR INPUT MICROPHONE AND EMOJI BUTTONS */
+.emoji-picker-btn {
+    display: flex !important;
+}
+
+.input-microphone-btn {
+    display: flex !important;
+}
+
+.attachment-btn {
+    display: flex !important;
+}
+
+/* FORCE SHOW ALL INPUT BUTTONS ON MOBILE */
+@media (max-width: 767px) {
+    .emoji-picker-btn,
+    .attachment-btn,
+    .input-microphone-btn,
+    .send-button {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+    }
+}
+
 </style>
 </head>
 <body>
@@ -3968,16 +4377,16 @@ header {
                     </div>
                 </div>
 				
-				<!-- Google Sign In Button Container -->
+				<!-- Google Sign In Button Container - COMMENTED FOR FUTURE INTEGRATION -->
+				<!--
 				<div id="googleSignInContainer" class="google-btn-container">
-				    <!-- Google Sign-in button will load here -->
 				    <div id="googleSignInDiv"></div>
-				    <!-- Fallback custom button for Android WebView -->
 				    <button class="custom-google-btn" id="customGoogleBtn" style="display: none;">
 				        <i class="fab fa-google"></i>
 				        <span>Sign in with Google</span>
 				    </button>
 				</div>
+				-->
                 
                 <!-- Guest Login Button -->
                 <button class="google-login-btn" id="guestLoginBtn">
@@ -3989,9 +4398,9 @@ header {
                     <p>Chat history will be saved locally in your browser</p>
                 </div>
 				
-				<!-- UNCOMMENT THIS WHEN DEPLOYING TO WEB SERVER -->
-                 <div style="text-align: center; margin-top: 1rem; font-size: 0.9rem; color: var(--dark-text-secondary);">
-                    <p>Sign in with Google for unlimited searches and cloud sync</p>
+				<!-- FUTURE INTEGRATION NOTE -->
+                 <div style="text-align: center; margin-top: 1rem; font-size: 0.9rem; color: var(--primary); padding: 10px; background: rgba(16, 163, 127, 0.1); border-radius: 8px; border: 1px solid rgba(16, 163, 127, 0.3);">
+                    <p><i class="fas fa-code-branch"></i> Google Login integration coming soon</p>
                 </div> 
             </div>
             
@@ -4017,19 +4426,19 @@ header {
             <div class="header-actions">
                 <div class="status-indicator">
                     <div class="status-dot"></div>
-                    <span class="hide-on-mobile">AI Assistant Ready</span>
+                    <span>AI Assistant Ready</span>
                 </div>
                 
                 <!-- Search Counter Display -->
                 <div class="search-counter" id="searchCounter">
                     <i class="fas fa-search"></i>
-                    <span class="hide-on-mobile">Free searches: 100/100</span>
+                    <span>Free searches: 100/100</span>
                 </div>
                 
                 <!-- Login Button -->
                 <button class="login-btn" id="headerLoginBtn">
                     <i class="fas fa-sign-in-alt"></i>
-                    <span class="hide-on-mobile">Login</span>
+                    <span>Login</span>
                 </button>
                 
                 <button class="header-btn voice-search-btn" id="voiceSearchBtn" title="Voice Search">
@@ -4278,14 +4687,11 @@ header {
                                 <i class="fas fa-microphone"></i>
                             </button>
                             
-                            <!-- Send Button -->
+                            <!-- Send/Stop Button -->
                             <button class="send-button" id="sendButton">
                                 <i class="fas fa-paper-plane"></i> <span class="hide-on-mobile">Send</span>
                             </button>
                         </div>
-                        
-                        <!-- Emoji Picker Container -->
-                        <div class="emoji-picker-container" id="emojiPickerContainer"></div>
                     </div>
                 </div>
             </main>
@@ -4516,22 +4922,21 @@ header {
     
     // Streaming control
     let isStreamingPaused = false;
+    let isStreamingActive = false;
+    let stopStreamingRequested = false;
     
     // User Management
     let currentUser = null;
     let isLoggedIn = false;
     let userToken = null;
     
-    // User search counter system
+    // User search counter system - CHANGED TO 500 PER DAY
     let searchCount = 0;
-    const MAX_FREE_SEARCHES = 100;
+    const MAX_FREE_SEARCHES = 500; // CHANGED FROM 100 TO 500
     const MAX_PREMIUM_SEARCHES = 1000;
     
     // Scroll position
     let scrollPosition = 0;
-    
-    // Emoji picker
-    let emojiPicker = null;
     
     // Downloaded file URL for notification
     let lastDownloadedFileUrl = null;
@@ -4605,636 +5010,13 @@ header {
     `;
     
     // ============================================
-    // ANDROID WEBVIEW DETECTION
-    // ============================================
-    function isAndroidWebView() {
-        const userAgent = navigator.userAgent.toLowerCase();
-        const isAndroid = /android/.test(userAgent);
-        const isWebView = /wv|webview/.test(userAgent);
-        const isChrome = /chrome/.test(userAgent);
-        
-        // Check for Android WebView specifically
-        if (isAndroid && (isWebView || (!isChrome && /version/.test(userAgent)))) {
-            return true;
-        }
-        
-        // Additional check for WebView in user agent
-        if (userAgent.includes('wv') || userAgent.includes('webview')) {
-            return true;
-        }
-        
-        return false;
-    }
-    
-    // Check for iOS WebView
-    function isIOSWebView() {
-        const userAgent = navigator.userAgent.toLowerCase();
-        const isIOS = /iphone|ipad|ipod/.test(userAgent);
-        const isSafari = /safari/.test(userAgent);
-        const isChrome = /crios/.test(userAgent);
-        
-        // iOS WebView detection
-        if (isIOS && !isSafari && !isChrome) {
-            return true;
-        }
-        
-        return false;
-    }
-    
-    // ============================================
-    // GOOGLE LOGIN FUNCTIONS - ANDROID COMPATIBLE
+    // GOOGLE LOGIN FUNCTIONS - COMMENTED FOR FUTURE INTEGRATION
     // ============================================
     
-    // Initialize Google Sign-in with Android WebView compatibility
-    function initializeGoogleSignIn() {
-        console.log("Initializing Google Sign-in...");
-        console.log("User Agent:", navigator.userAgent);
-        
-        const container = document.getElementById('googleSignInContainer');
-        const customBtn = document.getElementById('customGoogleBtn');
-        
-        if (!container) {
-            console.error("Google sign-in container not found");
-            return;
-        }
-        
-        // Check if we're in Android WebView or iOS WebView
-        const isInWebView = isAndroidWebView() || isIOSWebView();
-        console.log("Is in WebView:", isInWebView);
-        
-        if (isInWebView) {
-            // For WebView, use a custom button that opens OAuth in browser
-            console.log("Using WebView-compatible Google login");
-            
-            container.innerHTML = '';
-            customBtn.style.display = 'flex';
-            customBtn.innerHTML = `
-                <i class="fab fa-google"></i>
-                <span>Sign in with Google</span>
-            `;
-            
-            customBtn.onclick = function() {
-                initiateWebViewGoogleLogin();
-            };
-            
-            return;
-        }
-        
-        // For regular browsers, use standard Google Sign-in
-        console.log("Using standard Google Sign-in");
-        
-        // Clear container
-        container.innerHTML = '<div id="googleSignInDiv"></div>';
-        customBtn.style.display = 'none';
-        
-        // Check if Google Identity Services is loaded
-        if (!window.google) {
-            console.log("Loading Google Identity Services...");
-            
-            // Remove any existing script
-            const existingScript = document.querySelector('script[src*="accounts.google.com"]');
-            if (existingScript) {
-                existingScript.remove();
-            }
-            
-            // Create new script
-            const script = document.createElement('script');
-            script.src = "https://accounts.google.com/gsi/client";
-            script.async = true;
-            script.defer = true;
-            script.onload = function() {
-                console.log("Google Identity Services loaded");
-                renderGoogleButton();
-            };
-            script.onerror = function() {
-                console.error("Failed to load Google Identity Services");
-                showToast('Unable to load Google Sign-in. Please try again.', 'error');
-                // Fallback to custom button
-                container.innerHTML = '';
-                customBtn.style.display = 'flex';
-                customBtn.innerHTML = `
-                    <i class="fab fa-google"></i>
-                    <span>Sign in with Google (Click to retry)</span>
-                `;
-                customBtn.onclick = function() {
-                    initiateWebViewGoogleLogin();
-                };
-            };
-            
-            document.head.appendChild(script);
-        } else {
-            console.log("Google Identity Services already loaded");
-            renderGoogleButton();
-        }
-        
-        function renderGoogleButton() {
-            // Wait a bit to ensure Google API is ready
-            setTimeout(() => {
-                if (window.google && window.google.accounts && window.google.accounts.id) {
-                    console.log("Rendering Google button...");
-                    
-                    // Configure Google Sign-in
-                    window.google.accounts.id.initialize({
-                        client_id: "166511615962-bohur5q8d4i5hud6icr4185kcte9enk8.apps.googleusercontent.com",
-                        callback: handleGoogleLogin,
-                        auto_select: false,
-                        cancel_on_touch_outside: true,
-                        prompt_parent_id: 'googleSignInDiv'
-                    });
-                    
-                    // Render button
-                    window.google.accounts.id.renderButton(
-                        document.getElementById('googleSignInDiv'),
-                        {
-                            type: "standard",
-                            theme: "outline",
-                            size: "large",
-                            text: "signin_with",
-                            shape: "rectangular",
-                            logo_alignment: "left",
-                            width: container.offsetWidth
-                        }
-                    );
-                    
-                    console.log("Google button rendered successfully");
-                } else {
-                    console.error("Google API not available");
-                    // Fallback to custom button
-                    container.innerHTML = '';
-                    customBtn.style.display = 'flex';
-                    customBtn.innerHTML = `
-                        <i class="fab fa-google"></i>
-                        <span>Sign in with Google (Fallback)</span>
-                    `;
-                    customBtn.onclick = function() {
-                        initiateWebViewGoogleLogin();
-                    };
-                }
-            }, 500);
-        }
-    }
-    
-    // WebView-compatible Google Login
-    function initiateWebViewGoogleLogin() {
-        console.log("Initiating WebView-compatible Google login...");
-        
-        // For WebView, we need to open Google OAuth in a browser
-        const clientId = "166511615962-bohur5q8d4i5hud6icr4185kcte9enk8.apps.googleusercontent.com";
-        const redirectUri = window.location.origin + window.location.pathname;
-        const scope = "profile email";
-        
-        // Generate state to prevent CSRF
-        const state = Math.random().toString(36).substring(2);
-        localStorage.setItem('googleOAuthState', state);
-        
-        // Build OAuth URL
-        const oauthUrl = `https://accounts.google.com/o/oauth2/v2/auth?` +
-            `client_id=${encodeURIComponent(clientId)}` +
-            `&redirect_uri=${encodeURIComponent(redirectUri)}` +
-            `&response_type=token` +
-            `&scope=${encodeURIComponent(scope)}` +
-            `&state=${encodeURIComponent(state)}` +
-            `&prompt=consent`;
-        
-        console.log("Opening OAuth URL:", oauthUrl);
-        
-        // Try to open in new window/tab
-        if (isAndroidWebView() || isIOSWebView()) {
-            // For WebView, we need to use a different approach
-            showToast("Opening Google login in browser...", "info");
-            
-            // Try to open in a new window
-            const newWindow = window.open(oauthUrl, '_blank', 'location=yes');
-            
-            if (!newWindow) {
-                // If popup blocked, redirect current window
-                showToast("Popup blocked. Redirecting...", "warning");
-                setTimeout(() => {
-                    window.location.href = oauthUrl;
-                }, 1000);
-            }
-        } else {
-            // For regular browsers, open in popup
-            const width = 500;
-            const height = 600;
-            const left = (window.innerWidth - width) / 2;
-            const top = (window.innerHeight - height) / 2;
-            
-            const popup = window.open(
-                oauthUrl,
-                'googleOAuth',
-                `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes,toolbar=no,menubar=no,location=no,directories=no,status=yes`
-            );
-            
-            if (!popup) {
-                showToast("Popup blocked. Please allow popups for this site.", "error");
-                return;
-            }
-            
-            // Check for OAuth response
-            const checkPopup = setInterval(() => {
-                try {
-                    if (popup.closed) {
-                        clearInterval(checkPopup);
-                        showToast("Login window closed", "info");
-                    }
-                    
-                    // Check if popup has redirected to our page with token
-                    const popupUrl = popup.location.href;
-                    if (popupUrl && popupUrl.includes(window.location.origin)) {
-                        clearInterval(checkPopup);
-                        popup.close();
-                        
-                        // Extract token from URL
-                        const hash = popup.location.hash;
-                        if (hash) {
-                            processOAuthResponse(hash);
-                        }
-                    }
-                } catch (e) {
-                    // Cross-origin error, ignore
-                }
-            }, 100);
-        }
-    }
-    
-    // Process OAuth response from redirect
-    function processOAuthResponse(hash) {
-        console.log("Processing OAuth response:", hash);
-        
-        // Parse hash parameters
-        const params = new URLSearchParams(hash.substring(1));
-        const accessToken = params.get('access_token');
-        const state = params.get('state');
-        const error = params.get('error');
-        
-        // Check state to prevent CSRF
-        const savedState = localStorage.getItem('googleOAuthState');
-        if (state !== savedState) {
-            showToast("Security error: Invalid state", "error");
-            return;
-        }
-        
-        // Clear state
-        localStorage.removeItem('googleOAuthState');
-        
-        if (error) {
-            showToast(`Google login error: ${error}`, "error");
-            return;
-        }
-        
-        if (!accessToken) {
-            showToast("No access token received", "error");
-            return;
-        }
-        
-        // Get user info using access token
-        getUserInfoFromToken(accessToken);
-    }
-    
-    // Get user info from Google access token
-    function getUserInfoFromToken(accessToken) {
-        console.log("Getting user info from token...");
-        
-        fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
-            headers: {
-                'Authorization': `Bearer ${accessToken}`
-            }
-        })
-        .then(response => response.json())
-        .then(userInfo => {
-            console.log("User info received:", userInfo);
-            
-            if (userInfo.error) {
-                showToast(`Error: ${userInfo.error}`, "error");
-                return;
-            }
-            
-            // Process user login
-            processGoogleUserLogin(userInfo, accessToken);
-        })
-        .catch(error => {
-            console.error("Error fetching user info:", error);
-            showToast("Failed to get user information", "error");
-        });
-    }
-    
-    // Process Google user login
-    function processGoogleUserLogin(userInfo, token) {
-        const userData = {
-            id: userInfo.sub,
-            name: userInfo.name,
-            email: userInfo.email,
-            picture: userInfo.picture,
-            isGuest: false
-        };
-        
-        // Set user and token
-        currentUser = userData;
-        userToken = token;
-        isLoggedIn = true;
-        
-        // Save to localStorage
-        localStorage.setItem('legalSwamiUser', JSON.stringify(userData));
-        localStorage.setItem('legalSwamiToken', userToken);
-        
-        // Hide login modal and show app
-        document.getElementById('loginModal').classList.remove('active');
-        document.getElementById('appContainer').style.display = 'flex';
-        
-        // Update UI
-        updateUserUI();
-        
-        // Initialize chat
-        initializeChatApp();
-        
-        // Load user's chat history
-        loadUserChatHistory();
-        
-        // Show welcome message
-        showToast(`Welcome, ${userData.name}!`, 'success');
-    }
-    
-    // Handle Google login callback (for standard flow)
-    window.handleGoogleLogin = function(response) {
-        console.log('Google login response received:', response);
-        
-        // Check if we have a credential
-        if (!response || !response.credential) {
-            console.error('No credential in response:', response);
-            showToast('Login failed. No credential received.', 'error');
-            return;
-        }
-        
-        // Decode the JWT token
-        const decodedToken = decodeJWT(response.credential);
-        if (!decodedToken) {
-            showToast('Login failed. Invalid token.', 'error');
-            return;
-        }
-        
-        // Extract user info
-        const userInfo = {
-            id: decodedToken.sub,
-            name: decodedToken.name,
-            email: decodedToken.email,
-            picture: decodedToken.picture,
-            isGuest: false
-        };
-        
-        // Set user and token
-        currentUser = userInfo;
-        userToken = response.credential;
-        isLoggedIn = true;
-        
-        // Save to localStorage
-        localStorage.setItem('legalSwamiUser', JSON.stringify(userInfo));
-        localStorage.setItem('legalSwamiToken', userToken);
-        
-        // Hide login modal and show app
-        document.getElementById('loginModal').classList.remove('active');
-        document.getElementById('appContainer').style.display = 'flex';
-        
-        // Update UI
-        updateUserUI();
-        
-        // Initialize chat
-        initializeChatApp();
-        
-        // Load user's chat history
-        loadUserChatHistory();
-        
-        // Show welcome message
-        showToast(`Welcome, ${userInfo.name}!`, 'success');
-        
-        // Reset Google button state if needed
-        if (window.google && window.google.accounts && window.google.accounts.id) {
-            window.google.accounts.id.cancel();
-        }
-    };
-    
-    // Decode JWT token
-    function decodeJWT(token) {
-        try {
-            const base64Url = token.split('.')[1];
-            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-            const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
-                return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-            }).join(''));
-            
-            return JSON.parse(jsonPayload);
-        } catch (error) {
-            console.error('Error decoding JWT:', error);
-            return null;
-        }
-    }
-    
-    // Google logout
-    function googleLogout() {
-        // Clear local storage
-        localStorage.removeItem('legalSwamiUser');
-        localStorage.removeItem('legalSwamiToken');
-        
-        // Clear user data
-        currentUser = null;
-        userToken = null;
-        isLoggedIn = false;
-        
-        // Reset chat
-        chatHistory = [];
-        conversationHistory = [];
-        currentChatId = null;
-        
-        // Show login modal
-        document.getElementById('loginModal').classList.add('active');
-        document.getElementById('appContainer').style.display = 'none';
-        
-        // Clear UI
-        document.getElementById('userProfile').style.display = 'none';
-        document.getElementById('headerLoginBtn').style.display = 'flex';
-        
-        showToast('Logged out successfully', 'success');
-    }
-    
-    // Check URL for OAuth token (for WebView redirect)
-    function checkUrlForOAuthToken() {
-        console.log("Checking URL for OAuth token...");
-        
-        // Check hash for token (implicit flow)
-        if (window.location.hash) {
-            console.log("Found hash in URL:", window.location.hash);
-            
-            const hash = window.location.hash;
-            if (hash.includes('access_token') || hash.includes('id_token')) {
-                console.log("Processing OAuth token from URL hash");
-                processOAuthResponse(hash);
-                
-                // Clear hash from URL
-                window.history.replaceState({}, document.title, window.location.pathname);
-                return true;
-            }
-        }
-        
-        // Check query parameters (authorization code flow)
-        if (window.location.search) {
-            const params = new URLSearchParams(window.location.search);
-            const code = params.get('code');
-            const state = params.get('state');
-            
-            if (code && state) {
-                console.log("Found authorization code in URL");
-                // Handle authorization code flow
-                // You would need to exchange code for token here
-                
-                // Clear query from URL
-                window.history.replaceState({}, document.title, window.location.pathname);
-                return true;
-            }
-        }
-        
-        return false;
-    }
-    
-    // Initialize
-    document.addEventListener('DOMContentLoaded', function() {
-        console.log("DOM loaded, initializing app...");
-        console.log("User Agent:", navigator.userAgent);
-        console.log("Is Android WebView:", isAndroidWebView());
-        console.log("Is iOS WebView:", isIOSWebView());
-        
-        // First check for OAuth redirect
-        if (checkUrlForOAuthToken()) {
-            console.log("Processing OAuth redirect...");
-            return;
-        }
-        
-        // Check if user is already logged in
-        if (checkExistingLogin()) {
-            return;
-        }
-        
-        // Initialize search counter
-        initializeSearchCounter();
-        
-        // Initialize Google Sign-in
-        initializeGoogleSignIn();
-        
-        // Show login modal
-        document.getElementById('loginModal').classList.add('active');
-    });
-    
-    // Check for existing login
-    function checkExistingLogin() {
-        try {
-            const savedUser = localStorage.getItem('legalSwamiUser');
-            const savedToken = localStorage.getItem('legalSwamiToken');
-            
-            if (savedUser && savedToken) {
-                currentUser = JSON.parse(savedUser);
-                userToken = savedToken;
-                isLoggedIn = true;
-                
-                // Show app immediately
-                document.getElementById('appContainer').style.display = 'flex';
-                document.getElementById('loginModal').classList.remove('active');
-                
-                // Update UI for logged in user
-                updateUserUI();
-                
-                // Initialize chat functionality
-                initializeChatApp();
-                
-                // Load user's chat history
-                loadUserChatHistory();
-                
-                // Show welcome message
-                showToast(`Welcome back, ${currentUser.name}!`, 'success');
-                
-                return true;
-            }
-        } catch (error) {
-            console.error('Error checking login:', error);
-        }
-        
-        return false;
-    }
-    
-    // Initialize search counter
-    function initializeSearchCounter() {
-        try {
-            // For logged in users, load from server (simulated with localStorage)
-            if (isLoggedIn && currentUser) {
-                const userKey = `legalSwamiSearchCount_${currentUser.id}`;
-                const savedCount = localStorage.getItem(userKey);
-                if (savedCount) {
-                    searchCount = parseInt(savedCount);
-                }
-            } else {
-                // For guest users
-                const savedCount = localStorage.getItem('legalSwamiSearchCount');
-                if (savedCount) {
-                    searchCount = parseInt(savedCount);
-                }
-                
-                const savedDate = localStorage.getItem('legalSwamiSearchDate');
-                if (savedDate) {
-                    const lastDate = new Date(savedDate);
-                    const today = new Date();
-                    
-                    // Reset counter if it's a new day
-                    if (lastDate.getDate() !== today.getDate() || 
-                        lastDate.getMonth() !== today.getMonth() || 
-                        lastDate.getFullYear() !== today.getFullYear()) {
-                        searchCount = 0;
-                        saveSearchCounter();
-                    }
-                }
-            }
-            
-            // Update display
-            updateSearchCounterDisplay();
-        } catch (error) {
-            console.error('Error loading search counter:', error);
-        }
-    }
-    
-    // Save search counter
-    function saveSearchCounter() {
-        try {
-            if (isLoggedIn && currentUser) {
-                const userKey = `legalSwamiSearchCount_${currentUser.id}`;
-                localStorage.setItem(userKey, searchCount.toString());
-            } else {
-                localStorage.setItem('legalSwamiSearchCount', searchCount.toString());
-                localStorage.setItem('legalSwamiSearchDate', new Date().toISOString());
-            }
-        } catch (error) {
-            console.error('Error saving search counter:', error);
-        }
-    }
-    
-    // Update search counter display in header
-    function updateSearchCounterDisplay() {
-        const searchCounterElement = document.getElementById('searchCounter');
-        if (searchCounterElement) {
-            const maxSearches = isLoggedIn ? MAX_PREMIUM_SEARCHES : MAX_FREE_SEARCHES;
-            const remaining = maxSearches - searchCount;
-            
-            const icon = isLoggedIn ? 'fa-crown' : 'fa-search';
-            const text = isLoggedIn ? 'Premium searches' : 'Free searches';
-            
-            searchCounterElement.innerHTML = `<i class="fas ${icon}"></i><span class="hide-on-mobile">${text}: ${remaining}/${maxSearches}</span>`;
-            
-            // Change color when low
-            if (remaining <= 10) {
-                searchCounterElement.style.color = 'var(--warning)';
-            } else if (remaining <= 3) {
-                searchCounterElement.style.color = 'var(--error)';
-            } else {
-                searchCounterElement.style.color = 'var(--dark-text-secondary)';
-            }
-        }
-    }
+    /* GOOGLE LOGIN CODE HAS BEEN COMMENTED FOR FUTURE INTEGRATION
+    // All Google login related functions have been moved here and commented out
+    // They will be integrated in the future when needed
+    */
     
     // Initialize app for guest users
     function initializeAppForGuest() {
@@ -5264,7 +5046,7 @@ header {
         loadUserChatHistory();
         
         // Show welcome message
-        showToast('Welcome to LegalSwami! You have 100 free searches.', 'info');
+        showToast('Welcome to LegalSwami! You have 500 free searches per day.', 'info');
     }
     
     // Update User UI
@@ -5404,6 +5186,83 @@ header {
         }
     }
     
+    // Initialize search counter - UPDATED FOR 500 SEARCHES
+    function initializeSearchCounter() {
+        try {
+            // For logged in users, load from server (simulated with localStorage)
+            if (isLoggedIn && currentUser) {
+                const userKey = `legalSwamiSearchCount_${currentUser.id}`;
+                const savedCount = localStorage.getItem(userKey);
+                if (savedCount) {
+                    searchCount = parseInt(savedCount);
+                }
+            } else {
+                // For guest users
+                const savedCount = localStorage.getItem('legalSwamiSearchCount');
+                if (savedCount) {
+                    searchCount = parseInt(savedCount);
+                }
+                
+                const savedDate = localStorage.getItem('legalSwamiSearchDate');
+                if (savedDate) {
+                    const lastDate = new Date(savedDate);
+                    const today = new Date();
+                    
+                    // Reset counter if it's a new day
+                    if (lastDate.getDate() !== today.getDate() || 
+                        lastDate.getMonth() !== today.getMonth() || 
+                        lastDate.getFullYear() !== today.getFullYear()) {
+                        searchCount = 0;
+                        saveSearchCounter();
+                    }
+                }
+            }
+            
+            // Update display
+            updateSearchCounterDisplay();
+        } catch (error) {
+            console.error('Error loading search counter:', error);
+        }
+    }
+    
+    // Save search counter
+    function saveSearchCounter() {
+        try {
+            if (isLoggedIn && currentUser) {
+                const userKey = `legalSwamiSearchCount_${currentUser.id}`;
+                localStorage.setItem(userKey, searchCount.toString());
+            } else {
+                localStorage.setItem('legalSwamiSearchCount', searchCount.toString());
+                localStorage.setItem('legalSwamiSearchDate', new Date().toISOString());
+            }
+        } catch (error) {
+            console.error('Error saving search counter:', error);
+        }
+    }
+    
+    // Update search counter display in header - UPDATED FOR 500 SEARCHES
+    function updateSearchCounterDisplay() {
+        const searchCounterElement = document.getElementById('searchCounter');
+        if (searchCounterElement) {
+            const maxSearches = isLoggedIn ? MAX_PREMIUM_SEARCHES : MAX_FREE_SEARCHES;
+            const remaining = maxSearches - searchCount;
+            
+            const icon = isLoggedIn ? 'fa-crown' : 'fa-search';
+            const text = isLoggedIn ? 'Premium searches' : 'Free searches';
+            
+            searchCounterElement.innerHTML = `<i class="fas ${icon}"></i><span>${text}: ${remaining}/${maxSearches}</span>`;
+            
+            // Change color when low
+            if (remaining <= 50) {
+                searchCounterElement.style.color = 'var(--warning)';
+            } else if (remaining <= 10) {
+                searchCounterElement.style.color = 'var(--error)';
+            } else {
+                searchCounterElement.style.color = 'var(--dark-text-secondary)';
+            }
+        }
+    }
+    
     // Initialize Chat App
     function initializeChatApp() {
         console.log("Initializing chat app...");
@@ -5450,12 +5309,22 @@ header {
         }
         
         // Event listeners for chat functionality
-        sendButton.addEventListener('click', sendMessage);
+        sendButton.addEventListener('click', function() {
+            if (isStreamingActive) {
+                stopStreaming();
+            } else {
+                sendMessage();
+            }
+        });
         
         userInput.addEventListener('keydown', function(e) {
             if (e.key === 'Enter' && e.ctrlKey) {
                 e.preventDefault();
-                sendMessage();
+                if (isStreamingActive) {
+                    stopStreaming();
+                } else {
+                    sendMessage();
+                }
             }
             // Enter without Ctrl - just add new line
             if (e.key === 'Enter' && !e.ctrlKey) {
@@ -5470,7 +5339,17 @@ header {
         userInput.addEventListener('input', function() {
             this.style.height = 'auto';
             this.style.height = Math.min(this.scrollHeight, 200) + 'px';
-            sendButton.disabled = this.value.trim() === '' && attachedFiles.length === 0;
+            
+            // Update send button state
+            if (isStreamingActive) {
+                sendButton.disabled = false;
+                sendButton.classList.add('stop-button');
+                sendButton.innerHTML = '<i class="fas fa-stop"></i> <span class="hide-on-mobile">Stop</span>';
+            } else {
+                sendButton.disabled = this.value.trim() === '' && attachedFiles.length === 0;
+                sendButton.classList.remove('stop-button');
+                sendButton.innerHTML = '<i class="fas fa-paper-plane"></i> <span class="hide-on-mobile">Send</span>';
+            }
             
             // Show language detection hint
             const text = this.value.trim();
@@ -5513,6 +5392,9 @@ header {
                     // Auto-detect language and show hint
                     const lang = detectLanguage(transcript);
                     showLanguageHint(lang);
+                    
+                    // Enable send button
+                    sendButton.disabled = false;
                     
                     // Auto-send after 1 second for short queries
                     if (transcript.split(' ').length <= 10) {
@@ -5733,16 +5615,6 @@ header {
                 sidebarOverlay.classList.remove('active');
                 document.body.style.overflow = '';
             }
-            
-            // Close emoji picker when clicking outside
-            const emojiPickerContainer = document.getElementById('emojiPickerContainer');
-            const emojiPickerBtn = document.getElementById('emojiPickerBtn');
-            
-            if (emojiPickerContainer && emojiPickerContainer.classList.contains('active') && 
-                !emojiPickerContainer.contains(event.target) && 
-                !emojiPickerBtn.contains(event.target)) {
-                emojiPickerContainer.classList.remove('active');
-            }
         });
         
         // Focus input on load
@@ -5780,14 +5652,6 @@ header {
         // File upload functionality
         attachmentBtn.addEventListener('click', openFileUploadModal);
         
-        // Emoji picker functionality
-        if (emojiPickerBtn) {
-            emojiPickerBtn.addEventListener('click', toggleEmojiPicker);
-        }
-        
-        // Initialize emoji picker
-        initializeEmojiPicker();
-        
         // Download notification close
         document.getElementById('closeDownloadNotification').addEventListener('click', function() {
             document.getElementById('downloadNotification').classList.remove('show');
@@ -5801,59 +5665,27 @@ header {
             }
         });
         
-        console.log("Chat app initialized successfully");
-    }
-    
-    // Initialize emoji picker
-    function initializeEmojiPicker() {
-        const emojiPickerContainer = document.getElementById('emojiPickerContainer');
-        
-        if (window.emojiMart && emojiPickerContainer) {
-            emojiPicker = new window.emojiMart.Picker({
-                data: window.emojiMartData,
-                onEmojiSelect: (emoji) => {
-                    const userInput = document.getElementById('userInput');
-                    const cursorPos = userInput.selectionStart;
-                    const textBefore = userInput.value.substring(0, cursorPos);
-                    const textAfter = userInput.value.substring(cursorPos);
-                    
-                    userInput.value = textBefore + emoji.native + textAfter;
-                    userInput.focus();
-                    userInput.setSelectionRange(cursorPos + emoji.native.length, cursorPos + emoji.native.length);
-                    
-                    // Adjust height
-                    userInput.style.height = 'auto';
-                    userInput.style.height = Math.min(userInput.scrollHeight, 200) + 'px';
-                    
-                    // Hide emoji picker
-                    emojiPickerContainer.classList.remove('active');
-                },
-                theme: isLightMode ? 'light' : 'dark',
-                previewPosition: 'none',
-                skinTonePosition: 'search',
-                perLine: 8,
-                emojiSize: 24,
-                navPosition: 'bottom'
-            });
+        // Emoji picker button
+        emojiPickerBtn.addEventListener('click', function() {
+            // Simple emoji insertion - can be enhanced with emoji picker library
+            const emojis = ['⚖️', '📝', '🤝', '📄', '📚', '🏛️', '👨‍⚖️', '👨‍💼', '👤', '🏠', '💰', '⏰', '📅'];
+            const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
             
-            emojiPickerContainer.appendChild(emojiPicker);
-        }
-    }
-    
-    // Toggle emoji picker
-    function toggleEmojiPicker() {
-        const emojiPickerContainer = document.getElementById('emojiPickerContainer');
-        if (!emojiPickerContainer) return;
+            const userInput = document.getElementById('userInput');
+            const cursorPos = userInput.selectionStart;
+            const text = userInput.value;
+            userInput.value = text.substring(0, cursorPos) + randomEmoji + text.substring(cursorPos);
+            userInput.focus();
+            userInput.selectionStart = cursorPos + randomEmoji.length;
+            userInput.selectionEnd = cursorPos + randomEmoji.length;
+            
+            // Trigger input event to update height
+            userInput.dispatchEvent(new Event('input'));
+            
+            showToast('Emoji added!', 'success');
+        });
         
-        emojiPickerContainer.classList.toggle('active');
-        
-        // Update theme if needed
-        if (emojiPicker) {
-            const picker = emojiPicker.querySelector('em-emoji-picker');
-            if (picker) {
-                picker.setAttribute('theme', isLightMode ? 'light' : 'dark');
-            }
-        }
+        console.log("Chat app initialized successfully");
     }
     
     // Show download notification
@@ -6016,9 +5848,9 @@ header {
             return;
         }
         
-        // Check search limit for non-logged-in users
+        // Check search limit for non-logged-in users - UPDATED FOR 500 SEARCHES
         if (!isLoggedIn && searchCount >= MAX_FREE_SEARCHES) {
-            showToast(`You've used ${MAX_FREE_SEARCHES} free searches. Please clear local data to reset counter.`, 'warning');
+            showToast(`You've used ${MAX_FREE_SEARCHES} free searches today. Please wait until tomorrow or clear local data to reset counter.`, 'warning');
             return;
         }
         
@@ -6038,7 +5870,13 @@ header {
         const messageId = addMessageToChat(message, true, false, false, attachedFiles);
         userInput.value = '';
         userInput.style.height = '56px';
-        sendButton.disabled = true;
+        
+        // Update send button to stop button
+        sendButton.disabled = false;
+        sendButton.classList.add('stop-button');
+        sendButton.innerHTML = '<i class="fas fa-stop"></i> <span class="hide-on-mobile">Stop</span>';
+        isStreamingActive = true;
+        stopStreamingRequested = false;
         
         // Clear attachments after sending
         clearAttachments();
@@ -6063,10 +5901,12 @@ header {
                 
                 // Show warning when reaching limit
                 const remaining = MAX_FREE_SEARCHES - searchCount;
-                if (remaining === 10) {
+                if (remaining === 50) {
                     showToast(`You have ${remaining} free searches remaining.`, 'warning');
-                } else if (remaining === 3) {
+                } else if (remaining === 10) {
                     showToast(`Only ${remaining} free searches left!`, 'warning');
+                } else if (remaining === 0) {
+                    showToast(`Daily limit reached! You've used ${MAX_FREE_SEARCHES} searches today.`, 'warning');
                 }
             }
             
@@ -6086,6 +5926,12 @@ header {
             
             // Call AI API with multiple key rotation
             const response = await callGroqAPIWithRotation(fullMessage, detectedLanguage);
+            
+            // If streaming was stopped, don't process the response
+            if (stopStreamingRequested) {
+                console.log('Streaming was stopped, not processing response');
+                return;
+            }
             
             // Extract ONLY sources from the response
             const sourcesData = extractSourcesFromResponse(response);
@@ -6132,8 +5978,13 @@ header {
             
             // Show subtle notification to user
             showToast('Service temporarily unavailable', 'warning');
-        } finally {
+            
+            // Reset send button
             sendButton.disabled = userInput.value.trim() === '' && attachedFiles.length === 0;
+            sendButton.classList.remove('stop-button');
+            sendButton.innerHTML = '<i class="fas fa-paper-plane"></i> <span class="hide-on-mobile">Send</span>';
+            isStreamingActive = false;
+        } finally {
             document.getElementById('userInput').focus();
             
             // Adjust layout
@@ -6142,6 +5993,83 @@ header {
             // Add copy/edit buttons to the new user message
             setTimeout(addCopyEditButtonsToUserMessages, 100);
         }
+    }
+    
+    // Stop streaming function
+    function stopStreaming() {
+        stopStreamingRequested = true;
+        isStreamingActive = false;
+        isStreamingPaused = false;
+        
+        // Reset send button
+        const sendButton = document.getElementById('sendButton');
+        sendButton.disabled = document.getElementById('userInput').value.trim() === '' && attachedFiles.length === 0;
+        sendButton.classList.remove('stop-button');
+        sendButton.innerHTML = '<i class="fas fa-paper-plane"></i> <span class="hide-on-mobile">Send</span>';
+        
+        // If there's a streaming message, finalize it
+        if (currentStreamingMessageId) {
+            const messageDiv = document.getElementById(currentStreamingMessageId);
+            if (messageDiv) {
+                const messageText = messageDiv.querySelector('.message-text');
+                const streamControls = messageDiv.querySelector('.stream-controls');
+                
+                if (streamControls) {
+                    streamControls.remove();
+                }
+                
+                // Add action buttons
+                const messageActions = document.createElement('div');
+                messageActions.className = 'message-actions';
+                messageActions.innerHTML = `
+                    <button class="action-btn copy" onclick="copyMessage(this)" title="Copy response">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
+                    <button class="action-btn regenerate" onclick="regenerateResponse('${currentStreamingMessageId}')" title="Regenerate response">
+                        <i class="fas fa-sync-alt"></i> Regenerate
+                    </button>
+                    <button class="action-btn like" onclick="likeMessage(this)" title="Mark as helpful">
+                        <i class="far fa-thumbs-up"></i> Helpful
+                    </button>
+                    <button class="action-btn dislike" onclick="dislikeMessage(this)" title="Mark as not helpful">
+                        <i class="far fa-thumbs-down"></i> Not Helpful
+                    </button>
+                    <button class="action-btn share" onclick="shareResponse('${currentStreamingMessageId}')" title="Share response">
+                        <i class="fas fa-share"></i> Share
+                    </button>
+                    <button class="action-btn document" onclick="downloadThisMessage('${currentStreamingMessageId}')" title="Download document">
+                        <i class="fas fa-file-download"></i> Download
+                    </button>
+                `;
+                
+                messageText.parentElement.appendChild(messageActions);
+                
+                // Remove streaming cursor
+                const cursor = messageText.querySelector('.streaming-cursor');
+                if (cursor) cursor.remove();
+                
+                // Remove paused indicator
+                const pausedIndicator = messageText.querySelector('.paused-indicator');
+                if (pausedIndicator) pausedIndicator.remove();
+                
+                // Format the content
+                if (isDocumentRequest(currentStreamingContent)) {
+                    messageText.innerHTML = formatDocumentResponse(currentStreamingContent);
+                    addDocumentDownloadButton(currentStreamingMessageId, currentStreamingContent);
+                } else {
+                    messageText.innerHTML = formatLegalResponse(currentStreamingContent);
+                }
+            }
+            
+            // Reset streaming variables
+            currentStreamingMessageId = null;
+            currentStreamingContent = '';
+            currentStreamingBuffer = '';
+            streamingTextChunks = [];
+            streamingTextIndex = 0;
+        }
+        
+        showToast('Response stopped', 'info');
     }
     
     // NEW: Read file content
@@ -6701,7 +6629,7 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
         return 'english';
     }
     
-    // MODIFIED: Add message to chat with sources parameter
+    // MODIFIED: Add message to chat with sources parameter - USING parseEmojis FUNCTION
     function addMessageToChat(content, isUser, fromHistory = false, isDocument = false, attachments = [], sources = null) {
         const chatMessages = document.getElementById('chatMessages');
         
@@ -6743,7 +6671,10 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
         if (isUser) {
             // User message with attachments
             if (content) {
+                // Set plain text first
                 messageText.textContent = content;
+                // Then parse emojis using OUR function
+                parseEmojis(messageText);
             }
             
             // Add attachments if any
@@ -6775,11 +6706,15 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
             }
             
         } else {
-            // AI message
+            // AI message - APPLY parseEmojis TO AI RESPONSES ONLY
             if (isDocument) {
                 messageText.innerHTML = formatDocumentResponse(content);
+                // Parse emojis in document response
+                parseEmojis(messageText);
             } else {
                 messageText.innerHTML = formatLegalResponse(content);
+                // Parse emojis in legal response
+                parseEmojis(messageText);
             }
             
             // Add sources if available and not from history
@@ -6981,6 +6916,7 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
             // Send the user message again
             const userInput = document.getElementById('userInput');
             userInput.value = userMessageContent;
+            userInput.focus();
             userInput.style.height = Math.min(userInput.scrollHeight, 200) + 'px';
             
             // Trigger send after a short delay
@@ -7075,7 +7011,7 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
         showToast('Question loaded for editing. Press Ctrl+Enter to send.', 'info');
     };
     
-    // Format document response
+    // Format document response with emojis - USING parseEmojis
     function formatDocumentResponse(text) {
         const documentContainer = document.createElement('div');
         documentContainer.className = 'document-template';
@@ -7131,10 +7067,13 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
         
         documentContainer.innerHTML = htmlContent;
         
+        // Parse emojis in the document using OUR function
+        parseEmojis(documentContainer);
+        
         return documentContainer.outerHTML;
     }
     
-    // Format legal response
+    // Format legal response with emojis - USING parseEmojis
     function formatLegalResponse(text) {
         let formatted = text
             .replace(/## (.*?)\n/g, '<h3>$1</h3>')
@@ -7151,7 +7090,27 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
                 '<div class="legal-note">$1</div>');
         }
         
-        return '<div class="legal-content">' + formatted + '</div>';
+        const container = document.createElement('div');
+        container.className = 'legal-content';
+        container.innerHTML = formatted;
+        
+        // Parse emojis in the response using OUR function
+        parseEmojis(container);
+        
+        return container.outerHTML;
+    }
+    
+    // Format text for streaming display with emojis - USING parseEmojis
+    function formatStreamingText(text) {
+        const container = document.createElement('div');
+        container.innerHTML = text
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\n/g, '<br>');
+        
+        // Parse emojis using OUR function
+        parseEmojis(container);
+        
+        return container.innerHTML;
     }
     
     // Create streaming message container
@@ -7235,8 +7194,12 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
     
     // Stream next chunk of text
     function streamNextChunk(messageId, isDocument = false) {
-        if (streamingTextIndex >= streamingTextChunks.length) {
-            finalizeStreamingMessage(messageId, isDocument);
+        if (stopStreamingRequested || streamingTextIndex >= streamingTextChunks.length) {
+            if (stopStreamingRequested) {
+                console.log('Streaming stopped by user');
+            } else {
+                finalizeStreamingMessage(messageId, isDocument);
+            }
             return;
         }
         
@@ -7256,7 +7219,7 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
         }
         
         setTimeout(() => {
-            if (!isStreamingPaused) {
+            if (!isStreamingPaused && !stopStreamingRequested) {
                 streamNextChunk(messageId, isDocument);
             }
         }, delay);
@@ -7339,15 +7302,6 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
         checkScrollPosition();
     }
     
-    // Format text for streaming display
-    function formatStreamingText(text) {
-        let formatted = text
-            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-            .replace(/\n/g, '<br>');
-        
-        return formatted;
-    }
-    
     // Finalize streaming message
     function finalizeStreamingMessage(messageId, isDocument = false) {
         const messageDiv = document.getElementById(messageId);
@@ -7409,6 +7363,14 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
         streamingTextChunks = [];
         streamingTextIndex = 0;
         isStreamingPaused = false;
+        isStreamingActive = false;
+        stopStreamingRequested = false;
+        
+        // Reset send button
+        const sendButton = document.getElementById('sendButton');
+        sendButton.disabled = document.getElementById('userInput').value.trim() === '' && attachedFiles.length === 0;
+        sendButton.classList.remove('stop-button');
+        sendButton.innerHTML = '<i class="fas fa-paper-plane"></i> <span class="hide-on-mobile">Send</span>';
     }
     
     // Show attached files below AI response
@@ -7554,7 +7516,7 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
         );
     }
     
-    // Check scroll position and show/hide down arrow
+    // Check scroll position and show/hide down arrow - FIXED FOR MOBILE
     function checkScrollPosition() {
         const chatMessages = document.getElementById('chatMessages');
         const scrollBtn = document.getElementById('scrollToBottomBtn');
@@ -7581,7 +7543,7 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
         scrollPosition = chatMessages.scrollTop;
     }
     
-    // Scroll to bottom function
+    // Scroll to bottom function - FIXED FOR MOBILE
     function scrollToBottom() {
         const chatMessages = document.getElementById('chatMessages');
         if (chatMessages) {
@@ -7593,42 +7555,42 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
         }
     }
     
-// Add copy and edit buttons to user messages
-function addCopyEditButtonsToUserMessages() {
-    const userMessages = document.querySelectorAll('.user-message:not(.from-history) .message-content');
-    userMessages.forEach((messageContent, index) => {
-        if (!messageContent.querySelector('.user-message-controls')) {
-            const messageDiv = messageContent.closest('.message');
-            const messageId = messageDiv.id;
-            const messageText = messageContent.querySelector('.message-text');
-            
-            if (messageText && messageText.textContent.trim()) {
-                const controlsContainer = document.createElement('div');
-                controlsContainer.className = 'user-message-controls';
+    // Add copy and edit buttons to user messages
+    function addCopyEditButtonsToUserMessages() {
+        const userMessages = document.querySelectorAll('.user-message:not(.from-history) .message-content');
+        userMessages.forEach((messageContent, index) => {
+            if (!messageContent.querySelector('.user-message-controls')) {
+                const messageDiv = messageContent.closest('.message');
+                const messageId = messageDiv.id;
+                const messageText = messageContent.querySelector('.message-text');
                 
-                // Create copy button
-                const copyBtn = document.createElement('button');
-                copyBtn.className = 'user-message-btn copy-btn';
-                copyBtn.title = 'Copy question';
-                copyBtn.innerHTML = '<i class="fas fa-copy"></i><span class="hide-on-mobile">Copy</span>';
-                copyBtn.addEventListener('click', () => copyUserMessage(messageId));
-                
-                // Create edit button
-                const editBtn = document.createElement('button');
-                editBtn.className = 'user-message-btn edit-btn';
-                editBtn.title = 'Edit question';
-                editBtn.innerHTML = '<i class="fas fa-pencil-alt"></i><span class="hide-on-mobile">Edit</span>';
-                editBtn.addEventListener('click', () => editUserMessage(messageId));
-                
-                // Add buttons to container
-                controlsContainer.appendChild(copyBtn);
-                controlsContainer.appendChild(editBtn);
-                
-                messageContent.appendChild(controlsContainer);
+                if (messageText && messageText.textContent.trim()) {
+                    const controlsContainer = document.createElement('div');
+                    controlsContainer.className = 'user-message-controls';
+                    
+                    // Create copy button
+                    const copyBtn = document.createElement('button');
+                    copyBtn.className = 'user-message-btn copy-btn';
+                    copyBtn.title = 'Copy question';
+                    copyBtn.innerHTML = '<i class="fas fa-copy"></i><span class="hide-on-mobile">Copy</span>';
+                    copyBtn.addEventListener('click', () => copyUserMessage(messageId));
+                    
+                    // Create edit button
+                    const editBtn = document.createElement('button');
+                    editBtn.className = 'user-message-btn edit-btn';
+                    editBtn.title = 'Edit question';
+                    editBtn.innerHTML = '<i class="fas fa-pencil-alt"></i><span class="hide-on-mobile">Edit</span>';
+                    editBtn.addEventListener('click', () => editUserMessage(messageId));
+                    
+                    // Add buttons to container
+                    controlsContainer.appendChild(copyBtn);
+                    controlsContainer.appendChild(editBtn);
+                    
+                    messageContent.appendChild(controlsContainer);
+                }
             }
-        }
-    });
-}
+        });
+    }
     
     function loadThemePreference() {
         const savedTheme = localStorage.getItem('legalSwamiTheme');
@@ -7691,280 +7653,213 @@ function addCopyEditButtonsToUserMessages() {
     }
     
     // Show language hint
-    function showLanguageHint(language) {
-        const languageNames = {
-            'english': 'English',
-            'hindi': 'Hindi',
-            'marathi': 'Marathi',
-            'tamil': 'Tamil',
-            'telugu': 'Telugu',
-            'kannada': 'Kannada',
-            'punjabi': 'Punjabi',
-            'gujarati': 'Gujarati',
-            'bengali': 'Bengali'
-        };
-        
-        let hintElement = document.querySelector('.language-hint');
-        if (!hintElement) {
-            hintElement = document.createElement('div');
-            hintElement.className = 'language-hint';
-            document.querySelector('.input-area').appendChild(hintElement);
-        }
-        
-        hintElement.textContent = `Detected: ${languageNames[language] || 'English'}`;
-        hintElement.style.display = 'block';
-    }
-    
-    function hideLanguageHint() {
-        const hintElement = document.querySelector('.language-hint');
-        if (hintElement) {
-            hintElement.style.display = 'none';
-        }
-    }
-    
-    function adjustChatLayout() {
-        const chatMessages = document.getElementById('chatMessages');
-        if (chatMessages) {
-            setTimeout(() => {
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }, 100);
-        }
-    }
-    
-    function clearAttachments() {
-        attachedFiles = [];
-        const preview = document.getElementById('attachmentsPreview');
-        if (preview) {
-            preview.innerHTML = '';
-            preview.style.display = 'none';
-        }
-    }
-    
-    function openFileUploadModal() {
-        document.getElementById('fileUploadModal').classList.add('active');
-        selectedFiles = [];
-        updateUploadedFilesDisplay();
-    }
-    
-    function updateUploadedFilesDisplay() {
-        const container = document.getElementById('uploadedFiles');
-        if (!container) return;
-        
-        container.innerHTML = '';
-        
-        selectedFiles.forEach((file, index) => {
-            const item = document.createElement('div');
-            item.className = 'uploaded-image-item';
+        function showLanguageHint(language) {
+            const languageNames = {
+                'english': 'English',
+                'hindi': 'Hindi',
+                'marathi': 'Marathi',
+                'tamil': 'Tamil',
+                'telugu': 'Telugu',
+                'kannada': 'Kannada',
+                'punjabi': 'Punjabi',
+                'gujarati': 'Gujarati',
+                'bengali': 'Bengali'
+            };
             
-            if (file.type.startsWith('image/')) {
-                item.innerHTML = `
-                    <img src="${file.data}" alt="${file.name}" class="uploaded-image-preview">
-                    <button class="remove-uploaded-image" onclick="removeUploadedFile(${index})">
-                        <i class="fas fa-times"></i>
-                    </button>
-                `;
-            } else if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
-                item.innerHTML = `
-                    <div style="padding: 15px; text-align: center; background: var(--dark-surface-light); height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                        <i class="fas fa-file-pdf" style="font-size: 2rem; color: var(--error); margin-bottom: 8px;"></i>
-                        <div style="font-size: 0.7rem; color: var(--dark-text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">${file.name}</div>
-                    </div>
-                    <button class="remove-uploaded-image" onclick="removeUploadedFile(${index})">
-                        <i class="fas fa-times"></i>
-                    </button>
-                `;
-            } else if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
-                item.innerHTML = `
-                    <div style="padding: 15px; text-align: center; background: var(--dark-surface-light); height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                        <i class="fas fa-file-alt" style="font-size: 2rem; color: var(--primary); margin-bottom: 8px;"></i>
-                        <div style="font-size: 0.7rem; color: var(--dark-text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">${file.name}</div>
-                    </div>
-                    <button class="remove-uploaded-image" onclick="removeUploadedFile(${index})">
-                        <i class="fas fa-times"></i>
-                    </button>
-                `;
-            } else {
-                item.innerHTML = `
-                    <div style="padding: 15px; text-align: center; background: var(--dark-surface-light); height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                        <i class="fas fa-file" style="font-size: 2rem; color: var(--dark-text-secondary); margin-bottom: 8px;"></i>
-                        <div style="font-size: 0.7rem; color: var(--dark-text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">${file.name}</div>
-                    </div>
-                    <button class="remove-uploaded-image" onclick="removeUploadedFile(${index})">
-                        <i class="fas fa-times"></i>
-                    </button>
-                `;
+            let hintElement = document.querySelector('.language-hint');
+            if (!hintElement) {
+                hintElement = document.createElement('div');
+                hintElement.className = 'language-hint';
+                document.querySelector('.input-area').appendChild(hintElement);
             }
             
-            container.appendChild(item);
-        });
-    }
-    
-    window.removeUploadedFile = function(index) {
-        selectedFiles.splice(index, 1);
-        updateUploadedFilesDisplay();
-    };
-    
-    // Close file upload modal
-    document.getElementById('closeFileUploadModal').addEventListener('click', function() {
-        document.getElementById('fileUploadModal').classList.remove('active');
-    });
-    
-    document.getElementById('cancelFileUpload').addEventListener('click', function() {
-        document.getElementById('fileUploadModal').classList.remove('active');
-    });
-    
-    // Handle file selection
-    document.getElementById('browseFilesBtn').addEventListener('click', function() {
-        const fileInput = document.createElement('input');
-        fileInput.type = 'file';
-        fileInput.multiple = true;
-        fileInput.accept = 'image/*,.pdf,.txt,.doc,.docx';
-        
-        fileInput.onchange = function(e) {
-            handleFileSelection(e.target.files);
-        };
-        
-        fileInput.click();
-    });
-    
-    // Handle drag and drop
-    const uploadArea = document.getElementById('uploadArea');
-    uploadArea.addEventListener('dragover', function(e) {
-        e.preventDefault();
-        uploadArea.classList.add('dragover');
-    });
-    
-    uploadArea.addEventListener('dragleave', function(e) {
-        e.preventDefault();
-        uploadArea.classList.remove('dragover');
-    });
-    
-    uploadArea.addEventListener('drop', function(e) {
-        e.preventDefault();
-        uploadArea.classList.remove('dragover');
-        
-        if (e.dataTransfer.files.length > 0) {
-            handleFileSelection(e.dataTransfer.files);
+            hintElement.textContent = `Detected: ${languageNames[language] || 'English'}`;
+            hintElement.style.display = 'block';
         }
-    });
-    
-    function handleFileSelection(files) {
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            if (file.type.startsWith('image/') || 
-                file.type === 'application/pdf' || 
-                file.type === 'text/plain' ||
-                file.type.includes('document') ||
-                file.name.endsWith('.txt') ||
-                file.name.endsWith('.pdf') ||
-                file.name.endsWith('.doc') ||
-                file.name.endsWith('.docx')) {
+        
+        function hideLanguageHint() {
+            const hintElement = document.querySelector('.language-hint');
+            if (hintElement) {
+                hintElement.style.display = 'none';
+            }
+        }
+        
+        function adjustChatLayout() {
+            const chatMessages = document.getElementById('chatMessages');
+            if (chatMessages) {
+                setTimeout(() => {
+                    chatMessages.scrollTop = chatMessages.scrollHeight;
+                }, 100);
+            }
+        }
+        
+        function clearAttachments() {
+            attachedFiles = [];
+            const preview = document.getElementById('attachmentsPreview');
+            if (preview) {
+                preview.innerHTML = '';
+                preview.style.display = 'none';
+            }
+        }
+        
+        function openFileUploadModal() {
+            document.getElementById('fileUploadModal').classList.add('active');
+            selectedFiles = [];
+            updateUploadedFilesDisplay();
+        }
+        
+        function updateUploadedFilesDisplay() {
+            const container = document.getElementById('uploadedFiles');
+            if (!container) return;
+            
+            container.innerHTML = '';
+            
+            selectedFiles.forEach((file, index) => {
+                const item = document.createElement('div');
+                item.className = 'uploaded-image-item';
                 
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    selectedFiles.push({
-                        name: file.name,
-                        data: e.target.result,
-                        type: file.type,
-                        file: file,
-                        size: file.size
-                    });
-                    updateUploadedFilesDisplay();
-                };
-                reader.readAsDataURL(file);
-            } else {
-                showToast(`File type not supported: ${file.name}`, 'warning');
-            }
+                if (file.type.startsWith('image/')) {
+                    item.innerHTML = `
+                        <img src="${file.data}" alt="${file.name}" class="uploaded-image-preview">
+                        <button class="remove-uploaded-image" onclick="removeUploadedFile(${index})">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                } else if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
+                    item.innerHTML = `
+                        <div style="padding: 15px; text-align: center; background: var(--dark-surface-light); height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                            <i class="fas fa-file-pdf" style="font-size: 2rem; color: var(--error); margin-bottom: 8px;"></i>
+                            <div style="font-size: 0.7rem; color: var(--dark-text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">${file.name}</div>
+                        </div>
+                        <button class="remove-uploaded-image" onclick="removeUploadedFile(${index})">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                } else if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
+                    item.innerHTML = `
+                        <div style="padding: 15px; text-align: center; background: var(--dark-surface-light); height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                            <i class="fas fa-file-alt" style="font-size: 2rem; color: var(--primary); margin-bottom: 8px;"></i>
+                            <div style="font-size: 0.7rem; color: var(--dark-text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">${file.name}</div>
+                        </div>
+                        <button class="remove-uploaded-image" onclick="removeUploadedFile(${index})">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                } else {
+                    item.innerHTML = `
+                        <div style="padding: 15px; text-align: center; background: var(--dark-surface-light); height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                            <i class="fas fa-file" style="font-size: 2rem; color: var(--dark-text-secondary); margin-bottom: 8px;"></i>
+                            <div style="font-size: 0.7rem; color: var(--dark-text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">${file.name}</div>
+                        </div>
+                        <button class="remove-uploaded-image" onclick="removeUploadedFile(${index})">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                }
+                
+                container.appendChild(item);
+            });
         }
-    }
-    
-    // Confirm file upload
-    document.getElementById('confirmFileUpload').addEventListener('click', function() {
-        if (selectedFiles.length === 0) {
-            showToast('Please select at least one file', 'warning');
-            return;
-        }
         
-        attachedFiles = [...attachedFiles, ...selectedFiles];
+        window.removeUploadedFile = function(index) {
+            selectedFiles.splice(index, 1);
+            updateUploadedFilesDisplay();
+        };
         
-        const preview = document.getElementById('attachmentsPreview');
-        preview.innerHTML = '';
-        
-        attachedFiles.forEach((file, index) => {
-            const item = document.createElement('div');
-            item.className = 'attachment-preview-item';
-            
-            if (file.type.startsWith('image/')) {
-                item.innerHTML = `
-                    <img src="${file.data}" alt="${file.name}" class="attachment-preview-image">
-                    <button class="remove-attachment" onclick="removeAttachment(${index})">
-                        <i class="fas fa-times"></i>
-                    </button>
-                    <div class="attachment-preview-name">${file.name}</div>
-                `;
-            } else if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
-                item.innerHTML = `
-                    <div style="padding: 10px; text-align: center; background: var(--dark-surface-light); height: 80px; width: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                        <i class="fas fa-file-pdf" style="font-size: 1.5rem; color: var(--error);"></i>
-                        <div style="font-size: 0.6rem; color: var(--dark-text-secondary); margin-top: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">PDF</div>
-                    </div>
-                    <button class="remove-attachment" onclick="removeAttachment(${index})" style="top: 2px; right: 2px;">
-                        <i class="fas fa-times"></i>
-                    </button>
-                    <div class="attachment-preview-name">${file.name.substring(0, 15)}${file.name.length > 15 ? '...' : ''}</div>
-                `;
-            } else if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
-                item.innerHTML = `
-                    <div style="padding: 10px; text-align: center; background: var(--dark-surface-light); height: 80px; width: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                        <i class="fas fa-file-alt" style="font-size: 1.5rem; color: var(--primary);"></i>
-                        <div style="font-size: 0.6rem; color: var(--dark-text-secondary); margin-top: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">TXT</div>
-                    </div>
-                    <button class="remove-attachment" onclick="removeAttachment(${index})" style="top: 2px; right: 2px;">
-                        <i class="fas fa-times"></i>
-                    </button>
-                    <div class="attachment-preview-name">${file.name.substring(0, 15)}${file.name.length > 15 ? '...' : ''}</div>
-                `;
-            } else {
-                item.innerHTML = `
-                    <div style="padding: 10px; text-align: center; background: var(--dark-surface-light); height: 80px; width: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                        <i class="fas fa-file" style="font-size: 1.5rem; color: var(--dark-text-secondary);"></i>
-                        <div style="font-size: 0.6rem; color: var(--dark-text-secondary); margin-top: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">DOC</div>
-                    </div>
-                    <button class="remove-attachment" onclick="removeAttachment(${index})" style="top: 2px; right: 2px;">
-                        <i class="fas fa-times"></i>
-                    </button>
-                    <div class="attachment-preview-name">${file.name.substring(0, 15)}${file.name.length > 15 ? '...' : ''}</div>
-                `;
-            }
-            
-            preview.appendChild(item);
+        // Close file upload modal
+        document.getElementById('closeFileUploadModal').addEventListener('click', function() {
+            document.getElementById('fileUploadModal').classList.remove('active');
         });
         
-        preview.style.display = 'flex';
-        document.getElementById('sendButton').disabled = false;
-        document.getElementById('fileUploadModal').classList.remove('active');
-        showToast(`${selectedFiles.length} file(s) attached`, 'success');
-        selectedFiles = [];
-    });
-    
-    window.removeAttachment = function(index) {
-        attachedFiles.splice(index, 1);
+        document.getElementById('cancelFileUpload').addEventListener('click', function() {
+            document.getElementById('fileUploadModal').classList.remove('active');
+        });
         
-        const preview = document.getElementById('attachmentsPreview');
-        preview.innerHTML = '';
+        // Handle file selection
+        document.getElementById('browseFilesBtn').addEventListener('click', function() {
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.multiple = true;
+            fileInput.accept = 'image/*,.pdf,.txt,.doc,.docx';
+            
+            fileInput.onchange = function(e) {
+                handleFileSelection(e.target.files);
+            };
+            
+            fileInput.click();
+        });
         
-        if (attachedFiles.length === 0) {
-            preview.style.display = 'none';
-            document.getElementById('sendButton').disabled = document.getElementById('userInput').value.trim() === '';
-        } else {
-            attachedFiles.forEach((file, idx) => {
+        // Handle drag and drop
+        const uploadArea = document.getElementById('uploadArea');
+        uploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            
+            if (e.dataTransfer.files.length > 0) {
+                handleFileSelection(e.dataTransfer.files);
+            }
+        });
+        
+        function handleFileSelection(files) {
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                if (file.type.startsWith('image/') || 
+                    file.type === 'application/pdf' || 
+                    file.type === 'text/plain' ||
+                    file.type.includes('document') ||
+                    file.name.endsWith('.txt') ||
+                    file.name.endsWith('.pdf') ||
+                    file.name.endsWith('.doc') ||
+                    file.name.endsWith('.docx')) {
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        selectedFiles.push({
+                            name: file.name,
+                            data: e.target.result,
+                            type: file.type,
+                            file: file,
+                            size: file.size
+                        });
+                        updateUploadedFilesDisplay();
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    showToast(`File type not supported: ${file.name}`, 'warning');
+                }
+            }
+        }
+        
+        // Confirm file upload
+        document.getElementById('confirmFileUpload').addEventListener('click', function() {
+            if (selectedFiles.length === 0) {
+                showToast('Please select at least one file', 'warning');
+                return;
+            }
+            
+            attachedFiles = [...attachedFiles, ...selectedFiles];
+            
+            const preview = document.getElementById('attachmentsPreview');
+            preview.innerHTML = '';
+            
+            attachedFiles.forEach((file, index) => {
                 const item = document.createElement('div');
                 item.className = 'attachment-preview-item';
                 
                 if (file.type.startsWith('image/')) {
                     item.innerHTML = `
                         <img src="${file.data}" alt="${file.name}" class="attachment-preview-image">
-                        <button class="remove-attachment" onclick="removeAttachment(${idx})">
+                        <button class="remove-attachment" onclick="removeAttachment(${index})">
                             <i class="fas fa-times"></i>
                         </button>
                         <div class="attachment-preview-name">${file.name}</div>
@@ -7973,9 +7868,9 @@ function addCopyEditButtonsToUserMessages() {
                     item.innerHTML = `
                         <div style="padding: 10px; text-align: center; background: var(--dark-surface-light); height: 80px; width: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
                             <i class="fas fa-file-pdf" style="font-size: 1.5rem; color: var(--error);"></i>
-                            <div style="font-size: 0.6rem; color: var(--dark-text-secondary); margin-top: 5px;">PDF</div>
+                            <div style="font-size: 0.6rem; color: var(--dark-text-secondary); margin-top: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">PDF</div>
                         </div>
-                        <button class="remove-attachment" onclick="removeAttachment(${idx})" style="top: 2px; right: 2px;">
+                        <button class="remove-attachment" onclick="removeAttachment(${index})" style="top: 2px; right: 2px;">
                             <i class="fas fa-times"></i>
                         </button>
                         <div class="attachment-preview-name">${file.name.substring(0, 15)}${file.name.length > 15 ? '...' : ''}</div>
@@ -7984,9 +7879,9 @@ function addCopyEditButtonsToUserMessages() {
                     item.innerHTML = `
                         <div style="padding: 10px; text-align: center; background: var(--dark-surface-light); height: 80px; width: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
                             <i class="fas fa-file-alt" style="font-size: 1.5rem; color: var(--primary);"></i>
-                            <div style="font-size: 0.6rem; color: var(--dark-text-secondary); margin-top: 5px;">TXT</div>
+                            <div style="font-size: 0.6rem; color: var(--dark-text-secondary); margin-top: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">TXT</div>
                         </div>
-                        <button class="remove-attachment" onclick="removeAttachment(${idx})" style="top: 2px; right: 2px;">
+                        <button class="remove-attachment" onclick="removeAttachment(${index})" style="top: 2px; right: 2px;">
                             <i class="fas fa-times"></i>
                         </button>
                         <div class="attachment-preview-name">${file.name.substring(0, 15)}${file.name.length > 15 ? '...' : ''}</div>
@@ -7995,9 +7890,9 @@ function addCopyEditButtonsToUserMessages() {
                     item.innerHTML = `
                         <div style="padding: 10px; text-align: center; background: var(--dark-surface-light); height: 80px; width: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
                             <i class="fas fa-file" style="font-size: 1.5rem; color: var(--dark-text-secondary);"></i>
-                            <div style="font-size: 0.6rem; color: var(--dark-text-secondary); margin-top: 5px;">DOC</div>
+                            <div style="font-size: 0.6rem; color: var(--dark-text-secondary); margin-top: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">DOC</div>
                         </div>
-                        <button class="remove-attachment" onclick="removeAttachment(${idx})" style="top: 2px; right: 2px;">
+                        <button class="remove-attachment" onclick="removeAttachment(${index})" style="top: 2px; right: 2px;">
                             <i class="fas fa-times"></i>
                         </button>
                         <div class="attachment-preview-name">${file.name.substring(0, 15)}${file.name.length > 15 ? '...' : ''}</div>
@@ -8006,382 +7901,449 @@ function addCopyEditButtonsToUserMessages() {
                 
                 preview.appendChild(item);
             });
+            
             preview.style.display = 'flex';
-        }
-    };
-    
-    // Load history list
-    function loadHistoryList() {
-        const historyList = document.getElementById('historyList');
-        if (!historyList) return;
+            document.getElementById('sendButton').disabled = false;
+            document.getElementById('fileUploadModal').classList.remove('active');
+            showToast(`${selectedFiles.length} file(s) attached`, 'success');
+            selectedFiles = [];
+        });
         
-        if (chatHistory.length === 0) {
-            historyList.innerHTML = `
-                <div class="empty-history">
-                    <i class="fas fa-comments"></i>
-                    <p>No chat history yet</p>
-                    <p style="font-size: 0.8rem; margin-top: 0.5rem;">Start a conversation to see it here</p>
-                </div>
-            `;
-            return;
-        }
-        
-        let html = '';
-        chatHistory.forEach(chat => {
-            const isActive = chat.id === currentChatId;
-            const date = new Date(chat.date);
-            const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        window.removeAttachment = function(index) {
+            attachedFiles.splice(index, 1);
             
-            html += `
-                <div class="history-item ${isActive ? 'active' : ''}" data-chat-id="${chat.id}">
-                    <div class="history-title">${chat.title}</div>
-                    <div class="history-preview">${chat.preview}</div>
-                    <div class="history-date">${formattedDate}</div>
-                    <div class="history-item-actions">
-                        <button class="history-item-btn download" onclick="downloadChatHistory('${chat.id}')" title="Download chat">
-                            <i class="fas fa-download"></i>
-                        </button>
-                        <button class="history-item-btn delete" onclick="confirmDeleteChat('${chat.id}')" title="Delete chat">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                </div>
-            `;
-        });
-        
-        historyList.innerHTML = html;
-        
-        document.querySelectorAll('.history-item').forEach(item => {
-            item.addEventListener('click', function(e) {
-                if (!e.target.closest('.history-item-actions')) {
-                    const chatId = this.dataset.chatId;
-                    loadChatFromHistory(chatId);
-                }
-            });
-        });
-    }
-    
-    function loadChatFromHistory(chatId) {
-        const chat = chatHistory.find(c => c.id === chatId);
-        if (!chat) return;
-        
-        currentChatId = chatId;
-        conversationHistory = [...chat.messages];
-        
-        const chatMessages = document.getElementById('chatMessages');
-        chatMessages.innerHTML = '';
-        
-        chat.messages.forEach(msg => {
-            const isDocument = msg.isDocument || false;
-            const hasSources = msg.sources && msg.sources.length > 0;
-            addMessageToChat(msg.content, msg.role === 'user', true, isDocument, msg.attachments || [], hasSources ? msg.sources : null);
-        });
-        
-        loadHistoryList();
-        
-        if (window.innerWidth < 1024) {
-            document.getElementById('sidebar').classList.remove('active');
-            document.getElementById('sidebarOverlay').classList.remove('active');
-            document.body.style.overflow = '';
-        }
-        
-        showToast('Chat loaded from history', 'success');
-    }
-    
-    window.downloadChatHistory = function(chatId) {
-        const chat = chatHistory.find(c => c.id === chatId);
-        if (!chat) return;
-        
-        let content = `LegalSwami Chat History - ${chat.title}\n`;
-        content += `Date: ${new Date(chat.date).toLocaleString()}\n\n`;
-        content += '='.repeat(50) + '\n\n';
-        
-        chat.messages.forEach((msg, index) => {
-            const role = msg.role === 'user' ? 'You' : 'LegalSwami';
-            const time = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString() : new Date().toLocaleTimeString();
-            content += `${role} (${time}):\n`;
-            content += msg.content + '\n\n';
-            content += '-'.repeat(30) + '\n\n';
-        });
-        
-        const blob = new Blob([content], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `legalswami-chat-${chatId}.txt`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        
-        showDownloadNotification(`legalswami-chat-${chatId}.txt`, 'Text File');
-        showToast('Chat history downloaded', 'success');
-    };
-    
-    window.confirmDeleteChat = function(chatId) {
-        const chat = chatHistory.find(c => c.id === chatId);
-        if (!chat) return;
-        
-        document.getElementById('deleteChatTitle').textContent = `Delete "${chat.title}"?`;
-        document.getElementById('deleteModal').dataset.chatId = chatId;
-        document.getElementById('deleteModal').classList.add('active');
-    };
-    
-    // Delete chat confirmation
-    document.getElementById('confirmDelete').addEventListener('click', function() {
-        const chatId = document.getElementById('deleteModal').dataset.chatId;
-        const chatIndex = chatHistory.findIndex(chat => chat.id === chatId);
-        
-        if (chatIndex !== -1) {
-            if (currentChatId === chatId) {
-                createNewChat();
-            }
+            const preview = document.getElementById('attachmentsPreview');
+            preview.innerHTML = '';
             
-            chatHistory.splice(chatIndex, 1);
-            saveUserChatHistory();
-            loadHistoryList();
-            document.getElementById('deleteModal').classList.remove('active');
-            showToast('Chat deleted successfully', 'success');
-        }
-    });
-    
-    document.getElementById('cancelDelete').addEventListener('click', function() {
-        document.getElementById('deleteModal').classList.remove('active');
-    });
-    
-    document.getElementById('closeDeleteModal').addEventListener('click', function() {
-        document.getElementById('deleteModal').classList.remove('active');
-    });
-    
-    // Download modal functions
-    function openDownloadModal() {
-        document.getElementById('downloadModal').classList.add('active');
-    }
-    
-    function openMessageDownloadModal(content) {
-        messageContentForDownload = content;
-        document.getElementById('messageDownloadModal').classList.add('active');
-    }
-    
-    // Close download modals
-    document.getElementById('closeDownloadModal').addEventListener('click', function() {
-        document.getElementById('downloadModal').classList.remove('active');
-    });
-    
-    document.getElementById('closeMessageDownloadModal').addEventListener('click', function() {
-        document.getElementById('messageDownloadModal').classList.remove('active');
-    });
-    
-    // Handle download option clicks
-    document.querySelectorAll('.download-option').forEach(option => {
-        option.addEventListener('click', function() {
-            const format = this.dataset.format;
-            const isMessageModal = this.closest('#messageDownloadModal') !== null;
-            
-            if (isMessageModal) {
-                downloadMessage(format, messageContentForDownload);
+            if (attachedFiles.length === 0) {
+                preview.style.display = 'none';
+                document.getElementById('sendButton').disabled = document.getElementById('userInput').value.trim() === '';
             } else {
-                downloadChat(format);
+                attachedFiles.forEach((file, idx) => {
+                    const item = document.createElement('div');
+                    item.className = 'attachment-preview-item';
+                    
+                    if (file.type.startsWith('image/')) {
+                        item.innerHTML = `
+                            <img src="${file.data}" alt="${file.name}" class="attachment-preview-image">
+                            <button class="remove-attachment" onclick="removeAttachment(${idx})">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <div class="attachment-preview-name">${file.name}</div>
+                        `;
+                    } else if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
+                        item.innerHTML = `
+                            <div style="padding: 10px; text-align: center; background: var(--dark-surface-light); height: 80px; width: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                                <i class="fas fa-file-pdf" style="font-size: 1.5rem; color: var(--error);"></i>
+                                <div style="font-size: 0.6rem; color: var(--dark-text-secondary); margin-top: 5px;">PDF</div>
+                            </div>
+                            <button class="remove-attachment" onclick="removeAttachment(${idx})" style="top: 2px; right: 2px;">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <div class="attachment-preview-name">${file.name.substring(0, 15)}${file.name.length > 15 ? '...' : ''}</div>
+                        `;
+                    } else if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
+                        item.innerHTML = `
+                            <div style="padding: 10px; text-align: center; background: var(--dark-surface-light); height: 80px; width: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                                <i class="fas fa-file-alt" style="font-size: 1.5rem; color: var(--primary);"></i>
+                                <div style="font-size: 0.6rem; color: var(--dark-text-secondary); margin-top: 5px;">TXT</div>
+                            </div>
+                            <button class="remove-attachment" onclick="removeAttachment(${idx})" style="top: 2px; right: 2px;">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <div class="attachment-preview-name">${file.name.substring(0, 15)}${file.name.length > 15 ? '...' : ''}</div>
+                        `;
+                    } else {
+                        item.innerHTML = `
+                            <div style="padding: 10px; text-align: center; background: var(--dark-surface-light); height: 80px; width: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                                <i class="fas fa-file" style="font-size: 1.5rem; color: var(--dark-text-secondary);"></i>
+                                <div style="font-size: 0.6rem; color: var(--dark-text-secondary); margin-top: 5px;">DOC</div>
+                            </div>
+                            <button class="remove-attachment" onclick="removeAttachment(${idx})" style="top: 2px; right: 2px;">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <div class="attachment-preview-name">${file.name.substring(0, 15)}${file.name.length > 15 ? '...' : ''}</div>
+                        `;
+                    }
+                    
+                    preview.appendChild(item);
+                });
+                preview.style.display = 'flex';
             }
-        });
-    });
-    
-    function downloadMessage(format, content) {
-        const indicator = document.getElementById('messageProgressIndicator');
-        indicator.classList.add('active');
+        };
         
-        setTimeout(() => {
-            const fileName = `LegalSwami-Document-${formatDateForFilename(new Date())}`;
+        // Load history list
+        function loadHistoryList() {
+            const historyList = document.getElementById('historyList');
+            if (!historyList) return;
             
-            switch(format) {
-                case 'pdf':
-                    downloadAsPDF(content, fileName);
-                    break;
-                case 'doc':
-                    downloadAsDOC(content, fileName);
-                    break;
-                case 'txt':
-                    downloadAsTXT(content, fileName);
-                    break;
+            if (chatHistory.length === 0) {
+                historyList.innerHTML = `
+                    <div class="empty-history">
+                        <i class="fas fa-comments"></i>
+                        <p>No chat history yet</p>
+                        <p style="font-size: 0.8rem; margin-top: 0.5rem;">Start a conversation to see it here</p>
+                    </div>
+                `;
+                return;
             }
             
-            indicator.classList.remove('active');
-            document.getElementById('messageDownloadModal').classList.remove('active');
-        }, 500);
-    }
-    
-    function downloadChat(format) {
-        const indicator = document.getElementById('progressIndicator');
-        indicator.classList.add('active');
+            let html = '';
+            chatHistory.forEach(chat => {
+                const isActive = chat.id === currentChatId;
+                const date = new Date(chat.date);
+                const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                html += `
+                    <div class="history-item ${isActive ? 'active' : ''}" data-chat-id="${chat.id}">
+                        <div class="history-title">${chat.title}</div>
+                        <div class="history-preview">${chat.preview}</div>
+                        <div class="history-date">${formattedDate}</div>
+                        <div class="history-item-actions">
+                            <button class="history-item-btn download" onclick="downloadChatHistory('${chat.id}')" title="Download chat">
+                                <i class="fas fa-download"></i>
+                            </button>
+                            <button class="history-item-btn delete" onclick="confirmDeleteChat('${chat.id}')" title="Delete chat">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            historyList.innerHTML = html;
+            
+            document.querySelectorAll('.history-item').forEach(item => {
+                item.addEventListener('click', function(e) {
+                    if (!e.target.closest('.history-item-actions')) {
+                        const chatId = this.dataset.chatId;
+                        loadChatFromHistory(chatId);
+                    }
+                });
+            });
+        }
         
-        setTimeout(() => {
-            let content = '';
-            conversationHistory.forEach((msg, index) => {
+        function loadChatFromHistory(chatId) {
+            const chat = chatHistory.find(c => c.id === chatId);
+            if (!chat) return;
+            
+            currentChatId = chatId;
+            conversationHistory = [...chat.messages];
+            
+            const chatMessages = document.getElementById('chatMessages');
+            chatMessages.innerHTML = '';
+            
+            chat.messages.forEach(msg => {
+                const isDocument = msg.isDocument || false;
+                const hasSources = msg.sources && msg.sources.length > 0;
+                addMessageToChat(msg.content, msg.role === 'user', true, isDocument, msg.attachments || [], hasSources ? msg.sources : null);
+            });
+            
+            loadHistoryList();
+            
+            if (window.innerWidth < 1024) {
+                document.getElementById('sidebar').classList.remove('active');
+                document.getElementById('sidebarOverlay').classList.remove('active');
+                document.body.style.overflow = '';
+            }
+            
+            showToast('Chat loaded from history', 'success');
+        }
+        
+        window.downloadChatHistory = function(chatId) {
+            const chat = chatHistory.find(c => c.id === chatId);
+            if (!chat) return;
+            
+            let content = `LegalSwami Chat History - ${chat.title}\n`;
+            content += `Date: ${new Date(chat.date).toLocaleString()}\n\n`;
+            content += '='.repeat(50) + '\n\n';
+            
+            chat.messages.forEach((msg, index) => {
                 const role = msg.role === 'user' ? 'You' : 'LegalSwami';
                 const time = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString() : new Date().toLocaleTimeString();
-                content += `${role} (${time}):\n${msg.content}\n\n`;
+                content += `${role} (${time}):\n`;
+                content += msg.content + '\n\n';
+                content += '-'.repeat(30) + '\n\n';
             });
             
-            const fileName = `LegalSwami-Chat-${formatDateForFilename(new Date())}`;
-            
-            switch(format) {
-                case 'pdf':
-                    downloadAsPDF(content, fileName);
-                    break;
-                case 'doc':
-                    downloadAsDOC(content, fileName);
-                    break;
-                case 'txt':
-                    downloadAsTXT(content, fileName);
-                    break;
-            }
-            
-            indicator.classList.remove('active');
-            document.getElementById('downloadModal').classList.remove('active');
-        }, 500);
-    }
-    
-    function downloadAsPDF(content, filename) {
-        try {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            
-            const lines = doc.splitTextToSize(content, 180);
-            doc.setFontSize(12);
-            doc.text(lines, 10, 20);
-            doc.setFontSize(10);
-            doc.text('Generated by LegalSwami AI Assistant', 10, 280);
-            
-            const blob = doc.output('blob');
+            const blob = new Blob([content], { type: 'text/plain' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `${filename}.pdf`;
+            a.download = `legalswami-chat-${chatId}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showDownloadNotification(`legalswami-chat-${chatId}.txt`, 'Text File');
+            showToast('Chat history downloaded', 'success');
+        };
+        
+        window.confirmDeleteChat = function(chatId) {
+            const chat = chatHistory.find(c => c.id === chatId);
+            if (!chat) return;
+            
+            document.getElementById('deleteChatTitle').textContent = `Delete "${chat.title}"?`;
+            document.getElementById('deleteModal').dataset.chatId = chatId;
+            document.getElementById('deleteModal').classList.add('active');
+        };
+        
+        // Delete chat confirmation
+        document.getElementById('confirmDelete').addEventListener('click', function() {
+            const chatId = document.getElementById('deleteModal').dataset.chatId;
+            const chatIndex = chatHistory.findIndex(chat => chat.id === chatId);
+            
+            if (chatIndex !== -1) {
+                if (currentChatId === chatId) {
+                    createNewChat();
+                }
+                
+                chatHistory.splice(chatIndex, 1);
+                saveUserChatHistory();
+                loadHistoryList();
+                document.getElementById('deleteModal').classList.remove('active');
+                showToast('Chat deleted successfully', 'success');
+            }
+        });
+        
+        document.getElementById('cancelDelete').addEventListener('click', function() {
+            document.getElementById('deleteModal').classList.remove('active');
+        });
+        
+        document.getElementById('closeDeleteModal').addEventListener('click', function() {
+            document.getElementById('deleteModal').classList.remove('active');
+        });
+        
+        // Download modal functions
+        function openDownloadModal() {
+            document.getElementById('downloadModal').classList.add('active');
+        }
+        
+        function openMessageDownloadModal(content) {
+            messageContentForDownload = content;
+            document.getElementById('messageDownloadModal').classList.add('active');
+        }
+        
+        // Close download modals
+        document.getElementById('closeDownloadModal').addEventListener('click', function() {
+            document.getElementById('downloadModal').classList.remove('active');
+        });
+        
+        document.getElementById('closeMessageDownloadModal').addEventListener('click', function() {
+            document.getElementById('messageDownloadModal').classList.remove('active');
+        });
+        
+        // Handle download option clicks
+        document.querySelectorAll('.download-option').forEach(option => {
+            option.addEventListener('click', function() {
+                const format = this.dataset.format;
+                const isMessageModal = this.closest('#messageDownloadModal') !== null;
+                
+                if (isMessageModal) {
+                    downloadMessage(format, messageContentForDownload);
+                } else {
+                    downloadChat(format);
+                }
+            });
+        });
+        
+        function downloadMessage(format, content) {
+            const indicator = document.getElementById('messageProgressIndicator');
+            indicator.classList.add('active');
+            
+            setTimeout(() => {
+                const fileName = `LegalSwami-Document-${formatDateForFilename(new Date())}`;
+                
+                switch(format) {
+                    case 'pdf':
+                        downloadAsPDF(content, fileName);
+                        break;
+                    case 'doc':
+                        downloadAsDOC(content, fileName);
+                        break;
+                    case 'txt':
+                        downloadAsTXT(content, fileName);
+                        break;
+                }
+                
+                indicator.classList.remove('active');
+                document.getElementById('messageDownloadModal').classList.remove('active');
+            }, 500);
+        }
+        
+        function downloadChat(format) {
+            const indicator = document.getElementById('progressIndicator');
+            indicator.classList.add('active');
+            
+            setTimeout(() => {
+                let content = '';
+                conversationHistory.forEach((msg, index) => {
+                    const role = msg.role === 'user' ? 'You' : 'LegalSwami';
+                    const time = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString() : new Date().toLocaleTimeString();
+                    content += `${role} (${time}):\n${msg.content}\n\n`;
+                });
+                
+                const fileName = `LegalSwami-Chat-${formatDateForFilename(new Date())}`;
+                
+                switch(format) {
+                    case 'pdf':
+                        downloadAsPDF(content, fileName);
+                        break;
+                    case 'doc':
+                        downloadAsDOC(content, fileName);
+                        break;
+                    case 'txt':
+                        downloadAsTXT(content, fileName);
+                        break;
+                }
+                
+                indicator.classList.remove('active');
+                document.getElementById('downloadModal').classList.remove('active');
+            }, 500);
+        }
+        
+        function downloadAsPDF(content, filename) {
+            try {
+                const { jsPDF } = window.jspdf;
+                const doc = new jsPDF();
+                
+                const lines = doc.splitTextToSize(content, 180);
+                doc.setFontSize(12);
+                doc.text(lines, 10, 20);
+                doc.setFontSize(10);
+                doc.text('Generated by LegalSwami AI Assistant', 10, 280);
+                
+                const blob = doc.output('blob');
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${filename}.pdf`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+                
+                lastDownloadedFileUrl = url;
+                lastDownloadedFileName = `${filename}.pdf`;
+                showDownloadNotification(`${filename}.pdf`, 'PDF Document');
+                showToast('PDF downloaded successfully', 'success');
+            } catch (error) {
+                console.error('PDF generation error:', error);
+                showToast('PDF download failed. Using fallback.', 'warning');
+                downloadAsTXT(content, filename);
+            }
+        }
+        
+        function downloadAsDOC(content, filename) {
+            const htmlContent = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>${filename}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 40px; }
+                        h1 { color: #10a37f; }
+                        .timestamp { color: #666; font-size: 0.9em; }
+                        .user { color: #10a37f; font-weight: bold; }
+                        .ai { color: #7e57c2; font-weight: bold; }
+                        .disclaimer { 
+                            background-color: #f8f9fa; 
+                            border-left: 4px solid #f59e0b;
+                            padding: 10px;
+                            margin-top: 20px;
+                            font-size: 0.9em;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h1>${filename}</h1>
+                    <p class="timestamp">Generated on: ${new Date().toLocaleString()}</p>
+                    <hr>
+                    <pre style="white-space: pre-wrap; font-family: inherit;">${content}</pre>
+                    <div class="disclaimer">
+                        <strong>Disclaimer:</strong> This document is generated by LegalSwami AI Assistant for informational purposes only and does not constitute legal advice.
+                    </div>
+                </body>
+                </html>
+            `;
+            
+            const blob = new Blob([htmlContent], { type: 'application/msword' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${filename}.doc`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
             
             lastDownloadedFileUrl = url;
-            lastDownloadedFileName = `${filename}.pdf`;
-            showDownloadNotification(`${filename}.pdf`, 'PDF Document');
-            showToast('PDF downloaded successfully', 'success');
-        } catch (error) {
-            console.error('PDF generation error:', error);
-            showToast('PDF download failed. Using fallback.', 'warning');
-            downloadAsTXT(content, filename);
+            lastDownloadedFileName = `${filename}.doc`;
+            showDownloadNotification(`${filename}.doc`, 'Word Document');
+            showToast('Word document downloaded', 'success');
         }
-    }
-    
-    function downloadAsDOC(content, filename) {
-        const htmlContent = `
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <meta charset="UTF-8">
-                <title>${filename}</title>
-                <style>
-                    body { font-family: Arial, sans-serif; line-height: 1.6; margin: 40px; }
-                    h1 { color: #10a37f; }
-                    .timestamp { color: #666; font-size: 0.9em; }
-                    .user { color: #10a37f; font-weight: bold; }
-                    .ai { color: #7e57c2; font-weight: bold; }
-                    .disclaimer { 
-                        background-color: #f8f9fa; 
-                        border-left: 4px solid #f59e0b;
-                        padding: 10px;
-                        margin-top: 20px;
-                        font-size: 0.9em;
-                    }
-                </style>
-            </head>
-            <body>
-                <h1>${filename}</h1>
-                <p class="timestamp">Generated on: ${new Date().toLocaleString()}</p>
-                <hr>
-                <pre style="white-space: pre-wrap; font-family: inherit;">${content}</pre>
-                <div class="disclaimer">
-                    <strong>Disclaimer:</strong> This document is generated by LegalSwami AI Assistant for informational purposes only and does not constitute legal advice.
-                </div>
-            </body>
-            </html>
-        `;
         
-        const blob = new Blob([htmlContent], { type: 'application/msword' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${filename}.doc`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        function downloadAsTXT(content, filename) {
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${filename}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            lastDownloadedFileUrl = url;
+            lastDownloadedFileName = `${filename}.txt`;
+            showDownloadNotification(`${filename}.txt`, 'Text File');
+            showToast('Text file downloaded', 'success');
+        }
         
-        lastDownloadedFileUrl = url;
-        lastDownloadedFileName = `${filename}.doc`;
-        showDownloadNotification(`${filename}.doc`, 'Word Document');
-        showToast('Word document downloaded', 'success');
-    }
-    
-    function downloadAsTXT(content, filename) {
-        const blob = new Blob([content], { type: 'text/plain' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${filename}.txt`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
+        // Format date for filename
+        function formatDateForFilename(date) {
+            return date.toISOString()
+                .replace(/[:\-]/g, '')
+                .replace('T', '_')
+                .split('.')[0];
+        }
         
-        lastDownloadedFileUrl = url;
-        lastDownloadedFileName = `${filename}.txt`;
-        showDownloadNotification(`${filename}.txt`, 'Text File');
-        showToast('Text file downloaded', 'success');
-    }
-    
-    // Format date for filename
-    function formatDateForFilename(date) {
-        return date.toISOString()
-            .replace(/[:\-]/g, '')
-            .replace('T', '_')
-            .split('.')[0];
-    }
-    
-    // Show toast notification
-    function showToast(message, type = 'success') {
-        const toast = document.getElementById('toast');
-        const toastMessage = document.getElementById('toast-message');
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            const toastMessage = document.getElementById('toast-message');
+            
+            toastMessage.textContent = message;
+            toast.className = `toast ${type} show`;
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
         
-        toastMessage.textContent = message;
-        toast.className = `toast ${type} show`;
-        
-        setTimeout(() => {
-            toast.classList.remove('show');
-        }, 3000);
-    }
-    
-    // Force guest login on page load for testing
-    window.addEventListener('DOMContentLoaded', function() {
-        console.log("DOM loaded, checking for guest mode...");
-        
-        // Wait a moment then auto-login as guest for testing
-        setTimeout(function() {
-            if (!isLoggedIn && !document.getElementById('loginModal').classList.contains('active')) {
-                console.log("Auto-initializing guest mode...");
-                initializeAppForGuest();
+        // Force guest login on page load for testing
+        window.addEventListener('DOMContentLoaded', function() {
+            console.log("DOM loaded, checking for guest mode...");
+            
+            // Wait a moment then auto-login as guest for testing
+            setTimeout(function() {
+                if (!isLoggedIn && !document.getElementById('loginModal').classList.contains('active')) {
+                    console.log("Auto-initializing guest mode...");
+                    initializeAppForGuest();
+                }
+            }, 1000);
+            
+            // Also add direct button binding
+            const guestBtn = document.getElementById('guestLoginBtn');
+            if (guestBtn) {
+                guestBtn.addEventListener('click', function() {
+                    console.log("Guest button clicked!");
+                    initializeAppForGuest();
+                });
             }
-        }, 1000);
-        
-        // Also add direct button binding
-        const guestBtn = document.getElementById('guestLoginBtn');
-        if (guestBtn) {
-            guestBtn.addEventListener('click', function() {
-                console.log("Guest button clicked!");
-                initializeAppForGuest();
-            });
-        }
-    });
-</script>
-</body>
-</html>
+        });
+    </script>
+    </body>
+    </html>
