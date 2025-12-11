@@ -7,148 +7,68 @@
     
     <!-- jsPDF Library for PDF generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous"></script>
+    <!-- jsPDF AutoTable plugin -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
 
     <!-- Font Awesome for icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Simple emoji parsing without CORS issues -->
-    <script>
-    // Simple emoji parser for local files
-    function parseEmojis(element) {
-        if (!element) return;
-        
-        const emojiMap = {
-            // Legal emojis
-            '⚖️': '⚖️', '📝': '📝', '🤝': '🤝', '📄': '📄', '📚': '📚',
-            '🏛️': '🏛️', '👨‍⚖️': '👨‍⚖️', '👨‍💼': '👨‍💼', '👤': '👤', '🏠': '🏠',
-            '💰': '💰', '⏰': '⏰', '📅': '📅', '✍️': '✍️', '👀': '👀',
-            '🔍': '🔍', '📋': '📋', '✅': '✅', '❌': '❌', '⚠️': '⚠️',
-            
-            // Status emojis
-            '🔒': '🔒', '🌐': '🌐', '🎤': '🎤', '📎': '📎', '📥': '📥',
-            '📤': '📤', '🔄': '🔄', '👍': '👍', '👎': '👎', '💡': '💡',
-            '❓': '❓', '💬': '💬', '📊': '📊', '📑': '📑', '✖️': '✖️',
-            
-            // User interface emojis
-            '👋': '👋', '🎉': '🎉', '😔': '😔', '😞': '😞', '👌': '👌',
-            '🧹': '🧹', '✏️': '✏️', '📋': '📋', '⏸️': '⏸️', '▶️': '▶️',
-            '🔽': '🔽', '📷': '📷', '👁️': '👁️', '🗑️': '🗑️', '📭': '📭',
-            '📂': '📂', '👆': '👆', '🔑': '🔑', '🌙': '🌙', '☀️': '☀️',
-            
-            // Country flags
-            '🇮🇳': '🇮🇳', '🇬🇧': '🇬🇧',
-            
-            // AI and tech
-            '🤖': '🤖', '🔐': '🔐', '📱': '📱', '💻': '💻', '☁️': '☁️',
-            '💾': '💾', '🚀': '🚀', '💬': '💬'
-        };
-        
-        // Convert emoji shortcodes to actual emojis
-        const shortcodeMap = {
-            ':scales:': '⚖️', ':memo:': '📝', ':handshake:': '🤝',
-            ':page_facing_up:': '📄', ':books:': '📚', ':classical_building:': '🏛️',
-            ':man_judge:': '👨‍⚖️', ':man_in_business_suit_levitating:': '👨‍💼',
-            ':bust_in_silhouette:': '👤', ':house:': '🏠', ':money_bag:': '💰',
-            ':alarm_clock:': '⏰', ':calendar:': '📅', ':writing_hand:': '✍️',
-            ':eyes:': '👀', ':magnifying_glass:': '🔍', ':clipboard:': '📋',
-            ':white_check_mark:': '✅', ':x:': '❌', ':warning:': '⚠️',
-            ':lock:': '🔒', ':globe_showing_americas:': '🌐',
-            ':microphone:': '🎤', ':paperclip:': '📎', ':inbox_tray:': '📥',
-            ':outbox_tray:': '📤', ':arrows_counterclockwise:': '🔄',
-            ':thumbsup:': '👍', ':thumbsdown:': '👎', ':bulb:': '💡',
-            ':question:': '❓', ':speech_balloon:': '💬', ':bar_chart:': '📊',
-            ':bookmark_tabs:': '📑', ':heavy_multiplication_x:': '✖️',
-            ':wave:': '👋', ':tada:': '🎉', ':pensive:': '😔',
-            ':disappointed:': '😞', ':ok_hand:': '👌', ':broom:': '🧹',
-            ':pencil2:': '✏️', ':clipboard:': '📋', ':pause_button:': '⏸️',
-            ':play_button:': '▶️', ':down_arrow:': '🔽', ':camera:': '📷',
-            ':eye:': '👁️', ':wastebasket:': '🗑️', ':mailbox_closed:': '📭',
-            ':file_folder:': '📂', ':backhand_index_pointing_up:': '👆',
-            ':old_key:': '🔑', ':crescent_moon:': '🌙', ':sun:': '☀️',
-            ':flag_in:': '🇮🇳', ':flag_gb:': '🇬🇧', ':robot:': '🤖',
-            ':locked_with_key:': '🔐', ':mobile_phone:': '📱',
-            ':laptop:': '💻', ':cloud:': '☁️', ':floppy_disk:': '💾',
-            ':rocket:': '🚀', ':speech_balloon:': '💬'
-        };
-        
-        // Process text nodes
-        function processTextNode(node) {
-            if (node.nodeType === Node.TEXT_NODE) {
-                let text = node.textContent;
-                
-                // Replace shortcodes
-                Object.keys(shortcodeMap).forEach(shortcode => {
-                    const emoji = shortcodeMap[shortcode];
-                    text = text.replace(new RegExp(shortcode, 'g'), emoji);
-                });
-                
-                // Replace common emoji patterns
-                Object.keys(emojiMap).forEach(emoji => {
-                    text = text.replace(new RegExp(emoji, 'g'), emoji);
-                });
-                
-                if (text !== node.textContent) {
-                    const span = document.createElement('span');
-                    span.innerHTML = text;
-                    node.parentNode.replaceChild(span, node);
-                }
-            } else if (node.nodeType === Node.ELEMENT_NODE) {
-                // Process child nodes
-                Array.from(node.childNodes).forEach(processTextNode);
-            }
-        }
-        
-        processTextNode(element);
-    }
-    
-    // Parse all emojis in document
-    window.parseAllEmojis = function() {
-        parseEmojis(document.body);
-    };
-    </script>
+    <!-- ChatGPT-like Font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
 :root {
+    /* ChatGPT-like Colors */
     --primary: #10a37f;
     --primary-dark: #0d8c6d;
     --primary-light: #12b886;
     --secondary: #7e57c2;
     --accent: #ec4899;
+    
+    /* Dark Mode (ChatGPT-like) */
     --dark-bg: #343541;
     --dark-surface: #40414f;
     --dark-surface-light: #444654;
     --dark-border: #565869;
     --dark-text: #ececf1;
     --dark-text-secondary: #8e8ea0;
-    --success: #10b981;
-    --warning: #f59e0b;
-    --error: #ef4444;
+    --dark-text-tertiary: #6e6e80;
     
-    /* Light mode variables - ChatGPT-like */
+    /* Light Mode (ChatGPT-like) */
     --light-bg: #ffffff;
     --light-surface: #f7f7f8;
     --light-surface-light: #f0f0f0;
     --light-border: #e5e5e5;
     --light-text: #000000;
     --light-text-secondary: #6e6e80;
+    --light-text-tertiary: #8e8ea0;
+    
+    /* Status Colors */
+    --success: #10b981;
+    --warning: #f59e0b;
+    --error: #ef4444;
+    --info: #3b82f6;
 }
         
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
     -webkit-tap-highlight-color: transparent;
 }
         
 body {
     background: var(--dark-bg);
     color: var(--dark-text);
-    line-height: 1.6;
+    line-height: 1.5;
     min-height: 100vh;
     overflow-x: hidden;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     overflow-y: auto;
+    font-size: 14px;
 }
         
 body.light-mode {
@@ -164,7 +84,7 @@ body.light-mode {
     width: 100%;
     background: var(--dark-bg);
     overflow: hidden;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     position: relative;
 }
         
@@ -172,21 +92,25 @@ body.light-mode {
     background: var(--light-bg);
 }
 
-/* ChatGPT-like Header */
+/* ChatGPT-like Header - FIXED FOR MOBILE */
 header {
     background: var(--dark-surface);
-    padding: 0.8rem 1rem;
+    padding: 0.75rem 1rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid var(--dark-border);
     position: sticky;
     top: 0;
-    z-index: 100;
-    min-height: 64px;
-    transition: all 0.3s ease;
+    z-index: 1000;
+    min-height: 60px;
+    transition: all 0.2s ease;
     width: 100%;
     flex-shrink: 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
 }
         
 .light-mode header {
@@ -194,20 +118,31 @@ header {
     border-bottom-color: var(--light-border);
 }
         
+/* Hide scrollbar but keep functionality */
+header::-webkit-scrollbar {
+    height: 0;
+    background: transparent;
+}
+        
 .logo {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     flex-shrink: 0;
+    position: sticky;
+    left: 0;
+    background: inherit;
+    padding-right: 10px;
+    z-index: 2;
 }
         
 .logo-icon {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
     color: white;
-    width: 36px;
-    height: 36px;
-    border-radius: 8px;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -215,7 +150,7 @@ header {
 }
         
 .logo h1 {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: 600;
     color: var(--dark-text);
     white-space: nowrap;
@@ -229,8 +164,10 @@ header {
     display: flex;
     gap: 8px;
     align-items: center;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     justify-content: flex-end;
+    min-width: max-content;
+    padding-left: 10px;
 }
         
 .header-btn {
@@ -238,15 +175,17 @@ header {
     color: var(--dark-text);
     border: 1px solid var(--dark-border);
     border-radius: 6px;
-    padding: 0.5rem 0.8rem;
+    padding: 0.5rem 0.75rem;
     cursor: pointer;
     font-size: 0.85rem;
-    transition: all 0.3s;
+    transition: all 0.2s;
     display: flex;
     align-items: center;
     gap: 6px;
     white-space: nowrap;
-    min-height: 40px;
+    min-height: 36px;
+    font-weight: 500;
+    flex-shrink: 0;
 }
         
 .light-mode .header-btn {
@@ -267,12 +206,15 @@ header {
     display: flex;
     align-items: center;
     gap: 6px;
-    padding: 0.4rem 0.8rem;
+    padding: 0.4rem 0.75rem;
     background: rgba(16, 163, 127, 0.1);
     border: 1px solid rgba(16, 163, 127, 0.3);
-    border-radius: 20px;
-    font-size: 0.8rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
     white-space: nowrap;
+    flex-shrink: 0;
+    min-height: 36px;
+    font-weight: 500;
 }
         
 .light-mode .status-indicator {
@@ -297,13 +239,14 @@ header {
     background: var(--dark-surface-light);
     border: 1px solid var(--dark-border);
     border-radius: 6px;
-    width: 44px;
-    height: 44px;
+    width: 36px;
+    height: 36px;
     display: flex;
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.2s;
+    flex-shrink: 0;
 }
         
 .light-mode .theme-toggle {
@@ -317,7 +260,8 @@ header {
         
 .theme-toggle i {
     color: var(--dark-text);
-    transition: all 0.3s;
+    transition: all 0.2s;
+    font-size: 1rem;
 }
         
 .light-mode .theme-toggle i {
@@ -341,7 +285,7 @@ header {
     border-right: 1px solid var(--dark-border);
     display: flex;
     flex-direction: column;
-    transition: transform 0.3s ease;
+    transition: transform 0.2s ease;
     z-index: 50;
     position: absolute;
     top: 0;
@@ -374,8 +318,8 @@ header {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
 }
         
 .light-mode .sidebar-close {
@@ -386,7 +330,6 @@ header {
         
 .sidebar-close:hover {
     background: var(--dark-border);
-    transform: rotate(90deg);
 }
         
 .light-mode .sidebar-close:hover {
@@ -409,16 +352,17 @@ header {
         
 .sidebar-tab {
     flex: 1;
-    padding: 1rem;
+    padding: 0.875rem 0.5rem;
     background: transparent;
     border: none;
     color: var(--dark-text-secondary);
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 500;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.2s;
     text-align: center;
     position: relative;
+    white-space: nowrap;
 }
         
 .light-mode .sidebar-tab {
@@ -454,98 +398,8 @@ header {
     display: block;
 }
         
-.sidebar-header {
-    padding: 1rem;
-    border-bottom: 1px solid var(--dark-border);
-    position: sticky;
-    top: 0;
-    background: var(--dark-surface);
-    z-index: 10;
-}
-        
-.light-mode .sidebar-header {
-    background: var(--light-surface);
-    border-bottom-color: var(--light-border);
-}
-        
-.sidebar-header h2 {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--dark-text-secondary);
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-        
-.light-mode .sidebar-header h2 {
-    color: var(--light-text-secondary);
-}
-        
-.sidebar-section {
-    padding: 1rem;
-}
-        
-.sidebar-section h3 {
-    font-size: 0.85rem;
-    margin-bottom: 0.8rem;
-    color: var(--dark-text-secondary);
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-        
-.light-mode .sidebar-section h3 {
-    color: var(--light-text-secondary);
-}
-        
-.topic-list, .quick-actions {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-        
-.topic-item, .action-item {
-    padding: 0.8rem;
-    background: transparent;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.3s;
-    border: none;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    color: var(--dark-text);
-    min-height: 44px;
-    text-align: left;
-    width: 100%;
-    font-size: 0.9rem;
-}
-        
-.light-mode .topic-item,
-.light-mode .action-item {
-    color: var(--light-text);
-}
-        
-.topic-item:hover, .action-item:hover {
-    background: var(--dark-surface-light);
-}
-        
-.light-mode .topic-item:hover,
-.light-mode .action-item:hover {
-    background: var(--light-surface-light);
-}
-        
-.topic-item i, .action-item i {
-    width: 20px;
-    text-align: center;
-    font-size: 0.9rem;
-    flex-shrink: 0;
-}
-        
 .history-header {
-    padding: 1rem;
+    padding: 0.875rem 1rem;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -562,14 +416,14 @@ header {
 }
         
 .history-header h2 {
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     font-weight: 600;
     color: var(--dark-text-secondary);
     text-transform: uppercase;
     letter-spacing: 0.5px;
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
 }
         
 .light-mode .history-header h2 {
@@ -581,14 +435,15 @@ header {
     color: var(--dark-text);
     border: 1px solid var(--dark-border);
     border-radius: 6px;
-    padding: 0.5rem 1rem;
+    padding: 0.5rem 0.75rem;
     cursor: pointer;
     font-size: 0.85rem;
     font-weight: 500;
-    transition: all 0.3s;
+    transition: all 0.2s;
     display: flex;
     align-items: center;
     gap: 6px;
+    white-space: nowrap;
 }
         
 .light-mode .new-chat-btn {
@@ -610,11 +465,11 @@ header {
 }
         
 .history-item {
-    padding: 0.8rem;
+    padding: 0.75rem;
     background: transparent;
     border-radius: 6px;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.2s;
     border: none;
     display: flex;
     flex-direction: column;
@@ -649,7 +504,7 @@ header {
 }
         
 .history-title {
-    font-size: 0.9rem;
+    font-size: 0.875rem;
     font-weight: 500;
     white-space: nowrap;
     overflow: hidden;
@@ -671,7 +526,7 @@ header {
 }
         
 .history-date {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     color: var(--dark-text-secondary);
 }
         
@@ -682,10 +537,10 @@ header {
 .history-item-actions {
     display: none;
     position: absolute;
-    right: 10px;
+    right: 8px;
     top: 50%;
     transform: translateY(-50%);
-    gap: 5px;
+    gap: 4px;
     background: var(--dark-surface);
     padding: 4px;
     border-radius: 6px;
@@ -707,10 +562,10 @@ header {
     border: none;
     color: var(--dark-text-secondary);
     cursor: pointer;
-    padding: 4px 8px;
+    padding: 4px 6px;
     border-radius: 4px;
     font-size: 0.8rem;
-    transition: all 0.3s;
+    transition: all 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -740,7 +595,7 @@ header {
         
 .empty-history {
     text-align: center;
-    padding: 3rem 1rem;
+    padding: 2.5rem 1rem;
     color: var(--dark-text-secondary);
 }
         
@@ -749,13 +604,13 @@ header {
 }
         
 .empty-history i {
-    font-size: 2rem;
+    font-size: 1.75rem;
     margin-bottom: 1rem;
     opacity: 0.5;
 }
         
 .empty-history p {
-    font-size: 0.9rem;
+    font-size: 0.875rem;
 }
 
 /* ChatGPT-like Chat Container */
@@ -777,10 +632,10 @@ header {
 .chat-messages {
     flex: 1;
     overflow-y: auto;
-    padding: 1.5rem 1rem;
+    padding: 1.25rem 1rem;
     display: flex;
     flex-direction: column;
-    gap: 1.5rem;
+    gap: 1.25rem;
     scroll-behavior: smooth;
     -webkit-overflow-scrolling: touch;
     min-height: 0;
@@ -789,10 +644,10 @@ header {
         
 .message {
     display: flex;
-    gap: 1rem;
+    gap: 0.75rem;
     max-width: 100%;
-    padding: 0 1rem;
-    animation: fadeIn 0.3s ease-out;
+    padding: 0 0.75rem;
+    animation: fadeIn 0.2s ease-out;
 }
         
 @keyframes fadeIn {
@@ -804,6 +659,7 @@ header {
     background: var(--dark-surface);
     border-radius: 8px;
     padding: 1rem;
+    max-width: 100%;
 }
         
 .light-mode .user-message {
@@ -815,13 +671,13 @@ header {
 }
         
 .avatar {
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
     border-radius: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.9rem;
+    font-size: 0.85rem;
     flex-shrink: 0;
     margin-top: 4px;
 }
@@ -838,28 +694,31 @@ header {
     flex: 1;
     position: relative;
     width: 100%;
+    min-width: 0;
 }
         
 .message-text {
     padding: 0;
     border-radius: 0;
-    font-size: 0.95rem;
+    font-size: 0.9375rem;
     line-height: 1.6;
     word-wrap: break-word;
     overflow-wrap: break-word;
     overflow: hidden;
-}
-        
-.ai-message .message-text {
     color: var(--dark-text);
 }
         
-.light-mode .ai-message .message-text {
+.light-mode .message-text {
     color: var(--light-text);
 }
         
+/* FIXED: User message text visibility in light mode */
 .user-message .message-text {
-    color: white;
+    color: var(--dark-text);
+}
+        
+.light-mode .user-message .message-text {
+    color: var(--light-text);
 }
         
 .message-attachments {
@@ -892,17 +751,24 @@ header {
     padding: 4px 8px;
     background: rgba(0, 0, 0, 0.7);
     color: white;
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
         
+/* ChatGPT-like Message Actions */
 .message-actions {
     display: flex;
     gap: 8px;
-    margin-top: 0.8rem;
+    margin-top: 0.75rem;
     flex-wrap: wrap;
+    opacity: 0;
+    transition: opacity 0.2s ease;
+}
+        
+.message:hover .message-actions {
+    opacity: 1;
 }
         
 .action-btn {
@@ -910,14 +776,16 @@ header {
     color: var(--dark-text-secondary);
     border: 1px solid var(--dark-border);
     border-radius: 6px;
-    padding: 0.4rem 0.8rem;
+    padding: 0.375rem 0.75rem;
     cursor: pointer;
-    font-size: 0.75rem;
-    transition: all 0.3s;
+    font-size: 0.8125rem;
+    transition: all 0.2s;
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 6px;
     min-height: 32px;
+    font-weight: 500;
+    white-space: nowrap;
 }
         
 .light-mode .action-btn {
@@ -954,7 +822,7 @@ header {
     color: white;
 }
         
-.action-btn.document:hover {
+.action-btn.download:hover {
     background: var(--primary);
     border-color: var(--primary);
     color: white;
@@ -962,22 +830,23 @@ header {
         
 .document-download-btn {
     position: absolute;
-    top: -15px;
-    right: 10px;
+    top: -12px;
+    right: 8px;
     background: var(--dark-surface);
     border: 1px solid var(--primary);
     border-radius: 20px;
     padding: 6px 12px;
     color: var(--primary);
     cursor: pointer;
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     display: flex;
     align-items: center;
-    gap: 5px;
-    transition: all 0.3s;
+    gap: 4px;
+    transition: all 0.2s;
     z-index: 5;
     opacity: 0;
     transform: translateY(5px);
+    font-weight: 500;
 }
         
 .light-mode .document-download-btn {
@@ -1002,8 +871,8 @@ header {
     background: var(--dark-surface);
     border: 1px solid var(--dark-border);
     border-radius: 8px;
-    padding: 1.5rem;
-    margin: 1rem 0;
+    padding: 1.25rem;
+    margin: 0.75rem 0;
     overflow: hidden;
 }
         
@@ -1016,19 +885,20 @@ header {
     text-align: center;
     border-bottom: 2px solid var(--primary);
     padding-bottom: 1rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
 }
         
 .document-title {
-    font-size: 1.5rem;
+    font-size: 1.375rem;
     color: var(--primary);
     margin-bottom: 0.5rem;
     word-wrap: break-word;
+    font-weight: 600;
 }
         
 .document-subtitle {
     color: var(--dark-text-secondary);
-    font-size: 0.9rem;
+    font-size: 0.875rem;
 }
         
 .light-mode .document-subtitle {
@@ -1036,16 +906,17 @@ header {
 }
         
 .document-section {
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
 }
         
 .document-section-title {
     color: var(--primary);
-    font-size: 1.1rem;
-    margin-bottom: 0.8rem;
+    font-size: 1rem;
+    margin-bottom: 0.75rem;
     padding-bottom: 0.5rem;
     border-bottom: 1px solid var(--dark-border);
     word-wrap: break-word;
+    font-weight: 600;
 }
         
 .light-mode .document-section-title {
@@ -1053,7 +924,7 @@ header {
 }
         
 .document-clause {
-    margin-bottom: 1rem;
+    margin-bottom: 0.875rem;
     padding-left: 1rem;
     border-left: 3px solid var(--primary-light);
 }
@@ -1080,8 +951,8 @@ header {
 }
         
 .signature-section {
-    margin-top: 2rem;
-    padding-top: 1.5rem;
+    margin-top: 1.75rem;
+    padding-top: 1.25rem;
     border-top: 1px solid var(--dark-border);
 }
         
@@ -1092,13 +963,14 @@ header {
 .signature-line {
     display: flex;
     justify-content: space-between;
-    margin-top: 2rem;
+    margin-top: 1.5rem;
     flex-wrap: wrap;
+    gap: 1rem;
 }
         
 .signature-block {
     flex: 1;
-    padding: 1rem;
+    padding: 0.875rem;
     min-width: 150px;
 }
         
@@ -1114,7 +986,7 @@ header {
 }
         
 .signature-label {
-    font-size: 0.8rem;
+    font-size: 0.8125rem;
     color: var(--dark-text-secondary);
 }
         
@@ -1125,11 +997,11 @@ header {
 .welcome-message {
     text-align: center;
     max-width: 600px;
-    margin: 2rem auto;
-    padding: 1.5rem;
+    margin: 1.5rem auto;
+    padding: 1.25rem;
     background: linear-gradient(135deg, rgba(16, 163, 127, 0.1) 0%, rgba(30, 64, 175, 0.1) 100%);
     border: 1px solid var(--dark-border);
-    border-radius: 16px;
+    border-radius: 12px;
     width: 90%;
 }
         
@@ -1139,19 +1011,20 @@ header {
 }
         
 .welcome-message h2 {
-    font-size: 1.8rem;
-    margin-bottom: 0.8rem;
+    font-size: 1.5rem;
+    margin-bottom: 0.75rem;
     background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     word-wrap: break-word;
+    font-weight: 600;
 }
         
 .welcome-message p {
     color: var(--dark-text-secondary);
-    font-size: 1rem;
-    margin-bottom: 1.2rem;
+    font-size: 0.9375rem;
+    margin-bottom: 1rem;
     line-height: 1.5;
     word-wrap: break-word;
 }
@@ -1163,14 +1036,14 @@ header {
 .welcome-features {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-    gap: 1rem;
-    margin-top: 1.5rem;
+    gap: 0.875rem;
+    margin-top: 1.25rem;
 }
         
 .feature {
     background: var(--dark-surface);
-    padding: 1rem;
-    border-radius: 12px;
+    padding: 0.875rem;
+    border-radius: 8px;
     border: 1px solid var(--dark-border);
     display: flex;
     flex-direction: column;
@@ -1185,15 +1058,16 @@ header {
 }
         
 .feature i {
-    font-size: 1.5rem;
+    font-size: 1.375rem;
     color: var(--primary);
     margin-bottom: 0.5rem;
 }
         
 .feature h4 {
-    font-size: 0.9rem;
-    margin-bottom: 0.3rem;
+    font-size: 0.875rem;
+    margin-bottom: 0.25rem;
     color: var(--dark-text);
+    font-weight: 600;
 }
         
 .light-mode .feature h4 {
@@ -1201,7 +1075,7 @@ header {
 }
         
 .feature p {
-    font-size: 0.8rem;
+    font-size: 0.8125rem;
     color: var(--dark-text-secondary);
 }
         
@@ -1211,13 +1085,13 @@ header {
 
 /* ChatGPT-like Input Area */
 .input-container {
-    padding: 1rem;
+    padding: 0.875rem;
     background: var(--dark-bg);
     border-top: 1px solid var(--dark-border);
     position: sticky;
     bottom: 0;
     z-index: 10;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     width: 100%;
     flex-shrink: 0;
 }
@@ -1237,13 +1111,13 @@ header {
 .attachments-preview {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 10px;
-    padding: 8px;
+    gap: 6px;
+    margin-bottom: 8px;
+    padding: 6px;
     background: var(--dark-surface-light);
     border-radius: 8px;
     border: 1px solid var(--dark-border);
-    max-height: 120px;
+    max-height: 100px;
     overflow-y: auto;
 }
         
@@ -1254,8 +1128,8 @@ header {
         
 .attachment-preview-item {
     position: relative;
-    width: 80px;
-    height: 80px;
+    width: 70px;
+    height: 70px;
     border-radius: 6px;
     overflow: hidden;
     border: 1px solid var(--dark-border);
@@ -1285,7 +1159,7 @@ header {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.7rem;
+    font-size: 0.75rem;
 }
         
 .attachment-preview-name {
@@ -1296,7 +1170,7 @@ header {
     background: rgba(0, 0, 0, 0.7);
     color: white;
     padding: 2px 4px;
-    font-size: 0.6rem;
+    font-size: 0.625rem;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -1304,18 +1178,19 @@ header {
         
 .input-area textarea {
     width: 100%;
-    padding: 1rem 7.5rem 1rem 1.2rem;
+    padding: 0.875rem 6.5rem 0.875rem 1rem;
     background: var(--dark-surface);
     border: 1px solid var(--dark-border);
-    border-radius: 16px;
+    border-radius: 12px;
     color: var(--dark-text);
-    font-size: 1rem;
+    font-size: 0.9375rem;
     resize: none;
-    min-height: 56px;
-    max-height: 200px;
-    transition: all 0.3s;
+    min-height: 52px;
+    max-height: 150px;
+    transition: all 0.2s;
     line-height: 1.5;
     font-family: inherit;
+    outline: none;
 }
         
 .light-mode .input-area textarea {
@@ -1327,15 +1202,15 @@ header {
 .input-area textarea:focus {
     outline: none;
     border-color: var(--primary);
-    box-shadow: 0 0 0 3px rgba(16, 163, 127, 0.1);
+    box-shadow: 0 0 0 2px rgba(16, 163, 127, 0.1);
 }
         
 .input-buttons {
     position: absolute;
-    right: 0.8rem;
-    bottom: 0.8rem;
+    right: 0.75rem;
+    bottom: 0.75rem;
     display: flex;
-    gap: 8px;
+    gap: 6px;
     align-items: center;
 }
         
@@ -1346,12 +1221,12 @@ header {
     cursor: pointer;
     padding: 0.5rem;
     border-radius: 8px;
-    transition: all 0.3s;
+    transition: all 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
 }
         
 .light-mode .attachment-btn {
@@ -1375,12 +1250,12 @@ header {
     cursor: pointer;
     padding: 0.5rem;
     border-radius: 8px;
-    transition: all 0.3s;
+    transition: all 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
 }
         
 .light-mode .input-microphone-btn {
@@ -1410,16 +1285,16 @@ header {
     background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
     color: white;
     border: none;
-    border-radius: 12px;
-    padding: 0.6rem 1rem;
+    border-radius: 8px;
+    padding: 0.5rem 0.875rem;
     cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s;
+    font-weight: 500;
+    transition: all 0.2s;
     display: flex;
     align-items: center;
     gap: 6px;
-    min-height: 44px;
-    font-size: 0.9rem;
+    min-height: 40px;
+    font-size: 0.875rem;
 }
         
 .send-button:hover:not(:disabled) {
@@ -1437,35 +1312,16 @@ header {
     background: var(--light-border);
 }
         
-.voice-input-status {
-    position: absolute;
-    left: 15px;
-    bottom: 10px;
-    background: rgba(239, 68, 68, 0.1);
-    color: var(--error);
-    padding: 4px 10px;
-    border-radius: 12px;
-    font-size: 0.8rem;
-    display: none;
-    align-items: center;
-    gap: 5px;
-    animation: fadeIn 0.3s ease;
-}
-        
-.voice-input-status.active {
-    display: flex;
-}
-        
 .typing-indicator {
     display: flex;
     align-items: center;
     gap: 8px;
-    padding: 1rem 1.2rem;
+    padding: 0.875rem 1rem;
     background: var(--dark-surface);
     border: 1px solid var(--dark-border);
-    border-radius: 16px;
+    border-radius: 12px;
     max-width: fit-content;
-    margin-left: 3rem;
+    margin-left: 2.5rem;
     margin-top: 0.5rem;
 }
         
@@ -1501,54 +1357,6 @@ header {
     }
 }
         
-.toast {
-    position: fixed;
-    bottom: 20px;
-    right: 20px;
-    background: var(--dark-surface);
-    color: var(--dark-text);
-    padding: 1rem 1.2rem;
-    border-radius: 12px;
-    border: 1px solid var(--dark-border);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    transform: translateY(100px);
-    opacity: 0;
-    transition: all 0.3s ease;
-    z-index: 1000;
-    max-width: 300px;
-}
-        
-.light-mode .toast {
-    background: var(--light-surface);
-    color: var(--light-text);
-    border-color: var(--light-border);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-}
-        
-.toast.show {
-    transform: translateY(0);
-    opacity: 1;
-}
-        
-.toast.success {
-    border-left: 4px solid var(--success);
-}
-        
-.toast.error {
-    border-left: 4px solid var(--error);
-}
-        
-.toast.warning {
-    border-left: 4px solid var(--warning);
-}
-        
-.toast.info {
-    border-left: 4px solid var(--primary);
-}
-        
 .sidebar-overlay {
     display: none;
     position: fixed;
@@ -1579,7 +1387,7 @@ header {
     z-index: 2000;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 16px;
 }
         
 .light-mode .modal-overlay {
@@ -1592,13 +1400,13 @@ header {
         
 .modal {
     background: var(--dark-surface);
-    border-radius: 16px;
+    border-radius: 12px;
     border: 1px solid var(--dark-border);
     width: 100%;
-    max-width: 500px;
+    max-width: 480px;
     max-height: 90vh;
     overflow: hidden;
-    animation: modalSlideIn 0.3s ease-out;
+    animation: modalSlideIn 0.2s ease-out;
 }
         
 .light-mode .modal {
@@ -1618,7 +1426,7 @@ header {
 }
         
 .modal-header {
-    padding: 1.5rem;
+    padding: 1.25rem;
     border-bottom: 1px solid var(--dark-border);
     display: flex;
     justify-content: space-between;
@@ -1630,7 +1438,7 @@ header {
 }
         
 .modal-header h2 {
-    font-size: 1.2rem;
+    font-size: 1.125rem;
     font-weight: 600;
     color: var(--dark-text);
 }
@@ -1644,10 +1452,10 @@ header {
     border: none;
     color: var(--dark-text-secondary);
     cursor: pointer;
-    font-size: 1.2rem;
-    padding: 5px;
+    font-size: 1.125rem;
+    padding: 4px;
     border-radius: 6px;
-    transition: all 0.3s;
+    transition: all 0.2s;
 }
         
 .light-mode .modal-close {
@@ -1665,28 +1473,28 @@ header {
 }
         
 .modal-content {
-    padding: 1.5rem;
+    padding: 1.25rem;
 }
         
 .download-options {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 1rem;
-    margin: 1.5rem 0;
+    gap: 0.875rem;
+    margin: 1.25rem 0;
 }
         
 .download-option {
     background: var(--dark-surface-light);
     border: 1px solid var(--dark-border);
-    border-radius: 12px;
-    padding: 1.5rem 1rem;
+    border-radius: 8px;
+    padding: 1.25rem 0.875rem;
     text-align: center;
     cursor: pointer;
-    transition: all 0.3s;
+    transition: all 0.2s;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
 }
         
 .light-mode .download-option {
@@ -1705,12 +1513,12 @@ header {
 }
         
 .download-option i {
-    font-size: 2rem;
+    font-size: 1.75rem;
     color: var(--primary);
 }
         
 .download-option h3 {
-    font-size: 1rem;
+    font-size: 0.9375rem;
     font-weight: 600;
     color: var(--dark-text);
 }
@@ -1720,7 +1528,7 @@ header {
 }
         
 .download-option p {
-    font-size: 0.85rem;
+    font-size: 0.8125rem;
     color: var(--dark-text-secondary);
 }
         
@@ -1729,7 +1537,7 @@ header {
 }
         
 .modal-footer {
-    padding: 1.5rem;
+    padding: 1.25rem;
     border-top: 1px solid var(--dark-border);
     text-align: center;
 }
@@ -1739,7 +1547,7 @@ header {
 }
         
 .modal-footer p {
-    font-size: 0.85rem;
+    font-size: 0.8125rem;
     color: var(--dark-text-secondary);
 }
         
@@ -1751,8 +1559,8 @@ header {
     display: none;
     flex-direction: column;
     align-items: center;
-    gap: 1rem;
-    padding: 2rem;
+    gap: 0.875rem;
+    padding: 1.5rem;
 }
         
 .progress-indicator.active {
@@ -1760,8 +1568,8 @@ header {
 }
         
 .progress-spinner {
-    width: 40px;
-    height: 40px;
+    width: 36px;
+    height: 36px;
     border: 3px solid var(--dark-border);
     border-top: 3px solid var(--primary);
     border-radius: 50%;
@@ -1778,34 +1586,35 @@ header {
 }
         
 .confirmation-modal {
-    max-width: 400px;
+    max-width: 360px;
 }
         
 .confirmation-text {
     text-align: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
 }
         
 .confirmation-text i {
-    font-size: 3rem;
+    font-size: 2.5rem;
     color: var(--error);
-    margin-bottom: 1rem;
+    margin-bottom: 0.875rem;
 }
         
 .confirmation-buttons {
     display: flex;
-    gap: 1rem;
-    margin-top: 2rem;
+    gap: 0.875rem;
+    margin-top: 1.5rem;
 }
         
 .confirmation-btn {
     flex: 1;
-    padding: 0.8rem;
+    padding: 0.75rem;
     border-radius: 8px;
     border: none;
     cursor: pointer;
-    font-weight: 600;
-    transition: all 0.3s;
+    font-weight: 500;
+    transition: all 0.2s;
+    font-size: 0.875rem;
 }
         
 .confirmation-btn.cancel {
@@ -1838,644 +1647,13 @@ header {
     transform: translateY(-2px);
 }
         
-.language-hint {
-    position: absolute;
-    top: -25px;
-    left: 10px;
-    font-size: 0.8rem;
-    color: var(--primary);
-    background: var(--dark-surface);
-    padding: 2px 8px;
-    border-radius: 10px;
-    border: 1px solid var(--primary);
-    z-index: 1;
-    display: none;
-}
-        
-.light-mode .language-hint {
-    background: var(--light-surface);
-}
-        
-.legal-note {
-    background: rgba(245, 158, 11, 0.1);
-    border: 1px solid rgba(245, 158, 11, 0.3);
-    border-radius: 8px;
-    padding: 0.8rem;
-    margin: 0.8rem 0;
-    font-size: 0.85rem;
-    color: var(--warning);
-    word-wrap: break-word;
-}
-        
-.light-mode .legal-note {
-    background: rgba(245, 158, 11, 0.08);
-    border-color: rgba(245, 158, 11, 0.2);
-}
-        
-.legal-content {
-    line-height: 1.7;
-    word-wrap: break-word;
-}
-        
-.legal-content h3 {
-    color: var(--primary);
-    margin: 1.2rem 0 0.6rem 0;
-    font-size: 1.1rem;
-    word-wrap: break-word;
-}
-        
-.legal-content ul {
-    margin: 0.8rem 0 0.8rem 1.2rem;
-    list-style-type: disc;
-}
-        
-.legal-content li {
-    margin-bottom: 0.4rem;
-    word-wrap: break-word;
-}
-        
-.legal-content strong {
-    color: var(--primary-light);
-}
-        
-.draft-templates {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    margin-top: 1rem;
-}
-        
-.draft-template {
-    background: var(--dark-surface-light);
-    border: 1px solid var(--dark-border);
-    border-radius: 12px;
-    padding: 1.5rem;
-    cursor: pointer;
-    transition: all 0.3s;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-    gap: 10px;
-    word-wrap: break-word;
-}
-        
-.light-mode .draft-template {
-    background: var(--light-surface-light);
-    border-color: var(--light-border);
-}
-        
-.draft-template:hover {
-    background: var(--dark-border);
-    border-color: var(--primary);
-    transform: translateY(-2px);
-}
-        
-.light-mode .draft-template:hover {
-    background: var(--light-border);
-}
-        
-.draft-template i {
-    font-size: 2rem;
-    color: var(--primary);
-}
-        
-.draft-template h4 {
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--dark-text);
-}
-        
-.light-mode .draft-template h4 {
-    color: var(--light-text);
-}
-        
-.draft-template p {
-    font-size: 0.8rem;
-    color: var(--dark-text-secondary);
-}
-        
-.light-mode .draft-template p {
-    color: var(--light-text-secondary);
-}
-
-/* Responsive Design */
-@media (max-width: 767px) {
-    header {
-        padding: 0.8rem;
-        min-height: 60px;
-        gap: 5px;
-    }
-            
-    .logo h1 {
-        font-size: 1.1rem;
-    }
-            
-    .header-btn span {
-        display: none;
-    }
-            
-    .header-btn i {
-        margin: 0;
-    }
-            
-    .status-indicator span {
-        display: none;
-    }
-            
-    .chat-messages {
-        padding: 0.8rem;
-    }
-            
-    .message {
-        padding: 0 0.5rem;
-    }
-            
-    .document-download-btn {
-        opacity: 1;
-        transform: translateY(0);
-        top: -10px;
-        right: 5px;
-        padding: 4px 8px;
-        font-size: 0.6rem;
-    }
-            
-    .welcome-message {
-        padding: 1rem;
-        margin: 1rem auto;
-    }
-            
-    .welcome-message h2 {
-        font-size: 1.5rem;
-    }
-            
-    .welcome-features {
-        grid-template-columns: 1fr;
-    }
-            
-    .input-container {
-        padding: 0.8rem;
-    }
-            
-    .input-area textarea {
-        padding: 0.8rem 6.5rem 0.8rem 1rem;
-        font-size: 0.95rem;
-        min-height: 52px;
-    }
-            
-    .input-buttons {
-        right: 0.6rem;
-        bottom: 0.6rem;
-        gap: 6px;
-    }
-            
-    .send-button {
-        padding: 0.5rem 0.8rem;
-        min-height: 40px;
-    }
-            
-    .input-microphone-btn {
-        width: 32px;
-        height: 32px;
-        padding: 0.4rem;
-    }
-            
-    .attachment-btn {
-        width: 32px;
-        height: 32px;
-        padding: 0.4rem;
-    }
-            
-    .sidebar {
-        width: 85vw;
-        max-width: 300px;
-    }
-            
-    .download-options {
-        grid-template-columns: 1fr;
-    }
-            
-    .history-item-actions {
-        display: flex !important;
-        opacity: 0.9;
-    }
-            
-    .document-template {
-        padding: 1rem;
-    }
-            
-    .signature-line {
-        flex-direction: column;
-        gap: 1rem;
-    }
-            
-    .message-text {
-        padding: 0.8rem 1rem;
-    }
-            
-    .attachment-item {
-        max-width: 150px;
-    }
-}
-        
-@media (min-width: 481px) and (max-width: 767px) {
-    .header-btn span {
-        display: none;
-    }
-            
-    .status-indicator {
-        padding: 0.4rem;
-    }
-            
-    .status-indicator span {
-        display: none;
-    }
-            
-    .document-download-btn {
-        opacity: 1;
-        transform: translateY(0);
-    }
-            
-    .welcome-features {
-        grid-template-columns: repeat(2, 1fr);
-    }
-            
-    .history-item-actions {
-        display: flex !important;
-        opacity: 0.9;
-    }
-            
-    .input-area textarea {
-        padding: 1rem 7rem 1rem 1.2rem;
-    }
-            
-    .sidebar {
-        width: 85vw;
-        max-width: 320px;
-    }
-}
-        
-@media (min-width: 768px) and (max-width: 1023px) {
-    .sidebar {
-        position: fixed;
-        transform: translateX(-100%);
-        width: 320px;
-    }
-            
-    .sidebar.active {
-        transform: translateX(0);
-    }
-            
-    .chat-container {
-        margin-left: 0;
-    }
-            
-    .sidebar-toggle {
-        display: flex;
-    }
-            
-    .header-btn {
-        padding: 0.6rem 1rem;
-    }
-            
-    .welcome-features {
-        grid-template-columns: repeat(3, 1fr);
-    }
-            
-    .message-content {
-        max-width: 80%;
-    }
-}
-        
-@media (min-width: 1024px) {
-    .sidebar {
-        position: relative;
-        transform: translateX(0);
-        flex-shrink: 0;
-    }
-            
-    .sidebar-toggle {
-        display: none;
-    }
-            
-    .sidebar-close {
-        display: none;
-    }
-            
-    .sidebar-overlay {
-        display: none !important;
-    }
-            
-    .chat-messages {
-        padding: 1.5rem 2rem;
-    }
-            
-    .input-container {
-        padding: 1.5rem;
-    }
-            
-    .welcome-message {
-        margin: 3rem auto;
-        padding: 2rem;
-    }
-            
-    .welcome-message h2 {
-        font-size: 2.2rem;
-    }
-            
-    .main-content {
-        overflow: hidden;
-    }
-}
-        
-@media (min-width: 1440px) {
-    .container {
-        max-width: 1600px;
-        margin: 0 auto;
-    }
-            
-    .chat-messages {
-        padding: 2rem 3rem;
-    }
-            
-    .message-content {
-        max-width: 70%;
-    }
-            
-    .sidebar {
-        width: 300px;
-    }
-}
-        
-/* Scrollbar */
-::-webkit-scrollbar {
-    width: 8px;
-    height: 8px;
-}
-        
-::-webkit-scrollbar-track {
-    background: var(--dark-bg);
-}
-        
-.light-mode ::-webkit-scrollbar-track {
-    background: var(--light-bg);
-}
-        
-::-webkit-scrollbar-thumb {
-    background: var(--dark-border);
-    border-radius: 4px;
-}
-        
-.light-mode ::-webkit-scrollbar-thumb {
-    background: var(--light-border);
-}
-        
-::-webkit-scrollbar-thumb:hover {
-    background: var(--dark-surface-light);
-}
-        
-.light-mode ::-webkit-scrollbar-thumb:hover {
-    background: var(--light-surface-light);
-}
-        
-.legal-card {
-    background: var(--dark-surface);
-    border: 1px solid var(--dark-border);
-    border-radius: 12px;
-    padding: 1.5rem;
-    margin: 1rem 0;
-    transition: all 0.3s;
-    word-wrap: break-word;
-}
-        
-.light-mode .legal-card {
-    background: var(--light-surface);
-    border-color: var(--light-border);
-}
-        
-.legal-card:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
-}
-        
-.legal-card-title {
-    color: var(--primary);
-    font-size: 1.2rem;
-    margin-bottom: 1rem;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
-        
-.legal-card-content {
-    color: var(--dark-text-secondary);
-    line-height: 1.6;
-}
-        
-.light-mode .legal-card-content {
-    color: var(--light-text-secondary);
-}
-        
-.law-reference {
-    background: rgba(16, 163, 127, 0.1);
-    border-left: 4px solid var(--primary);
-    padding: 1rem;
-    margin: 1rem 0;
-    border-radius: 0 8px 8px 0;
-    word-wrap: break-word;
-}
-        
-.light-mode .law-reference {
-    background: rgba(16, 163, 127, 0.08);
-}
-        
-.law-reference-title {
-    color: var(--primary);
-    font-weight: 600;
-    margin-bottom: 0.5rem;
-}
-        
-.law-reference-content {
-    color: var(--dark-text-secondary);
-    font-size: 0.9rem;
-}
-        
-.light-mode .law-reference-content {
-    color: var(--light-text-secondary);
-}
-        
-.section-divider {
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--dark-border), transparent);
-    margin: 2rem 0;
-}
-        
-.light-mode .section-divider {
-    background: linear-gradient(90deg, transparent, var(--light-border), transparent);
-}
-        
-.hide-on-mobile {
-    display: none;
-}
-        
-.show-on-mobile {
-    display: flex;
-}
-        
-@media (min-width: 768px) {
-    .hide-on-mobile {
-        display: flex;
-    }
-            
-    .show-on-mobile {
-        display: none;
-    }
-}
-        
-.voice-animation {
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    height: 20px;
-}
-        
-.voice-bar {
-    width: 3px;
-    background: var(--primary);
-    border-radius: 3px;
-    animation: voicePulse 0.8s ease-in-out infinite;
-}
-        
-.voice-bar:nth-child(1) {
-    height: 8px;
-    animation-delay: 0.1s;
-}
-        
-.voice-bar:nth-child(2) {
-    height: 12px;
-    animation-delay: 0.2s;
-}
-        
-.voice-bar:nth-child(3) {
-    height: 16px;
-    animation-delay: 0.3s;
-}
-        
-.voice-bar:nth-child(4) {
-    height: 12px;
-    animation-delay: 0.4s;
-}
-        
-.voice-bar:nth-child(5) {
-    height: 8px;
-    animation-delay: 0.5s;
-}
-        
-@keyframes voicePulse {
-    0%, 100% {
-        opacity: 0.4;
-        transform: scaleY(0.8);
-    }
-    50% {
-        opacity: 1;
-        transform: scaleY(1.2);
-    }
-}
-        
-.voice-input-text {
-    position: absolute;
-    bottom: -25px;
-    left: 0;
-    right: 0;
-    text-align: center;
-    font-size: 0.85rem;
-    color: var(--primary);
-    font-style: italic;
-    padding: 5px;
-    background: rgba(16, 163, 127, 0.1);
-    border-radius: 8px;
-    animation: slideUp 0.3s ease;
-    display: none;
-}
-        
-.light-mode .voice-input-text {
-    background: rgba(16, 163, 127, 0.08);
-}
-        
-@keyframes slideUp {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-        
-.input-microphone-btn.listening .fa-microphone {
-    animation: micPulse 1.5s ease-in-out infinite;
-}
-        
-@keyframes micPulse {
-    0%, 100% {
-        transform: scale(1);
-    }
-    50% {
-        transform: scale(1.1);
-    }
-}
-        
-@media (max-height: 600px) {
-    header {
-        min-height: 56px;
-        padding: 0.6rem 1rem;
-    }
-            
-    .header-btn {
-        min-height: 36px;
-        padding: 0.4rem 0.6rem;
-    }
-            
-    .voice-search-btn,
-    .theme-toggle,
-    .sidebar-toggle {
-        width: 40px;
-        height: 40px;
-    }
-            
-    .chat-messages {
-        padding: 0.6rem;
-    }
-            
-    .input-container {
-        padding: 0.6rem;
-    }
-            
-    .input-area textarea {
-        min-height: 48px;
-        padding: 0.8rem 6rem 0.8rem 1rem;
-    }
-            
-    .send-button {
-        min-height: 36px;
-        padding: 0.4rem 0.8rem;
-    }
-            
-    .attachment-btn,
-    .input-microphone-btn {
-        width: 32px;
-        height: 32px;
-    }
-}
-
 /* Scroll to Bottom Button */
 .scroll-to-bottom-btn {
     position: fixed;
-    bottom: 100px;
-    right: 25px;
-    width: 44px;
-    height: 44px;
+    bottom: 90px;
+    right: 20px;
+    width: 40px;
+    height: 40px;
     background: var(--dark-surface);
     border: 1px solid var(--dark-border);
     border-radius: 50%;
@@ -2484,20 +1662,11 @@ header {
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s;
+    transition: all 0.2s;
     z-index: 900;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     opacity: 0;
     transform: translateY(20px);
-}
-        
-@media (max-width: 767px) {
-    .scroll-to-bottom-btn {
-        bottom: 90px;
-        right: 15px;
-        width: 40px;
-        height: 40px;
-    }
 }
         
 .light-mode .scroll-to-bottom-btn {
@@ -2535,15 +1704,16 @@ header {
     border: 1px solid var(--dark-border);
     border-radius: 6px;
     cursor: pointer;
-    padding: 6px 12px;
-    font-size: 0.8rem;
-    transition: all 0.3s;
+    padding: 6px 10px;
+    font-size: 0.75rem;
+    transition: all 0.2s;
     display: flex;
     align-items: center;
-    gap: 6px;
-    min-width: 36px;
-    min-height: 36px;
+    gap: 4px;
+    min-width: 32px;
+    min-height: 32px;
     justify-content: center;
+    font-weight: 500;
 }
         
 .light-mode .user-message-btn {
@@ -2586,7 +1756,7 @@ header {
 .stream-controls {
     display: flex;
     gap: 8px;
-    margin-top: 10px;
+    margin-top: 8px;
     padding: 0 8px;
 }
         
@@ -2594,14 +1764,15 @@ header {
     background: var(--dark-surface-light);
     border: 1px solid var(--dark-border);
     border-radius: 6px;
-    padding: 6px 12px;
+    padding: 6px 10px;
     color: var(--dark-text-secondary);
     cursor: pointer;
-    font-size: 0.8rem;
-    transition: all 0.3s;
+    font-size: 0.75rem;
+    transition: all 0.2s;
     display: flex;
     align-items: center;
-    gap: 5px;
+    gap: 4px;
+    font-weight: 500;
 }
         
 .light-mode .stream-control-btn {
@@ -2632,38 +1803,6 @@ header {
     color: white;
 }
         
-.response-controls {
-    display: flex;
-    gap: 8px;
-    margin-top: 8px;
-    margin-left: 3rem;
-}
-        
-.scroll-position-indicator {
-    position: absolute;
-    bottom: -25px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: var(--dark-surface);
-    color: var(--dark-text-secondary);
-    padding: 4px 12px;
-    border-radius: 12px;
-    font-size: 0.8rem;
-    border: 1px solid var(--dark-border);
-    display: none;
-    z-index: 10;
-}
-        
-.light-mode .scroll-position-indicator {
-    background: var(--light-surface);
-    color: var(--light-text-secondary);
-    border-color: var(--light-border);
-}
-        
-.scroll-position-indicator.visible {
-    display: block;
-}
-        
 .image-upload-modal {
     display: none;
     position: fixed;
@@ -2675,7 +1814,7 @@ header {
     z-index: 2000;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 16px;
 }
         
 .image-upload-modal.active {
@@ -2684,13 +1823,13 @@ header {
         
 .image-upload-content {
     background: var(--dark-surface);
-    border-radius: 16px;
+    border-radius: 12px;
     border: 1px solid var(--dark-border);
     width: 100%;
-    max-width: 500px;
+    max-width: 480px;
     max-height: 90vh;
     overflow: hidden;
-    animation: modalSlideIn 0.3s ease-out;
+    animation: modalSlideIn 0.2s ease-out;
 }
         
 .light-mode .image-upload-content {
@@ -2699,13 +1838,13 @@ header {
 }
         
 .upload-area {
-    padding: 2rem;
+    padding: 1.5rem;
     text-align: center;
     cursor: pointer;
     border: 2px dashed var(--dark-border);
-    border-radius: 12px;
-    margin: 1.5rem;
-    transition: all 0.3s;
+    border-radius: 8px;
+    margin: 1.25rem;
+    transition: all 0.2s;
 }
         
 .light-mode .upload-area {
@@ -2724,19 +1863,19 @@ header {
 .upload-area.dragover {
     border-color: var(--primary);
     background: rgba(16, 163, 127, 0.1);
-    transform: scale(1.02);
 }
         
 .upload-icon {
-    font-size: 3rem;
+    font-size: 2.5rem;
     color: var(--primary);
-    margin-bottom: 1rem;
+    margin-bottom: 0.875rem;
 }
         
 .upload-text h3 {
-    font-size: 1.2rem;
+    font-size: 1.125rem;
     margin-bottom: 0.5rem;
     color: var(--dark-text);
+    font-weight: 600;
 }
         
 .light-mode .upload-text h3 {
@@ -2745,8 +1884,8 @@ header {
         
 .upload-text p {
     color: var(--dark-text-secondary);
-    font-size: 0.9rem;
-    margin-bottom: 1rem;
+    font-size: 0.875rem;
+    margin-bottom: 0.875rem;
 }
         
 .light-mode .upload-text p {
@@ -2758,11 +1897,11 @@ header {
     color: white;
     border: none;
     border-radius: 8px;
-    padding: 0.8rem 2rem;
+    padding: 0.75rem 1.5rem;
     cursor: pointer;
-    font-size: 1rem;
-    font-weight: 600;
-    transition: all 0.3s;
+    font-size: 0.9375rem;
+    font-weight: 500;
+    transition: all 0.2s;
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -2776,9 +1915,9 @@ header {
 .uploaded-images {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-    gap: 10px;
-    margin: 1.5rem;
-    max-height: 300px;
+    gap: 8px;
+    margin: 1.25rem;
+    max-height: 250px;
     overflow-y: auto;
 }
         
@@ -2802,8 +1941,8 @@ header {
         
 .remove-uploaded-image {
     position: absolute;
-    top: 5px;
-    right: 5px;
+    top: 4px;
+    right: 4px;
     width: 24px;
     height: 24px;
     background: rgba(239, 68, 68, 0.9);
@@ -2814,24 +1953,25 @@ header {
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.8rem;
+    font-size: 0.75rem;
 }
         
 .share-btn {
     position: absolute;
-    top: 5px;
-    left: 5px;
+    top: 4px;
+    left: 4px;
     background: rgba(16, 163, 127, 0.9);
     color: white;
     border: none;
     border-radius: 4px;
     padding: 4px 8px;
     cursor: pointer;
-    font-size: 0.7rem;
+    font-size: 0.75rem;
     display: flex;
     align-items: center;
     gap: 4px;
     z-index: 2;
+    font-weight: 500;
 }
         
 .share-btn:hover {
@@ -2861,7 +2001,7 @@ header {
     display: flex;
     align-items: center;
     gap: 6px;
-    margin-top: 10px;
+    margin-top: 8px;
 }
         
 .streaming-loader .dot {
@@ -2921,40 +2061,21 @@ header {
     color: var(--warning);
     padding: 2px 8px;
     border-radius: 4px;
-    font-size: 0.8rem;
-    margin-left: 10px;
+    font-size: 0.75rem;
+    margin-left: 8px;
     border: 1px solid rgba(245, 158, 11, 0.3);
+    font-weight: 500;
 }
         
-.user-position-fixed {
-    position: relative;
-    top: 0;
-    margin-bottom: 10px;
-}
-        
-@media (max-width: 767px) {
-    .user-message-controls {
-        gap: 6px;
-        margin-top: 6px;
-    }
-            
-    .user-message-btn {
-        padding: 4px 8px;
-        font-size: 0.75rem;
-        min-width: 32px;
-        min-height: 32px;
-    }
-}
-    
 .file-content-display {
     background: var(--dark-surface-light);
     border: 1px solid var(--dark-border);
     border-radius: 8px;
-    padding: 1rem;
-    margin: 10px 0;
-    max-height: 300px;
+    padding: 0.875rem;
+    margin: 8px 0;
+    max-height: 250px;
     overflow-y: auto;
-    font-size: 0.85rem;
+    font-size: 0.8125rem;
     line-height: 1.5;
     white-space: pre-wrap;
     word-wrap: break-word;
@@ -2970,7 +2091,7 @@ header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 10px;
+    margin-bottom: 8px;
     padding-bottom: 8px;
     border-bottom: 1px solid var(--dark-border);
 }
@@ -2985,6 +2106,7 @@ header {
     display: flex;
     align-items: center;
     gap: 8px;
+    font-size: 0.875rem;
 }
     
 .file-content-close {
@@ -2992,10 +2114,10 @@ header {
     border: none;
     color: var(--dark-text-secondary);
     cursor: pointer;
-    font-size: 1rem;
+    font-size: 0.9375rem;
     padding: 4px;
     border-radius: 4px;
-    transition: all 0.3s;
+    transition: all 0.2s;
 }
     
 .file-content-close:hover {
@@ -3011,10 +2133,10 @@ header {
 .sources-container {
     background: linear-gradient(135deg, rgba(16, 163, 127, 0.08) 0%, rgba(126, 87, 194, 0.08) 100%);
     border: 1px solid var(--dark-border);
-    border-radius: 12px;
-    padding: 1.2rem;
-    margin-top: 1.2rem;
-    margin-bottom: 1rem;
+    border-radius: 8px;
+    padding: 1rem;
+    margin-top: 1rem;
+    margin-bottom: 0.875rem;
     border-left: 4px solid var(--primary);
 }
     
@@ -3026,40 +2148,41 @@ header {
 .sources-header {
     display: flex;
     align-items: center;
-    gap: 10px;
-    margin-bottom: 12px;
+    gap: 8px;
+    margin-bottom: 10px;
     color: var(--primary);
     font-weight: 600;
-    font-size: 0.95rem;
+    font-size: 0.875rem;
 }
     
 .sources-header i {
     color: var(--primary);
-    font-size: 1rem;
+    font-size: 0.9375rem;
 }
     
 .sources-list {
     display: flex;
     flex-wrap: wrap;
-    gap: 8px;
-    margin-top: 12px;
+    gap: 6px;
+    margin-top: 10px;
 }
     
 .source-tag {
     background: var(--dark-surface);
     border: 1px solid var(--dark-border);
-    border-radius: 8px;
-    padding: 8px 12px;
-    font-size: 0.8rem;
+    border-radius: 6px;
+    padding: 6px 10px;
+    font-size: 0.75rem;
     color: var(--dark-text);
     display: flex;
     align-items: center;
-    gap: 8px;
-    transition: all 0.3s ease;
+    gap: 6px;
+    transition: all 0.2s ease;
     max-width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+    font-weight: 500;
 }
     
 .light-mode .source-tag {
@@ -3070,8 +2193,8 @@ header {
     
 .source-tag:hover {
     background: var(--dark-surface-light);
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
 }
     
 .light-mode .source-tag:hover {
@@ -3087,12 +2210,12 @@ header {
 .sources-info {
     font-size: 0.75rem;
     color: var(--dark-text-secondary);
-    margin-top: 12px;
+    margin-top: 10px;
     font-style: italic;
     display: flex;
     align-items: center;
     gap: 6px;
-    padding-top: 10px;
+    padding-top: 8px;
     border-top: 1px dashed var(--dark-border);
 }
     
@@ -3103,70 +2226,7 @@ header {
     
 .sources-info i {
     color: var(--primary);
-    font-size: 0.8rem;
-}
-    
-@media (max-width: 767px) {
-    .sources-container {
-        padding: 1rem;
-        margin-top: 1rem;
-    }
-            
-    .sources-list {
-        gap: 6px;
-    }
-            
-    .source-tag {
-        padding: 6px 10px;
-        font-size: 0.75rem;
-    }
-}
-    
-.topic-item.active-tab {
-    background: var(--primary);
-    color: white !important;
-    border-color: var(--primary);
-}
-    
-.topic-item.active-tab i {
-    color: white !important;
-}
-
-.emoji-picker-container {
-    position: absolute;
-    bottom: 70px;
-    right: 60px;
-    z-index: 1000;
-    display: none;
-}
-
-.emoji-picker-container.active {
-    display: block;
-}
-
-.emoji-picker-btn {
-    background: transparent;
-    border: none;
-    color: var(--dark-text-secondary);
-    cursor: pointer;
-    padding: 8px;
-    border-radius: 8px;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 36px;
-    height: 36px;
-}
-
-.emoji-picker-btn:hover {
-    background: var(--dark-surface-light);
-    color: var(--dark-text);
-}
-
-.light-mode .emoji-picker-btn:hover {
-    background: var(--light-surface-light);
-    color: var(--light-text);
+    font-size: 0.75rem;
 }
 
 .download-notification {
@@ -3181,10 +2241,10 @@ header {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     z-index: 1001;
     transform: translateX(-100%);
-    transition: transform 0.3s ease;
+    transition: transform 0.2s ease;
     max-width: 300px;
 }
 
@@ -3201,7 +2261,7 @@ header {
 
 .download-notification i {
     color: var(--primary);
-    font-size: 1.2rem;
+    font-size: 1.125rem;
 }
 
 .download-notification-content {
@@ -3210,11 +2270,12 @@ header {
 
 .download-notification-title {
     font-weight: 600;
-    margin-bottom: 4px;
+    margin-bottom: 2px;
+    font-size: 0.875rem;
 }
 
 .download-notification-message {
-    font-size: 0.85rem;
+    font-size: 0.8125rem;
     color: var(--dark-text-secondary);
 }
 
@@ -3241,16 +2302,6 @@ header {
     color: var(--light-text);
 }
 
-.message-text-with-emoji {
-    display: inline;
-}
-
-.emoji-in-message {
-    font-size: 1.2em;
-    vertical-align: middle;
-    margin: 0 2px;
-}
-
 .send-button:disabled {
     background: var(--dark-border) !important;
     cursor: not-allowed !important;
@@ -3266,7 +2317,7 @@ header {
     background: linear-gradient(135deg, var(--error) 0%, #b91c1c 100%) !important;
 }
 
-/* Login Modal Styles (ChatGPT-like) */
+/* Login Modal */
 .login-modal-overlay {
     display: none;
     position: fixed;
@@ -3278,9 +2329,8 @@ header {
     z-index: 9999;
     align-items: center;
     justify-content: center;
-    padding: 20px;
+    padding: 16px;
     backdrop-filter: blur(5px);
-    overflow-y: auto;
 }
         
 .login-modal-overlay.active {
@@ -3292,10 +2342,10 @@ header {
     border-radius: 12px;
     border: 1px solid var(--dark-border);
     width: 100%;
-    max-width: 450px;
-    max-height: 95vh;
+    max-width: 420px;
+    max-height: 90vh;
     overflow-y: auto;
-    animation: modalSlideIn 0.4s ease-out;
+    animation: modalSlideIn 0.2s ease-out;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
 }
         
@@ -3305,7 +2355,7 @@ header {
 }
         
 .login-header {
-    padding: 2rem;
+    padding: 1.75rem;
     text-align: center;
     border-bottom: 1px solid var(--dark-border);
 }
@@ -3315,15 +2365,16 @@ header {
 }
         
 .login-icon {
-    font-size: 3rem;
-    margin-bottom: 1rem;
+    font-size: 2.5rem;
+    margin-bottom: 0.875rem;
     color: var(--primary);
 }
         
 .login-header h2 {
-    font-size: 1.8rem;
+    font-size: 1.5rem;
     margin-bottom: 0.5rem;
     color: var(--dark-text);
+    font-weight: 600;
 }
         
 .light-mode .login-header h2 {
@@ -3332,7 +2383,7 @@ header {
         
 .login-header p {
     color: var(--dark-text-secondary);
-    font-size: 0.9rem;
+    font-size: 0.875rem;
 }
         
 .light-mode .login-header p {
@@ -3340,22 +2391,22 @@ header {
 }
         
 .login-content {
-    padding: 2rem;
+    padding: 1.75rem;
     overflow-y: visible;
 }
         
 .login-features {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 1rem;
-    margin-bottom: 2rem;
+    gap: 0.875rem;
+    margin-bottom: 1.5rem;
 }
         
 .login-feature {
     display: flex;
     align-items: center;
-    gap: 12px;
-    padding: 0.8rem;
+    gap: 10px;
+    padding: 0.75rem;
     background: var(--dark-surface-light);
     border-radius: 8px;
     border: 1px solid var(--dark-border);
@@ -3368,15 +2419,16 @@ header {
         
 .login-feature i {
     color: var(--primary);
-    font-size: 1.2rem;
+    font-size: 1.125rem;
     width: 24px;
     text-align: center;
 }
         
 .login-feature h4 {
-    font-size: 0.9rem;
+    font-size: 0.875rem;
     margin-bottom: 2px;
     color: var(--dark-text);
+    font-weight: 600;
 }
         
 .light-mode .login-feature h4 {
@@ -3384,7 +2436,7 @@ header {
 }
         
 .login-feature p {
-    font-size: 0.8rem;
+    font-size: 0.8125rem;
     color: var(--dark-text-secondary);
 }
         
@@ -3394,20 +2446,20 @@ header {
         
 .google-login-btn {
     width: 100%;
-    padding: 1rem;
+    padding: 0.875rem;
     background: var(--dark-surface-light);
     color: var(--dark-text);
     border: 1px solid var(--dark-border);
     border-radius: 8px;
     cursor: pointer;
-    font-size: 1rem;
+    font-size: 0.9375rem;
     font-weight: 500;
-    transition: all 0.3s;
+    transition: all 0.2s;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 12px;
-    margin-top: 1.5rem;
+    gap: 10px;
+    margin-top: 1.25rem;
 }
         
 .light-mode .google-login-btn {
@@ -3424,16 +2476,11 @@ header {
     background: var(--light-border);
 }
         
-.google-login-btn.loading {
-    opacity: 0.7;
-    cursor: not-allowed;
-}
-        
 .login-footer {
-    padding: 1.5rem 2rem;
+    padding: 1.25rem 1.75rem;
     border-top: 1px solid var(--dark-border);
     text-align: center;
-    font-size: 0.85rem;
+    font-size: 0.8125rem;
     color: var(--dark-text-secondary);
 }
         
@@ -3444,22 +2491,24 @@ header {
 .login-footer a {
     color: var(--primary);
     text-decoration: none;
+    font-weight: 500;
 }
         
 .login-footer a:hover {
     text-decoration: underline;
 }
 
-/* User Profile Styles */
+/* User Profile */
 .user-profile {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 8px;
     cursor: pointer;
     padding: 0.5rem;
     border-radius: 6px;
-    transition: all 0.3s;
+    transition: all 0.2s;
     border: 1px solid transparent;
+    flex-shrink: 0;
 }
         
 .user-profile:hover {
@@ -3473,8 +2522,8 @@ header {
 }
         
 .user-avatar {
-    width: 36px;
-    height: 36px;
+    width: 32px;
+    height: 32px;
     border-radius: 6px;
     overflow: hidden;
     background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
@@ -3483,7 +2532,8 @@ header {
     justify-content: center;
     color: white;
     font-weight: 500;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
+    flex-shrink: 0;
 }
         
 .user-avatar img {
@@ -3496,13 +2546,14 @@ header {
     display: flex;
     flex-direction: column;
     gap: 2px;
+    min-width: 0;
 }
         
 .user-name {
-    font-size: 0.9rem;
+    font-size: 0.875rem;
     font-weight: 500;
     white-space: nowrap;
-    max-width: 150px;
+    max-width: 120px;
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -3511,7 +2562,7 @@ header {
     font-size: 0.75rem;
     color: var(--dark-text-secondary);
     white-space: nowrap;
-    max-width: 150px;
+    max-width: 120px;
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -3522,12 +2573,12 @@ header {
         
 .user-dropdown {
     position: absolute;
-    top: 70px;
-    right: 15px;
+    top: 65px;
+    right: 12px;
     background: var(--dark-surface);
     border: 1px solid var(--dark-border);
     border-radius: 8px;
-    min-width: 250px;
+    min-width: 220px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
     z-index: 1000;
     display: none;
@@ -3546,11 +2597,11 @@ header {
 }
         
 .dropdown-header {
-    padding: 1.2rem;
+    padding: 1rem;
     border-bottom: 1px solid var(--dark-border);
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
 }
         
 .light-mode .dropdown-header {
@@ -3558,8 +2609,8 @@ header {
 }
         
 .dropdown-header .user-avatar {
-    width: 44px;
-    height: 44px;
+    width: 40px;
+    height: 40px;
 }
         
 .dropdown-header .user-info {
@@ -3567,7 +2618,7 @@ header {
 }
         
 .dropdown-header .user-name {
-    font-size: 1rem;
+    font-size: 0.9375rem;
 }
         
 .dropdown-items {
@@ -3575,20 +2626,21 @@ header {
 }
         
 .dropdown-item {
-    padding: 0.8rem 1rem;
+    padding: 0.75rem;
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     color: var(--dark-text);
     text-decoration: none;
     border-radius: 6px;
-    transition: all 0.3s;
+    transition: all 0.2s;
     cursor: pointer;
     border: none;
     background: transparent;
     width: 100%;
     text-align: left;
-    font-size: 0.9rem;
+    font-size: 0.875rem;
+    font-weight: 500;
 }
         
 .light-mode .dropdown-item {
@@ -3607,6 +2659,7 @@ header {
     width: 20px;
     text-align: center;
     color: var(--dark-text-secondary);
+    font-size: 0.9375rem;
 }
         
 .light-mode .dropdown-item i {
@@ -3622,7 +2675,7 @@ header {
 }
         
 .dropdown-footer {
-    padding: 0.8rem;
+    padding: 0.75rem;
     border-top: 1px solid var(--dark-border);
     font-size: 0.75rem;
     color: var(--dark-text-secondary);
@@ -3639,16 +2692,17 @@ header {
     color: var(--dark-text);
     border: 1px solid var(--dark-border);
     border-radius: 6px;
-    padding: 0.5rem 1rem;
+    padding: 0.5rem 0.875rem;
     cursor: pointer;
     font-size: 0.85rem;
     font-weight: 500;
-    transition: all 0.3s;
+    transition: all 0.2s;
     display: flex;
     align-items: center;
     gap: 6px;
-    min-height: 40px;
+    min-height: 36px;
     flex-shrink: 0;
+    white-space: nowrap;
 }
         
 .login-btn:hover {
@@ -3656,88 +2710,23 @@ header {
 }
         
 .login-btn i {
-    font-size: 0.9rem;
-}
-        
-.search-counter {
-    padding: 4px 12px;
-    background: var(--dark-surface-light);
-    border: 1px solid var(--dark-border);
-    border-radius: 20px;
-    font-size: 0.8rem;
-    color: var(--dark-text-secondary);
-    white-space: nowrap;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    font-weight: 500;
-    flex-shrink: 0;
-}
-        
-.light-mode .search-counter {
-    background: var(--light-surface-light);
-    border-color: var(--light-border);
-    color: var(--light-text-secondary);
-}
-        
-.search-counter i {
-    font-size: 0.9rem;
-    color: var(--primary);
-}
-
-/* Voice Search Button in Header */
-.voice-search-btn {
-    background: var(--dark-surface-light);
-    border: 1px solid var(--dark-border);
-    border-radius: 6px;
-    width: 44px;
-    height: 44px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s;
-    position: relative;
-    flex-shrink: 0;
-}
-        
-.light-mode .voice-search-btn {
-    background: var(--light-surface-light);
-    border-color: var(--light-border);
-}
-        
-.voice-search-btn:hover {
-    background: var(--dark-border);
-}
-        
-.voice-search-btn.listening {
-    background: rgba(239, 68, 68, 0.1);
-    border-color: rgba(239, 68, 68, 0.3);
-    animation: pulse 1.5s infinite;
-}
-        
-.voice-search-btn i {
-    color: var(--dark-text);
-}
-        
-.light-mode .voice-search-btn i {
-    color: var(--light-text);
+    font-size: 0.875rem;
 }
         
 .sidebar-toggle {
     background: transparent;
     border: none;
     color: var(--dark-text);
-    font-size: 1.5rem;
+    font-size: 1.375rem;
     cursor: pointer;
     padding: 0.5rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: all 0.3s;
+    transition: all 0.2s;
     border-radius: 6px;
-    width: 44px;
-    height: 44px;
+    width: 36px;
+    height: 36px;
     flex-shrink: 0;
 }
         
@@ -3753,72 +2742,496 @@ header {
     background: var(--light-surface-light);
 }
 
-/* Mobile Optimization */
-@media (max-width: 767px) {
-    .container {
+/* AI Response Footer */
+.ai-response-footer {
+    margin-top: 1rem;
+    padding-top: 0.75rem;
+    border-top: 1px dashed var(--dark-border);
+    font-size: 0.8125rem;
+    color: var(--dark-text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+        
+.light-mode .ai-response-footer {
+    border-top-color: var(--light-border);
+    color: var(--light-text-secondary);
+}
+        
+.ai-response-footer i {
+    color: var(--primary);
+    font-size: 0.875rem;
+}
+        
+.ai-response-footer .ai-signature {
+    font-weight: 600;
+    color: var(--primary);
+}
+
+/* Mobile Optimization - FIXED */
+@media (max-width: 768px) {
+    body, .container {
         height: 100vh;
         overflow: hidden;
     }
     
-    .chat-messages {
-        padding: 1rem 0.5rem;
+    header {
+        padding: 0.625rem 0.75rem;
+        min-height: 56px;
+        gap: 4px;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 1000;
+    }
+            
+    .logo h1 {
+        font-size: 1rem;
+    }
+            
+    .status-indicator {
+        padding: 0.375rem;
+        font-size: 0.75rem;
+    }
+            
+    .status-indicator span {
+        display: none;
+    }
+            
+    .header-actions {
+        gap: 4px;
     }
     
+    .new-chat-header-btn span,
+    .login-btn span {
+        display: none;
+    }
+    
+    .new-chat-header-btn i,
+    .login-btn i {
+        margin: 0;
+    }
+    
+    .theme-toggle {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .clear-chat-btn {
+        width: 32px;
+        height: 32px;
+        padding: 0.5rem;
+    }
+    
+    .clear-chat-btn span {
+        display: none;
+    }
+    
+    .clear-chat-btn i {
+        margin: 0;
+    }
+            
+    .main-content {
+        position: fixed;
+        top: 56px;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        overflow: hidden;
+    }
+            
+    .chat-container {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        overflow: hidden;
+    }
+            
+    .chat-messages {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 70px;
+        padding: 0.75rem 0.5rem;
+        overflow-y: auto;
+        -webkit-overflow-scrolling: touch;
+    }
+            
     .message {
         padding: 0 0.5rem;
+        gap: 0.625rem;
     }
-    
+            
+    .avatar {
+        width: 28px;
+        height: 28px;
+        font-size: 0.75rem;
+    }
+            
+    .message-text {
+        font-size: 0.875rem;
+    }
+            
+    .document-download-btn {
+        opacity: 1;
+        transform: translateY(0);
+        top: -8px;
+        right: 4px;
+        padding: 4px 8px;
+        font-size: 0.625rem;
+    }
+            
+    .welcome-message {
+        padding: 0.875rem;
+        margin: 0.875rem auto;
+    }
+            
+    .welcome-message h2 {
+        font-size: 1.25rem;
+    }
+            
+    .welcome-features {
+        grid-template-columns: 1fr;
+    }
+            
     .input-container {
-        padding: 0.8rem;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        padding: 0.75rem;
+        background: var(--dark-bg);
+        border-top: 1px solid var(--dark-border);
+        z-index: 100;
     }
-    
+            
     .input-area textarea {
-        padding-right: 100px;
+        padding: 0.75rem 5.5rem 0.75rem 0.875rem;
+        font-size: 0.875rem;
+        min-height: 48px;
+        max-height: 120px;
     }
-    
+            
+    .input-buttons {
+        right: 0.5rem;
+        bottom: 0.5rem;
+        gap: 4px;
+    }
+            
+    .send-button {
+        padding: 0.5rem 0.75rem;
+        min-height: 36px;
+        font-size: 0.8125rem;
+    }
+            
+    .input-microphone-btn,
+    .attachment-btn {
+        width: 28px;
+        height: 28px;
+        padding: 0.375rem;
+    }
+            
     .sidebar {
-        width: 85%;
+        width: 85vw;
+        max-width: 280px;
+        position: fixed;
+        top: 56px;
+        bottom: 0;
+        z-index: 999;
+    }
+            
+    .download-options {
+        grid-template-columns: 1fr;
+    }
+            
+    .history-item-actions {
+        display: flex !important;
+        opacity: 0.9;
+    }
+            
+    .document-template {
+        padding: 0.875rem;
+    }
+            
+    .signature-line {
+        flex-direction: column;
+        gap: 0.875rem;
+    }
+            
+    .attachment-item {
+        max-width: 140px;
+    }
+            
+    .scroll-to-bottom-btn {
+        bottom: 80px;
+        right: 12px;
+        width: 36px;
+        height: 36px;
+        position: fixed;
+    }
+            
+    .user-message-controls {
+        gap: 6px;
+        margin-top: 6px;
+    }
+            
+    .user-message-btn {
+        padding: 4px 6px;
+        font-size: 0.75rem;
+        min-width: 28px;
+        min-height: 28px;
+    }
+            
+    .action-btn {
+        padding: 0.375rem 0.625rem;
+        font-size: 0.75rem;
+        min-height: 28px;
+    }
+            
+    .sources-container {
+        padding: 0.75rem;
+        margin-top: 0.75rem;
+    }
+            
+    .sources-list {
+        gap: 4px;
+    }
+            
+    .source-tag {
+        padding: 4px 8px;
+        font-size: 0.75rem;
     }
     
-    /* Prevent reload on Android APK */
-    body {
-        -webkit-overflow-scrolling: touch;
-        overflow: hidden;
-        height: 100vh;
+    .sidebar-overlay {
+        position: fixed;
+        top: 56px;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 998;
     }
     
-    /* Fix scrolling issues on Android */
+    .download-notification {
+        bottom: 80px;
+        left: 10px;
+        right: 10px;
+        max-width: none;
+    }
+    
+    .ai-response-footer {
+        font-size: 0.75rem;
+        padding-top: 0.5rem;
+        margin-top: 0.75rem;
+    }
+}
+        
+@media (min-width: 481px) and (max-width: 768px) {
+    .status-indicator {
+        padding: 0.375rem;
+    }
+            
+    .status-indicator span {
+        display: none;
+    }
+            
+    .welcome-features {
+        grid-template-columns: repeat(2, 1fr);
+    }
+            
+    .history-item-actions {
+        display: flex !important;
+        opacity: 0.9;
+    }
+            
+    .input-area textarea {
+        padding: 0.875rem 6rem 0.875rem 1rem;
+    }
+            
+    .sidebar {
+        width: 85vw;
+        max-width: 300px;
+    }
+}
+        
+@media (min-width: 769px) and (max-width: 1024px) {
+    .sidebar {
+        position: fixed;
+        transform: translateX(-100%);
+        width: 300px;
+    }
+            
+    .sidebar.active {
+        transform: translateX(0);
+    }
+            
+    .chat-container {
+        margin-left: 0;
+    }
+            
+    .sidebar-toggle {
+        display: flex;
+    }
+            
+    .welcome-features {
+        grid-template-columns: repeat(3, 1fr);
+    }
+            
+    .message-content {
+        max-width: 80%;
+    }
+}
+        
+@media (min-width: 1025px) {
+    .sidebar {
+        position: relative;
+        transform: translateX(0);
+        flex-shrink: 0;
+    }
+            
+    .sidebar-toggle {
+        display: none;
+    }
+            
+    .sidebar-close {
+        display: none;
+    }
+            
+    .sidebar-overlay {
+        display: none !important;
+    }
+            
     .chat-messages {
-        -webkit-overflow-scrolling: touch;
-        overflow-y: scroll;
+        padding: 1.25rem 1.5rem;
     }
-    
-    /* Prevent text selection */
-    * {
-        -webkit-user-select: none;
-        -moz-user-select: none;
-        -ms-user-select: none;
-        user-select: none;
+            
+    .input-container {
+        padding: 1.25rem;
     }
-    
-    /* Allow text selection in input areas */
-    textarea, input {
-        -webkit-user-select: text;
-        -moz-user-select: text;
-        -ms-user-select: text;
-        user-select: text;
+            
+    .welcome-message {
+        margin: 2rem auto;
+        padding: 1.5rem;
+    }
+            
+    .welcome-message h2 {
+        font-size: 1.75rem;
+    }
+            
+    .main-content {
+        overflow: hidden;
+    }
+}
+        
+/* Scrollbar */
+::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+}
+        
+::-webkit-scrollbar-track {
+    background: var(--dark-bg);
+}
+        
+.light-mode ::-webkit-scrollbar-track {
+    background: var(--light-bg);
+}
+        
+::-webkit-scrollbar-thumb {
+    background: var(--dark-border);
+    border-radius: 3px;
+}
+        
+.light-mode ::-webkit-scrollbar-thumb {
+    background: var(--light-border);
+}
+        
+::-webkit-scrollbar-thumb:hover {
+    background: var(--dark-surface-light);
+}
+        
+.light-mode ::-webkit-scrollbar-thumb:hover {
+    background: var(--light-surface-light);
+}
+
+/* Voice animation */
+.voice-animation {
+    display: flex;
+    align-items: center;
+    gap: 3px;
+    height: 20px;
+}
+        
+.voice-bar {
+    width: 3px;
+    background: var(--primary);
+    border-radius: 3px;
+    animation: voicePulse 0.8s ease-in-out infinite;
+}
+        
+.voice-bar:nth-child(1) {
+    height: 8px;
+    animation-delay: 0.1s;
+}
+        
+.voice-bar:nth-child(2) {
+    height: 12px;
+    animation-delay: 0.2s;
+}
+        
+.voice-bar:nth-child(3) {
+    height: 16px;
+    animation-delay: 0.3s;
+}
+        
+.voice-bar:nth-child(4) {
+    height: 12px;
+    animation-delay: 0.4s;
+}
+        
+.voice-bar:nth-child(5) {
+    height: 8px;
+    animation-delay: 0.5s;
+}
+        
+@keyframes voicePulse {
+    0%, 100% {
+        opacity: 0.4;
+        transform: scaleY(0.8);
+    }
+    50% {
+        opacity: 1;
+        transform: scaleY(1.2);
     }
 }
 
-/* Active Topics Section */
-#activeTopicsSection {
+/* Hide/show on mobile */
+.hide-on-mobile {
     display: none;
 }
-
-#activeTopicsList {
+        
+.show-on-mobile {
     display: flex;
-    flex-direction: column;
-    gap: 4px;
+}
+        
+@media (min-width: 769px) {
+    .hide-on-mobile {
+        display: flex;
+    }
+            
+    .show-on-mobile {
+        display: none;
+    }
+}
+
+/* Toast message - hidden as requested */
+.toast {
+    display: none !important;
 }
 
 </style>
@@ -3866,7 +3279,7 @@ header {
                     <span>Continue as Guest</span>
                 </button>
                 
-                <div style="text-align: center; margin-top: 1rem; font-size: 0.9rem; color: var(--dark-text-secondary);">
+                <div style="text-align: center; margin-top: 1rem; font-size: 0.875rem; color: var(--dark-text-secondary);">
                     <p>Chat history will be saved locally in your browser</p>
                 </div>
             </div>
@@ -3893,38 +3306,27 @@ header {
             <div class="header-actions">
                 <div class="status-indicator">
                     <div class="status-dot"></div>
-                    <span>AI Assistant Ready</span>
+                    <span class="hide-on-mobile">AI Ready</span>
                 </div>
                 
-                <!-- Search Counter Display -->
-                <div class="search-counter" id="searchCounter">
-                    <i class="fas fa-search"></i>
-                    <span>Free searches: 500/500</span>
-                </div>
+                <!-- NEW: Create New Chat button in header -->
+                <button class="header-btn" id="newChatHeaderBtn">
+                    <i class="fas fa-plus"></i>
+                    <span class="hide-on-mobile">New Chat</span>
+                </button>
                 
-                <!-- Login Button -->
+                <!-- Login Button with icon -->
                 <button class="login-btn" id="headerLoginBtn">
                     <i class="fas fa-sign-in-alt"></i>
-                    <span>Login</span>
+                    <span class="hide-on-mobile">Login</span>
                 </button>
                 
-                <button class="header-btn voice-search-btn" id="voiceSearchBtn" title="Voice Search">
-                    <i class="fas fa-microphone"></i>
-                </button>
                 <button class="header-btn theme-toggle" id="themeToggle" title="Toggle Theme">
                     <i class="fas fa-sun"></i>
                 </button>
                 <button class="header-btn" id="clearChatBtn">
                     <i class="fas fa-broom"></i>
                     <span class="hide-on-mobile">Clear Chat</span>
-                </button>
-                <button class="header-btn" id="downloadCurrentBtn">
-                    <i class="fas fa-download"></i>
-                    <span class="hide-on-mobile">Download Chat</span>
-                </button>
-                <button class="header-btn" id="suggestionsBtn">
-                    <i class="fas fa-lightbulb"></i>
-                    <span class="hide-on-mobile">Suggestions</span>
                 </button>
                 
                 <!-- User Profile -->
@@ -3936,7 +3338,7 @@ header {
                         <div class="user-name" id="userName">Guest User</div>
                         <div class="user-email" id="userEmail">Local Browser Mode</div>
                     </div>
-                    <i class="fas fa-chevron-down" style="font-size: 0.8rem;"></i>
+                    <i class="fas fa-chevron-down" style="font-size: 0.75rem;"></i>
                 </div>
             </div>
         </header>
@@ -3993,83 +3395,8 @@ header {
                     <i class="fas fa-times"></i>
                 </button>
                 
-                <!-- Sidebar Tabs -->
-                <div class="sidebar-tabs">
-                    <button class="sidebar-tab active" data-tab="legal-topics">
-                        <i class="fas fa-book"></i>
-                        <span class="hide-on-mobile">Legal Topics</span>
-                    </button>
-                    <button class="sidebar-tab" data-tab="chat-history">
-                        <i class="fas fa-history"></i>
-                        <span class="hide-on-mobile">Chat History</span>
-                    </button>
-                </div>
-                
-                <!-- Legal Topics Tab Content -->
-                <div class="tab-content active" id="legal-topics-content">
-                    <div class="sidebar-header">
-                        <h2><i class="fas fa-book"></i> Legal Topics</h2>
-                    </div>
-                    
-                    <div class="sidebar-section">
-                        <h3><i class="fas fa-gavel"></i> Common Legal Areas</h3>
-                        <div class="topic-list">
-                            <button class="topic-item" data-topic="contract">
-                                <i class="fas fa-file-contract"></i>
-                                <span>Contract Law</span>
-                            </button>
-                            <button class="topic-item" data-topic="employment">
-                                <i class="fas fa-briefcase"></i>
-                                <span>Employment Law</span>
-                            </button>
-                            <button class="topic-item" data-topic="intellectual">
-                                <i class="fas fa-lightbulb"></i>
-                                <span>Intellectual Property</span>
-                            </button>
-                            <button class="topic-item" data-topic="realestate">
-                                <i class="fas fa-house"></i>
-                                <span>Real Estate Law</span>
-                            </button>
-                            <button class="topic-item" data-topic="family">
-                                <i class="fas fa-heart"></i>
-                                <span>Family Law</span>
-                            </button>
-                            <button class="topic-item" data-topic="criminal">
-                                <i class="fas fa-gavel"></i>
-                                <span>Criminal Law</span>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Active Topics Tabs Section -->
-                    <div class="sidebar-section" id="activeTopicsSection" style="display: none;">
-                        <h3><i class="fas fa-folder-open"></i> Active Topics</h3>
-                        <div class="topic-list" id="activeTopicsList">
-                            <!-- Active topics will be added here dynamically -->
-                        </div>
-                    </div>
-                    
-                    <div class="sidebar-section">
-                        <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
-                        <div class="quick-actions">
-                            <button class="action-item" data-action="document-drafts">
-                                <i class="fas fa-file-alt"></i>
-                                <span>Document Drafts</span>
-                            </button>
-                            <button class="action-item" data-action="legal-research">
-                                <i class="fas fa-search"></i>
-                                <span>Legal Research</span>
-                            </button>
-                            <button class="action-item" data-action="case-analysis">
-                                <i class="fas fa-chart-bar"></i>
-                                <span>Case Analysis</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
                 <!-- Chat History Tab Content -->
-                <div class="tab-content" id="chat-history-content">
+                <div class="tab-content active" id="chat-history-content">
                     <div class="history-header">
                         <h2><i class="fas fa-history"></i> Chat History</h2>
                         <button class="new-chat-btn" id="newChatBtn">
@@ -4083,7 +3410,7 @@ header {
                         <div class="empty-history">
                             <i class="fas fa-comments"></i>
                             <p>No chat history yet</p>
-                            <p style="font-size: 0.8rem; margin-top: 0.5rem;">Start a conversation to see it here</p>
+                            <p style="font-size: 0.8125rem; margin-top: 0.5rem;">Start a conversation to see it here</p>
                         </div>
                     </div>
                 </div>
@@ -4094,26 +3421,10 @@ header {
                     <!-- Welcome Message will be added dynamically -->
                 </div>
                 
-                <!-- Scroll Position Indicator -->
-                <div class="scroll-position-indicator" id="scrollPositionIndicator">
-                    Scroll to see more messages
-                </div>
-                
                 <div class="input-container">
                     <div class="input-area">
                         <!-- Attachments Preview -->
                         <div class="attachments-preview" id="attachmentsPreview" style="display: none;"></div>
-                        
-                        <div class="voice-input-status" id="voiceInputStatus">
-                            <div class="voice-animation">
-                                <div class="voice-bar"></div>
-                                <div class="voice-bar"></div>
-                                <div class="voice-bar"></div>
-                                <div class="voice-bar"></div>
-                                <div class="voice-bar"></div>
-                            </div>
-                            <span>Listening... Speak now</span>
-                        </div>
                         
                         <textarea 
                             id="userInput" 
@@ -4121,14 +3432,7 @@ header {
                             rows="1"
                         ></textarea>
                         
-                        <div class="voice-input-text" id="voiceInputText"></div>
-                        
                         <div class="input-buttons">
-                            <!-- Emoji Picker Button -->
-                            <button class="emoji-picker-btn" id="emojiPickerBtn" title="Insert emoji">
-                                <i class="far fa-smile"></i>
-                            </button>
-                            
                             <!-- Attachment Button -->
                             <button class="attachment-btn" id="attachmentBtn" title="Attach files (images, PDF, TXT)">
                                 <i class="fas fa-paperclip"></i>
@@ -4272,7 +3576,7 @@ header {
                         <div class="upload-text">
                             <h3>Drag & Drop Files Here</h3>
                             <p>or click to browse files</p>
-                            <p style="font-size: 0.8rem; color: var(--dark-text-secondary);">
+                            <p style="font-size: 0.8125rem; color: var(--dark-text-secondary);">
                                 Supported formats: Images (JPG, PNG, GIF), PDF, TXT, DOC
                             </p>
                             <button class="upload-btn" id="browseFilesBtn">
@@ -4285,7 +3589,7 @@ header {
                         <!-- Uploaded files will appear here -->
                     </div>
                     
-                    <div class="confirmation-buttons" style="margin-top: 1.5rem;">
+                    <div class="confirmation-buttons" style="margin-top: 1.25rem;">
                         <button class="confirmation-btn cancel" id="cancelFileUpload">
                             Cancel
                         </button>
@@ -4297,7 +3601,7 @@ header {
             </div>
         </div>
         
-        <!-- Download Notification -->
+        <!-- Download Notification - Fixed position -->
         <div class="download-notification" id="downloadNotification">
             <i class="fas fa-file-download"></i>
             <div class="download-notification-content">
@@ -4316,7 +3620,7 @@ header {
     </div>
 
     <script>
-    // All API keys and models remain the same
+    // All API keys and models
     const API_KEYS = [
         "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",
         "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",
@@ -4332,10 +3636,6 @@ header {
         "llama3-8b-8192",
         "mixtral-8x7b-32768"
     ];
-    
-    // All existing JavaScript code remains EXACTLY THE SAME
-    // The functionality is unchanged, only the CSS/styling has been updated
-    // All variables and functions from your original code remain intact
     
     let currentModel = "llama-3.3-70b-versatile";
     let currentApiKeyIndex = 0;
@@ -4365,8 +3665,6 @@ header {
     let attachedFiles = [];
     let selectedFiles = [];
     
-    let activeLegalTopics = [];
-    
     let isStreamingPaused = false;
     let isStreamingActive = false;
     let stopStreamingRequested = false;
@@ -4374,10 +3672,6 @@ header {
     let currentUser = null;
     let isLoggedIn = false;
     let userToken = null;
-    
-    let searchCount = 0;
-    const MAX_FREE_SEARCHES = 500;
-    const MAX_PREMIUM_SEARCHES = 1000;
     
     let scrollPosition = 0;
     
@@ -4388,12 +3682,12 @@ header {
         <div class="welcome-message">
             <h2>Welcome to LegalSwami</h2>
             <p>Your AI-powered legal assistant for accurate, comprehensive legal information and guidance.</p>
-            <p style="color: var(--primary); margin-top: 10px; font-size: 0.9rem;">
+            <p style="color: var(--primary); margin-top: 10px; font-size: 0.875rem;">
                 <i class="fas fa-language"></i> Supports multiple Indian languages including Marathi, Hindi, and more!
             </p>
             
-            <div style="margin-top: 2rem;">
-                <h3 style="color: var(--primary); margin-bottom: 1rem;">Ready-to-Use Legal Documents:</h3>
+            <div style="margin-top: 1.5rem;">
+                <h3 style="color: var(--primary); margin-bottom: 0.875rem; font-size: 1rem;">Ready-to-Use Legal Documents:</h3>
                 <div class="draft-templates">
                     <div class="draft-template" data-template="nda">
                         <i class="fas fa-file-signature"></i>
@@ -4477,8 +3771,8 @@ header {
         // Load user's chat history
         loadUserChatHistory();
         
-        // Show welcome message
-        showToast('Welcome to LegalSwami! You have 500 free searches per day.', 'info');
+        // Load chat history list
+        loadHistoryList();
     }
     
     // Update User UI
@@ -4517,9 +3811,6 @@ header {
             document.getElementById('headerLoginBtn').style.display = 'flex';
             document.getElementById('userProfile').style.display = 'none';
         }
-        
-        // Update search counter display
-        updateSearchCounterDisplay();
     }
     
     // Toggle User Dropdown
@@ -4540,7 +3831,6 @@ header {
                 chatHistory = [];
                 conversationHistory = [];
                 currentChatId = null;
-                searchCount = 0;
                 currentUser = null;
                 isLoggedIn = false;
                 
@@ -4551,8 +3841,6 @@ header {
                 // Reset UI
                 document.getElementById('userProfile').style.display = 'none';
                 document.getElementById('headerLoginBtn').style.display = 'flex';
-                
-                showToast('Local data cleared', 'success');
             }
         } else {
             // Logged in user - logout
@@ -4573,8 +3861,6 @@ header {
                 // Reset UI
                 document.getElementById('userProfile').style.display = 'none';
                 document.getElementById('headerLoginBtn').style.display = 'flex';
-                
-                showToast('Logged out successfully', 'success');
             }
         }
     }
@@ -4618,83 +3904,6 @@ header {
         }
     }
     
-    // Initialize search counter - UPDATED FOR 500 SEARCHES
-    function initializeSearchCounter() {
-        try {
-            // For logged in users, load from server (simulated with localStorage)
-            if (isLoggedIn && currentUser) {
-                const userKey = `legalSwamiSearchCount_${currentUser.id}`;
-                const savedCount = localStorage.getItem(userKey);
-                if (savedCount) {
-                    searchCount = parseInt(savedCount);
-                }
-            } else {
-                // For guest users
-                const savedCount = localStorage.getItem('legalSwamiSearchCount');
-                if (savedCount) {
-                    searchCount = parseInt(savedCount);
-                }
-                
-                const savedDate = localStorage.getItem('legalSwamiSearchDate');
-                if (savedDate) {
-                    const lastDate = new Date(savedDate);
-                    const today = new Date();
-                    
-                    // Reset counter if it's a new day
-                    if (lastDate.getDate() !== today.getDate() || 
-                        lastDate.getMonth() !== today.getMonth() || 
-                        lastDate.getFullYear() !== today.getFullYear()) {
-                        searchCount = 0;
-                        saveSearchCounter();
-                    }
-                }
-            }
-            
-            // Update display
-            updateSearchCounterDisplay();
-        } catch (error) {
-            console.error('Error loading search counter:', error);
-        }
-    }
-    
-    // Save search counter
-    function saveSearchCounter() {
-        try {
-            if (isLoggedIn && currentUser) {
-                const userKey = `legalSwamiSearchCount_${currentUser.id}`;
-                localStorage.setItem(userKey, searchCount.toString());
-            } else {
-                localStorage.setItem('legalSwamiSearchCount', searchCount.toString());
-                localStorage.setItem('legalSwamiSearchDate', new Date().toISOString());
-            }
-        } catch (error) {
-            console.error('Error saving search counter:', error);
-        }
-    }
-    
-    // Update search counter display in header - UPDATED FOR 500 SEARCHES
-    function updateSearchCounterDisplay() {
-        const searchCounterElement = document.getElementById('searchCounter');
-        if (searchCounterElement) {
-            const maxSearches = isLoggedIn ? MAX_PREMIUM_SEARCHES : MAX_FREE_SEARCHES;
-            const remaining = maxSearches - searchCount;
-            
-            const icon = isLoggedIn ? 'fa-crown' : 'fa-search';
-            const text = isLoggedIn ? 'Premium searches' : 'Free searches';
-            
-            searchCounterElement.innerHTML = `<i class="fas ${icon}"></i><span>${text}: ${remaining}/${maxSearches}</span>`;
-            
-            // Change color when low
-            if (remaining <= 50) {
-                searchCounterElement.style.color = 'var(--warning)';
-            } else if (remaining <= 10) {
-                searchCounterElement.style.color = 'var(--error)';
-            } else {
-                searchCounterElement.style.color = 'var(--dark-text-secondary)';
-            }
-        }
-    }
-    
     // Initialize Chat App
     function initializeChatApp() {
         console.log("Initializing chat app...");
@@ -4707,24 +3916,18 @@ header {
         const sidebarClose = document.getElementById('sidebarClose');
         const sidebarOverlay = document.getElementById('sidebarOverlay');
         const clearChatBtn = document.getElementById('clearChatBtn');
-        const downloadCurrentBtn = document.getElementById('downloadCurrentBtn');
-        const suggestionsBtn = document.getElementById('suggestionsBtn');
-        const voiceSearchBtn = document.getElementById('voiceSearchBtn');
-        const inputMicrophoneBtn = document.getElementById('inputMicrophoneBtn');
         const themeToggle = document.getElementById('themeToggle');
-        const topicItems = document.querySelectorAll('.topic-item');
-        const actionItems = document.querySelectorAll('.action-item');
-        const sidebarTabs = document.querySelectorAll('.sidebar-tab');
         const newChatBtn = document.getElementById('newChatBtn');
+        const newChatHeaderBtn = document.getElementById('newChatHeaderBtn');
         const attachmentBtn = document.getElementById('attachmentBtn');
         const guestLoginBtn = document.getElementById('guestLoginBtn');
         const headerLoginBtn = document.getElementById('headerLoginBtn');
         const logoutBtn = document.getElementById('logoutBtn');
         const userProfile = document.getElementById('userProfile');
-        const emojiPickerBtn = document.getElementById('emojiPickerBtn');
+        const inputMicrophoneBtn = document.getElementById('inputMicrophoneBtn');
         
         // Set initial state based on screen size
-        const isDesktop = window.innerWidth >= 1024;
+        const isDesktop = window.innerWidth >= 1025;
         if (isDesktop) {
             sidebar.classList.add('active');
         }
@@ -4763,14 +3966,14 @@ header {
                 // Allow default behavior (new line)
                 setTimeout(() => {
                     this.style.height = 'auto';
-                    this.style.height = Math.min(this.scrollHeight, 200) + 'px';
+                    this.style.height = Math.min(this.scrollHeight, 150) + 'px';
                 }, 10);
             }
         });
         
         userInput.addEventListener('input', function() {
             this.style.height = 'auto';
-            this.style.height = Math.min(this.scrollHeight, 200) + 'px';
+            this.style.height = Math.min(this.scrollHeight, 150) + 'px';
             
             // Update send button state
             if (isStreamingActive) {
@@ -4781,15 +3984,6 @@ header {
                 sendButton.disabled = this.value.trim() === '' && attachedFiles.length === 0;
                 sendButton.classList.remove('stop-button');
                 sendButton.innerHTML = '<i class="fas fa-paper-plane"></i> <span class="hide-on-mobile">Send</span>';
-            }
-            
-            // Show language detection hint
-            const text = this.value.trim();
-            if (text.length > 0) {
-                const lang = detectLanguage(text);
-                showLanguageHint(lang);
-            } else {
-                hideLanguageHint();
             }
         });
         
@@ -4805,25 +3999,15 @@ header {
                 isListening = true;
                 if (isInputMicrophoneActive) {
                     inputMicrophoneBtn.classList.add('listening');
-                } else {
-                    voiceSearchBtn.classList.add('listening');
                 }
-                document.getElementById('voiceInputStatus').classList.add('active');
-                showToast('Listening... Speak now', 'info');
             };
             
             recognition.onresult = function(event) {
                 const transcript = event.results[0][0].transcript;
-                const voiceInputText = document.getElementById('voiceInputText');
                 
                 if (event.results[0].isFinal) {
                     userInput.value = transcript;
-                    userInput.style.height = Math.min(userInput.scrollHeight, 200) + 'px';
-                    voiceInputText.style.display = 'none';
-                    
-                    // Auto-detect language and show hint
-                    const lang = detectLanguage(transcript);
-                    showLanguageHint(lang);
+                    userInput.style.height = Math.min(userInput.scrollHeight, 180) + 'px';
                     
                     // Enable send button
                     sendButton.disabled = false;
@@ -4834,9 +4018,6 @@ header {
                             sendMessage();
                         }, 1000);
                     }
-                } else {
-                    voiceInputText.textContent = transcript;
-                    voiceInputText.style.display = 'block';
                 }
             };
             
@@ -4845,41 +4026,33 @@ header {
                 isListening = false;
                 isInputMicrophoneActive = false;
                 inputMicrophoneBtn.classList.remove('listening');
-                voiceSearchBtn.classList.remove('listening');
-                document.getElementById('voiceInputStatus').classList.remove('active');
-                
-                if (event.error === 'not-allowed') {
-                    showToast('Microphone access denied. Please allow microphone access.', 'error');
-                } else {
-                    showToast('Voice recognition failed. Please try again.', 'error');
-                }
             };
             
             recognition.onend = function() {
                 isListening = false;
                 isInputMicrophoneActive = false;
                 inputMicrophoneBtn.classList.remove('listening');
-                voiceSearchBtn.classList.remove('listening');
-                document.getElementById('voiceInputStatus').classList.remove('active');
-                document.getElementById('voiceInputText').style.display = 'none';
             };
             
-            voiceSearchBtn.addEventListener('click', toggleVoiceRecognition);
             inputMicrophoneBtn.addEventListener('click', toggleInputVoiceRecognition);
         } else {
-            voiceSearchBtn.style.display = 'none';
             inputMicrophoneBtn.style.display = 'none';
-            showToast('Voice search not supported in your browser', 'warning');
         }
         
         // Theme toggle
         themeToggle.addEventListener('click', toggleTheme);
         
-        // Sidebar toggle buttons
+        // Sidebar toggle button - UPDATED: Toggle open/close
         sidebarToggle.addEventListener('click', function() {
-            sidebar.classList.add('active');
-            sidebarOverlay.classList.add('active');
-            document.body.style.overflow = 'hidden';
+            if (sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+                sidebarOverlay.classList.remove('active');
+                document.body.style.overflow = '';
+            } else {
+                sidebar.classList.add('active');
+                sidebarOverlay.classList.add('active');
+                document.body.style.overflow = 'hidden';
+            }
         });
         
         sidebarClose.addEventListener('click', function() {
@@ -4894,120 +4067,13 @@ header {
             document.body.style.overflow = '';
         });
         
-        // Sidebar tab switching
-        sidebarTabs.forEach(tab => {
-            tab.addEventListener('click', function() {
-                const tabId = this.dataset.tab;
-                
-                // Update active tab
-                sidebarTabs.forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
-                
-                // Show corresponding content
-                document.querySelectorAll('.tab-content').forEach(content => {
-                    content.classList.remove('active');
-                });
-                document.getElementById(`${tabId}-content`).classList.add('active');
-                
-                // If switching to history tab, refresh the list
-                if (tabId === 'chat-history') {
-                    loadHistoryList();
-                }
-            });
-        });
-        
-        // New chat button
+        // New chat button (in sidebar)
         newChatBtn.addEventListener('click', createNewChat);
         
+        // New chat button (in header) - NEW
+        newChatHeaderBtn.addEventListener('click', createNewChat);
+        
         clearChatBtn.addEventListener('click', clearCurrentChat);
-        downloadCurrentBtn.addEventListener('click', () => {
-            if (conversationHistory.length === 0) {
-                showToast('No chat content to download', 'warning');
-                return;
-            }
-            openDownloadModal();
-        });
-        suggestionsBtn.addEventListener('click', showSuggestions);
-        
-        // Topic click handlers - UPDATED: Toggle tabs functionality
-        topicItems.forEach(item => {
-            item.addEventListener('click', function() {
-                const topic = this.dataset.topic;
-                const topicName = this.querySelector('span').textContent;
-                
-                // Check if topic is already active
-                const isActive = this.classList.contains('active-tab');
-                
-                if (isActive) {
-                    // Remove active state
-                    this.classList.remove('active-tab');
-                    removeActiveTopic(topic);
-                    
-                    // Clear any open file content for this topic
-                    clearTopicFileContent(topic);
-                    
-                    showToast(`${topicName} tab closed`, 'info');
-                } else {
-                    // Add active state
-                    this.classList.add('active-tab');
-                    addActiveTopic(topic, topicName);
-                    
-                    // Show questions for the topic
-                    const questions = {
-                        'contract': 'What are the essential elements of a valid contract under Indian law?',
-                        'employment': 'What are the rights of employees regarding workplace harassment in India?',
-                        'intellectual': 'How does copyright protection work for software in India?',
-                        'realestate': 'What documents are required for property registration in India?',
-                        'family': 'What are the grounds for divorce under Hindu Marriage Act?',
-                        'criminal': 'What is the difference between bailable and non-bailable offenses?'
-                    };
-                    
-                    userInput.value = questions[topic] || `Tell me about ${topicName.toLowerCase()} in Indian law.`;
-                    userInput.focus();
-                    userInput.style.height = Math.min(userInput.scrollHeight, 200) + 'px';
-                    
-                    // Enable send button
-                    sendButton.disabled = false;
-                    
-                    showToast(`${topicName} tab opened`, 'success');
-                }
-                
-                // Close sidebar on mobile/tablet
-                if (window.innerWidth < 1024) {
-                    sidebar.classList.remove('active');
-                    sidebarOverlay.classList.remove('active');
-                    document.body.style.overflow = '';
-                }
-            });
-        });
-        
-        // Action click handlers
-        actionItems.forEach(item => {
-            item.addEventListener('click', function() {
-                const action = this.dataset.action;
-                
-                if (action === 'document-drafts') {
-                    userInput.value = 'Create a non-disclosure agreement draft for me';
-                    userInput.focus();
-                } else if (action === 'legal-research') {
-                    userInput.value = 'Can you help me research case laws related to breach of contract?';
-                    userInput.focus();
-                } else if (action === 'case-analysis') {
-                    userInput.value = 'Can you analyze the legal principles in landmark privacy law cases?';
-                    userInput.focus();
-                }
-                
-                userInput.style.height = Math.min(userInput.scrollHeight, 200) + 'px';
-                sendButton.disabled = false;
-                
-                // Close sidebar on mobile/tablet
-                if (window.innerWidth < 1024) {
-                    sidebar.classList.remove('active');
-                    sidebarOverlay.classList.remove('active');
-                    document.body.style.overflow = '';
-                }
-            });
-        });
         
         // Guest login button click
         if (guestLoginBtn) {
@@ -5055,7 +4121,7 @@ header {
         // Adjust textarea height on page load
         setTimeout(() => {
             userInput.style.height = 'auto';
-            userInput.style.height = Math.min(userInput.scrollHeight, 200) + 'px';
+            userInput.style.height = Math.min(userInput.scrollHeight, 180) + 'px';
         }, 100);
         
         // Initialize scroll to bottom button
@@ -5097,26 +4163,6 @@ header {
             }
         });
         
-        // Emoji picker button
-        emojiPickerBtn.addEventListener('click', function() {
-            // Simple emoji insertion - can be enhanced with emoji picker library
-            const emojis = ['⚖️', '📝', '🤝', '📄', '📚', '🏛️', '👨‍⚖️', '👨‍💼', '👤', '🏠', '💰', '⏰', '📅'];
-            const randomEmoji = emojis[Math.floor(Math.random() * emojis.length)];
-            
-            const userInput = document.getElementById('userInput');
-            const cursorPos = userInput.selectionStart;
-            const text = userInput.value;
-            userInput.value = text.substring(0, cursorPos) + randomEmoji + text.substring(cursorPos);
-            userInput.focus();
-            userInput.selectionStart = cursorPos + randomEmoji.length;
-            userInput.selectionEnd = cursorPos + randomEmoji.length;
-            
-            // Trigger input event to update height
-            userInput.dispatchEvent(new Event('input'));
-            
-            showToast('Emoji added!', 'success');
-        });
-        
         console.log("Chat app initialized successfully");
     }
     
@@ -5126,7 +4172,7 @@ header {
         const title = document.getElementById('downloadNotificationTitle');
         const message = document.getElementById('downloadNotificationMessage');
         
-        title.textContent = `${fileType} Downloaded`;
+        title.textContent = `${fileType} Downloaded 📥`;
         message.textContent = `Click to open ${fileName}`;
         
         notification.classList.add('show');
@@ -5137,77 +4183,6 @@ header {
         }, 5000);
     }
     
-    // NEW: Add active topic to sidebar
-    function addActiveTopic(topicId, topicName) {
-        // Check if topic is already active
-        const existingIndex = activeLegalTopics.findIndex(t => t.id === topicId);
-        if (existingIndex !== -1) return;
-        
-        // Add to active topics array
-        activeLegalTopics.push({
-            id: topicId,
-            name: topicName,
-            timestamp: new Date().toISOString()
-        });
-        
-        // Update UI
-        updateActiveTopicsUI();
-    }
-    
-    // NEW: Remove active topic from sidebar
-    function removeActiveTopic(topicId) {
-        // Remove from active topics array
-        activeLegalTopics = activeLegalTopics.filter(t => t.id !== topicId);
-        
-        // Update UI
-        updateActiveTopicsUI();
-    }
-    
-    // NEW: Update active topics UI in sidebar
-    function updateActiveTopicsUI() {
-        const activeTopicsSection = document.getElementById('activeTopicsSection');
-        const activeTopicsList = document.getElementById('activeTopicsList');
-        
-        if (activeLegalTopics.length === 0) {
-            activeTopicsSection.style.display = 'none';
-            return;
-        }
-        
-        // Show section
-        activeTopicsSection.style.display = 'block';
-        
-        // Clear and rebuild list
-        activeTopicsList.innerHTML = '';
-        
-        activeLegalTopics.forEach(topic => {
-            const topicItem = document.createElement('div');
-            topicItem.className = 'topic-item active-tab';
-            topicItem.innerHTML = `
-                <i class="fas fa-folder-open"></i>
-                <span>${topic.name}</span>
-            `;
-            
-            topicItem.addEventListener('click', function(e) {
-                e.stopPropagation();
-                // Find and click the corresponding original topic item
-                const originalTopic = document.querySelector(`.topic-item[data-topic="${topic.id}"]`);
-                if (originalTopic) {
-                    originalTopic.click();
-                }
-            });
-            
-            activeTopicsList.appendChild(topicItem);
-        });
-    }
-    
-    // NEW: Clear file content display for a specific topic
-    function clearTopicFileContent(topicId) {
-        const fileContents = document.querySelectorAll(`.file-content-display[data-topic="${topicId}"]`);
-        fileContents.forEach(content => {
-            content.remove();
-        });
-    }
-    
     // Load current chat messages
     function loadCurrentChatMessages() {
         const chatMessages = document.getElementById('chatMessages');
@@ -5215,7 +4190,9 @@ header {
         
         // Add welcome message if no conversation history
         if (conversationHistory.length === 0) {
-            chatMessages.innerHTML = WELCOME_MESSAGE_HTML;
+            const welcomeContainer = document.createElement('div');
+            welcomeContainer.innerHTML = WELCOME_MESSAGE_HTML;
+            chatMessages.appendChild(welcomeContainer);
             addDraftTemplateListeners();
             return;
         }
@@ -5224,7 +4201,7 @@ header {
         conversationHistory.forEach(msg => {
             const isDocument = msg.isDocument || false;
             const hasSources = msg.sources && msg.sources.length > 0;
-            addMessageToChat(msg.content, msg.role === 'user', true, isDocument, msg.attachments || [], hasSources ? msg.sources : null);
+            addMessageToChat(msg.content, msg.role === 'user', true, isDocument, msg.attachments || [], hasSources ? msg.sources : null, msg.language || 'english');
         });
         
         // Add copy/edit buttons to user messages
@@ -5257,7 +4234,7 @@ header {
                 const userInput = document.getElementById('userInput');
                 userInput.value = requestText;
                 userInput.focus();
-                userInput.style.height = Math.min(userInput.scrollHeight, 200) + 'px';
+                userInput.style.height = Math.min(userInput.scrollHeight, 180) + 'px';
                 document.getElementById('sendButton').disabled = false;
                 
                 // Auto-send after 1 second
@@ -5268,7 +4245,7 @@ header {
         });
     }
     
-    // MODIFIED: Send message function with file reading capability
+    // Send message function
     async function sendMessage() {
         const userInput = document.getElementById('userInput');
         const sendButton = document.getElementById('sendButton');
@@ -5276,13 +4253,6 @@ header {
         
         // Check if there's either text or attachments
         if (!message && attachedFiles.length === 0) {
-            showToast('Please enter a message or attach a file', 'warning');
-            return;
-        }
-        
-        // Check search limit for non-logged-in users - UPDATED FOR 500 SEARCHES
-        if (!isLoggedIn && searchCount >= MAX_FREE_SEARCHES) {
-            showToast(`You've used ${MAX_FREE_SEARCHES} free searches today. Please wait until tomorrow or clear local data to reset counter.`, 'warning');
             return;
         }
         
@@ -5295,13 +4265,12 @@ header {
         let detectedLanguage = 'english';
         if (message) {
             detectedLanguage = detectLanguage(message);
-            hideLanguageHint();
         }
         
         // Add user message to chat with attachments
-        const messageId = addMessageToChat(message, true, false, false, attachedFiles);
+        const messageId = addMessageToChat(message, true, false, false, attachedFiles, null, detectedLanguage);
         userInput.value = '';
-        userInput.style.height = '56px';
+        userInput.style.height = '52px';
         
         // Update send button to stop button
         sendButton.disabled = false;
@@ -5324,23 +4293,6 @@ header {
             };
             
             conversationHistory.push(userMessage);
-            
-            // Increment search counter for non-logged-in users
-            if (!isLoggedIn) {
-                searchCount++;
-                saveSearchCounter();
-                updateSearchCounterDisplay();
-                
-                // Show warning when reaching limit
-                const remaining = MAX_FREE_SEARCHES - searchCount;
-                if (remaining === 50) {
-                    showToast(`You have ${remaining} free searches remaining.`, 'warning');
-                } else if (remaining === 10) {
-                    showToast(`Only ${remaining} free searches left!`, 'warning');
-                } else if (remaining === 0) {
-                    showToast(`Daily limit reached! You've used ${MAX_FREE_SEARCHES} searches today.`, 'warning');
-                }
-            }
             
             // If there are files, read their contents
             let fileContents = '';
@@ -5380,11 +4332,14 @@ header {
             
             conversationHistory.push(aiMessage);
             
+            // Save current chat to history
+            saveCurrentChat();
+            
             // Create AI message container for streaming
             const aiMessageId = createStreamingMessage();
             
             // Start streaming the response
-            startStreamingResponse(aiMessageId, response, isDocumentRequest(message));
+            startStreamingResponse(aiMessageId, response, isDocumentRequest(message), detectedLanguage);
             
             // After streaming completes, add sources ONLY
             setTimeout(() => {
@@ -5398,7 +4353,7 @@ header {
             
             // Update with error message
             const errorMessage = "I apologize for the inconvenience. I'm currently experiencing technical difficulties. Please try again in a moment.";
-            addMessageToChat(errorMessage, false);
+            addMessageToChat(errorMessage, false, false, false, [], null, 'english');
             
             // Add error to conversation history
             conversationHistory.push({
@@ -5407,9 +4362,6 @@ header {
                 language: 'english',
                 timestamp: new Date().toISOString()
             });
-            
-            // Show subtle notification to user
-            showToast('Service temporarily unavailable', 'warning');
             
             // Reset send button
             sendButton.disabled = userInput.value.trim() === '' && attachedFiles.length === 0;
@@ -5500,11 +4452,9 @@ header {
             streamingTextChunks = [];
             streamingTextIndex = 0;
         }
-        
-        showToast('Response stopped', 'info');
     }
     
-    // NEW: Read file content
+    // Read file content
     async function readFileContent(file) {
         return new Promise((resolve, reject) => {
             if (file.type.startsWith('image/')) {
@@ -5531,7 +4481,7 @@ header {
         });
     }
     
-    // NEW: Extract ONLY sources from AI response (NO SUMMARY)
+    // Extract ONLY sources from AI response (NO SUMMARY)
     function extractSourcesFromResponse(response) {
         const sources = [];
         
@@ -5636,7 +4586,7 @@ header {
         };
     }
     
-    // NEW: Show ONLY sources after response
+    // Show ONLY sources after response
     function addResponseSources(messageId, sourcesData) {
         const messageDiv = document.getElementById(messageId);
         if (!messageDiv || !sourcesData || !sourcesData.hasSources) return;
@@ -5702,7 +4652,7 @@ header {
         setTimeout(() => clearInterval(checkStreaming), 10000);
     }
     
-    // MODIFIED: API call with multiple key rotation
+    // API call with multiple key rotation
     async function callGroqAPIWithRotation(message, responseLanguage, maxRetries = 3) {
         for (let attempt = 0; attempt < maxRetries; attempt++) {
             try {
@@ -5737,7 +4687,7 @@ header {
         }
     }
     
-    // Single API call - UPDATED: Include file reading instructions
+    // Single API call
     async function callSingleGroqAPI(apiKey, message, responseLanguage) {
         const isDocumentReq = isDocumentRequest(message);
         const hasFiles = attachedFiles.length > 0;
@@ -5781,7 +4731,7 @@ header {
         return data.choices[0].message.content;
     }
     
-    // MODIFIED: Save current chat to history
+    // Save current chat to history
     function saveCurrentChat() {
         if (!currentChatId || conversationHistory.length === 0) return;
         
@@ -5816,7 +4766,7 @@ header {
             preview: preview,
             date: new Date().toISOString(),
             messages: [...conversationHistory],
-            userId: 'guest'
+            userId: currentUser ? currentUser.id : 'guest'
         };
         
         if (chatIndex !== -1) {
@@ -5829,6 +4779,9 @@ header {
         
         // Save to user-specific storage
         saveUserChatHistory();
+        
+        // Update history list display
+        loadHistoryList();
     }
     
     // Check if user is asking for document
@@ -5849,7 +4802,7 @@ header {
         return docKeywords.some(keyword => lowerMessage.includes(keyword));
     }
     
-    // UPDATED: Get system prompt with file reading capability
+    // Get system prompt with file reading capability
     function getSystemPrompt(language, isDocumentRequest = false, hasFiles = false) {
         let basePrompt = '';
         
@@ -5858,17 +4811,17 @@ header {
                 'english': `You are LegalSwami, an expert AI legal assistant specializing in Indian law.
                 
 IMPORTANT: When the user asks for a legal document draft, you MUST create a complete, ready-to-use legal document template. Include:
-1. Proper document title and headings
-2. All necessary legal clauses
-3. Placeholders for personal information [like this]
-4. Signature sections
-5. Date and witness sections if applicable
+1. Proper document title and headings.
+2. All necessary legal clauses.
+3. Placeholders for personal information [like this].
+4. Signature sections.
+5. Date and witness sections if applicable.
 
 Make sure the document is:
-- Legally sound for Indian context
-- Professionally formatted
-- Ready for immediate download and use
-- Includes all standard legal clauses
+- Legally sound for Indian context.
+- Professionally formatted.
+- Ready for immediate download and use.
+- Includes all standard legal clauses.
 
 Format your response as a complete legal document.
 
@@ -5878,48 +4831,48 @@ ALWAYS include this disclaimer at the end:
                 'hindi': `आप LegalSwami हैं, भारतीय कानून में विशेषज्ञ AI कानूनी सहायक।
 
 महत्वपूर्ण: जब उपयोगकर्ता कानूनी दस्तावेज़ का मसौदा मांगता है, तो आपको एक पूर्ण, उपयोग के लिए तैयार कानूनी दस्तावेज़ टेम्पलेट बनाना चाहिए। शामिल करें:
-1. उचित दस्तावेज़ शीर्षक और शीर्षलेख
-2. सभी आवश्यक कानूनी खंड
-3. व्यक्तिगत जानकारी के लिए प्लेसहोल्डर [इस तरह]
-4. हस्ताक्षर अनुभाग
-5. यदि लागू हो तो तारीख और गवाह अनुभाग
+1. उचित दस्तावेज़ शीर्षक और शीर्षलेख।
+2. सभी आवश्यक कानूनी खंड।
+3. व्यक्तिगत जानकारी के लिए प्लेसहोल्डर [इस तरह]।
+4. हस्ताक्षर अनुभाग।
+5. यदि लागू हो तो तारीख और गवाह अनुभाग।
 
 सुनिश्चित करें कि दस्तावेज़:
-- भारतीय संदर्भ के लिए कानूनी रूप से सही है
-- पेशेवर रूप से स्वरूपित है
-- तत्काल डाउनलोड और उपयोग के लिए तयार है
-- सभी मानक कानूनी खंड शामिल हैं
+- भारतीय संदर्भ के लिए कानूनी रूप से सही है।
+- पेशेवर रूप से स्वरूपित है।
+- तत्काल डाउनलोड और उपयोग के लिए तयार है।
+- सभी मानक कानूनी खंड शामिल हैं।
 
 अपनी प्रतिक्रिया को एक पूर्ण कानूनी दस्तावेज़ के रूप में स्वरूपित करें।
 
 अंत में हमेशा यह अस्वीकरण शामिल करें:
 "अस्वीकरण: यह टेम्पलेट केवल शैक्षिक उद्देश्यों के लिए है। उपयोग से पहले योग्य वकील से परामर्श करें।"`,
 
-                'marathi': `तुम्ही LegalSwami आहात, भारतीय कायद्यात तज्ञ AI कायदेशीर सहाय्यक.
+                'marathi': `तुम्ही LegalSwami आहात, भारतीय कायद्यात तज्ञ AI कायदेशीर सहाय्यक।
 
-महत्वाचे: जेव्हा वापरकर्ता कायदेशीर दस्तऐवजाचा मसौदा मागतो, तेव्हा तुम्ही एक संपूर्ण, वापरण्यासाठी तयार कायदेशीर दस्तऐवज टेम्पलेट तयार करणे आवश्यक आहे. समाविष्ट करा:
-1. योग्य दस्तऐवज शीर्षक आणि शीर्षलेख
-2. सर्व आवश्यक कायदेशीर कलमे
-3. वैयक्तिक माहितीसाठी प्लेसहोल्डर [अशा प्रकारे]
-4. सही विभाग
-5. लागू असल्यास तारीख आणि साक्षीदार विभाग
+महत्वाचे: जेव्हा वापरकर्ता कायदेशीर दस्तऐवजाचा मसौदा मागतो, तेव्हा तुम्ही एक संपूर्ण, वापरण्यासाठी तयार कायदेशीर दस्तऐवज टेम्पलेट तयार करणे आवश्यक आहे। समाविष्ट करा:
+1. योग्य दस्तऐवज शीर्षक आणि शीर्षलेख।
+2. सर्व आवश्यक कायदेशीर कलमे।
+3. वैयक्तिक माहितीसाठी प्लेसहोल्डर [अशा प्रकारे]।
+4. सही विभाग।
+5. लागू असल्यास तारीख आणि साक्षीदार विभाग।
 
 दस्तऐवज खालीलप्रमाणे असल्याचे सुनिश्चित करा:
-- भारतीय संदर्भासाठी कायदेशीरदृष्ट्या योग्य आहे
-- व्यावसायिकरित्या स्वरूपित आहे
-- तत्काळ डाउनलोड आणि वापरासाठी तयार आहे
-- सर्व मानक कायदेशीर कलमे समाविष्ट आहेत
+- भारतीय संदर्भासाठी कायदेशीरदृष्ट्या योग्य आहे।
+- व्यावसायिकरित्या स्वरूपित आहे।
+- तत्काळ डाउनलोड आणि वापरासाठी तयार आहे।
+- सर्व मानक कायदेशीर कलमे समाविष्ट आहेत।
 
-तुमचे उत्तर एक संपूर्ण कायदेशीर दस्तऐवज म्हणून स्वरूपित करा.
+तुमचे उत्तर एक संपूर्ण कायदेशीर दस्तऐवज म्हणून स्वरूपित करा।
 
 शेवटी नेहमी ही सूचना समाविष्ट करा:
-"सूचना: हे टेम्पलेट केवळ शैक्षणिक हेतूंसाठी आहे. वापरण्यापूर्वी पात्र वकीलांचा सल्ला घ्या."`
+"सूचना: हे टेम्पलेट केवळ शैक्षणिक हेतूंसाठी आहे। वापरण्यापूर्वी पात्र वकीलांचा सल्ला घ्या।"`
             };
             
             basePrompt = documentPrompts[language] || documentPrompts['english'];
         } else {
             const generalPrompts = {
-                'english': `You are LegalSwami, an expert AI legal assistant specializing in Indian law. 
+                'english': `You are LegalSwami, an expert AI legal assistant specializing in Indian law.
                 
 CRITICAL RULE: Respond in the same language as the user's query. If user writes in Hindi, respond in Hindi. If in Marathi, respond in Marathi. If in English, respond in English.
 
@@ -5933,12 +4886,12 @@ Provide actionable advice when appropriate.
 ${hasFiles ? 'IMPORTANT: The user has attached files with their query. Read and analyze the file contents provided in the message. Reference specific parts of the files in your response when relevant.' : ''}
 
 When answering:
-- Structure your response with clear headings
-- Use bullet points for lists
-- Bold important terms and sections
-- Include references to relevant laws
-- Provide practical next steps
-- If files are attached, mention what you found in them
+- Structure your response with clear headings.
+- Use bullet points for lists.
+- Bold important terms and sections.
+- Include references to relevant laws.
+- Provide practical next steps.
+- If files are attached, mention what you found in them.
 
 ALWAYS include this disclaimer at the end:
 "Disclaimer: This information is for educational purposes only and not legal advice. Consult a qualified attorney for specific legal matters."`,
@@ -5957,17 +4910,17 @@ ALWAYS include this disclaimer at the end:
 ${hasFiles ? 'महत्वपूर्ण: उपयोगकर्ता ने अपने प्रश्न के साथ फ़ाइलें संलग्न की हैं। संदेश में प्रदान की गई फ़ाइल सामग्री को पढ़ें और विश्लेषण करें। प्रासंगिक होने पर अपनी प्रतिक्रिया में फ़ाइलों के विशिष्ट भागों का संदर्भ दें।' : ''}
 
 जवाब देते समय:
-- स्पष्ट शीर्षकों के साथ अपनी प्रतिक्रिया को संरचित करें
-- सूचियों के लिए बुलेट पॉइंट का उपयोग करें
-- महत्वपूर्ण शब्दों और अनुभागों को बोल्ड करें
-- प्रासंगिक कानूनों के संदर्भ शामिल करें
-- व्यावहारिक अगले कदम प्रदान करें
-- यदि फ़ाइलें संलग्न हैं, तो उनमें आपको क्या मिला इसका उल्लेख करें
+- स्पष्ट शीर्षकों के साथ अपनी प्रतिक्रिया को संरचित करें।
+- सूचियों के लिए बुलेट पॉइंट का उपयोग करें।
+- महत्वपूर्ण शब्दों और अनुभागों को बोल्ड करें।
+- प्रासंगिक कानूनों के संदर्भ शामिल करें।
+- व्यावहारिक अगले कदम प्रदान करें।
+- यदि फ़ाइलें संलग्न हैं, तो उनमें आपको क्या मिला इसका उल्लेख करें।
 
 अंत में हमेशा यह अस्वीकरण शामिल करें:
 "अस्वीकरण: यह जानकारी केवल शैक्षिक उद्देश्यों के लिए है और कानूनी सलाह नहीं है। विशिष्ट कानूनी मामलों के लिए योग्य वकील से परामर्श करें।"`,
 
-                'marathi': `तुम्ही LegalSwami आहात, भारतीय कायद्यात तज्ञ AI कायदेशीर सहाय्यक.
+                'marathi': `तुम्ही LegalSwami आहात, भारतीय कायद्यात तज्ञ AI कायदेशीर सहाय्यक।
 
 महत्वाचा नियम: वापरकर्त्याच्या प्रश्नाच्या भाषेतच उत्तर द्या. वापरकर्ता हिंदीत लिहिल्यास हिंदीत उत्तर द्या. मराठीत असल्यास मराठीत उत्तर द्या. इंग्रजीत असल्यास इंग्रजीत उत्तर द्या.
 
@@ -5981,15 +4934,15 @@ ${hasFiles ? 'महत्वपूर्ण: उपयोगकर्ता न
 ${hasFiles ? 'महत्वाचे: वापरकर्त्याने त्यांच्या प्रश्नासोबत फाइल जोडल्या आहेत. संदेशात प्रदान केलेली फाइल सामग्री वाचा आणि विश्लेषण करा. संबंधित असल्यास तुमच्या प्रतिसादात फाइल्सच्या विशिष्ट भागांचा उल्लेख करा.' : ''}
 
 उत्तर देताना:
-- स्पष्ट शीर्षकांसह तुमचे उत्तर संरचित करा
-- यादीसाठी बुलेट पॉइंट वापरा
-- महत्वाच्या शब्द आणि विभाग ठळक करा
-- संबंधित कायद्यांच्या संदर्भांचा समावेश करा
-- व्यावहारिक पुढील चरण प्रदान करा
-- फाइल जोडल्या असल्यास, त्यात तुम्हाला काय सापडले याचा उल्लेख करा
+- स्पष्ट शीर्षकांसह तुमचे उत्तर संरचित करा.
+- यादीसाठी बुलेट पॉइंट वापरा.
+- महत्वाच्या शब्द आणि विभाग ठळक करा.
+- संबंधित कायद्यांच्या संदर्भांचा समावेश करा.
+- व्यावहारिक पुढील चरण प्रदान करा.
+- फाइल जोडल्या असल्यास, त्यात तुम्हाला काय सापडले याचा उल्लेख करा.
 
 शेवटी नेहमी ही सूचना समाविष्ट करा:
-"सूचना: ही माहिती केवळ शैक्षणिक हेतूंसाठी आहे आणि कायदेशीर सल्ला नाही. विशिष्ट कायदेशीर बाबींसाठी पात्र वकीलांचा सल्ला घ्या."`
+"सूचना: ही माहिती केवळ शैक्षणिक हेतूंसाठी आहे आणि कायदेशीर सल्ला नाही. विशिष्ट कायदेशीर बाबींसाठी पात्र वकीलांचा सल्ला घ्या।"`
             };
             
             basePrompt = generalPrompts[language] || generalPrompts['english'];
@@ -6061,8 +5014,8 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
         return 'english';
     }
     
-    // MODIFIED: Add message to chat with sources parameter - USING parseEmojis FUNCTION
-    function addMessageToChat(content, isUser, fromHistory = false, isDocument = false, attachments = [], sources = null) {
+    // Add message to chat with sources parameter and language
+    function addMessageToChat(content, isUser, fromHistory = false, isDocument = false, attachments = [], sources = null, language = 'english') {
         const chatMessages = document.getElementById('chatMessages');
         
         // Remove welcome message if it exists and this is a new message
@@ -6103,10 +5056,7 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
         if (isUser) {
             // User message with attachments
             if (content) {
-                // Set plain text first
-                messageText.textContent = content;
-                // Then parse emojis using OUR function
-                parseEmojis(messageText);
+                messageText.innerHTML = content.replace(/\n/g, '<br>');
             }
             
             // Add attachments if any
@@ -6138,16 +5088,36 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
             }
             
         } else {
-            // AI message - APPLY parseEmojis TO AI RESPONSES ONLY
+            // AI message
             if (isDocument) {
                 messageText.innerHTML = formatDocumentResponse(content);
-                // Parse emojis in document response
-                parseEmojis(messageText);
             } else {
                 messageText.innerHTML = formatLegalResponse(content);
-                // Parse emojis in legal response
-                parseEmojis(messageText);
             }
+            
+            // Add AI response footer (Responded by LegalSwami)
+            const aiFooter = document.createElement('div');
+            aiFooter.className = 'ai-response-footer';
+            
+            // Set footer text based on language
+            let footerText = '';
+            if (language === 'hindi') {
+                footerText = 'LegalSwami द्वारा प्रतिक्रिया दी गई';
+            } else if (language === 'marathi') {
+                footerText = 'LegalSwami द्वारा प्रतिसाद दिला';
+            } else {
+                footerText = 'Responded by LegalSwami';
+            }
+            
+            aiFooter.innerHTML = `
+                <i class="fas fa-robot"></i>
+                <span class="ai-signature">${footerText}</span>
+                <span style="margin-left: auto; font-size: 0.75rem;">
+                    <i class="fas fa-clock"></i> ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                </span>
+            `;
+            
+            messageContent.appendChild(aiFooter);
             
             // Add sources if available and not from history
             if (sources && sources.length > 0 && !fromHistory) {
@@ -6202,7 +5172,7 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
         return messageId;
     }
     
-    // NEW: Show attached files with content preview
+    // Show attached files with content preview
     function showAttachedFilesBelowUserMessage(messageId, attachments) {
         const messageDiv = document.getElementById(messageId);
         if (!messageDiv || !attachments || attachments.length === 0) return;
@@ -6213,36 +5183,36 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
             // Create file display container
             const fileContainer = document.createElement('div');
             fileContainer.className = 'attachment-item';
-            fileContainer.style.maxWidth = '300px';
-            fileContainer.style.marginTop = '10px';
+            fileContainer.style.maxWidth = '280px';
+            fileContainer.style.marginTop = '8px';
             
             if (attachment.type.startsWith('image/')) {
                 // Image preview
                 fileContainer.innerHTML = `
-                    <img src="${attachment.data}" alt="${attachment.name}" class="attachment-image" style="max-height: 150px;">
+                    <img src="${attachment.data}" alt="${attachment.name}" class="attachment-image" style="max-height: 130px;">
                     <div class="attachment-name">${attachment.name}</div>
                 `;
             } else if (attachment.type === 'application/pdf' || attachment.name.endsWith('.pdf')) {
                 // PDF icon
                 fileContainer.innerHTML = `
-                    <div style="padding: 20px; text-align: center; background: var(--dark-surface-light);">
-                        <i class="fas fa-file-pdf" style="font-size: 2rem; color: var(--error);"></i>
+                    <div style="padding: 15px; text-align: center; background: var(--dark-surface-light);">
+                        <i class="fas fa-file-pdf" style="font-size: 1.8rem; color: var(--error);"></i>
                         <div class="attachment-name">${attachment.name}</div>
-                        <div style="font-size: 0.7rem; color: var(--dark-text-secondary);">PDF Document</div>
+                        <div style="font-size: 0.65rem; color: var(--dark-text-secondary);">PDF Document</div>
                     </div>
                 `;
             } else if (attachment.type === 'text/plain' || attachment.name.endsWith('.txt')) {
                 // Text file icon with content preview button
                 fileContainer.innerHTML = `
-                    <div style="padding: 15px; background: var(--dark-surface-light); border-radius: 8px;">
-                        <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
-                            <i class="fas fa-file-alt" style="font-size: 1.5rem; color: var(--primary);"></i>
+                    <div style="padding: 12px; background: var(--dark-surface-light); border-radius: 8px;">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                            <i class="fas fa-file-alt" style="font-size: 1.3rem; color: var(--primary);"></i>
                             <div style="flex: 1;">
                                 <div class="attachment-name">${attachment.name}</div>
-                                <div style="font-size: 0.7rem; color: var(--dark-text-secondary);">Text Document</div>
+                                <div style="font-size: 0.65rem; color: var(--dark-text-secondary);">Text Document</div>
                             </div>
                         </div>
-                        <button class="action-btn" style="width: 100%; padding: 8px;" onclick="showFileContent('${attachment.data}', '${attachment.name.replace(/'/g, "\\'")}')">
+                        <button class="action-btn" style="width: 100%; padding: 6px;" onclick="showFileContent('${attachment.data}', '${attachment.name.replace(/'/g, "\\'")}')">
                             <i class="fas fa-eye"></i> Preview Content
                         </button>
                     </div>
@@ -6250,10 +5220,10 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
             } else {
                 // Generic file icon
                 fileContainer.innerHTML = `
-                    <div style="padding: 20px; text-align: center; background: var(--dark-surface-light);">
-                        <i class="fas fa-file" style="font-size: 2rem; color: var(--dark-text-secondary);"></i>
+                    <div style="padding: 15px; text-align: center; background: var(--dark-surface-light);">
+                        <i class="fas fa-file" style="font-size: 1.8rem; color: var(--dark-text-secondary);"></i>
                         <div class="attachment-name">${attachment.name}</div>
-                        <div style="font-size: 0.7rem; color: var(--dark-text-secondary);">${attachment.type || 'File'}</div>
+                        <div style="font-size: 0.65rem; color: var(--dark-text-secondary);">${attachment.type || 'File'}</div>
                     </div>
                 `;
             }
@@ -6264,7 +5234,7 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
         });
     }
     
-    // NEW: Show file content in a preview box
+    // Show file content in a preview box
     window.showFileContent = async function(dataUrl, fileName) {
         try {
             // Decode base64 data URL
@@ -6284,9 +5254,9 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
                         <i class="fas fa-times"></i>
                     </button>
                 </div>
-                <div style="max-height: 200px; overflow-y: auto; font-family: monospace; font-size: 0.8rem;">
-                    ${text.substring(0, 5000)}
-                    ${text.length > 5000 ? '<div style="color: var(--dark-text-secondary); margin-top: 10px;">... (content truncated)</div>' : ''}
+                <div style="max-height: 180px; overflow-y: auto; font-family: monospace; font-size: 0.75rem;">
+                    ${text.substring(0, 4000)}
+                    ${text.length > 4000 ? '<div style="color: var(--dark-text-secondary); margin-top: 8px;">... (content truncated)</div>' : ''}
                 </div>
             `;
             
@@ -6301,7 +5271,6 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
             
         } catch (error) {
             console.error('Error reading file content:', error);
-            showToast('Could not read file content', 'error');
         }
     };
     
@@ -6349,14 +5318,12 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
             const userInput = document.getElementById('userInput');
             userInput.value = userMessageContent;
             userInput.focus();
-            userInput.style.height = Math.min(userInput.scrollHeight, 200) + 'px';
+            userInput.style.height = Math.min(userInput.scrollHeight, 180) + 'px';
             
             // Trigger send after a short delay
             setTimeout(() => {
                 sendMessage();
             }, 500);
-            
-            showToast('Regenerating response...', 'info');
         }
     };
     
@@ -6367,7 +5334,6 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
         button.style.borderColor = 'var(--error)';
         button.style.color = 'white';
         button.disabled = true;
-        showToast('Thank you for your feedback!', 'info');
     };
     
     // Share response function
@@ -6383,8 +5349,6 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
                 title: 'LegalSwami AI Response',
                 text: textToShare.substring(0, 100) + '...',
                 url: window.location.href
-            }).then(() => {
-                showToast('Response shared successfully!', 'success');
             }).catch(err => {
                 console.error('Share failed:', err);
                 copyToClipboard(textToShare);
@@ -6397,10 +5361,8 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
     // Helper function to copy to clipboard
     function copyToClipboard(text) {
         navigator.clipboard.writeText(text).then(() => {
-            showToast('Response copied to clipboard!', 'success');
         }).catch(err => {
             console.error('Copy failed:', err);
-            showToast('Failed to copy response', 'error');
         });
     }
     
@@ -6413,10 +5375,8 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
         const textToCopy = messageText.textContent;
         
         navigator.clipboard.writeText(textToCopy).then(() => {
-            showToast('Question copied to clipboard!', 'success');
         }).catch(err => {
             console.error('Copy failed:', err);
-            showToast('Failed to copy question', 'error');
         });
     };
     
@@ -6434,16 +5394,13 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
         
         // Adjust textarea height
         userInput.style.height = 'auto';
-        userInput.style.height = Math.min(userInput.scrollHeight, 200) + 'px';
+        userInput.style.height = Math.min(userInput.scrollHeight, 180) + 'px';
         
         // Enable send button
         document.getElementById('sendButton').disabled = false;
-        
-        // Show toast
-        showToast('Question loaded for editing. Press Ctrl+Enter to send.', 'info');
     };
     
-    // Format document response with emojis - USING parseEmojis
+    // Format document response
     function formatDocumentResponse(text) {
         const documentContainer = document.createElement('div');
         documentContainer.className = 'document-template';
@@ -6470,7 +5427,7 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
             }
             else {
                 if (line.includes('___________________') || line.includes('________________')) {
-                    htmlContent += `<div class="clause-content" style="border-bottom: 1px solid var(--dark-border); padding-bottom: 5px; margin-bottom: 10px;">${line}</div>`;
+                    htmlContent += `<div class="clause-content" style="border-bottom: 1px solid var(--dark-border); padding-bottom: 4px; margin-bottom: 8px;">${line}</div>`;
                 } else {
                     htmlContent += `<div class="clause-content">${line}</div>`;
                 }
@@ -6499,13 +5456,10 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
         
         documentContainer.innerHTML = htmlContent;
         
-        // Parse emojis in the document using OUR function
-        parseEmojis(documentContainer);
-        
         return documentContainer.outerHTML;
     }
     
-    // Format legal response with emojis - USING parseEmojis
+    // Format legal response
     function formatLegalResponse(text) {
         let formatted = text
             .replace(/## (.*?)\n/g, '<h3>$1</h3>')
@@ -6526,21 +5480,15 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
         container.className = 'legal-content';
         container.innerHTML = formatted;
         
-        // Parse emojis in the response using OUR function
-        parseEmojis(container);
-        
         return container.outerHTML;
     }
     
-    // Format text for streaming display with emojis - USING parseEmojis
+    // Format text for streaming display
     function formatStreamingText(text) {
         const container = document.createElement('div');
         container.innerHTML = text
             .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
             .replace(/\n/g, '<br>');
-        
-        // Parse emojis using OUR function
-        parseEmojis(container);
         
         return container.innerHTML;
     }
@@ -6600,7 +5548,7 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
     }
     
     // Start streaming response word by word
-    function startStreamingResponse(messageId, response, isDocument = false) {
+    function startStreamingResponse(messageId, response, isDocument = false, language = 'english') {
         const messageDiv = document.getElementById(messageId);
         if (!messageDiv) return;
         
@@ -6608,7 +5556,7 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
         streamingTextChunks = splitTextIntoChunks(textToStream);
         streamingTextIndex = 0;
         
-        streamNextChunk(messageId, isDocument);
+        streamNextChunk(messageId, isDocument, language);
     }
     
     // Split text into chunks for streaming
@@ -6625,12 +5573,12 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
     }
     
     // Stream next chunk of text
-    function streamNextChunk(messageId, isDocument = false) {
+    function streamNextChunk(messageId, isDocument = false, language = 'english') {
         if (stopStreamingRequested || streamingTextIndex >= streamingTextChunks.length) {
             if (stopStreamingRequested) {
                 console.log('Streaming stopped by user');
             } else {
-                finalizeStreamingMessage(messageId, isDocument);
+                finalizeStreamingMessage(messageId, isDocument, language);
             }
             return;
         }
@@ -6638,7 +5586,7 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
         const chunk = streamingTextChunks[streamingTextIndex];
         streamingTextIndex++;
         
-        updateStreamingMessage(messageId, chunk, isDocument);
+        updateStreamingMessage(messageId, chunk, isDocument, language);
         
         let delay = streamingWordDelay;
         
@@ -6652,7 +5600,7 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
         
         setTimeout(() => {
             if (!isStreamingPaused && !stopStreamingRequested) {
-                streamNextChunk(messageId, isDocument);
+                streamNextChunk(messageId, isDocument, language);
             }
         }, delay);
     }
@@ -6677,8 +5625,6 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
                 indicator.textContent = 'Paused';
                 messageText.appendChild(indicator);
             }
-            
-            showToast('Response paused', 'info');
         } else {
             pauseBtn.innerHTML = '<i class="fas fa-pause"></i> Pause';
             pauseBtn.style.background = '';
@@ -6694,8 +5640,6 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
             setTimeout(() => {
                 streamNextChunk(messageId, isDocumentRequest(currentStreamingContent));
             }, 100);
-            
-            showToast('Response continued', 'success');
         }
     };
     
@@ -6708,15 +5652,13 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
         const textToCopy = messageText.textContent.replace('Paused', '').trim();
         
         navigator.clipboard.writeText(textToCopy).then(() => {
-            showToast('Copied to clipboard!', 'success');
         }).catch(err => {
             console.error('Copy failed:', err);
-            showToast('Failed to copy', 'error');
         });
     };
     
     // Update streaming message with new content
-    function updateStreamingMessage(messageId, newContent, isDocument = false) {
+    function updateStreamingMessage(messageId, newContent, isDocument = false, language = 'english') {
         const messageDiv = document.getElementById(messageId);
         if (!messageDiv) return;
         
@@ -6734,8 +5676,8 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
         checkScrollPosition();
     }
     
-    // Finalize streaming message
-    function finalizeStreamingMessage(messageId, isDocument = false) {
+    // Finalize streaming message with language-specific footer
+    function finalizeStreamingMessage(messageId, isDocument = false, language = 'english') {
         const messageDiv = document.getElementById(messageId);
         if (!messageDiv) return;
         
@@ -6753,6 +5695,30 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
         } else {
             messageText.innerHTML = formatLegalResponse(currentStreamingContent);
         }
+        
+        // Add AI response footer (Responded by LegalSwami)
+        const aiFooter = document.createElement('div');
+        aiFooter.className = 'ai-response-footer';
+        
+        // Set footer text based on language
+        let footerText = '';
+        if (language === 'hindi') {
+            footerText = 'LegalSwami द्वारा प्रतिक्रिया दी गई';
+        } else if (language === 'marathi') {
+            footerText = 'LegalSwami द्वारा प्रतिसाद दिला';
+        } else {
+            footerText = 'Responded by LegalSwami';
+        }
+        
+        aiFooter.innerHTML = `
+            <i class="fas fa-robot"></i>
+            <span class="ai-signature">${footerText}</span>
+            <span style="margin-left: auto; font-size: 0.75rem;">
+                <i class="fas fa-clock"></i> ${new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+            </span>
+        `;
+        
+        messageText.parentElement.appendChild(aiFooter);
         
         // Add action buttons
         const messageActions = document.createElement('div');
@@ -6869,15 +5835,9 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
         textarea.setSelectionRange(0, 99999);
         
         try {
-            const successful = document.execCommand('copy');
-            if (successful) {
-                showToast('Document copied to clipboard!', 'success');
-            } else {
-                showToast('Failed to copy text', 'error');
-            }
+            document.execCommand('copy');
         } catch (err) {
             console.error('Copy failed:', err);
-            showToast('Failed to copy: ' + err, 'error');
         }
         
         document.body.removeChild(textarea);
@@ -6890,7 +5850,6 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
         button.style.borderColor = 'var(--success)';
         button.style.color = 'white';
         button.disabled = true;
-        showToast('Thank you for your feedback!', 'success');
     };
     
     // Download this specific message
@@ -6907,7 +5866,6 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
     // Clear current chat
     function clearCurrentChat() {
         if (conversationHistory.length === 0 && attachedFiles.length === 0) {
-            showToast('Chat is already empty', 'warning');
             return;
         }
         
@@ -6918,41 +5876,13 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
             clearAttachments();
             
             createNewChat();
-            
-            showToast('Current chat cleared', 'success');
         }
     }
     
-    // Show suggestions
-    function showSuggestions() {
-        const suggestions = [
-            "Create a non-disclosure agreement draft",
-            "I need an employment contract template",
-            "Generate a rental agreement for me",
-            "Draft a loan agreement document",
-            "What are the essential elements of a valid contract?"
-        ];
-        
-        addMessageToChat(
-            `<h3>Suggested Questions:</h3>
-            <ul>
-                ${suggestions.map(q => `<li style="cursor: pointer; padding: 8px; border-radius: 6px; transition: background 0.3s;" 
-                    onmouseover="this.style.background='var(--dark-surface-light)'" 
-                    onmouseout="this.style.background='transparent'"
-                    onclick="document.getElementById('userInput').value = '${q}'; document.getElementById('userInput').focus(); document.getElementById('userInput').style.height = Math.min(document.getElementById('userInput').scrollHeight, 200) + 'px'; document.getElementById('sendButton').disabled = false;">
-                    ${q}
-                </li>`).join('')}
-            </ul>
-            <p>Click any question to add it to the input field.</p>`,
-            false
-        );
-    }
-    
-    // Check scroll position and show/hide down arrow - FIXED FOR MOBILE
+    // Check scroll position and show/hide down arrow
     function checkScrollPosition() {
         const chatMessages = document.getElementById('chatMessages');
         const scrollBtn = document.getElementById('scrollToBottomBtn');
-        const indicator = document.getElementById('scrollPositionIndicator');
         
         if (!chatMessages) return;
         
@@ -6960,22 +5890,14 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
         
         if (!isAtBottom) {
             scrollBtn.classList.add('visible');
-            
-            if (chatMessages.scrollTop < scrollPosition) {
-                indicator.classList.add('visible');
-                setTimeout(() => {
-                    indicator.classList.remove('visible');
-                }, 2000);
-            }
         } else {
             scrollBtn.classList.remove('visible');
-            indicator.classList.remove('visible');
         }
         
         scrollPosition = chatMessages.scrollTop;
     }
     
-    // Scroll to bottom function - FIXED FOR MOBILE
+    // Scroll to bottom function
     function scrollToBottom() {
         const chatMessages = document.getElementById('chatMessages');
         if (chatMessages) {
@@ -7049,27 +5971,31 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
     }
     
     function createNewChat() {
+        // Save current chat before creating new one
+        if (currentChatId && conversationHistory.length > 0) {
+            saveCurrentChat();
+        }
+        
         currentChatId = 'chat_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
         conversationHistory = [];
         
         const chatMessages = document.getElementById('chatMessages');
-        chatMessages.innerHTML = WELCOME_MESSAGE_HTML;
+        const welcomeContainer = document.createElement('div');
+        welcomeContainer.innerHTML = WELCOME_MESSAGE_HTML;
+        chatMessages.innerHTML = '';
+        chatMessages.appendChild(welcomeContainer);
         
         addDraftTemplateListeners();
         clearAttachments();
+        
+        // Update history list to show new chat
         loadHistoryList();
         
-        showToast('New chat started', 'success');
-    }
-    
-    function toggleVoiceRecognition() {
-        if (!recognition) return;
-        
-        if (isListening && !isInputMicrophoneActive) {
-            recognition.stop();
-        } else {
-            isInputMicrophoneActive = false;
-            recognition.start();
+        // Close sidebar on mobile
+        if (window.innerWidth < 1024) {
+            document.getElementById('sidebar').classList.remove('active');
+            document.getElementById('sidebarOverlay').classList.remove('active');
+            document.body.style.overflow = '';
         }
     }
     
@@ -7081,38 +6007,6 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
         } else {
             isInputMicrophoneActive = true;
             recognition.start();
-        }
-    }
-    
-    // Show language hint
-    function showLanguageHint(language) {
-        const languageNames = {
-            'english': 'English',
-            'hindi': 'Hindi',
-            'marathi': 'Marathi',
-            'tamil': 'Tamil',
-            'telugu': 'Telugu',
-            'kannada': 'Kannada',
-            'punjabi': 'Punjabi',
-            'gujarati': 'Gujarati',
-            'bengali': 'Bengali'
-        };
-        
-        let hintElement = document.querySelector('.language-hint');
-        if (!hintElement) {
-            hintElement = document.createElement('div');
-            hintElement.className = 'language-hint';
-            document.querySelector('.input-area').appendChild(hintElement);
-        }
-        
-        hintElement.textContent = `Detected: ${languageNames[language] || 'English'}`;
-        hintElement.style.display = 'block';
-    }
-    
-    function hideLanguageHint() {
-        const hintElement = document.querySelector('.language-hint');
-        if (hintElement) {
-            hintElement.style.display = 'none';
         }
     }
     
@@ -7159,9 +6053,9 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
                 `;
             } else if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
                 item.innerHTML = `
-                    <div style="padding: 15px; text-align: center; background: var(--dark-surface-light); height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                        <i class="fas fa-file-pdf" style="font-size: 2rem; color: var(--error); margin-bottom: 8px;"></i>
-                        <div style="font-size: 0.7rem; color: var(--dark-text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">${file.name}</div>
+                    <div style="padding: 12px; text-align: center; background: var(--dark-surface-light); height: 90px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <i class="fas fa-file-pdf" style="font-size: 1.8rem; color: var(--error); margin-bottom: 6px;"></i>
+                        <div style="font-size: 0.65rem; color: var(--dark-text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">${file.name}</div>
                     </div>
                     <button class="remove-uploaded-image" onclick="removeUploadedFile(${index})">
                         <i class="fas fa-times"></i>
@@ -7169,9 +6063,9 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
                 `;
             } else if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
                 item.innerHTML = `
-                    <div style="padding: 15px; text-align: center; background: var(--dark-surface-light); height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                        <i class="fas fa-file-alt" style="font-size: 2rem; color: var(--primary); margin-bottom: 8px;"></i>
-                        <div style="font-size: 0.7rem; color: var(--dark-text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">${file.name}</div>
+                    <div style="padding: 12px; text-align: center; background: var(--dark-surface-light); height: 90px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <i class="fas fa-file-alt" style="font-size: 1.8rem; color: var(--primary); margin-bottom: 6px;"></i>
+                        <div style="font-size: 0.65rem; color: var(--dark-text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">${file.name}</div>
                     </div>
                     <button class="remove-uploaded-image" onclick="removeUploadedFile(${index})">
                         <i class="fas fa-times"></i>
@@ -7179,9 +6073,9 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
                 `;
             } else {
                 item.innerHTML = `
-                    <div style="padding: 15px; text-align: center; background: var(--dark-surface-light); height: 100px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                        <i class="fas fa-file" style="font-size: 2rem; color: var(--dark-text-secondary); margin-bottom: 8px;"></i>
-                        <div style="font-size: 0.7rem; color: var(--dark-text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">${file.name}</div>
+                    <div style="padding: 12px; text-align: center; background: var(--dark-surface-light); height: 90px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <i class="fas fa-file" style="font-size: 1.8rem; color: var(--dark-text-secondary); margin-bottom: 6px;"></i>
+                        <div style="font-size: 0.65rem; color: var(--dark-text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">${file.name}</div>
                     </div>
                     <button class="remove-uploaded-image" onclick="removeUploadedFile(${index})">
                         <i class="fas fa-times"></i>
@@ -7266,8 +6160,6 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
                     updateUploadedFilesDisplay();
                 };
                 reader.readAsDataURL(file);
-            } else {
-                showToast(`File type not supported: ${file.name}`, 'warning');
             }
         }
     }
@@ -7275,7 +6167,6 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
     // Confirm file upload
     document.getElementById('confirmFileUpload').addEventListener('click', function() {
         if (selectedFiles.length === 0) {
-            showToast('Please select at least one file', 'warning');
             return;
         }
         
@@ -7298,36 +6189,36 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
                 `;
             } else if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
                 item.innerHTML = `
-                    <div style="padding: 10px; text-align: center; background: var(--dark-surface-light); height: 80px; width: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                        <i class="fas fa-file-pdf" style="font-size: 1.5rem; color: var(--error);"></i>
-                        <div style="font-size: 0.6rem; color: var(--dark-text-secondary); margin-top: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">PDF</div>
+                    <div style="padding: 8px; text-align: center; background: var(--dark-surface-light); height: 70px; width: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <i class="fas fa-file-pdf" style="font-size: 1.3rem; color: var(--error);"></i>
+                        <div style="font-size: 0.55rem; color: var(--dark-text-secondary); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">PDF</div>
                     </div>
                     <button class="remove-attachment" onclick="removeAttachment(${index})" style="top: 2px; right: 2px;">
                         <i class="fas fa-times"></i>
                     </button>
-                    <div class="attachment-preview-name">${file.name.substring(0, 15)}${file.name.length > 15 ? '...' : ''}</div>
+                    <div class="attachment-preview-name">${file.name.substring(0, 12)}${file.name.length > 12 ? '...' : ''}</div>
                 `;
             } else if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
                 item.innerHTML = `
-                    <div style="padding: 10px; text-align: center; background: var(--dark-surface-light); height: 80px; width: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                        <i class="fas fa-file-alt" style="font-size: 1.5rem; color: var(--primary);"></i>
-                        <div style="font-size: 0.6rem; color: var(--dark-text-secondary); margin-top: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">TXT</div>
+                    <div style="padding: 8px; text-align: center; background: var(--dark-surface-light); height: 70px; width: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <i class="fas fa-file-alt" style="font-size: 1.3rem; color: var(--primary);"></i>
+                        <div style="font-size: 0.55rem; color: var(--dark-text-secondary); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">TXT</div>
                     </div>
                     <button class="remove-attachment" onclick="removeAttachment(${index})" style="top: 2px; right: 2px;">
                         <i class="fas fa-times"></i>
                     </button>
-                    <div class="attachment-preview-name">${file.name.substring(0, 15)}${file.name.length > 15 ? '...' : ''}</div>
+                    <div class="attachment-preview-name">${file.name.substring(0, 12)}${file.name.length > 12 ? '...' : ''}</div>
                 `;
-            } else {
+            }else {
                 item.innerHTML = `
-                    <div style="padding: 10px; text-align: center; background: var(--dark-surface-light); height: 80px; width: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                        <i class="fas fa-file" style="font-size: 1.5rem; color: var(--dark-text-secondary);"></i>
-                        <div style="font-size: 0.6rem; color: var(--dark-text-secondary); margin-top: 5px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">DOC</div>
+                    <div style="padding: 8px; text-align: center; background: var(--dark-surface-light); height: 70px; width: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                        <i class="fas fa-file" style="font-size: 1.3rem; color: var(--dark-text-secondary);"></i>
+                        <div style="font-size: 0.55rem; color: var(--dark-text-secondary); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">DOC</div>
                     </div>
                     <button class="remove-attachment" onclick="removeAttachment(${index})" style="top: 2px; right: 2px;">
                         <i class="fas fa-times"></i>
                     </button>
-                    <div class="attachment-preview-name">${file.name.substring(0, 15)}${file.name.length > 15 ? '...' : ''}</div>
+                    <div class="attachment-preview-name">${file.name.substring(0, 12)}${file.name.length > 12 ? '...' : ''}</div>
                 `;
             }
             
@@ -7337,7 +6228,6 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
         preview.style.display = 'flex';
         document.getElementById('sendButton').disabled = false;
         document.getElementById('fileUploadModal').classList.remove('active');
-        showToast(`${selectedFiles.length} file(s) attached`, 'success');
         selectedFiles = [];
     });
     
@@ -7365,36 +6255,36 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
                     `;
                 } else if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
                     item.innerHTML = `
-                        <div style="padding: 10px; text-align: center; background: var(--dark-surface-light); height: 80px; width: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                            <i class="fas fa-file-pdf" style="font-size: 1.5rem; color: var(--error);"></i>
-                            <div style="font-size: 0.6rem; color: var(--dark-text-secondary); margin-top: 5px;">PDF</div>
+                        <div style="padding: 8px; text-align: center; background: var(--dark-surface-light); height: 70px; width: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                            <i class="fas fa-file-pdf" style="font-size: 1.3rem; color: var(--error);"></i>
+                            <div style="font-size: 0.55rem; color: var(--dark-text-secondary); margin-top: 4px;">PDF</div>
                         </div>
                         <button class="remove-attachment" onclick="removeAttachment(${idx})" style="top: 2px; right: 2px;">
                             <i class="fas fa-times"></i>
                         </button>
-                        <div class="attachment-preview-name">${file.name.substring(0, 15)}${file.name.length > 15 ? '...' : ''}</div>
+                        <div class="attachment-preview-name">${file.name.substring(0, 12)}${file.name.length > 12 ? '...' : ''}</div>
                     `;
                 } else if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
                     item.innerHTML = `
-                        <div style="padding: 10px; text-align: center; background: var(--dark-surface-light); height: 80px; width: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                            <i class="fas fa-file-alt" style="font-size: 1.5rem; color: var(--primary);"></i>
-                            <div style="font-size: 0.6rem; color: var(--dark-text-secondary); margin-top: 5px;">TXT</div>
+                        <div style="padding: 8px; text-align: center; background: var(--dark-surface-light); height: 70px; width: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                            <i class="fas fa-file-alt" style="font-size: 1.3rem; color: var(--primary);"></i>
+                            <div style="font-size: 0.55rem; color: var(--dark-text-secondary); margin-top: 4px;">TXT</div>
                         </div>
                         <button class="remove-attachment" onclick="removeAttachment(${idx})" style="top: 2px; right: 2px;">
                             <i class="fas fa-times"></i>
                         </button>
-                        <div class="attachment-preview-name">${file.name.substring(0, 15)}${file.name.length > 15 ? '...' : ''}</div>
+                        <div class="attachment-preview-name">${file.name.substring(0, 12)}${file.name.length > 12 ? '...' : ''}</div>
                     `;
                 } else {
                     item.innerHTML = `
-                        <div style="padding: 10px; text-align: center; background: var(--dark-surface-light); height: 80px; width: 80px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                            <i class="fas fa-file" style="font-size: 1.5rem; color: var(--dark-text-secondary);"></i>
-                            <div style="font-size: 0.6rem; color: var(--dark-text-secondary); margin-top: 5px;">DOC</div>
+                        <div style="padding: 8px; text-align: center; background: var(--dark-surface-light); height: 70px; width: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                            <i class="fas fa-file" style="font-size: 1.3rem; color: var(--dark-text-secondary);"></i>
+                            <div style="font-size: 0.55rem; color: var(--dark-text-secondary); margin-top: 4px;">DOC</div>
                         </div>
                         <button class="remove-attachment" onclick="removeAttachment(${idx})" style="top: 2px; right: 2px;">
                             <i class="fas fa-times"></i>
                         </button>
-                        <div class="attachment-preview-name">${file.name.substring(0, 15)}${file.name.length > 15 ? '...' : ''}</div>
+                        <div class="attachment-preview-name">${file.name.substring(0, 12)}${file.name.length > 12 ? '...' : ''}</div>
                     `;
                 }
                 
@@ -7414,7 +6304,7 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
                 <div class="empty-history">
                     <i class="fas fa-comments"></i>
                     <p>No chat history yet</p>
-                    <p style="font-size: 0.8rem; margin-top: 0.5rem;">Start a conversation to see it here</p>
+                    <p style="font-size: 0.75rem; margin-top: 0.4rem;">Start a conversation to see it here</p>
                 </div>
             `;
             return;
@@ -7468,7 +6358,7 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
         chat.messages.forEach(msg => {
             const isDocument = msg.isDocument || false;
             const hasSources = msg.sources && msg.sources.length > 0;
-            addMessageToChat(msg.content, msg.role === 'user', true, isDocument, msg.attachments || [], hasSources ? msg.sources : null);
+            addMessageToChat(msg.content, msg.role === 'user', true, isDocument, msg.attachments || [], hasSources ? msg.sources : null, msg.language || 'english');
         });
         
         loadHistoryList();
@@ -7478,8 +6368,6 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
             document.getElementById('sidebarOverlay').classList.remove('active');
             document.body.style.overflow = '';
         }
-        
-        showToast('Chat loaded from history', 'success');
     }
     
     window.downloadChatHistory = function(chatId) {
@@ -7498,7 +6386,7 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
             content += '-'.repeat(30) + '\n\n';
         });
         
-        const blob = new Blob([content], { type: 'text/plain' });
+        const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -7509,7 +6397,6 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
         URL.revokeObjectURL(url);
         
         showDownloadNotification(`legalswami-chat-${chatId}.txt`, 'Text File');
-        showToast('Chat history downloaded', 'success');
     };
     
     window.confirmDeleteChat = function(chatId) {
@@ -7535,7 +6422,6 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
             saveUserChatHistory();
             loadHistoryList();
             document.getElementById('deleteModal').classList.remove('active');
-            showToast('Chat deleted successfully', 'success');
         }
     });
     
@@ -7640,9 +6526,25 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
             
-            const lines = doc.splitTextToSize(content, 180);
+            // Enable UTF-8 support
+            doc.setFont("helvetica");
             doc.setFontSize(12);
-            doc.text(lines, 10, 20);
+            
+            // Split content into lines
+            const lines = doc.splitTextToSize(content, 180);
+            
+            // Add content with proper encoding
+            let y = 20;
+            for (let i = 0; i < lines.length; i++) {
+                if (y > 270) {
+                    doc.addPage();
+                    y = 20;
+                }
+                doc.text(lines[i], 10, y);
+                y += 7;
+            }
+            
+            // Add footer
             doc.setFontSize(10);
             doc.text('Generated by LegalSwami AI Assistant', 10, 280);
             
@@ -7659,10 +6561,9 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
             lastDownloadedFileUrl = url;
             lastDownloadedFileName = `${filename}.pdf`;
             showDownloadNotification(`${filename}.pdf`, 'PDF Document');
-            showToast('PDF downloaded successfully', 'success');
         } catch (error) {
             console.error('PDF generation error:', error);
-            showToast('PDF download failed. Using fallback.', 'warning');
+            // Fallback to TXT if PDF fails
             downloadAsTXT(content, filename);
         }
     }
@@ -7714,11 +6615,10 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
         lastDownloadedFileUrl = url;
         lastDownloadedFileName = `${filename}.doc`;
         showDownloadNotification(`${filename}.doc`, 'Word Document');
-        showToast('Word document downloaded', 'success');
     }
     
     function downloadAsTXT(content, filename) {
-        const blob = new Blob([content], { type: 'text/plain' });
+        const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
@@ -7731,7 +6631,6 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
         lastDownloadedFileUrl = url;
         lastDownloadedFileName = `${filename}.txt`;
         showDownloadNotification(`${filename}.txt`, 'Text File');
-        showToast('Text file downloaded', 'success');
     }
     
     // Format date for filename
@@ -7742,24 +6641,11 @@ ${hasFiles ? 'महत्वाचे: वापरकर्त्याने 
             .split('.')[0];
     }
     
-    // Show toast notification
-    function showToast(message, type = 'success') {
-        const toast = document.getElementById('toast');
-        const toastMessage = document.getElementById('toast-message');
-        
-        toastMessage.textContent = message;
-        toast.className = `toast ${type} show`;
-        
-        setTimeout(() => {
-            toast.classList.remove('show');
-        }, 3000);
-    }
-    
-    // Force guest login on page load for testing
+    // Force guest login on page load
     window.addEventListener('DOMContentLoaded', function() {
         console.log("DOM loaded, checking for guest mode...");
         
-        // Wait a moment then auto-login as guest for testing
+        // Wait a moment then auto-login as guest
         setTimeout(function() {
             if (!isLoggedIn && !document.getElementById('loginModal').classList.contains('active')) {
                 console.log("Auto-initializing guest mode...");
