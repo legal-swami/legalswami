@@ -3620,22 +3620,7 @@ header::-webkit-scrollbar {
     </div>
 
     <script>
-// Line 4700 ke aas-paas (callSingleGroqAPI function se pehle)
 const GROQ_API_KEY = ["__GROQ_API_KEY_PLACEHOLDER__"];
-
-// ✅ DEBUG: Console mein check karein
-console.log("=== API KEY DEBUG ===");
-console.log("API Key Array:", GROQ_API_KEY);
-console.log("First Key:", GROQ_API_KEY[0]);
-console.log("Key Length:", GROQ_API_KEY[0]?.length || "Empty");
-console.log("Key starts with:", GROQ_API_KEY[0]?.substring(0, 10) || "N/A");
-console.log("Is placeholder?", GROQ_API_KEY[0] === "__GROQ_API_KEY_PLACEHOLDER__" ? "YES ❌" : "NO ✅");
-
-// Agar key sahi nahi hai toh alert bhi de sakte hain
-if (GROQ_API_KEY[0] === "__GROQ_API_KEY_PLACEHOLDER__") {
-    console.error("❌ ERROR: API Key nahi inject hua! Placeholder hi hai.");
-    alert("API Key nahi inject hua! GitHub Secrets check karein.");
-}
     
     const WORKING_MODELS = [
         "llama-3.3-70b-versatile",
