@@ -1,10 +1,8 @@
-name: Secure Deploy
+name: Deploy Static HTML
 
 on:
   push:
-    branches:
-      - main  # या master
-      - gh-pages
+    branches: [main]
 
 permissions:
   contents: write
@@ -16,18 +14,19 @@ jobs:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     
     steps:
+      # 1. Checkout code
       - name: Checkout Repository
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 0  # सभी history fetch करने के लिए
+        uses: actions/checkout@v4
         
-      - name: Inject API Key Securely
+      # 2. Inject API Key Securely
+      - name: Inject API Key
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: |
-          echo "Injecting API key into HTML files..."
+          echo "🔑 Injecting API key into HTML files..."
           
           # Check if API key exists
           if [ -z "$GROQ_API_KEY" ]; then
@@ -36,41 +35,50 @@ jobs:
             exit 1
           fi
           
-          # Find and replace in all HTML files
-          find . -name "*.html" -type f | while read file; do
-            if grep -q "__GROQ_API_KEY_PLACEHOLDER__" "$file"; then
-              echo "Updating API key in: $file"
-              # Create temporary file and replace
-              temp_file=$(mktemp)
-              sed "s|__GROQ_API_KEY_PLACEHOLDER__|${GROQ_API_KEY}|g" "$file" > "$temp_file"
-              
-              # Check if replacement was successful
-              if grep -q "$GROQ_API_KEY" "$temp_file"; then
-                mv "$temp_file" "$file"
-                echo "✅ API key injected successfully in $file"
-              else
-                echo "⚠️  Warning: API key might not have been replaced in $file"
-                rm "$temp_file"
+          # Inject into index.html
+          if [ -f "index.html" ]; then
+            sed -i "s|__GROQ_API_KEY_PLACEHOLDER__|$GROQ_API_KEY|g" index.html
+            echo "✅ API key injected into index.html"
+            
+            # Verify injection
+            if grep -q "$GROQ_API_KEY" index.html; then
+              echo "✅ Verification: API key found in index.html"
+            else
+              echo "⚠️ Warning: API key might not have been injected properly"
+            fi
+          else
+            echo "❌ Error: index.html not found!"
+            exit 1
+          fi
+          
+          # Inject into other HTML files
+          echo "📄 Checking for other HTML files..."
+          count=0
+          for file in *.html; do
+            if [ -f "$file" ] && [ "$file" != "index.html" ]; then
+              if grep -q "__GROQ_API_KEY_PLACEHOLDER__" "$file"; then
+                sed -i "s|__GROQ_API_KEY_PLACEHOLDER__|$GROQ_API_KEY|g" "$file"
+                echo "✅ API key injected into $file"
+                ((count++))
               fi
             fi
           done
           
-          # Also check for JS files if needed
-          find . -name "*.js" -type f | while read file; do
-            if grep -q "__GROQ_API_KEY_PLACEHOLDER__" "$file"; then
-              echo "Updating API key in JS file: $file"
-              sed -i "s|__GROQ_API_KEY_PLACEHOLDER__|${GROQ_API_KEY}|g" "$file"
-            fi
-          done
+          if [ $count -gt 0 ]; then
+            echo "✅ API keys injected into $count additional HTML files"
+          fi
       
+      # 3. Configure GitHub Pages
       - name: Setup Pages
-        uses: actions/configure-pages@v3
-      
+        uses: actions/configure-pages@v5
+        
+      # 4. Upload to Pages artifact (UPDATED from v3 to v4)
       - name: Upload Artifact
-        uses: actions/upload-pages-artifact@v2
+        uses: actions/upload-pages-artifact@v4
         with:
-          path: ./  # Static HTML files current directory में हैं
+          path: ./  # Static HTML files in current directory
       
+      # 5. Deploy to GitHub Pages (UPDATED from v2 to v4)
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v4
