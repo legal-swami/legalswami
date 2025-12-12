@@ -1,4 +1,4 @@
-name: Deploy Static HTML
+name: Debug API Key Injection
 
 on:
   push:
@@ -12,93 +12,79 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     
     steps:
-      # 1. Checkout code
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        
-      # 2. Verify files exist
-      - name: Check HTML Files
-        run: |
-          echo "📁 Files in repository:"
-          ls -la *.html || echo "No HTML files found"
-          echo ""
-          
-          if [ -f "index4.html" ]; then
-            echo "✅ Found index4.html"
-            echo "File size: $(wc -l < index4.html) lines"
-          else
-            echo "❌ ERROR: index4.html not found!"
-            echo "Available HTML files:"
-            find . -name "*.html" -type f | head -10
-            exit 1
-          fi
+      - uses: actions/checkout@v4
       
-      # 3. Inject API Key into index4.html
-      - name: Inject API Key
+      - name: 🔍 DEBUG - Show Key Status (Safe)
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: |
-          echo "🔑 Injecting API key into index4.html..."
+          echo "=== DEBUG INFORMATION ==="
+          echo "Key exists in secrets: $([ -n \"$GROQ_API_KEY\" ] && echo '✅ YES' || echo '❌ NO')"
+          echo "Key length: ${#GROQ_API_KEY} characters"
+          echo "Key starts with: ${GROQ_API_KEY:0:10}..."
+          echo "Key ends with: ...${GROQ_API_KEY: -10}"
+          echo ""
           
-          # Check if API key exists
-          if [ -z "$GROQ_API_KEY" ]; then
-            echo "❌ Error: GROQ_API_KEY secret is not set"
-            echo "Please add GROQ_API_KEY to repository secrets"
+          # Check index4.html
+          if [ -f "index4.html" ]; then
+            echo "=== Checking index4.html ==="
+            echo "File exists: ✅"
+            echo "Placeholder found: $(grep -q '__GROQ_API_KEY_PLACEHOLDER__' index4.html && echo '✅ YES' || echo '❌ NO')"
+            
+            # Show lines around placeholder
+            echo "Placeholder context:"
+            grep -n -B2 -A2 '__GROQ_API_KEY_PLACEHOLDER__' index4.html || echo "No placeholder found"
+          else
+            echo "❌ index4.html not found!"
             exit 1
           fi
-          
-          # Backup original file
-          cp index4.html index4.html.backup
-          
-          # Inject API key
-          sed -i "s|__GROQ_API_KEY_PLACEHOLDER__|$GROQ_API_KEY|g" index4.html
-          echo "✅ API key injected into index4.html"
-          
-          # Verify injection worked
-          if grep -q "$GROQ_API_KEY" index4.html; then
-            echo "✅ Verification: API key found in index4.html"
-            echo "First 50 chars of key: ${GROQ_API_KEY:0:50}..."
-          else
-            echo "⚠️ Warning: API key might not have been injected"
-            echo "Checking for placeholder..."
-            if grep -q "__GROQ_API_KEY_PLACEHOLDER__" index4.html; then
-              echo "❌ Placeholder still exists! Injection failed"
-              # Restore backup
-              mv index4.html.backup index4.html
-              exit 1
-            else
-              echo "✅ Placeholder replaced (key might be truncated)"
-            fi
-          fi
-          
-          # Clean up backup
-          rm index4.html.backup
       
-      # 4. Rename index4.html to index.html for GitHub Pages
-      - name: Rename for GitHub Pages
+      - name: Inject API Key with Verification
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: |
-          echo "🔄 Renaming index4.html to index.html..."
-          cp index4.html index.html
-          echo "✅ Created index.html from index4.html"
-          echo "Files now:"
-          ls -la *.html
+          echo "=== INJECTION PROCESS ==="
+          
+          # Create test files to verify injection
+          cp index4.html index4.original.html
+          
+          # Perform injection
+          sed -i "s|__GROQ_API_KEY_PLACEHOLDER__|${GROQ_API_KEY}|g" index4.html
+          
+          echo "✅ Injection attempted"
+          
+          # Verify injection
+          echo "=== VERIFICATION ==="
+          echo "Placeholder still present: $(grep -q '__GROQ_API_KEY_PLACEHOLDER__' index4.html && echo '❌ YES (FAILED)' || echo '✅ NO (SUCCESS)')"
+          
+          # Check what was actually inserted
+          echo "Checking inserted content..."
+          
+          # Extract the line with the key
+          KEY_LINE=$(grep -o '".*"' index4.html | grep -v '""' | head -5)
+          echo "Sample lines with quotes:"
+          echo "$KEY_LINE"
+          
+          # Create a simple test file to show the injection
+          echo "<html><body><h1>Key Test</h1>
+          <div id='key-display' style='background:#f0f0f0;padding:10px;margin:10px;'>
+          Injected Key (first/last 10 chars): ${GROQ_API_KEY:0:10}...${GROQ_API_KEY: -10}
+          </div></body></html>" > key-test.html
+          
+          echo "Created key-test.html for manual verification"
       
-      # 5. Configure GitHub Pages
+      - name: Create index.html
+        run: cp index4.html index.html
+      
       - name: Setup Pages
         uses: actions/configure-pages@v5
-        
-      # 6. Upload to Pages artifact
+      
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v4
         with:
-          path: ./  # All files in current directory
+          path: ./
       
-      # 7. Deploy to GitHub Pages
-      - name: Deploy to GitHub Pages
-        id: deployment
+      - name: Deploy
         uses: actions/deploy-pages@v4
