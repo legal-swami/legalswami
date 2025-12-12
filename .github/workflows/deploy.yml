@@ -5,40 +5,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-      
-      - name: Debug - Check file
-        run: |
-          echo "Checking index4.html..."
-          if [ -f "index4.html" ]; then
-            echo "✅ File exists"
-            # Check for the exact placeholder
-            if grep -q '__GROQ_API_KEY_PLACEHOLDER__' index4.html; then
-              echo "✅ Found: __GROQ_API_KEY_PLACEHOLDER__"
-              grep -n '__GROQ_API_KEY_PLACEHOLDER__' index4.html
-            fi
-          else
-            echo "❌ File not found!"
-            exit 1
-          fi
+        with:
+          persist-credentials: false
       
       - name: Replace API Key
         run: |
-          echo "Replacing placeholder with actual API key..."
-          # Note: Using | as delimiter because / might be in the API key
-          sed -i "s|\[\"__GROQ_API_KEY_PLACEHOLDER__\"\]|\"${{ secrets.GROQ_API_KEY }}\"|g" index4.html
-          echo "✅ Replacement done!"
-          
-          # Verify replacement
-          echo "Verifying..."
-          if grep -q "${{ secrets.GROQ_API_KEY }}" index4.html; then
-            echo "✅ API key successfully inserted!"
-          else
-            echo "Checking what's there now..."
-            grep -n "GROQ_API_KEY" index4.html
-          fi
+          sed -i "s|__GROQ_API_KEY_PLACEHOLDER__|${{ secrets.GROQ_API_KEY }}|g" index4.html
       
-      - name: Deploy
+      - name: Deploy to main branch
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: .
+          publish_branch: main  # ← YEH ADD KARO
+          force_orphan: true    # ← Clean deploy
