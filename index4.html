@@ -3621,7 +3621,7 @@ header::-webkit-scrollbar {
 
     <script>
     // All API keys and models
-    const API_KEYS = ["__GROQ_API_KEY_PLACEHOLDER__"];
+    const GROQ_API_KEY = ["__GROQ_API_KEY_PLACEHOLDER__"];
     
     const WORKING_MODELS = [
         "llama-3.3-70b-versatile",
@@ -4650,7 +4650,7 @@ header::-webkit-scrollbar {
     async function callGroqAPIWithRotation(message, responseLanguage, maxRetries = 3) {
         for (let attempt = 0; attempt < maxRetries; attempt++) {
             try {
-                const currentApiKey = API_KEYS[currentApiKeyIndex];
+                const currentApiKey = GROQ_API_KEY[currentApiKeyIndex];
                 console.log(`Attempt ${attempt + 1} with API key ${currentApiKeyIndex + 1}`);
                 
                 const response = await callSingleGroqAPI(currentApiKey, message, responseLanguage);
@@ -4659,7 +4659,7 @@ header::-webkit-scrollbar {
                 requestCount++;
                 if (requestCount >= REQUEST_LIMIT_PER_KEY) {
                     requestCount = 0;
-                    currentApiKeyIndex = (currentApiKeyIndex + 1) % API_KEYS.length;
+                    currentApiKeyIndex = (currentApiKeyIndex + 1) % GROQ_API_KEY.length;
                     console.log(`Rotating to API key ${currentApiKeyIndex + 1}`);
                 }
                 
@@ -4668,7 +4668,7 @@ header::-webkit-scrollbar {
                 console.error(`Attempt ${attempt + 1} failed:`, error);
                 
                 // Rotate to next API key
-                currentApiKeyIndex = (currentApiKeyIndex + 1) % API_KEYS.length;
+                currentApiKeyIndex = (currentApiKeyIndex + 1) % GROQ_API_KEY.length;
                 requestCount = 0;
                 
                 if (attempt === maxRetries - 1) {
