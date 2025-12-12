@@ -2,64 +2,77 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
+      - master
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
 
 jobs:
   deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-      pages: write
-      id-token: write
     
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v4
-    
-    - name: Setup Pages
-      uses: actions/configure-pages@v4
-    
-    - name: Verify files
-      run: |
-        echo "Current directory:"
-        pwd
-        echo "Files in directory:"
-        ls -la
-        
-        # Check for index4.html
-        if [ -f "index4.html" ]; then
-          echo "Found index4.html"
-          # Create a backup before modifying
-          cp index4.html index4.html.backup
-        else
-          echo "index4.html not found, creating a placeholder"
-          echo "<html><body><h1>Placeholder</h1></body></html>" > index4.html
-        fi
-    
-    - name: Inject API Key
-      if: ${{ secrets.GROQ_API_KEY }}
-      run: |
-        if [ -f "index4.html" ]; then
-          # Use a safer method to inject the API key
-          API_KEY="${{ secrets.GROQ_API_KEY }}"
-          # Escape special characters for sed
-          ESCAPED_KEY=$(printf '%s\n' "$API_KEY" | sed 's/[&/\]/\\&/g')
-          sed -i "s|__GROQ_API_KEY_PLACEHOLDER__|${ESCAPED_KEY}|g" index4.html
-          echo "API key injected"
-        fi
-    
-    - name: Build with Jekyll (if needed)
-      if: false  # Set to true if using Jekyll
-      uses: actions/jekyll-build-pages@v1
-      with:
-        source: ./
-        destination: ./_site
-    
-    - name: Upload artifact
-      uses: actions/upload-pages-artifact@v3
-      with:
-        path: .  # Or ./_site if using Jekyll
-    
-    - name: Deploy to GitHub Pages
-      uses: actions/deploy-pages@v4
-      id: deployment
+      - name: Checkout
+        uses: actions/checkout@v4
+      
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+      
+      - name: Process HTML files
+        run: |
+          # List all files
+          echo "Repository contents:"
+          ls -la
+          
+          # Check for HTML files
+          echo "HTML files found:"
+          find . -name "*.html" -type f | head -10
+          
+          # If index4.html exists, use it
+          if [ -f "index4.html" ]; then
+            echo "Found index4.html"
+            # Create a copy as index.html for GitHub Pages
+            cp index4.html index.html
+            
+            # Inject API key if placeholder exists and secret is available
+            if grep -q "__GROQ_API_KEY_PLACEHOLDER__" index4.html && [ -n "${{ secrets.GROQ_API_KEY }}" ]; then
+              echo "Injecting API key..."
+              # Escape special characters in the API key
+              API_KEY="${{ secrets.GROQ_API_KEY }}"
+              # Use a different delimiter (#) to avoid issues with slashes
+              sed -i.bak "s#__GROQ_API_KEY_PLACEHOLDER__#${API_KEY}#g" index4.html
+              sed -i.bak "s#__GROQ_API_KEY_PLACEHOLDER__#${API_KEY}#g" index.html
+              rm -f *.bak
+            fi
+          else
+            # Create a simple index.html if none exists
+            echo "<!DOCTYPE html>
+            <html>
+            <head>
+              <title>GitHub Pages</title>
+            </head>
+            <body>
+              <h1>Website Deployed Successfully</h1>
+              <p>Deployed via GitHub Actions</p>
+            </html>" > index.html
+          fi
+      
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+      
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v3
