@@ -1,50 +1,44 @@
-name: Secure Deploy with API Key
+name: Deploy
 on: [push]
-
-permissions:
-  contents: write
-
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
       
-      - name: Verify index4.html exists
+      - name: Debug - Check file
         run: |
-          if [ ! -f "index4.html" ]; then
-            echo "❌ ERROR: index4.html not found!"
-            echo "Files in directory:"
-            ls -la
+          echo "Checking index4.html..."
+          if [ -f "index4.html" ]; then
+            echo "✅ File exists"
+            # Check for the exact placeholder
+            if grep -q '__GROQ_API_KEY_PLACEHOLDER__' index4.html; then
+              echo "✅ Found: __GROQ_API_KEY_PLACEHOLDER__"
+              grep -n '__GROQ_API_KEY_PLACEHOLDER__' index4.html
+            fi
+          else
+            echo "❌ File not found!"
             exit 1
-          else
-            echo "✅ index4.html found"
           fi
       
-      - name: Check if placeholder exists
+      - name: Replace API Key
         run: |
-          if grep -q "__GROQ_API_KEY_PLACEHOLDER__" index4.html; then
-            echo "✅ Placeholder found in index4.html"
+          echo "Replacing placeholder with actual API key..."
+          # Note: Using | as delimiter because / might be in the API key
+          sed -i "s|\[\"__GROQ_API_KEY_PLACEHOLDER__\"\]|\"${{ secrets.GROQ_API_KEY }}\"|g" index4.html
+          echo "✅ Replacement done!"
+          
+          # Verify replacement
+          echo "Verifying..."
+          if grep -q "${{ secrets.GROQ_API_KEY }}" index4.html; then
+            echo "✅ API key successfully inserted!"
           else
-            echo "⚠️  Warning: __GROQ_API_KEY_PLACEHOLDER__ not found in index4.html"
-            echo "The API key injection will not work."
-            echo "Make sure your HTML has: __GROQ_API_KEY_PLACEHOLDER__"
+            echo "Checking what's there now..."
+            grep -n "GROQ_API_KEY" index4.html
           fi
       
-      - name: Inject API Key
-        run: |
-          # Use sed to replace the placeholder with the actual API key
-          sed -i "s|__GROQ_API_KEY_PLACEHOLDER__|${{ secrets.GROQ_API_KEY }}|g" index4.html
-          echo "✅ API key injected into index4.html"
-      
-      - name: Create .nojekyll file (for SPA support)
-        run: touch .nojekyll
-      
-      - name: Deploy to GitHub Pages
+      - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: .
-          user_name: 'github-actions[bot]'
-          user_email: 'github-actions[bot]@users.noreply.github.com'
