@@ -1,46 +1,81 @@
 name: Secure Deploy
 on:
   push:
-    branches: [ main, master ]  # Specify which branches trigger deployment
+    branches: [ main, master ]
+    paths:  # Optional: only deploy when certain files change
+      - 'index4.html'
+      - '**.js'
+      - '**.css'
+
+# Global permissions (optional but helpful)
+permissions:
+  contents: read
+  pages: write
+  id-token: write
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write  # Moved to job level
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4  # Updated to v4
       with:
         fetch-depth: 0
     
-    - name: Verify HTML file exists
+    - name: Setup Pages
+      uses: actions/configure-pages@v4
+    
+    - name: Verify and Prepare Files
       run: |
+        # Check if file exists
         if [ ! -f "index4.html" ]; then
-          echo "Error: index4.html not found!"
-          ls -la
-          exit 1
+          echo "Creating index.html from index4.html if needed..."
+          # If you want to rename or use a different file
+          cp index4.html index.html 2>/dev/null || true
+        fi
+        
+        # Create a .nojekyll file to bypass Jekyll processing
+        touch .nojekyll
+        
+        # Verify directory structure
+        echo "Current directory contents:"
+        ls -la
+    
+    - name: Inject API Key (if needed)
+      if: ${{ secrets.GROQ_API_KEY != '' }}
+      run: |
+        # Backup original file
+        cp index4.html index4.html.backup
+        
+        # Replace placeholder securely
+        if [ -f "index4.html" ]; then
+          # Use @ as delimiter to avoid conflicts with slashes in API key
+          sed -i 's@__GROQ_API_KEY_PLACEHOLDER__@'"${{ secrets.GROQ_API_KEY }}"'@g' index4.html
+          echo "API key injected into index4.html"
+        fi
+        
+        # Also update index.html if it exists
+        if [ -f "index.html" ]; then
+          sed -i 's@__GROQ_API_KEY_PLACEHOLDER__@'"${{ secrets.GROQ_API_KEY }}"'@g' index.html
+          echo "API key injected into index.html"
         fi
     
-    - name: Inject API Key Securely
-      run: |
-        # Use a different delimiter and escape special characters
-        GROQ_API_KEY_ESCAPED=$(echo "${{ secrets.GROQ_API_KEY }}" | sed 's/[&/\]/\\&/g')
-        sed -i.bak "s|__GROQ_API_KEY_PLACEHOLDER__|${GROQ_API_KEY_ESCAPED}|g" index4.html
-        
-        # Optional: Verify the replacement worked
-        if grep -q "__GROQ_API_KEY_PLACEHOLDER__" index4.html; then
-          echo "Warning: Placeholder still found in file"
-        fi
-        
-        # Remove backup file
-        rm -f index4.html.bak
-      
     - name: Deploy to GitHub Pages
       uses: peaceiris/actions-gh-pages@v3
       with:
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: .
-        publish_branch: gh-pages  # Explicitly specify the target branch
-        keep_files: false  # Clean the branch before deploying
+        publish_dir: .  # Current directory
+        publish_branch: gh-pages  # Target branch
+        force_orphan: true  # Clean history - prevents conflicts
+        keep_files: false  # Don't keep old files
+        user_name: 'github-actions[bot]'
+        user_email: 'github-actions[bot]@users.noreply.github.com'
+    
+    - name: Verify Deployment
+      run: |
+        echo "Deployment completed successfully!"
+        echo "Your site will be available at: https://<your-username>.github.io/<repo-name>/"
