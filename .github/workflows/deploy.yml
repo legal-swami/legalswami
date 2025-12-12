@@ -19,104 +19,59 @@ jobs:
       - name: 📥 Checkout code
         uses: actions/checkout@v4
       
-      - name: 🔍 Debug - Show what's in the file
+      - name: 🔍 Debug HTML file
         run: |
-          echo "=== DEBUG: Checking index4.html ==="
+          echo "Checking index4.html..."
           if [ -f "index4.html" ]; then
-            echo "File exists"
-            echo "Lines containing GROQ_API_KEY:"
-            grep -n "GROQ_API_KEY" index4.html
-            echo ""
-            echo "Lines containing placeholder:"
-            grep -n "__GROQ_API_KEY_PLACEHOLDER__" index4.html
+            echo "✅ File exists"
+            echo "Lines with GROQ_API_KEY:"
+            grep -n "GROQ_API_KEY" index4.html || echo "Not found"
           else
-            echo "❌ ERROR: index4.html not found!"
+            echo "❌ File not found!"
             exit 1
           fi
       
-      - name: 🛠️ FIXED API Key Injection
+      - name: 🛠️ SIMPLE API Key Injection
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: |
-          echo "=== STARTING INJECTION ==="
-          echo "Key from secrets (first/last 5 chars): ${GROQ_API_KEY:0:5}...${GROQ_API_KEY: -5}"
+          echo "Starting injection..."
+          echo "Key available: $([ -n "$GROQ_API_KEY" ] && echo 'YES' || echo 'NO')"
           
-          # METHOD 1: Simple sed with exact pattern
-          echo "Method 1: Simple sed..."
-          sed -i "s|'__GROQ_API_KEY_PLACEHOLDER__'|'${GROQ_API_KEY}'|g" index4.html
+          # BACKUP first
+          cp index4.html index4.html.backup
           
-          # METHOD 2: Alternative pattern
-          echo "Method 2: Alternative pattern..."
-          sed -i 's|"__GROQ_API_KEY_PLACEHOLDER__"|"'"${GROQ_API_KEY}"'"|g' index4.html
+          # TRY 1: Exact pattern from your HTML
+          echo "Trying exact pattern replacement..."
+          sed -i 's/const GROQ_API_KEY = \["__GROQ_API_KEY_PLACEHOLDER__"\];/const GROQ_API_KEY = ["'"$GROQ_API_KEY"'"];/g' index4.html
           
-          # METHOD 3: Array format
-          echo "Method 3: Array format..."
-          sed -i 's|\["__GROQ_API_KEY_PLACEHOLDER__"\]|["'"${GROQ_API_KEY}"'"]|g' index4.html
-          
-          # METHOD 4: Direct variable assignment
-          echo "Method 4: Direct assignment..."
-          sed -i 's|const GROQ_API_KEY = \["__GROQ_API_KEY_PLACEHOLDER__"\];|const GROQ_API_KEY = ["'"${GROQ_API_KEY}"'"];|g' index4.html
-          
-          # VERIFICATION
-          echo ""
-          echo "=== VERIFICATION ==="
-          echo "Checking if placeholder still exists..."
-          PLACEHOLDER_COUNT=$(grep -o "__GROQ_API_KEY_PLACEHOLDER__" index4.html | wc -l)
-          echo "Placeholders remaining: $PLACEHOLDER_COUNT"
-          
-          echo "Checking if key was injected..."
+          # CHECK if worked
           if grep -q "gsk_" index4.html; then
-            echo "✅ SUCCESS: gsk_ found in file!"
-            echo "Line with key:"
-            grep -n "gsk_" index4.html | head -1
+            echo "✅ SUCCESS: gsk_ found!"
           else
-            echo "❌ FAILURE: gsk_ NOT found in file!"
-            echo "Creating emergency fix..."
-            
-            # EMERGENCY: Create new file with injected key
-            cp index4.html index4.html.backup
-            python3 << 'EOF'
-import re
-with open('index4.html', 'r') as f:
-    content = f.read()
-
-import os
-key = os.environ.get('GROQ_API_KEY', '')
-if not key:
-    print("ERROR: No key in environment")
-    exit(1)
-
-# Replace ALL patterns
-patterns = [
-    r'__GROQ_API_KEY_PLACEHOLDER__',
-    r'\"__GROQ_API_KEY_PLACEHOLDER__\"',
-    r'\'__GROQ_API_KEY_PLACEHOLDER__\'',
-    r'\["__GROQ_API_KEY_PLACEHOLDER__"\]',
-    r'\[\'__GROQ_API_KEY_PLACEHOLDER__\'\]'
-]
-
-new_content = content
-for pattern in patterns:
-    new_content = re.sub(pattern, f'"{key}"', new_content)
-
-with open('index4.html', 'w') as f:
-    f.write(new_content)
-print(f"Python replacement done. Key length: {len(key)}")
-EOF
-            
-            # Final check
-            if grep -q "$GROQ_API_KEY" index4.html; then
-              echo "🎉 EMERGENCY FIX WORKED!"
-            else
-              echo "❌ All methods failed"
-              exit 1
-            fi
+            echo "❌ Pattern 1 failed, trying pattern 2..."
+            # Restore backup and try different pattern
+            cp index4.html.backup index4.html
+            sed -i 's/"__GROQ_API_KEY_PLACEHOLDER__"/"'"$GROQ_API_KEY"'"/g' index4.html
           fi
+          
+          # FINAL CHECK
+          echo ""
+          echo "=== FINAL RESULT ==="
+          if grep -q "__GROQ_API_KEY_PLACEHOLDER__" index4.html; then
+            echo "❌ FAILURE: Placeholder still exists"
+            echo "Current line:"
+            grep "GROQ_API_KEY" index4.html
+          else
+            echo "✅ SUCCESS: Placeholder replaced"
+            echo "gsk_ found: $(grep -q "gsk_" index4.html && echo YES || echo NO)"
+          fi
+          
+          # Cleanup
+          rm -f index4.html.backup
       
       - name: 📄 Create index.html
-        run: |
-          cp index4.html index.html
-          echo "Created index.html"
+        run: cp index4.html index.html
       
       - name: ⚙️ Setup GitHub Pages
         uses: actions/configure-pages@v5
