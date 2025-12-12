@@ -21,64 +21,84 @@ jobs:
       - name: Checkout Repository
         uses: actions/checkout@v4
         
-      # 2. Inject API Key Securely
+      # 2. Verify files exist
+      - name: Check HTML Files
+        run: |
+          echo "📁 Files in repository:"
+          ls -la *.html || echo "No HTML files found"
+          echo ""
+          
+          if [ -f "index4.html" ]; then
+            echo "✅ Found index4.html"
+            echo "File size: $(wc -l < index4.html) lines"
+          else
+            echo "❌ ERROR: index4.html not found!"
+            echo "Available HTML files:"
+            find . -name "*.html" -type f | head -10
+            exit 1
+          fi
+      
+      # 3. Inject API Key into index4.html
       - name: Inject API Key
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: |
-          echo "🔑 Injecting API key into HTML files..."
+          echo "🔑 Injecting API key into index4.html..."
           
           # Check if API key exists
           if [ -z "$GROQ_API_KEY" ]; then
             echo "❌ Error: GROQ_API_KEY secret is not set"
-            echo "Please add GROQ_API_KEY to your repository secrets"
+            echo "Please add GROQ_API_KEY to repository secrets"
             exit 1
           fi
           
-          # Inject into index.html
-          if [ -f "index.html" ]; then
-            sed -i "s|__GROQ_API_KEY_PLACEHOLDER__|$GROQ_API_KEY|g" index.html
-            echo "✅ API key injected into index.html"
-            
-            # Verify injection
-            if grep -q "$GROQ_API_KEY" index.html; then
-              echo "✅ Verification: API key found in index.html"
-            else
-              echo "⚠️ Warning: API key might not have been injected properly"
-            fi
+          # Backup original file
+          cp index4.html index4.html.backup
+          
+          # Inject API key
+          sed -i "s|__GROQ_API_KEY_PLACEHOLDER__|$GROQ_API_KEY|g" index4.html
+          echo "✅ API key injected into index4.html"
+          
+          # Verify injection worked
+          if grep -q "$GROQ_API_KEY" index4.html; then
+            echo "✅ Verification: API key found in index4.html"
+            echo "First 50 chars of key: ${GROQ_API_KEY:0:50}..."
           else
-            echo "❌ Error: index.html not found!"
-            exit 1
-          fi
-          
-          # Inject into other HTML files
-          echo "📄 Checking for other HTML files..."
-          count=0
-          for file in *.html; do
-            if [ -f "$file" ] && [ "$file" != "index.html" ]; then
-              if grep -q "__GROQ_API_KEY_PLACEHOLDER__" "$file"; then
-                sed -i "s|__GROQ_API_KEY_PLACEHOLDER__|$GROQ_API_KEY|g" "$file"
-                echo "✅ API key injected into $file"
-                ((count++))
-              fi
+            echo "⚠️ Warning: API key might not have been injected"
+            echo "Checking for placeholder..."
+            if grep -q "__GROQ_API_KEY_PLACEHOLDER__" index4.html; then
+              echo "❌ Placeholder still exists! Injection failed"
+              # Restore backup
+              mv index4.html.backup index4.html
+              exit 1
+            else
+              echo "✅ Placeholder replaced (key might be truncated)"
             fi
-          done
-          
-          if [ $count -gt 0 ]; then
-            echo "✅ API keys injected into $count additional HTML files"
           fi
+          
+          # Clean up backup
+          rm index4.html.backup
       
-      # 3. Configure GitHub Pages
+      # 4. Rename index4.html to index.html for GitHub Pages
+      - name: Rename for GitHub Pages
+        run: |
+          echo "🔄 Renaming index4.html to index.html..."
+          cp index4.html index.html
+          echo "✅ Created index.html from index4.html"
+          echo "Files now:"
+          ls -la *.html
+      
+      # 5. Configure GitHub Pages
       - name: Setup Pages
         uses: actions/configure-pages@v5
         
-      # 4. Upload to Pages artifact (UPDATED from v3 to v4)
+      # 6. Upload to Pages artifact
       - name: Upload Artifact
         uses: actions/upload-pages-artifact@v4
         with:
-          path: ./  # Static HTML files in current directory
+          path: ./  # All files in current directory
       
-      # 5. Deploy to GitHub Pages (UPDATED from v2 to v4)
+      # 7. Deploy to GitHub Pages
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
