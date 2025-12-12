@@ -1,109 +1,55 @@
-name: Secure Deploy
+name: Deploy HTML with API Key
 on:
   push:
-    branches: [ main, master ]
-
-permissions:
-  contents: write
-  pages: write
-  id-token: write
+    branches: [main, master]
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     
     steps:
-      # Step 1: Checkout code
+      # 1. Get your code
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v3
       
-      # Step 2: Setup Node.js (if needed for your project)
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: '18'
-          cache: 'npm'
-      
-      # Step 3: Debug - List files to see what's in the repository
-      - name: Debug - List files
+      # 2. Check if index.html exists
+      - name: Check HTML file
         run: |
-          echo "📁 Current directory structure:"
-          pwd
-          ls -la
-          echo "📄 Checking for index.html:"
-          if [ -f "index.html" ]; then
-            echo "✅ index.html exists"
-            echo "First few lines of index.html:"
-            head -10 index.html
+          if [ ! -f "index.html" ]; then
+            echo "ERROR: No index.html file found!"
+            echo "Creating a basic one..."
+            echo '<!DOCTYPE html>
+            <html>
+            <head>
+              <title>My Site</title>
+            </head>
+            <body>
+              <h1>Hello World!</h1>
+            </body>
+            </html>' > index.html
           else
-            echo "❌ index.html not found!"
-            echo "Creating a simple index.html for testing..."
-            echo '<!DOCTYPE html><html><head><title>Test Page</title></head><body><h1>Hello World</h1></body></html>' > index.html
+            echo "✅ index.html found"
           fi
       
-      # Step 4: Check if GROQ_API_KEY secret exists
-      - name: Check Secrets
+      # 3. Optional: Inject API key if you have a placeholder
+      - name: Inject API Key (Optional)
+        if: ${{ secrets.GROQ_API_KEY }}
         run: |
-          if [ -z "${{ secrets.GROQ_API_KEY }}" ]; then
-            echo "⚠️  GROQ_API_KEY secret is empty or not set"
-            echo "Using placeholder value for testing"
-            echo "GROQ_API_KEY_PLACEHOLDER=demo_key_12345" >> $GITHUB_ENV
+          if grep -q "__GROQ_API_KEY_PLACEHOLDER__" index.html; then
+            echo "Injecting API key..."
+            sed -i "s|__GROQ_API_KEY_PLACEHOLDER__|${{ secrets.GROQ_API_KEY }}|g" index.html
+            echo "✅ API key injected"
           else
-            echo "✅ GROQ_API_KEY secret is available"
-            echo "GROQ_API_KEY_PLACEHOLDER=${{ secrets.GROQ_API_KEY }}" >> $GITHUB_ENV
+            echo "No placeholder found in index.html"
           fi
       
-      # Step 5: Replace placeholder in files (safer approach)
-      - name: Inject API Key
-        run: |
-          echo "🔧 Injecting API key..."
-          
-          # Find all HTML files
-          find . -name "*.html" -type f | while read file; do
-            echo "Processing: $file"
-            if grep -q "__GROQ_API_KEY_PLACEHOLDER__" "$file"; then
-              echo "  Found placeholder in $file"
-              # Create a backup
-              cp "$file" "$file.bak"
-              # Replace using env variable
-              sed -i "s|__GROQ_API_KEY_PLACEHOLDER__|${GROQ_API_KEY_PLACEHOLDER}|g" "$file"
-              echo "  ✅ Placeholder replaced"
-            fi
-          done
-          
-          # Also check for common JavaScript files
-          find . -name "*.js" -type f | while read file; do
-            if grep -q "__GROQ_API_KEY_PLACEHOLDER__" "$file"; then
-              echo "Processing: $file"
-              cp "$file" "$file.bak"
-              sed -i "s|__GROQ_API_KEY_PLACEHOLDER__|${GROQ_API_KEY_PLACEHOLDER}|g" "$file"
-              echo "  ✅ Placeholder replaced"
-            fi
-          done
+      # 4. Create .nojekyll file
+      - name: Add .nojekyll file
+        run: touch .nojekyll
       
-      # Step 6: Verify the injection worked
-      - name: Verify Injection
-        run: |
-          echo "🔍 Verifying injection..."
-          if find . -name "*.html" -o -name "*.js" | xargs grep -l "__GROQ_API_KEY_PLACEHOLDER__" 2>/dev/null; then
-            echo "❌ Error: Some placeholders were not replaced!"
-            exit 1
-          else
-            echo "✅ All placeholders replaced successfully"
-          fi
-      
-      # Step 7: Deploy to GitHub Pages (using official action)
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-      
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: '.'
-      
+      # 5. Deploy
       - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: .
