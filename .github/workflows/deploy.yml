@@ -2,77 +2,82 @@ name: Deploy to GitHub Pages
 
 on:
   push:
-    branches:
-      - main
-      - master
-
-permissions:
-  contents: read
-  pages: write
-  id-token: write
-
-concurrency:
-  group: "pages"
-  cancel-in-progress: false
+    branches: [ main ]
 
 jobs:
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+  build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
     
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-      
-      - name: Setup Pages
-        uses: actions/configure-pages@v4
-      
-      - name: Process HTML files
-        run: |
-          # List all files
-          echo "Repository contents:"
-          ls -la
+    - name: Checkout
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+    
+    - name: Setup Git
+      run: |
+        git config --global user.name 'github-actions[bot]'
+        git config --global user.email 'github-actions[bot]@users.noreply.github.com'
+    
+    - name: Prepare Files
+      run: |
+        echo "Preparing files for deployment..."
+        
+        # Check if index4.html exists
+        if [ -f "index4.html" ]; then
+          echo "Found index4.html"
+          # Copy to index.html for GitHub Pages
+          cp index4.html index.html
           
-          # Check for HTML files
-          echo "HTML files found:"
-          find . -name "*.html" -type f | head -10
-          
-          # If index4.html exists, use it
-          if [ -f "index4.html" ]; then
-            echo "Found index4.html"
-            # Create a copy as index.html for GitHub Pages
-            cp index4.html index.html
-            
-            # Inject API key if placeholder exists and secret is available
-            if grep -q "__GROQ_API_KEY_PLACEHOLDER__" index4.html && [ -n "${{ secrets.GROQ_API_KEY }}" ]; then
-              echo "Injecting API key..."
-              # Escape special characters in the API key
-              API_KEY="${{ secrets.GROQ_API_KEY }}"
-              # Use a different delimiter (#) to avoid issues with slashes
-              sed -i.bak "s#__GROQ_API_KEY_PLACEHOLDER__#${API_KEY}#g" index4.html
-              sed -i.bak "s#__GROQ_API_KEY_PLACEHOLDER__#${API_KEY}#g" index.html
-              rm -f *.bak
-            fi
-          else
-            # Create a simple index.html if none exists
-            echo "<!DOCTYPE html>
-            <html>
-            <head>
-              <title>GitHub Pages</title>
-            </head>
-            <body>
-              <h1>Website Deployed Successfully</h1>
-              <p>Deployed via GitHub Actions</p>
-            </html>" > index.html
+          # Inject API key if secret exists
+          if [ -n "${{ secrets.GROQ_API_KEY }}" ]; then
+            echo "Injecting API key..."
+            # Use perl instead of sed for safer replacement
+            perl -i -pe 's|__GROQ_API_KEY_PLACEHOLDER__|$ENV{GROQ_API_KEY}|g' index4.html
+            perl -i -pe 's|__GROQ_API_KEY_PLACEHOLDER__|$ENV{GROQ_API_KEY}|g' index.html
           fi
-      
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: .
-      
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v3
+        else
+          # Create a simple index.html
+          echo "Creating index.html..."
+          echo '<!DOCTYPE html>
+          <html>
+          <head>
+            <title>My Site</title>
+          </head>
+          <body>
+            <h1>Site is deployed!</h1>
+            <p>GitHub Pages deployment successful.</p>
+          </body>
+          </html>' > index.html
+        fi
+        
+        # Create .nojekyll file to bypass Jekyll processing
+        touch .nojekyll
+    
+    - name: Create gh-pages branch and deploy
+      env:
+        GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+      run: |
+        # Create or update gh-pages branch
+        if git show-ref --quiet refs/heads/gh-pages; then
+          echo "gh-pages branch exists"
+          git fetch origin gh-pages
+          git worktree add --track -B gh-pages gh-pages origin/gh-pages
+        else
+          echo "Creating gh-pages branch"
+          git worktree add -B gh-pages gh-pages
+        fi
+        
+        # Copy files to gh-pages worktree
+        echo "Copying files..."
+        rsync -av --delete --exclude='.git' --exclude='gh-pages' ./ gh-pages/
+        
+        # Commit and push
+        cd gh-pages
+        git add -A
+        git commit -m "Deploy to GitHub Pages: $(date)" || echo "No changes to commit"
+        git push origin gh-pages
