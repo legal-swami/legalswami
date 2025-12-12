@@ -1,40 +1,54 @@
-name: Deploy HTML
+name: Deploy HTML with API Key
 on:
   push:
-    branches: [main]
+    branches: [main, master]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     
     steps:
-      # Step 1: Get your code
-      - name: Checkout repository
+      # 1. Get your code
+      - name: Checkout
         uses: actions/checkout@v3
       
-      # Step 2: Verify index.html exists
-      - name: Check files
+      # 2. Check if index.html exists
+      - name: Check HTML file
         run: |
-          echo "Files in repository:"
-          ls -la
-          if [ -f "index.html" ]; then
-            echo "✅ index.html found"
-          else
-            echo "Creating index.html..."
+          if [ ! -f "index4.html" ]; then
+            echo "ERROR: No index.html file found!"
+            echo "Creating a basic one..."
             echo '<!DOCTYPE html>
             <html>
             <head>
               <title>My Site</title>
             </head>
             <body>
-              <h1>Site is Live!</h1>
-              <p>Deployed with GitHub Actions</p>
+              <h1>Hello World!</h1>
             </body>
             </html>' > index.html
+          else
+            echo "✅ index.html found"
           fi
       
-      # Step 3: Deploy to GitHub Pages
-      - name: Deploy
+      # 3. Optional: Inject API key if you have a placeholder
+      - name: Inject API Key (Optional)
+        if: ${{ secrets.GROQ_API_KEY }}
+        run: |
+          if grep -q "__GROQ_API_KEY_PLACEHOLDER__" index.html; then
+            echo "Injecting API key..."
+            sed -i "s|__GROQ_API_KEY_PLACEHOLDER__|${{ secrets.GROQ_API_KEY }}|g" index4.html
+            echo "✅ API key injected"
+          else
+            echo "No placeholder found in index.html"
+          fi
+      
+      # 4. Create .nojekyll file
+      - name: Add .nojekyll file
+        run: touch .nojekyll
+      
+      # 5. Deploy
+      - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
