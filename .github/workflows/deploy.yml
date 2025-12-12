@@ -1,16 +1,72 @@
 name: Secure Deploy
-on: [push]
+on:
+  push:
+    branches: [ main, master ]
+    
+# Minimal required permissions
 permissions:
-contents: write
+  pages: write
+  id-token: write
+  contents: read
+
 jobs:
-deploy:
-runs-on: ubuntu-latest
-steps:
-- uses: actions/checkout@v3
-- name: Inject Key
-run: sed -i 's|__GROQ_API_KEY_PLACEHOLDER__|${{ secrets.GROQ_API_KEY }}|g' index4.html
-- name: Deploy
-uses: peaceiris/actions-gh-pages@v3
-with:
-github_token: ${{ secrets.GITHUB_TOKEN }}
-publish_dir: .
+  security-scan:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Check for exposed secrets
+        run: |
+          # Scan for potential secret patterns
+          if grep -r "api[_-]*key\|secret\|token" --include="*.js" --include="*.html" --include="*.json" .; then
+            echo "Warning: Possible secrets found in code"
+            exit 1
+          fi
+
+  build:
+    runs-on: ubuntu-latest
+    needs: security-scan
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+          
+      - name: Build application
+        run: |
+          # Build process without injecting secrets
+          # Your build commands here
+          echo "Building application..."
+          
+      - name: Create config file (server-side only pattern)
+        run: |
+          # If you need configuration, create it in a way that
+          # doesn't expose secrets to client
+          cat > config.json << EOF
+          {
+            "apiEndpoint": "/api/proxy",
+            "otherConfig": "value"
+          }
+          EOF
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+        
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: './dist'  # Your built files directory
+          
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
