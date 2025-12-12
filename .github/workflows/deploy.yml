@@ -16,70 +16,69 @@ jobs:
       name: github-pages
     
     steps:
-      - name: 📥 Checkout code
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
       
-      - name: 🔍 Debug HTML file
+      - name: 🔍 FIND EXACT PATTERN
         run: |
-          echo "Checking index4.html..."
-          if [ -f "index4.html" ]; then
-            echo "✅ File exists"
-            echo "Lines with GROQ_API_KEY:"
-            grep -n "GROQ_API_KEY" index4.html || echo "Not found"
-          else
-            echo "❌ File not found!"
-            exit 1
-          fi
+          echo "=== FINDING EXACT PATTERN ==="
+          # Method 1: Show exact line with special characters
+          echo "Exact line with cat -A:"
+          grep "GROQ_API_KEY" index4.html | cat -A
+          
+          echo ""
+          echo "=== HEX DUMP OF LINE ==="
+          grep "GROQ_API_KEY" index4.html | xxd
+          
+          echo ""
+          echo "=== EXACT REPLACEMENT NEEDED ==="
+          # Show what we need to replace
+          LINE=$(grep "GROQ_API_KEY.*PLACEHOLDER" index4.html)
+          echo "Line to replace: '$LINE'"
       
-      - name: 🛠️ SIMPLE API Key Injection
+      - name: 🛠️ PERFECT INJECTION
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: |
-          echo "Starting injection..."
-          echo "Key available: $([ -n "$GROQ_API_KEY" ] && echo 'YES' || echo 'NO')"
+          echo "=== PERFECT INJECTION ==="
           
-          # BACKUP first
-          cp index4.html index4.html.backup
+          # READ the exact line
+          EXACT_LINE=$(grep 'GROQ_API_KEY.*__GROQ_API_KEY_PLACEHOLDER__' index4.html)
+          echo "Found line: '$EXACT_LINE'"
           
-          # TRY 1: Exact pattern from your HTML
-          echo "Trying exact pattern replacement..."
-          sed -i 's/const GROQ_API_KEY = \["__GROQ_API_KEY_PLACEHOLDER__"\];/const GROQ_API_KEY = ["'"$GROQ_API_KEY"'"];/g' index4.html
+          # CREATE the replacement line
+          REPLACEMENT_LINE="const GROQ_API_KEY = [\"${GROQ_API_KEY}\"];"
+          echo "Replacement: '$REPLACEMENT_LINE'"
           
-          # CHECK if worked
-          if grep -q "gsk_" index4.html; then
-            echo "✅ SUCCESS: gsk_ found!"
-          else
-            echo "❌ Pattern 1 failed, trying pattern 2..."
-            # Restore backup and try different pattern
-            cp index4.html.backup index4.html
-            sed -i 's/"__GROQ_API_KEY_PLACEHOLDER__"/"'"$GROQ_API_KEY"'"/g' index4.html
-          fi
+          # USE awk for exact line replacement (more reliable than sed)
+          awk -v replace="$REPLACEMENT_LINE" \
+              '/GROQ_API_KEY.*__GROQ_API_KEY_PLACEHOLDER__/ {print replace; next} {print}' \
+              index4.html > index4.html.tmp && mv index4.html.tmp index4.html
           
-          # FINAL CHECK
+          echo "✅ awk replacement completed"
+          
+          # VERIFY
           echo ""
-          echo "=== FINAL RESULT ==="
-          if grep -q "__GROQ_API_KEY_PLACEHOLDER__" index4.html; then
-            echo "❌ FAILURE: Placeholder still exists"
-            echo "Current line:"
-            grep "GROQ_API_KEY" index4.html
+          echo "=== VERIFICATION ==="
+          if grep -q "\"$GROQ_API_KEY\"" index4.html; then
+            echo "✅ SUCCESS: Exact key found"
+            echo "First 20 chars: ${GROQ_API_KEY:0:20}"
           else
-            echo "✅ SUCCESS: Placeholder replaced"
-            echo "gsk_ found: $(grep -q "gsk_" index4.html && echo YES || echo NO)"
+            echo "❌ FAILED: Key not found"
+            echo "Trying emergency method..."
+            
+            # EMERGENCY: Delete and recreate file
+            LINES_BEFORE=$(wc -l < index4.html)
+            grep -v "GROQ_API_KEY.*__GROQ_API_KEY_PLACEHOLDER__" index4.html > index4.html.tmp
+            echo "const GROQ_API_KEY = [\"${GROQ_API_KEY}\"];" >> index4.html.tmp
+            mv index4.html.tmp index4.html
+            echo "Emergency fix applied"
           fi
-          
-          # Cleanup
-          rm -f index4.html.backup
       
-      - name: 📄 Create index.html
+      - name: Create index.html
         run: cp index4.html index.html
       
-      - name: ⚙️ Setup GitHub Pages
-        uses: actions/configure-pages@v5
-      
-      - name: 📤 Upload artifact
-        uses: actions/upload-pages-artifact@v4
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
         with:
           path: ./
-      
-      - name: 🚀 Deploy to GitHub Pages
-        uses: actions/deploy-pages@v4
+      - uses: actions/deploy-pages@v4
