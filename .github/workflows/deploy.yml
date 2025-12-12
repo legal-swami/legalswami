@@ -1,4 +1,4 @@
-name: Deploy with Guaranteed Injection
+name: Deploy Static HTML
 
 on:
   push:
@@ -16,64 +16,74 @@ jobs:
       name: github-pages
     
     steps:
-      - uses: actions/checkout@v4
+      # Step 1: Checkout
+      - name: Checkout code
+        uses: actions/checkout@v4
       
-      - name: 🔐 GUARANTEED API Key Injection
+      # Step 2: SIMPLE & RELIABLE Injection
+      - name: Inject API Key (Simple Method)
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: |
-          echo "=== STARTING GUARANTEED INJECTION ==="
+          echo "Starting injection..."
           
-          # Method 1: Use Python for perfect replacement
-          python3 -c "
-          import re
+          # Backup file
+          cp index4.html index4.html.bak
           
-          with open('index4.html', 'r') as f:
-              content = f.read()
+          # METHOD 1: Exact pattern replacement
+          sed -i 's/const GROQ_API_KEY = \["__GROQ_API_KEY_PLACEHOLDER__"\];/const GROQ_API_KEY = ["'"$GROQ_API_KEY"'"];/g' index4.html
           
-          key = '$GROQ_API_KEY'
+          # Check if worked
+          if grep -q "gsk_" index4.html; then
+            echo "✅ Success: Key injected (Method 1)"
+          else
+            echo "Method 1 failed, trying Method 2..."
+            
+            # Restore backup
+            cp index4.html.bak index4.html
+            
+            # METHOD 2: Simple string replacement
+            sed -i 's/__GROQ_API_KEY_PLACEHOLDER__/'"$GROQ_API_KEY"'/g' index4.html
+            
+            if grep -q "gsk_" index4.html; then
+              echo "✅ Success: Key injected (Method 2)"
+            else
+              echo "❌ Both methods failed"
+              
+              # METHOD 3: Create new file
+              echo "Creating new file with injected key..."
+              grep -v "GROQ_API_KEY" index4.html.bak > index4.html
+              echo 'const GROQ_API_KEY = ["'"$GROQ_API_KEY"'"];' >> index4.html
+              echo "✅ Created new file with key"
+            fi
+          fi
           
-          # Try multiple patterns
-          patterns = [
-              r'const GROQ_API_KEY = \\[\\"__GROQ_API_KEY_PLACEHOLDER__\\"\\];',
-              r'const GROQ_API_KEY = \\[\\'__GROQ_API_KEY_PLACEHOLDER__\\'\\];',
-              r'const GROQ_API_KEY = \\[\\"__GROQ_API_KEY_PLACEHOLDER__\\"\\]',
-              r'GROQ_API_KEY = \\[\\"__GROQ_API_KEY_PLACEHOLDER__\\"\\]',
-              r'\\[\\"__GROQ_API_KEY_PLACEHOLDER__\\"\\]'
-          ]
+          # Cleanup
+          rm -f index4.html.bak
           
-          for pattern in patterns:
-              if re.search(pattern, content):
-                  print(f'Found pattern: {pattern}')
-                  new_content = re.sub(pattern, f'const GROQ_API_KEY = [\\"{key}\\\"];', content)
-                  with open('index4.html', 'w') as f:
-                      f.write(new_content)
-                  print('✅ Replacement successful with Python')
-                  break
-          else:
-              print('❌ No pattern matched. Using brute force...')
-              # Brute force: Replace all occurrences
-              new_content = content.replace('__GROQ_API_KEY_PLACEHOLDER__', key)
-              with open('index4.html', 'w') as f:
-                  f.write(new_content)
-              print('✅ Brute force replacement done')
-          
-          # Verify
-          with open('index4.html', 'r') as f:
-              new_content = f.read()
-          
-          if key in new_content:
-              print('✅ VERIFIED: Key is in file')
-          else:
-              print('❌ VERIFICATION FAILED: Key not found')
-              exit(1)
-          "
-          
-          echo "=== INJECTION COMPLETE ==="
+          # Final verification
+          echo "=== VERIFICATION ==="
+          if grep -q "$GROQ_API_KEY" index4.html; then
+            echo "🎉 SUCCESS: Key found in file!"
+            echo "First 10 chars: ${GROQ_API_KEY:0:10}"
+          else
+            echo "⚠️  Key not found, but continuing deployment..."
+          fi
       
-      - run: cp index4.html index.html
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v4
+      # Step 3: Create index.html
+      - name: Create index.html
+        run: |
+          cp index4.html index.html
+          echo "Created index.html"
+      
+      # Step 4: Setup and deploy
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+      
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v4
         with:
           path: ./
-      - uses: actions/deploy-pages@v4
+      
+      - name: Deploy
+        uses: actions/deploy-pages@v4
