@@ -1,4 +1,4 @@
-name: Deploy Static HTML with API Key
+name: Deploy Static HTML
 
 on:
   push:
@@ -10,58 +10,64 @@ permissions:
   id-token: write
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     
     steps:
       # Step 1: Checkout
-      - name: Checkout repository
+      - name: Checkout code
         uses: actions/checkout@v4
       
-      # Step 2: Debug
-      - name: Debug current HTML
-        run: |
-          echo "Checking index4.html..."
-          ls -la *.html
-      
-      # Step 3: Inject API Key - FIXED MULTI-LINE SYNTAX
-      - name: Inject Groq API Key
+      # Step 2: SIMPLE API Key Injection
+      - name: Inject API Key
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: |
-          echo "Starting injection..."
+          echo "🔧 Starting API key injection..."
+          echo "Key available: $([ -n "$GROQ_API_KEY" ] && echo 'YES' || echo 'NO')"
           
-          # Simple one-line replacement first
-          sed -i 's/__GROQ_API_KEY_PLACEHOLDER__/'"$GROQ_API_KEY"'/g' index4.html
+          # FIRST, check what's in the file
+          echo "📄 Checking index4.html..."
+          grep -n "GROQ_API_KEY" index4.html || echo "GROQ_API_KEY not found in file"
+          
+          # SIMPLE replacement - no complex patterns
+          # This will replace ALL occurrences of the placeholder
+          sed -i "s|__GROQ_API_KEY_PLACEHOLDER__|${GROQ_API_KEY}|g" index4.html
           
           # Verify
+          echo "✅ Replacement done"
+          echo "Checking if placeholder still exists..."
+          if grep -q "__GROQ_API_KEY_PLACEHOLDER__" index4.html; then
+            echo "❌ ERROR: Placeholder still found!"
+            echo "Trying different pattern..."
+            # Maybe there are quotes around placeholder
+            sed -i "s|'__GROQ_API_KEY_PLACEHOLDER__'|'${GROQ_API_KEY}'|g" index4.html
+            sed -i 's|"__GROQ_API_KEY_PLACEHOLDER__"|"'"${GROQ_API_KEY}"'"|g' index4.html
+          fi
+          
+          # Final check
           if grep -q "gsk_" index4.html; then
-            echo "✅ gsk_ found - injection successful"
-            echo "Key length: ${#GROQ_API_KEY} chars"
+            echo "🎉 SUCCESS: gsk_ found in file!"
           else
-            echo "❌ gsk_ not found - trying array format..."
-            # For array format
-            sed -i 's/\["__GROQ_API_KEY_PLACEHOLDER__"\]/["'"$GROQ_API_KEY"'"]/g' index4.html
+            echo "⚠️  gsk_ NOT found - but let's continue deployment"
           fi
       
-      # Step 4: Create index.html
-      - name: Create index.html
-        run: cp index4.html index.html
+      # Step 3: Create index.html
+      - name: Create index.html for GitHub Pages
+        run: |
+          cp index4.html index.html
+          echo "Created index.html"
       
-      # Step 5: Setup Pages
-      - name: Setup Pages
+      # Step 4: Setup and Deploy
+      - name: Setup GitHub Pages
         uses: actions/configure-pages@v5
       
-      # Step 6: Upload
-      - name: Upload to GitHub Pages
+      - name: Upload artifact
         uses: actions/upload-pages-artifact@v4
         with:
           path: ./
       
-      # Step 7: Deploy
       - name: Deploy to GitHub Pages
-        id: deployment
         uses: actions/deploy-pages@v4
