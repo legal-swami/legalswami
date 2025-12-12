@@ -1,0 +1,16 @@
+name: Secure Deploy
+on: [push]
+permissions:
+contents: write
+jobs:
+deploy:
+runs-on: ubuntu-latest
+steps:
+- uses: actions/checkout@v3
+- name: Inject Key
+run: sed -i 's|__GROQ_API_KEY_PLACEHOLDER__|${{ secrets.GROQ_API_KEY }}|g' index4.html
+- name: Deploy
+uses: peaceiris/actions-gh-pages@v3
+with:
+github_token: ${{ secrets.GITHUB_TOKEN }}
+publish_dir: .
