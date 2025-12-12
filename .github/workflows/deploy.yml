@@ -1,4 +1,4 @@
-name: Deploy HTML with API Key
+name: Deploy HTML to GitHub Pages
 on:
   push:
     branches: [main, master]
@@ -17,37 +17,16 @@ jobs:
         run: |
           if [ ! -f "index4.html" ]; then
             echo "ERROR: No index4.html file found!"
-            echo "Creating a basic one..."
-            echo '<!DOCTYPE html>
-            <html>
-            <head>
-              <title>My Site</title>
-            </head>
-            <body>
-              <h1>Hello World!</h1>
-            </body>
-            </html>' > index4.html
+            exit 1
           else
             echo "✅ index4.html found"
           fi
       
-      # 3. Optional: Inject API key if you have a placeholder
-      - name: Inject API Key (Optional)
-        if: ${{ secrets.GROQ_API_KEY != '' }}
-        run: |
-          if grep -q "__GROQ_API_KEY_PLACEHOLDER__" index4.html; then
-            echo "Injecting API key..."
-            sed -i "s|__GROQ_API_KEY_PLACEHOLDER__|${{ secrets.GROQ_API_KEY }}|g" index4.html
-            echo "✅ API key injected"
-          else
-            echo "No placeholder found in index4.html"
-          fi
-      
-      # 4. Create .nojekyll file
+      # 3. Create .nojekyll file
       - name: Add .nojekyll file
         run: touch .nojekyll
       
-      # 5. Deploy
+      # 4. Deploy
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
