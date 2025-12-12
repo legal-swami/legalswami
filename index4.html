@@ -4664,7 +4664,8 @@ if (GROQ_API_KEY[0] === "__GROQ_API_KEY_PLACEHOLDER__") {
     async function callGroqAPIWithRotation(message, responseLanguage, maxRetries = 3) {
         for (let attempt = 0; attempt < maxRetries; attempt++) {
             try {
-                const currentApiKey = GROQ_API_KEY[currentApiKeyIndex];
+                //const currentApiKey = GROQ_API_KEY[currentApiKeyIndex];
+                const currentApiKey = GROQ_API_KEY[0];  // Use first key directly
                 console.log(`Attempt ${attempt + 1} with API key ${currentApiKeyIndex + 1}`);
                 
                 const response = await callSingleGroqAPI(currentApiKey, message, responseLanguage);
