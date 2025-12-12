@@ -1,4 +1,4 @@
-name: Deploy Static HTML
+name: Deploy with Guaranteed Injection
 
 on:
   push:
@@ -10,49 +10,70 @@ permissions:
   id-token: write
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     
     steps:
-      - name: 📥 Checkout repository
-        uses: actions/checkout@v4
-        
-      - name: 🔧 Inject API Key (Node.js Method)
+      - uses: actions/checkout@v4
+      
+      - name: 🔐 GUARANTEED API Key Injection
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: |
-          node -e "
-          const fs = require('fs');
-          let content = fs.readFileSync('index4.html', 'utf8');
+          echo "=== STARTING GUARANTEED INJECTION ==="
           
-          // Replace the placeholder using the exact format from your file
-          const updatedContent = content.replace('const GROQ_API_KEY = [\"__GROQ_API_KEY_PLACEHOLDER__\"];', 'const GROQ_API_KEY = [\"' + process.env.GROQ_API_KEY + '\"];');
+          # Method 1: Use Python for perfect replacement
+          python3 -c "
+          import re
           
-          fs.writeFileSync('index4.html', updatedContent);
-          console.log('✅ API Key placeholder replaced.');
+          with open('index4.html', 'r') as f:
+              content = f.read()
           
-          // Quick verification
-          if (content.includes(process.env.GROQ_API_KEY)) {
-            console.log('✅ Verification: Real key found in file.');
-          } else {
-            console.log('⚠️  Post-replacement check: Key not found in file string.');
-          }
+          key = '$GROQ_API_KEY'
+          
+          # Try multiple patterns
+          patterns = [
+              r'const GROQ_API_KEY = \\[\\"__GROQ_API_KEY_PLACEHOLDER__\\"\\];',
+              r'const GROQ_API_KEY = \\[\\'__GROQ_API_KEY_PLACEHOLDER__\\'\\];',
+              r'const GROQ_API_KEY = \\[\\"__GROQ_API_KEY_PLACEHOLDER__\\"\\]',
+              r'GROQ_API_KEY = \\[\\"__GROQ_API_KEY_PLACEHOLDER__\\"\\]',
+              r'\\[\\"__GROQ_API_KEY_PLACEHOLDER__\\"\\]'
+          ]
+          
+          for pattern in patterns:
+              if re.search(pattern, content):
+                  print(f'Found pattern: {pattern}')
+                  new_content = re.sub(pattern, f'const GROQ_API_KEY = [\\"{key}\\\"];', content)
+                  with open('index4.html', 'w') as f:
+                      f.write(new_content)
+                  print('✅ Replacement successful with Python')
+                  break
+          else:
+              print('❌ No pattern matched. Using brute force...')
+              # Brute force: Replace all occurrences
+              new_content = content.replace('__GROQ_API_KEY_PLACEHOLDER__', key)
+              with open('index4.html', 'w') as f:
+                  f.write(new_content)
+              print('✅ Brute force replacement done')
+          
+          # Verify
+          with open('index4.html', 'r') as f:
+              new_content = f.read()
+          
+          if key in new_content:
+              print('✅ VERIFIED: Key is in file')
+          else:
+              print('❌ VERIFICATION FAILED: Key not found')
+              exit(1)
           "
+          
+          echo "=== INJECTION COMPLETE ==="
       
-      - name: 📄 Create index.html
-        run: cp index4.html index.html
-      
-      - name: ⚙️ Setup GitHub Pages
-        uses: actions/configure-pages@v5
-      
-      - name: 📤 Upload artifact
-        uses: actions/upload-pages-artifact@v4
+      - run: cp index4.html index.html
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
         with:
           path: ./
-      
-      - name: 🚀 Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - uses: actions/deploy-pages@v4
