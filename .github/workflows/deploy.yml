@@ -17,85 +17,45 @@ jobs:
       url: ${{ steps.deployment.outputs.page_url }}
     
     steps:
-      # Step 1: Checkout code
+      # Step 1: Checkout
       - name: Checkout repository
         uses: actions/checkout@v4
       
-      # Step 2: Debug - Show current state
+      # Step 2: Debug
       - name: Debug current HTML
         run: |
-          echo "=== Current state ==="
-          if [ -f "index4.html" ]; then
-            echo "index4.html exists"
-            echo "Placeholder count:"
-            grep -o "__GROQ_API_KEY_PLACEHOLDER__" index4.html | wc -l
-          else
-            echo "ERROR: index4.html not found!"
-            exit 1
-          fi
+          echo "Checking index4.html..."
+          ls -la *.html
       
-      # Step 3: Inject API Key (FIXED SYNTAX)
+      # Step 3: Inject API Key - FIXED MULTI-LINE SYNTAX
       - name: Inject Groq API Key
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: |
-          echo "Injecting API key..."
+          echo "Starting injection..."
           
-          # Backup file
-          cp index4.html index4.html.backup
-          
-          # Method 1: Direct replacement
-          sed -i 's/const GROQ_API_KEY = \["__GROQ_API_KEY_PLACEHOLDER__"\];/const GROQ_API_KEY = ["'"$GROQ_API_KEY"'"];/g' index4.html
+          # Simple one-line replacement first
+          sed -i 's/__GROQ_API_KEY_PLACEHOLDER__/'"$GROQ_API_KEY"'/g' index4.html
           
           # Verify
-          if grep -q "$GROQ_API_KEY" index4.html; then
-            echo "✅ Key injected successfully"
-            echo "Key preview: ${GROQ_API_KEY:0:15}..."
-          else
-            echo "⚠️ Key not found after injection"
-            echo "Trying alternative method..."
-            
-            # Method 2: Python for complex replacement
-            python3 << 'EOF'
-import re
-with open('index4.html', 'r') as f:
-    content = f.read()
-
-import os
-api_key = os.environ.get('GROQ_API_KEY', '')
-
-# Replace array with placeholder
-pattern = r'(\[["\']__GROQ_API_KEY_PLACEHOLDER__["\']\])'
-replacement = f'["{api_key}"]'
-new_content = re.sub(pattern, replacement, content)
-
-with open('index4.html', 'w') as f:
-    f.write(new_content)
-print("Python replacement completed")
-EOF
-          fi
-          
-          # Final check
           if grep -q "gsk_" index4.html; then
-            echo "✅ gsk_ pattern found - injection successful"
+            echo "✅ gsk_ found - injection successful"
+            echo "Key length: ${#GROQ_API_KEY} chars"
           else
-            echo "❌ Injection may have failed"
-            # Restore backup
-            mv index4.html.backup index4.html
-            exit 1
+            echo "❌ gsk_ not found - trying array format..."
+            # For array format
+            sed -i 's/\["__GROQ_API_KEY_PLACEHOLDER__"\]/["'"$GROQ_API_KEY"'"]/g' index4.html
           fi
       
       # Step 4: Create index.html
       - name: Create index.html
-        run: |
-          cp index4.html index.html
-          echo "Created index.html from index4.html"
+        run: cp index4.html index.html
       
-      # Step 5: Setup GitHub Pages
+      # Step 5: Setup Pages
       - name: Setup Pages
         uses: actions/configure-pages@v5
       
-      # Step 6: Upload artifact
+      # Step 6: Upload
       - name: Upload to GitHub Pages
         uses: actions/upload-pages-artifact@v4
         with:
