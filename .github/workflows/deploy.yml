@@ -7,8 +7,44 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      
+      # Check if file exists first
+      - name: Check for index.html
+        run: |
+          if [ ! -f "index.html" ]; then
+            echo "Error: index.html not found!"
+            ls -la
+            exit 1
+          fi
+          
+      - name: Verify Placeholder
+        run: |
+          if ! grep -q "__GROQ_API_KEY_PLACEHOLDER__" index.html; then
+            echo "Warning: Placeholder not found in index.html"
+            echo "File contents (first 5 lines):"
+            head -5 index.html
+          fi
+          
       - name: Inject Key
-        run: sed -i 's|__GROQ_API_KEY_PLACEHOLDER__|${{ secrets.GROQ_API_KEY }}|g' index.html
+        run: |
+          # Backup original file
+          cp index.html index.html.backup
+          # Replace placeholder with actual key
+          sed -i 's|__GROQ_API_KEY_PLACEHOLDER__|${{ secrets.GROQ_API_KEY }}|g' index.html
+          echo "Key injection completed"
+          
+      - name: Verify Injection
+        run: |
+          if grep -q "__GROQ_API_KEY_PLACEHOLDER__" index.html; then
+            echo "Error: Placeholder still exists!"
+            exit 1
+          fi
+          if grep -q "${{ secrets.GROQ_API_KEY }}" index.html; then
+            echo "Success: API key injected"
+          else
+            echo "Warning: API key pattern not found in file"
+          fi
+          
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
