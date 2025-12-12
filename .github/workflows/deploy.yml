@@ -1,0 +1,76 @@
+name: Secure Deploy
+
+on:
+  push:
+    branches:
+      - main  # या master
+      - gh-pages
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+    
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0  # सभी history fetch करने के लिए
+        
+      - name: Inject API Key Securely
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+        run: |
+          echo "Injecting API key into HTML files..."
+          
+          # Check if API key exists
+          if [ -z "$GROQ_API_KEY" ]; then
+            echo "❌ Error: GROQ_API_KEY secret is not set"
+            echo "Please add GROQ_API_KEY to your repository secrets"
+            exit 1
+          fi
+          
+          # Find and replace in all HTML files
+          find . -name "*.html" -type f | while read file; do
+            if grep -q "__GROQ_API_KEY_PLACEHOLDER__" "$file"; then
+              echo "Updating API key in: $file"
+              # Create temporary file and replace
+              temp_file=$(mktemp)
+              sed "s|__GROQ_API_KEY_PLACEHOLDER__|${GROQ_API_KEY}|g" "$file" > "$temp_file"
+              
+              # Check if replacement was successful
+              if grep -q "$GROQ_API_KEY" "$temp_file"; then
+                mv "$temp_file" "$file"
+                echo "✅ API key injected successfully in $file"
+              else
+                echo "⚠️  Warning: API key might not have been replaced in $file"
+                rm "$temp_file"
+              fi
+            fi
+          done
+          
+          # Also check for JS files if needed
+          find . -name "*.js" -type f | while read file; do
+            if grep -q "__GROQ_API_KEY_PLACEHOLDER__" "$file"; then
+              echo "Updating API key in JS file: $file"
+              sed -i "s|__GROQ_API_KEY_PLACEHOLDER__|${GROQ_API_KEY}|g" "$file"
+            fi
+          done
+      
+      - name: Setup Pages
+        uses: actions/configure-pages@v3
+      
+      - name: Upload Artifact
+        uses: actions/upload-pages-artifact@v2
+        with:
+          path: ./  # Static HTML files current directory में हैं
+      
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v2
