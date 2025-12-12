@@ -1,4 +1,4 @@
-name: Secure Deploy with API Key
+name: Secure Deploy
 on: [push]
 
 permissions:
@@ -8,43 +8,19 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v3
+      - uses: actions/checkout@v3
       
-      - name: Verify index4.html exists
-        run: |
-          if [ ! -f "index4.html" ]; then
-            echo "❌ ERROR: index4.html not found!"
-            echo "Files in directory:"
-            ls -la
-            exit 1
-          else
-            echo "✅ index4.html found"
-          fi
+      - name: Create deploy copy
+        run: cp index4.html index-deploy.html
       
-      - name: Check if placeholder exists
-        run: |
-          if grep -q "__GROQ_API_KEY_PLACEHOLDER__" index4.html; then
-            echo "✅ Placeholder found in index4.html"
-          else
-            echo "⚠️  Warning: __GROQ_API_KEY_PLACEHOLDER__ not found in index4.html"
-            echo "The API key injection will not work."
-            echo "Make sure your HTML has: __GROQ_API_KEY_PLACEHOLDER__"
-          fi
+      - name: Inject Key
+        run: sed -i "s|__GROQ_API_KEY_PLACEHOLDER__|${{ secrets.GROQ_API_KEY }}|g" index-deploy.html
       
-      - name: Inject API Key
-        run: |
-          # Use sed to replace the placeholder with the actual API key
-          sed -i "s|__GROQ_API_KEY_PLACEHOLDER__|${{ secrets.GROQ_API_KEY }}|g" index4.html
-          echo "✅ API key injected into index4.html"
+      - name: Rename for GitHub Pages (optional)
+        run: mv index-deploy.html index.html
       
-      - name: Create .nojekyll file (for SPA support)
-        run: touch .nojekyll
-      
-      - name: Deploy to GitHub Pages
+      - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: .
-          user_name: 'github-actions[bot]'
-          user_email: 'github-actions[bot]@users.noreply.github.com'
