@@ -1,81 +1,65 @@
-name: Secure Deploy
+name: Deploy to GitHub Pages
+
 on:
   push:
-    branches: [ main, master ]
-    paths:  # Optional: only deploy when certain files change
-      - 'index4.html'
-      - '**.js'
-      - '**.css'
-
-# Global permissions (optional but helpful)
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+    branches: [ main ]
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
     
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4  # Updated to v4
-      with:
-        fetch-depth: 0
+      uses: actions/checkout@v4
     
     - name: Setup Pages
       uses: actions/configure-pages@v4
     
-    - name: Verify and Prepare Files
+    - name: Verify files
       run: |
-        # Check if file exists
-        if [ ! -f "index4.html" ]; then
-          echo "Creating index.html from index4.html if needed..."
-          # If you want to rename or use a different file
-          cp index4.html index.html 2>/dev/null || true
-        fi
-        
-        # Create a .nojekyll file to bypass Jekyll processing
-        touch .nojekyll
-        
-        # Verify directory structure
-        echo "Current directory contents:"
+        echo "Current directory:"
+        pwd
+        echo "Files in directory:"
         ls -la
-    
-    - name: Inject API Key (if needed)
-      if: ${{ secrets.GROQ_API_KEY != '' }}
-      run: |
-        # Backup original file
-        cp index4.html index4.html.backup
         
-        # Replace placeholder securely
+        # Check for index4.html
         if [ -f "index4.html" ]; then
-          # Use @ as delimiter to avoid conflicts with slashes in API key
-          sed -i 's@__GROQ_API_KEY_PLACEHOLDER__@'"${{ secrets.GROQ_API_KEY }}"'@g' index4.html
-          echo "API key injected into index4.html"
+          echo "Found index4.html"
+          # Create a backup before modifying
+          cp index4.html index4.html.backup
+        else
+          echo "index4.html not found, creating a placeholder"
+          echo "<html><body><h1>Placeholder</h1></body></html>" > index4.html
         fi
-        
-        # Also update index.html if it exists
-        if [ -f "index.html" ]; then
-          sed -i 's@__GROQ_API_KEY_PLACEHOLDER__@'"${{ secrets.GROQ_API_KEY }}"'@g' index.html
-          echo "API key injected into index.html"
+    
+    - name: Inject API Key
+      if: ${{ secrets.GROQ_API_KEY }}
+      run: |
+        if [ -f "index4.html" ]; then
+          # Use a safer method to inject the API key
+          API_KEY="${{ secrets.GROQ_API_KEY }}"
+          # Escape special characters for sed
+          ESCAPED_KEY=$(printf '%s\n' "$API_KEY" | sed 's/[&/\]/\\&/g')
+          sed -i "s|__GROQ_API_KEY_PLACEHOLDER__|${ESCAPED_KEY}|g" index4.html
+          echo "API key injected"
         fi
+    
+    - name: Build with Jekyll (if needed)
+      if: false  # Set to true if using Jekyll
+      uses: actions/jekyll-build-pages@v1
+      with:
+        source: ./
+        destination: ./_site
+    
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v3
+      with:
+        path: .  # Or ./_site if using Jekyll
     
     - name: Deploy to GitHub Pages
-      uses: peaceiris/actions-gh-pages@v3
-      with:
-        github_token: ${{ secrets.GITHUB_TOKEN }}
-        publish_dir: .  # Current directory
-        publish_branch: gh-pages  # Target branch
-        force_orphan: true  # Clean history - prevents conflicts
-        keep_files: false  # Don't keep old files
-        user_name: 'github-actions[bot]'
-        user_email: 'github-actions[bot]@users.noreply.github.com'
-    
-    - name: Verify Deployment
-      run: |
-        echo "Deployment completed successfully!"
-        echo "Your site will be available at: https://<your-username>.github.io/<repo-name>/"
+      uses: actions/deploy-pages@v4
+      id: deployment
