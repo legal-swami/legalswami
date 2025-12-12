@@ -12,11 +12,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
       
-      # 2. Check if index.html exists
+      # 2. Check if index4.html exists
       - name: Check HTML file
         run: |
           if [ ! -f "index4.html" ]; then
-            echo "ERROR: No index.html file found!"
+            echo "ERROR: No index4.html file found!"
             echo "Creating a basic one..."
             echo '<!DOCTYPE html>
             <html>
@@ -26,21 +26,21 @@ jobs:
             <body>
               <h1>Hello World!</h1>
             </body>
-            </html>' > index.html
+            </html>' > index4.html
           else
-            echo "✅ index.html found"
+            echo "✅ index4.html found"
           fi
       
       # 3. Optional: Inject API key if you have a placeholder
       - name: Inject API Key (Optional)
-        if: ${{ secrets.GROQ_API_KEY }}
+        if: ${{ secrets.GROQ_API_KEY != '' }}
         run: |
-          if grep -q "__GROQ_API_KEY_PLACEHOLDER__" index.html; then
+          if grep -q "__GROQ_API_KEY_PLACEHOLDER__" index4.html; then
             echo "Injecting API key..."
             sed -i "s|__GROQ_API_KEY_PLACEHOLDER__|${{ secrets.GROQ_API_KEY }}|g" index4.html
             echo "✅ API key injected"
           else
-            echo "No placeholder found in index.html"
+            echo "No placeholder found in index4.html"
           fi
       
       # 4. Create .nojekyll file
