@@ -1,4 +1,4 @@
-name: Simple Deploy
+name: Secure Deploy
 on:
   push:
     branches: [ main, master ]
@@ -6,37 +6,104 @@ on:
 permissions:
   contents: write
   pages: write
+  id-token: write
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
     steps:
+      # Step 1: Checkout code
       - name: Checkout
         uses: actions/checkout@v4
       
-      - name: Create basic site if missing
+      # Step 2: Setup Node.js (if needed for your project)
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+          cache: 'npm'
+      
+      # Step 3: Debug - List files to see what's in the repository
+      - name: Debug - List files
         run: |
-          # If no index.html exists, create one
-          if [ ! -f "index.html" ]; then
-            echo '<!DOCTYPE html>
-            <html>
-            <head>
-              <title>My Site</title>
-              <script>
-                const API_KEY = "${{ secrets.GROQ_API_KEY || 'DEMO_KEY' }}";
-                console.log("API Key configured");
-              </script>
-            </head>
-            <body>
-              <h1>Site Deployed Successfully!</h1>
-              <p>Deployed via GitHub Actions</p>
-            </body>
-            </html>' > index.html
+          echo "📁 Current directory structure:"
+          pwd
+          ls -la
+          echo "📄 Checking for index.html:"
+          if [ -f "index.html" ]; then
+            echo "✅ index.html exists"
+            echo "First few lines of index.html:"
+            head -10 index.html
+          else
+            echo "❌ index.html not found!"
+            echo "Creating a simple index.html for testing..."
+            echo '<!DOCTYPE html><html><head><title>Test Page</title></head><body><h1>Hello World</h1></body></html>' > index.html
           fi
       
-      - name: Deploy
-        uses: peaceiris/actions-gh-pages@v3
+      # Step 4: Check if GROQ_API_KEY secret exists
+      - name: Check Secrets
+        run: |
+          if [ -z "${{ secrets.GROQ_API_KEY }}" ]; then
+            echo "⚠️  GROQ_API_KEY secret is empty or not set"
+            echo "Using placeholder value for testing"
+            echo "GROQ_API_KEY_PLACEHOLDER=demo_key_12345" >> $GITHUB_ENV
+          else
+            echo "✅ GROQ_API_KEY secret is available"
+            echo "GROQ_API_KEY_PLACEHOLDER=${{ secrets.GROQ_API_KEY }}" >> $GITHUB_ENV
+          fi
+      
+      # Step 5: Replace placeholder in files (safer approach)
+      - name: Inject API Key
+        run: |
+          echo "🔧 Injecting API key..."
+          
+          # Find all HTML files
+          find . -name "*.html" -type f | while read file; do
+            echo "Processing: $file"
+            if grep -q "__GROQ_API_KEY_PLACEHOLDER__" "$file"; then
+              echo "  Found placeholder in $file"
+              # Create a backup
+              cp "$file" "$file.bak"
+              # Replace using env variable
+              sed -i "s|__GROQ_API_KEY_PLACEHOLDER__|${GROQ_API_KEY_PLACEHOLDER}|g" "$file"
+              echo "  ✅ Placeholder replaced"
+            fi
+          done
+          
+          # Also check for common JavaScript files
+          find . -name "*.js" -type f | while read file; do
+            if grep -q "__GROQ_API_KEY_PLACEHOLDER__" "$file"; then
+              echo "Processing: $file"
+              cp "$file" "$file.bak"
+              sed -i "s|__GROQ_API_KEY_PLACEHOLDER__|${GROQ_API_KEY_PLACEHOLDER}|g" "$file"
+              echo "  ✅ Placeholder replaced"
+            fi
+          done
+      
+      # Step 6: Verify the injection worked
+      - name: Verify Injection
+        run: |
+          echo "🔍 Verifying injection..."
+          if find . -name "*.html" -o -name "*.js" | xargs grep -l "__GROQ_API_KEY_PLACEHOLDER__" 2>/dev/null; then
+            echo "❌ Error: Some placeholders were not replaced!"
+            exit 1
+          else
+            echo "✅ All placeholders replaced successfully"
+          fi
+      
+      # Step 7: Deploy to GitHub Pages (using official action)
+      - name: Setup Pages
+        uses: actions/configure-pages@v4
+      
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: .
-          force_orphan: true  # Clean deployment
+          path: '.'
+      
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
