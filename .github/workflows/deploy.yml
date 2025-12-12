@@ -1,125 +1,86 @@
-name: Deploy Static HTML with API Key
+name: Deploy with Array API Key Fix
 
 on:
   push:
     branches: [main]
 
-# IMPORTANT: These permissions are required for GitHub Pages
 permissions:
   contents: write
   pages: write
   id-token: write
 
 jobs:
-  # Main deployment job
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
-    
-    # CRITICAL: This environment declaration was missing
     environment:
       name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
     
     steps:
-      # Step 1: Checkout code
-      - name: 📥 Checkout repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          
-      # Step 2: Debug - Show files
-      - name: 📁 List repository files
+      - uses: actions/checkout@v4
+      
+      - name: Debug - Show Current HTML
         run: |
-          echo "Files in repository:"
-          ls -la
+          echo "=== Current GROQ_API_KEY line in index4.html ==="
+          grep -n "GROQ_API_KEY" index4.html
           echo ""
-          echo "HTML files:"
-          ls -la *.html || echo "No HTML files"
-          
-      # Step 3: Verify index4.html exists
-      - name: 🔍 Check index4.html
-        run: |
-          if [ ! -f "index4.html" ]; then
-            echo "❌ ERROR: index4.html not found!"
-            echo "Available files:"
-            find . -type f -name "*.html" | head -20
-            exit 1
-          else
-            echo "✅ Found index4.html"
-            echo "File size: $(wc -l < index4.html) lines"
-          fi
-          
-      # Step 4: Inject API Key into index4.html
-      - name: 🔑 Inject Groq API Key
+          echo "=== Exact content ==="
+          grep "GROQ_API_KEY" index4.html | head -2
+      
+      - name: Fix and Inject API Key
         env:
           GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: |
-          echo "Starting API key injection..."
+          echo "=== API KEY INJECTION ==="
+          echo "Key from secrets (first 10 chars): ${GROQ_API_KEY:0:10}..."
           
-          # Check if secret is set
-          if [ -z "$GROQ_API_KEY" ]; then
-            echo "❌ ERROR: GROQ_API_KEY secret is empty!"
-            echo "Please add GROQ_API_KEY to repository secrets."
-            exit 1
-          fi
-          
-          echo "✅ API key is set (length: ${#GROQ_API_KEY} chars)"
-          echo "Key preview: gsk_${GROQ_API_KEY:3:6}..."
-          
-          # Backup original
-          cp index4.html index4.html.backup
-          
-          # Check if placeholder exists
-          if ! grep -q "__GROQ_API_KEY_PLACEHOLDER__" index4.html; then
-            echo "⚠️ WARNING: Placeholder '__GROQ_API_KEY_PLACEHOLDER__' not found in index4.html"
-            echo "Checking for other common placeholders..."
-            grep -i "placeholder\|api.*key\|groq" index4.html | head -5 || echo "No API key patterns found"
-          fi
-          
-          # Inject the key
-          echo "Replacing placeholder with API key..."
-          sed -i "s|__GROQ_API_KEY_PLACEHOLDER__|${GROQ_API_KEY}|g" index4.html
-          
-          # Verify injection
-          if grep -q "$GROQ_API_KEY" index4.html; then
-            echo "✅ SUCCESS: API key injected into index4.html"
-            echo "Verification: Key found in file"
-            
-            # Show a snippet (hide full key)
-            INJECTED_LINE=$(grep -n "$GROQ_API_KEY" index4.html | head -1)
-            LINE_NUM=$(echo "$INJECTED_LINE" | cut -d: -f1)
-            echo "Key injected at line $LINE_NUM"
-            echo "Context: $(grep -B1 -A1 "$GROQ_API_KEY" index4.html | head -3)"
+          # Method 1: Direct array replacement
+          echo "Method 1: Replacing in array format..."
+          if grep -q '\["__GROQ_API_KEY_PLACEHOLDER__"\]' index4.html; then
+            echo "Found array pattern with double quotes"
+            sed -i 's|\["__GROQ_API_KEY_PLACEHOLDER__"\]|["'"${GROQ_API_KEY}"'"]|g' index4.html
+          elif grep -q "\\['__GROQ_API_KEY_PLACEHOLDER__'\\]" index4.html; then
+            echo "Found array pattern with single quotes"
+            sed -i "s|\\['__GROQ_API_KEY_PLACEHOLDER__'\\]|\\['${GROQ_API_KEY}'\\]|g" index4.html
+          elif grep -q '=\s*\[.*__GROQ_API_KEY_PLACEHOLDER__.*\]' index4.html; then
+            echo "Found generic array pattern"
+            # Use Perl for complex replacement
+            perl -i -pe 's/(=\s*\[)[^\]]*__GROQ_API_KEY_PLACEHOLDER__[^\]]*(\])/$1"'"${GROQ_API_KEY}"'"$2/g' index4.html
           else
-            echo "❌ ERROR: API key not found in file after injection"
-            echo "Restoring original file..."
-            mv index4.html.backup index4.html
-            exit 1
+            echo "❌ No array pattern found"
           fi
           
-          # Cleanup backup
-          rm index4.html.backup
-          
-      # Step 5: Create index.html for GitHub Pages
-      - name: 📝 Create index.html
-        run: |
-          echo "Creating index.html from index4.html..."
-          cp index4.html index.html
-          echo "✅ Created index.html"
-          echo "Both files now exist:"
-          ls -la index*.html
-          
-      # Step 6: Configure GitHub Pages
-      - name: ⚙️ Setup GitHub Pages
+          # Verify
+          echo ""
+          echo "=== VERIFICATION ==="
+          if grep -q "\"${GROQ_API_KEY}\"" index4.html || grep -q "'${GROQ_API_KEY}'" index4.html; then
+            echo "✅ SUCCESS: Key injected!"
+            echo "Updated line:"
+            grep "GROQ_API_KEY" index4.html
+          else
+            echo "❌ FAILED: Key not found after injection"
+            echo "Trying emergency fix..."
+            
+            # Emergency: Convert array to string
+            sed -i 's/const GROQ_API_KEY = \["__GROQ_API_KEY_PLACEHOLDER__"\];/const GROQ_API_KEY = "'"${GROQ_API_KEY}"'";/g' index4.html
+            
+            if grep -q "${GROQ_API_KEY}" index4.html; then
+              echo "✅ Emergency fix worked (converted to string)"
+            else
+              echo "❌ All methods failed"
+              exit 1
+            fi
+          fi
+      
+      - name: Create index.html
+        run: cp index4.html index.html
+      
+      - name: Setup Pages
         uses: actions/configure-pages@v5
-          
-      # Step 7: Upload artifact
-      - name: 📤 Upload to GitHub Pages
+      
+      - name: Upload Artifact
         uses: actions/upload-pages-artifact@v4
         with:
           path: ./
-          
-      # Step 8: Deploy to GitHub Pages
-      - name: 🚀 Deploy to GitHub Pages
-        id: deployment
+      
+      - name: Deploy
         uses: actions/deploy-pages@v4
