@@ -1,4 +1,4 @@
-name: Deploy Secure Static Site
+name: Deploy Static HTML
 
 on:
   push:
@@ -10,98 +10,41 @@ permissions:
   id-token: write
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
     environment:
       name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     
     steps:
-      # 1. Checkout code
       - name: 📥 Checkout repository
         uses: actions/checkout@v4
-      
-      # 2. Remove API key from HTML (SECURITY FIX)
-      - name: 🛡️ Remove API Key from HTML
+        
+      - name: 🔧 Inject API Key (Node.js Method)
+        env:
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
         run: |
-          echo "Removing API key placeholder from HTML..."
+          node -e "
+          const fs = require('fs');
+          let content = fs.readFileSync('index4.html', 'utf8');
           
-          # Replace with empty array - users will need to add their own key
-          sed -i 's/const GROQ_API_KEY = \["__GROQ_API_KEY_PLACEHOLDER__"\];/const GROQ_API_KEY = []; \/\/ Add your Groq API key here/g' index4.html
+          // Replace the placeholder using the exact format from your file
+          const updatedContent = content.replace('const GROQ_API_KEY = [\"__GROQ_API_KEY_PLACEHOLDER__\"];', 'const GROQ_API_KEY = [\"' + process.env.GROQ_API_KEY + '\"];');
           
-          # Add user instructions
-          echo "
-          <!-- 
-          INSTRUCTIONS FOR USERS:
-          1. Get API key from: https://console.groq.com
-          2. Add to line above: const GROQ_API_KEY = ['your_key_here'];
-          3. Save and refresh page
-          -->" >> index4.html
+          fs.writeFileSync('index4.html', updatedContent);
+          console.log('✅ API Key placeholder replaced.');
           
-          echo "✅ API key removed from source code"
+          // Quick verification
+          if (content.includes(process.env.GROQ_API_KEY)) {
+            console.log('✅ Verification: Real key found in file.');
+          } else {
+            console.log('⚠️  Post-replacement check: Key not found in file string.');
+          }
+          "
       
-      # 3. Create instruction page
-      - name: 📝 Create setup instructions
-        run: |
-          cat > setup-instructions.html << 'EOF'
-          <!DOCTYPE html>
-          <html>
-          <head>
-              <title>Setup Instructions</title>
-              <style>
-                  body { font-family: Arial, sans-serif; max-width: 800px; margin: 40px auto; padding: 20px; }
-                  .card { background: #f5f5f5; padding: 20px; border-radius: 10px; margin: 20px 0; }
-                  code { background: #e0e0e0; padding: 2px 6px; border-radius: 4px; }
-                  .step { margin: 15px 0; }
-              </style>
-          </head>
-          <body>
-              <h1>🚀 Setup Your AI Chat</h1>
-              
-              <div class="card">
-                  <h2>📋 Step-by-Step Guide:</h2>
-                  
-                  <div class="step">
-                      <h3>1. Get Groq API Key</h3>
-                      <p>Visit: <a href="https://console.groq.com" target="_blank">console.groq.com</a></p>
-                      <p>Sign up and create a new API key</p>
-                  </div>
-                  
-                  <div class="step">
-                      <h3>2. Edit index4.html</h3>
-                      <p>Open <code>index4.html</code> in a text editor</p>
-                      <p>Find this line:</p>
-                      <code>const GROQ_API_KEY = []; // Add your Groq API key here</code>
-                      <p>Change it to:</p>
-                      <code>const GROQ_API_KEY = ['your_api_key_here'];</code>
-                  </div>
-                  
-                  <div class="step">
-                      <h3>3. Run locally or deploy</h3>
-                      <p>Save the file and open in browser</p>
-                      <p>Or deploy to GitHub Pages/Vercel/Netlify</p>
-                  </div>
-                  
-                  <div class="step">
-                      <h3>⚠️ Security Note</h3>
-                      <p>Never commit API keys to public repositories</p>
-                      <p>For production, use backend proxy or environment variables</p>
-                  </div>
-              </div>
-              
-              <p><a href="index.html">Back to Chat</a></p>
-          </body>
-          </html>
-          EOF
-          
-          echo "✅ Created setup instructions"
-      
-      # 4. Create index.html
       - name: 📄 Create index.html
-        run: |
-          cp index4.html index.html
-          echo "Created index.html"
+        run: cp index4.html index.html
       
-      # 5. Setup and deploy
       - name: ⚙️ Setup GitHub Pages
         uses: actions/configure-pages@v5
       
@@ -111,4 +54,5 @@ jobs:
           path: ./
       
       - name: 🚀 Deploy to GitHub Pages
+        id: deployment
         uses: actions/deploy-pages@v4
