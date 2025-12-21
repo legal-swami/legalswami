@@ -16,4 +16,4 @@ jobs:
           echo "Project structure:"
           find . -type f -name "*.java" | head -10
           echo "Backend folder exists:"
-          ls -la legalswami-backend/
+          ls -la backend/
