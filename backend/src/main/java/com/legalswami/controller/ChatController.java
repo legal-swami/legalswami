@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/chat")
@@ -20,11 +21,35 @@ public class ChatController {
     @PostMapping("/send")
     public ResponseEntity<ChatResponse> sendMessage(
             @Valid @RequestBody ChatRequest request,
-            @RequestHeader(value = "X-User-Id", required = false, defaultValue = "guest") String userId) {
+            @RequestHeader Map<String, String> headers) {  // Get all headers
+        
+        // Extract user ID from headers (case-insensitive)
+        String userId = "guest";
+        if (headers.containsKey("x-user-id")) {
+            userId = headers.get("x-user-id");
+        } else if (headers.containsKey("X-User-Id")) {
+            userId = headers.get("X-User-Id");
+        }
         
         ChatResponse response = chatService.processMessage(request, userId);
         return ResponseEntity.ok(response);
     }
+    
+    // Or keep the original but add a helper method
+    /*
+    @PostMapping("/send")
+    public ResponseEntity<ChatResponse> sendMessage(
+            @Valid @RequestBody ChatRequest request,
+            @RequestHeader(value = "X-User-Id", required = false) String userId) {
+        
+        if (userId == null) {
+            userId = "guest";
+        }
+        
+        ChatResponse response = chatService.processMessage(request, userId);
+        return ResponseEntity.ok(response);
+    }
+    */
     
     @GetMapping("/history")
     public ResponseEntity<List<ChatResponse>> getChatHistory(
