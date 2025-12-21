@@ -8,10 +8,13 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
       
-      - name: List Files
+      - name: List Files (Linux compatible)
         run: |
           echo "Project structure:"
-          dir /s
+          find . -type f | head -20
+          echo ""
+          echo "Frontend folder:"
+          ls -la legalswami-frontend/ || echo "Frontend folder not found"
