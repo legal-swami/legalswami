@@ -14,9 +14,11 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .csrf(csrf -> csrf.disable())
-            .authorizeHttpRequests(authz -> authz
-                .anyRequest().permitAll()  // Allow ALL requests for now
-            );
+            .authorizeHttpRequests(auth -> auth
+                .anyRequest().permitAll()  // ALLOW EVERYTHING WITHOUT LOGIN
+            )
+            .formLogin(form -> form.disable())  // DISABLE DEFAULT LOGIN PAGE
+            .httpBasic(basic -> basic.disable()); // DISABLE BASIC AUTH
         
         return http.build();
     }
