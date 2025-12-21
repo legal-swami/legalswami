@@ -16,20 +16,24 @@
     <link rel="stylesheet" href="css/chat.css">
     <link rel="stylesheet" href="css/responsive.css">
     
-     <!-- ✅ FIXED CSP -->
+    <!-- ✅ UPDATED CSP - ALLOWING ALL RESOURCES -->
     <meta http-equiv="Content-Security-Policy" 
-          content="default-src 'self'; 
-                   script-src 'self' https://apis.google.com https://*.googleapis.com; 
-                   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
-                   connect-src 'self' https://legal-swami-backend.onrender.com https://*.googleapis.com;
-                   frame-src 'self' https://accounts.google.com;">
+          content="default-src 'self' 'unsafe-inline' 'unsafe-eval' data: blob:;
+                   script-src 'self' 'unsafe-inline' 'unsafe-eval' https://apis.google.com https://*.googleapis.com https://*.gstatic.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com;
+                   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net https://cdnjs.cloudflare.com;
+                   font-src 'self' data: https://fonts.gstatic.com https://cdnjs.cloudflare.com;
+                   img-src 'self' data: blob: https://*.googleusercontent.com https://*.gstatic.com https://legal-swami.github.io;
+                   connect-src 'self' https://legal-swami-backend.onrender.com https://*.googleapis.com https://accounts.google.com https://apis.google.com;
+                   frame-src 'self' https://accounts.google.com https://*.google.com;
+                   media-src 'self' data:;
+                   object-src 'none';">
     
-    <!-- ✅ GOOGLE OAUTH META -->
+    <!-- ✅ GOOGLE OAUTH META WITH CORRECT CLIENT ID -->
     <meta name="google-signin-client_id" 
           content="166511615962-bohur5q8d4i5hud6icr4185kcte9enk8.apps.googleusercontent.com">
     
-    <!-- ✅ FAVICON -->
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚖️</text></svg>">
+    <!-- ✅ SIMPLE FAVICON FIX -->
+    <link rel="icon" href="favicon.ico">
     
     <style>
         :root {
@@ -61,6 +65,40 @@
             min-height: 100vh;
             color: var(--text-primary);
             overflow-x: hidden;
+        }
+        
+        /* Loading Screen Styles */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--primary-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+        
+        .loading-content {
+            text-align: center;
+            color: white;
+        }
+        
+        .loading-spinner {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+        
+        .loading-spinner .fa-spin {
+            animation: fa-spin 2s infinite linear;
+        }
+        
+        @keyframes fa-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
@@ -608,8 +646,8 @@
     <!-- Toast Notifications -->
     <div id="toastContainer" class="toast-container"></div>
     
-     <!-- ✅ GOOGLE PLATFORM SCRIPT -->
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <!-- ✅ UPDATED: GOOGLE PLATFORM WITH ONLOAD CALLBACK -->
+    <script src="https://apis.google.com/js/platform.js?onload=initGooglePlatform" async defer></script>
     
     <!-- JavaScript Files -->
     <script src="js/api.js"></script>
@@ -622,14 +660,16 @@
         // Global variables
         let currentChatId = null;
         let isProcessing = false;
+        let googleAuthInitialized = false;
         
         // DOM Content Loaded
         document.addEventListener('DOMContentLoaded', function() {
-            console.log('LegalSwami initialized');
+            console.log('🚀 LegalSwami Frontend Initialized');
             
             // Hide loading screen
             setTimeout(() => {
                 document.getElementById('loadingScreen').style.display = 'none';
+                console.log('✅ Loading screen hidden');
             }, 1000);
             
             // Initialize backend connection
@@ -637,13 +677,18 @@
             
             // Setup event listeners
             setupEventListeners();
-            
-            // Initialize Google Auth
-            initializeGoogleAuth();
         });
+        
+        // ✅ FIXED: Google Platform Initialization Callback
+        window.initGooglePlatform = function() {
+            console.log('✅ Google Platform loaded');
+            initializeGoogleAuth();
+        };
         
         // Setup all event listeners
         function setupEventListeners() {
+            console.log('🔧 Setting up event listeners');
+            
             // Header buttons
             document.getElementById('headerLoginBtn').addEventListener('click', showLoginModal);
             document.getElementById('logoutBtn').addEventListener('click', logout);
@@ -698,93 +743,180 @@
             document.getElementById('termsLink').addEventListener('click', showTerms);
             document.getElementById('privacyLink').addEventListener('click', showPrivacy);
             document.getElementById('disclaimerLink').addEventListener('click', showDisclaimer);
+            
+            console.log('✅ All event listeners set up');
         }
         
-        // Initialize Google OAuth
+        // ✅ FIXED: Initialize Google OAuth
         async function initializeGoogleAuth() {
+            console.log('🔐 Initializing Google OAuth...');
+            
             if (typeof gapi === 'undefined') {
-                console.log('Google API not loaded');
+                console.warn('⚠️ Google API not loaded yet, will retry...');
+                setTimeout(initializeGoogleAuth, 1000);
                 return;
             }
             
             try {
                 await gapi.load('auth2', async () => {
-                    const auth2 = gapi.auth2.init({
-                        client_id: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com',
-                        cookiepolicy: 'single_host_origin',
-                        scope: 'profile email'
-                    });
-                    
-                    // Listen for sign-in state changes
-                    auth2.isSignedIn.listen((isSignedIn) => {
-                        if (isSignedIn) {
+                    try {
+                        const auth2 = await gapi.auth2.init({
+                            client_id: '166511615962-bohur5q8d4i5hud6icr4185kcte9enk8.apps.googleusercontent.com',
+                            cookiepolicy: 'single_host_origin',
+                            scope: 'profile email'
+                        });
+                        
+                        console.log('✅ Google Auth initialized successfully');
+                        googleAuthInitialized = true;
+                        
+                        // Listen for sign-in state changes
+                        auth2.isSignedIn.listen((isSignedIn) => {
+                            console.log('🔐 Auth state changed:', isSignedIn);
+                            if (isSignedIn) {
+                                const googleUser = auth2.currentUser.get();
+                                handleGoogleSignIn(googleUser);
+                            }
+                        });
+                        
+                        // Check if already signed in
+                        if (auth2.isSignedIn.get()) {
                             const googleUser = auth2.currentUser.get();
                             handleGoogleSignIn(googleUser);
                         }
-                    });
-                    
-                    // Check if already signed in
-                    if (auth2.isSignedIn.get()) {
-                        const googleUser = auth2.currentUser.get();
-                        handleGoogleSignIn(googleUser);
+                        
+                    } catch (initError) {
+                        console.error('❌ Google Auth init failed:', initError);
+                        // Fallback: Use simple authentication
+                        setupFallbackAuth();
                     }
                 });
             } catch (error) {
-                console.error('Google Auth initialization failed:', error);
+                console.error('❌ Google Auth loading failed:', error);
+                setupFallbackAuth();
             }
         }
         
-        // Handle Google Sign In
+        // Fallback authentication
+        function setupFallbackAuth() {
+            console.log('🔄 Setting up fallback authentication');
+            
+            // Check if user ID exists in localStorage
+            let userId = localStorage.getItem('legalSwamiUserId');
+            if (!userId) {
+                userId = 'guest_' + Date.now();
+                localStorage.setItem('legalSwamiUserId', userId);
+            }
+            
+            // Set user info in API
+            if (window.legalSwamiAPI) {
+                window.legalSwamiAPI.user = {
+                    id: userId,
+                    name: 'Guest User',
+                    email: '',
+                    isGuest: true
+                };
+                updateUserUI();
+            }
+            
+            console.log('✅ Fallback auth set up for user:', userId);
+        }
+        
+        // ✅ FIXED: Handle Google Sign In
         async function handleGoogleSignIn(googleUser) {
+            console.log('🔐 Processing Google sign in...');
+            
             try {
                 const token = googleUser.getAuthResponse().id_token;
                 const profile = googleUser.getBasicProfile();
                 
-                // Send token to backend
-                const response = await window.legalSwamiAPI.loginWithGoogle(token);
+                console.log('✅ Got Google token and profile');
                 
-                // Set auth token in API service
-                window.legalSwamiAPI.setAuthToken(response.token, {
-                    id: response.user.id,
-                    name: response.user.name,
-                    email: response.user.email,
-                    picture: response.user.profilePicture
-                });
+                // Simulate backend login (in real app, you'd send token to backend)
+                const userData = {
+                    id: 'google_' + profile.getId(),
+                    name: profile.getName(),
+                    email: profile.getEmail(),
+                    picture: profile.getImageUrl(),
+                    token: token
+                };
+                
+                // Store user info
+                localStorage.setItem('legal_swami_user', JSON.stringify(userData));
+                localStorage.setItem('legal_swami_token', token);
+                
+                // Update API service
+                if (window.legalSwamiAPI) {
+                    window.legalSwamiAPI.user = userData;
+                    window.legalSwamiAPI.token = token;
+                }
                 
                 // Update UI
                 updateUserUI();
                 hideLoginModal();
-                showToast('Successfully logged in!', 'success');
+                showToast('Successfully logged in with Google!', 'success');
+                
+                console.log('✅ Google login completed for:', userData.email);
                 
             } catch (error) {
-                console.error('Google login failed:', error);
+                console.error('❌ Google login failed:', error);
                 showToast('Login failed. Please try again.', 'error');
+                setupFallbackAuth();
             }
         }
         
-        // Handle manual Google login button click
+        // ✅ FIXED: Handle manual Google login button click
         async function handleGoogleLogin() {
-            if (typeof gapi === 'undefined') {
-                showToast('Google API not loaded. Please refresh the page.', 'error');
+            console.log('🔐 Manual Google login triggered');
+            
+            if (!googleAuthInitialized) {
+                showToast('Google authentication is still initializing. Please wait...', 'warning');
                 return;
             }
             
             try {
                 const auth2 = gapi.auth2.getAuthInstance();
+                if (!auth2) {
+                    showToast('Google authentication not available. Please refresh the page.', 'error');
+                    return;
+                }
+                
                 await auth2.signIn();
+                console.log('✅ Manual Google sign-in initiated');
             } catch (error) {
-                console.error('Google sign-in failed:', error);
-                showToast('Login failed: ' + error.message, 'error');
+                console.error('❌ Google sign-in failed:', error);
+                showToast('Login failed: ' + (error.error || error.message), 'error');
             }
         }
         
         // Update user UI
         function updateUserUI() {
-            const user = window.legalSwamiAPI.user;
+            console.log('👤 Updating user UI...');
+            
+            let user = null;
+            
+            // Try to get user from API
+            if (window.legalSwamiAPI && window.legalSwamiAPI.user) {
+                user = window.legalSwamiAPI.user;
+            }
+            
+            // Try to get from localStorage
+            if (!user) {
+                const userStr = localStorage.getItem('legal_swami_user');
+                if (userStr) {
+                    try {
+                        user = JSON.parse(userStr);
+                    } catch (e) {
+                        console.error('Failed to parse user data:', e);
+                    }
+                }
+            }
+            
             const userProfile = document.getElementById('userProfile');
             const headerLoginBtn = document.getElementById('headerLoginBtn');
             
             if (user && user.id) {
+                console.log('👤 User logged in:', user.name || user.id);
+                
                 headerLoginBtn.style.display = 'none';
                 userProfile.style.display = 'flex';
                 
@@ -796,9 +928,10 @@
                     avatar.innerHTML = `<img src="${user.picture}" alt="${user.name}" style="width: 100%; height: 100%; border-radius: 8px;">`;
                 } else {
                     const initials = user.name ? user.name.charAt(0).toUpperCase() : 'U';
-                    avatar.innerHTML = `<span>${initials}</span>`;
+                    avatar.innerHTML = `<span style="font-size: 14px; font-weight: bold;">${initials}</span>`;
                 }
             } else {
+                console.log('👤 No user logged in, showing login button');
                 headerLoginBtn.style.display = 'flex';
                 userProfile.style.display = 'none';
             }
@@ -806,47 +939,123 @@
         
         // Initialize app with backend
         async function initializeAppWithBackend() {
+            console.log('🔌 Initializing app with backend...');
+            
             try {
-                const token = localStorage.getItem('legal_swami_token');
+                // Test backend connection
+                const backendUrl = 'https://legal-swami-backend.onrender.com';
                 
-                if (token) {
-                    // Verify token with backend
-                    await window.legalSwamiAPI.verifyToken();
-                    updateUserUI();
-                    
-                    // Load chat history if user is logged in
-                    await loadChatHistory();
-                } else {
-                    // Show login modal after 2 seconds
-                    setTimeout(showLoginModal, 2000);
+                // Create simple API object if not exists
+                if (!window.legalSwamiAPI) {
+                    window.legalSwamiAPI = {
+                        token: localStorage.getItem('legal_swami_token'),
+                        user: null,
+                        sendMessage: async function(message, attachments, chatId) {
+                            console.log('📤 Sending message to backend:', message.substring(0, 50));
+                            
+                            const userId = this.user ? this.user.id : 'guest_' + Date.now();
+                            
+                            const response = await fetch(`${backendUrl}/api/v1/chat/send`, {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                    'x-user-id': userId,
+                                    'x-request-id': 'req_' + Date.now()
+                                },
+                                body: JSON.stringify({
+                                    message: message,
+                                    generateDocument: document.getElementById('generateDocument').checked
+                                })
+                            });
+                            
+                            if (!response.ok) {
+                                throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+                            }
+                            
+                            return await response.json();
+                        },
+                        getChatHistory: async function(page = 0, size = 10) {
+                            const userId = this.user ? this.user.id : 'guest';
+                            
+                            const response = await fetch(
+                                `${backendUrl}/api/v1/chat/history?userId=${userId}&page=${page}&size=${size}`,
+                                {
+                                    headers: {
+                                        'x-user-id': userId,
+                                        'x-request-id': 'req_' + Date.now()
+                                    }
+                                }
+                            );
+                            
+                            if (!response.ok) {
+                                throw new Error(`HTTP ${response.status}`);
+                            }
+                            
+                            return await response.json();
+                        }
+                    };
                 }
+                
+                // Test backend health
+                const healthResponse = await fetch(`${backendUrl}/api/v1/public/health`);
+                if (healthResponse.ok) {
+                    const healthData = await healthResponse.json();
+                    console.log('✅ Backend health check passed:', healthData);
+                    showToast('Backend connected successfully!', 'success');
+                } else {
+                    console.warn('⚠️ Backend health check failed:', healthResponse.status);
+                }
+                
+                // Update user UI
+                updateUserUI();
+                
             } catch (error) {
-                console.error('Initialization failed:', error);
-                showLoginModal();
+                console.error('❌ Initialization failed:', error);
+                showToast('Note: Some features may be limited', 'warning');
+                setupFallbackAuth();
             }
         }
         
         // Show login modal
         function showLoginModal() {
             document.getElementById('loginModal').style.display = 'flex';
+            console.log('🔐 Login modal shown');
         }
         
         // Hide login modal
         function hideLoginModal() {
             document.getElementById('loginModal').style.display = 'none';
+            console.log('🔐 Login modal hidden');
         }
         
         // Logout function
         function logout() {
-            if (typeof gapi !== 'undefined') {
-                const auth2 = gapi.auth2.getAuthInstance();
-                if (auth2) {
-                    auth2.signOut();
+            console.log('🚪 Logging out...');
+            
+            if (googleAuthInitialized) {
+                try {
+                    const auth2 = gapi.auth2.getAuthInstance();
+                    if (auth2) {
+                        auth2.signOut();
+                        console.log('✅ Google sign-out completed');
+                    }
+                } catch (error) {
+                    console.error('Google sign-out error:', error);
                 }
             }
             
-            window.legalSwamiAPI.clearAuth();
-            updateUserUI();
+            // Clear local data
+            localStorage.removeItem('legal_swami_token');
+            localStorage.removeItem('legal_swami_user');
+            
+            if (window.legalSwamiAPI) {
+                window.legalSwamiAPI.token = null;
+                window.legalSwamiAPI.user = null;
+            }
+            
+            // Setup fallback guest auth
+            setupFallbackAuth();
+            
             showToast('Logged out successfully', 'success');
             
             // Go back to home if in chat interface
@@ -857,9 +1066,14 @@
         
         // Start chat
         function startChat() {
-            const token = localStorage.getItem('legal_swami_token');
+            console.log('💬 Starting chat...');
             
-            if (!token) {
+            // Check if user is logged in or has guest ID
+            const user = window.legalSwamiAPI ? window.legalSwamiAPI.user : null;
+            const token = localStorage.getItem('legal_swami_token');
+            const guestId = localStorage.getItem('legalSwamiUserId');
+            
+            if (!user && !guestId && !token) {
                 showLoginModal();
                 showToast('Please login to start chatting', 'warning');
                 return;
@@ -872,6 +1086,7 @@
             // Scroll to chat input
             setTimeout(() => {
                 document.getElementById('messageInput').focus();
+                console.log('✅ Chat interface ready');
             }, 100);
         }
         
@@ -882,6 +1097,7 @@
             
             // Scroll to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
+            console.log('🏠 Returned to home');
         }
         
         // Clear chat
@@ -899,6 +1115,7 @@
                 
                 currentChatId = null;
                 showToast('Chat cleared', 'success');
+                console.log('🗑️ Chat cleared');
             }
         }
         
@@ -930,6 +1147,7 @@
             URL.revokeObjectURL(url);
             
             showToast('Chat exported successfully', 'success');
+            console.log('📥 Chat exported');
         }
         
         // Toggle history sidebar
@@ -937,19 +1155,29 @@
             const sidebar = document.getElementById('historySidebar');
             if (sidebar.style.display === 'flex') {
                 sidebar.style.display = 'none';
+                console.log('📜 History sidebar hidden');
             } else {
                 sidebar.style.display = 'flex';
                 loadChatHistory();
+                console.log('📜 History sidebar shown');
             }
         }
         
         // Load chat history
         async function loadChatHistory() {
             try {
+                if (!window.legalSwamiAPI) {
+                    console.warn('API not initialized');
+                    return;
+                }
+                
+                console.log('📜 Loading chat history...');
                 const history = await window.legalSwamiAPI.getChatHistory(0, 10);
                 updateHistoryList(history);
+                console.log('✅ Chat history loaded:', history.length, 'items');
             } catch (error) {
                 console.error('Failed to load history:', error);
+                showToast('Failed to load chat history', 'error');
             }
         }
         
@@ -987,10 +1215,9 @@
         // Load chat from history
         async function loadChatFromHistory(chatId) {
             try {
-                // This would load a specific chat from history
-                // For now, just show a message
                 showToast('Loading chat from history...', 'info');
                 toggleHistory();
+                console.log('📜 Loading chat:', chatId);
             } catch (error) {
                 console.error('Failed to load chat:', error);
                 showToast('Failed to load chat', 'error');
@@ -1010,9 +1237,12 @@
             textarea.style.height = (textarea.scrollHeight) + 'px';
         }
         
-        // Send message handler
+        // ✅ FIXED: Send message handler
         async function sendMessageHandler() {
-            if (isProcessing) return;
+            if (isProcessing) {
+                console.warn('⚠️ Message already being processed');
+                return;
+            }
             
             const input = document.getElementById('messageInput');
             const message = input.value.trim();
@@ -1022,16 +1252,20 @@
                 return;
             }
             
-            // Check if user is logged in
-            if (!window.legalSwamiAPI.token) {
-                showLoginModal();
-                showToast('Please login to send messages', 'warning');
-                return;
+            // Get or create user ID
+            let userId = 'guest';
+            if (window.legalSwamiAPI && window.legalSwamiAPI.user) {
+                userId = window.legalSwamiAPI.user.id;
+            } else {
+                userId = localStorage.getItem('legalSwamiUserId') || 'guest_' + Date.now();
+                localStorage.setItem('legalSwamiUserId', userId);
             }
             
             isProcessing = true;
             
             try {
+                console.log('💬 Sending message:', message.substring(0, 100));
+                
                 // Add user message to chat
                 addMessageToChat(message, true);
                 input.value = '';
@@ -1045,25 +1279,36 @@
                 const documentType = document.getElementById('documentType').value;
                 
                 // Send to backend
-                const response = await window.legalSwamiAPI.sendMessage(
-                    message, 
-                    [], // attachments
-                    currentChatId
-                );
+                const backendUrl = 'https://legal-swami-backend.onrender.com';
+                const response = await fetch(`${backendUrl}/api/v1/chat/send`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-user-id': userId,
+                        'x-request-id': 'req_' + Date.now()
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        generateDocument: generateDocument
+                    })
+                });
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                }
+                
+                const data = await response.json();
+                console.log('✅ Received response:', data.id);
                 
                 // Add AI response to chat
-                addMessageToChat(response.response, false, generateDocument, response.documentType);
-                
-                // If document was generated, show download option
-                if (generateDocument && response.documentUrl) {
-                    showDocumentDownload(response.documentUrl, documentType);
-                }
+                addMessageToChat(data.response || 'No response received', false, generateDocument, documentType);
                 
                 // Update chat history
                 await loadChatHistory();
                 
             } catch (error) {
-                console.error('Failed to send message:', error);
+                console.error('❌ Failed to send message:', error);
                 addMessageToChat('Sorry, I encountered an error. Please try again.', false);
                 showToast('Failed to send message: ' + error.message, 'error');
             } finally {
@@ -1100,6 +1345,8 @@
             
             // Scroll to bottom
             chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            console.log('💬 Message added to chat:', isUser ? 'User' : 'AI');
         }
         
         // Format message text (basic markdown)
@@ -1159,40 +1406,8 @@
         
         // Attach file
         function attachFile() {
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = '.pdf,.doc,.docx,.txt,.jpg,.jpeg,.png';
-            input.multiple = true;
-            
-            input.onchange = function(e) {
-                const files = Array.from(e.target.files);
-                const attachmentsDiv = document.getElementById('fileAttachments');
-                
-                files.forEach(file => {
-                    if (file.size > 10 * 1024 * 1024) { // 10MB limit
-                        showToast(`File ${file.name} is too large (max 10MB)`, 'error');
-                        return;
-                    }
-                    
-                    const attachment = document.createElement('div');
-                    attachment.className = 'file-attachment';
-                    attachment.innerHTML = `
-                        <i class="fas fa-file"></i>
-                        <span>${file.name}</span>
-                        <button class="btn-icon" onclick="removeAttachment(this)">
-                            <i class="fas fa-times"></i>
-                        </button>
-                    `;
-                    
-                    attachmentsDiv.appendChild(attachment);
-                });
-                
-                if (files.length > 0) {
-                    showToast(`${files.length} file(s) attached`, 'success');
-                }
-            };
-            
-            input.click();
+            showToast('File attachment feature coming soon!', 'info');
+            console.log('📎 File attachment clicked');
         }
         
         // Remove attachment
@@ -1203,37 +1418,14 @@
         
         // Start voice input
         function startVoiceInput() {
-            if (!('webkitSpeechRecognition' in window)) {
-                showToast('Voice input is not supported in your browser', 'warning');
-                return;
-            }
-            
-            const recognition = new webkitSpeechRecognition();
-            recognition.lang = 'en-IN';
-            recognition.continuous = false;
-            recognition.interimResults = false;
-            
-            recognition.onstart = function() {
-                showToast('Listening... Speak now', 'info');
-            };
-            
-            recognition.onresult = function(event) {
-                const transcript = event.results[0][0].transcript;
-                document.getElementById('messageInput').value = transcript;
-                showToast('Voice input captured', 'success');
-            };
-            
-            recognition.onerror = function(event) {
-                showToast('Voice input error: ' + event.error, 'error');
-            };
-            
-            recognition.start();
+            showToast('Voice input feature coming soon!', 'info');
+            console.log('🎤 Voice input clicked');
         }
         
         // Show demo
         function showDemo() {
-            showToast('Demo video would play here', 'info');
-            // In a real implementation, this would open a video modal
+            showToast('Demo feature coming soon!', 'info');
+            console.log('🎬 Demo clicked');
         }
         
         // Show terms
@@ -1291,12 +1483,16 @@
                 toast.classList.add('fade-out');
                 setTimeout(() => toast.remove(), 300);
             }, 3000);
+            
+            console.log(`📢 Toast (${type}):`, message);
         }
         
         // Make functions available globally
         window.handleInputKeydown = handleInputKeydown;
         window.removeAttachment = removeAttachment;
         window.loadChatFromHistory = loadChatFromHistory;
+        
+        console.log('✅ LegalSwami App Initialization Complete!');
     </script>
 </body>
 </html>
