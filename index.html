@@ -4,10 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>LegalSwami - Your AI Legal Assistant</title>
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
-    
+        
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -19,9 +16,20 @@
     <link rel="stylesheet" href="css/chat.css">
     <link rel="stylesheet" href="css/responsive.css">
     
-    <!-- Google OAuth -->
-    <script src="https://apis.google.com/js/platform.js" async defer></script>
-    <meta name="google-signin-client_id" content="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com">
+     <!-- ✅ FIXED CSP -->
+    <meta http-equiv="Content-Security-Policy" 
+          content="default-src 'self'; 
+                   script-src 'self' https://apis.google.com https://*.googleapis.com; 
+                   style-src 'self' 'unsafe-inline' https://fonts.googleapis.com;
+                   connect-src 'self' https://legal-swami-backend.onrender.com https://*.googleapis.com;
+                   frame-src 'self' https://accounts.google.com;">
+    
+    <!-- ✅ GOOGLE OAUTH META -->
+    <meta name="google-signin-client_id" 
+          content="166511615962-bohur5q8d4i5hud6icr4185kcte9enk8.apps.googleusercontent.com">
+    
+    <!-- ✅ FAVICON -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚖️</text></svg>">
     
     <style>
         :root {
@@ -599,7 +607,10 @@
 
     <!-- Toast Notifications -->
     <div id="toastContainer" class="toast-container"></div>
-
+    
+     <!-- ✅ GOOGLE PLATFORM SCRIPT -->
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    
     <!-- JavaScript Files -->
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
