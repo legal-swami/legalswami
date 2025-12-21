@@ -6,7 +6,6 @@ spring:
     name: legal-swami-backend
   
   # ========== DATABASE CONFIGURATION ==========
-  # YOUR RENDER POSTGRESQL DATABASE
   datasource:
     url: jdbc:postgresql://dpg-d53salali9vc73acgia0-a.singapore-postgres.render.com:5432/legalswami
     username: legalswami_user
@@ -43,11 +42,9 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
   
-  # ========== CORS CONFIGURATION ========== ⭐ UPDATED LOCATION
-  # This MUST be under spring: for Spring Boot to recognize it
-  mvc:
-    async:
-      request-timeout: 30000
+  # ========== BEAN OVERRIDING FOR CORS FIX ==========
+  main:
+    allow-bean-definition-overriding: true  # ✅ CORS filter conflict resolve karne ke liye
 
 # ========== SERVER ==========
 server:
@@ -75,7 +72,7 @@ groq:
     
     # ⭐ MULTIPLE MODELS FOR FALLBACK (comma-separated) ⭐
     # Priority order: First model will be tried first
-    models: llama-3.3-70b-versatile,llama-3.3-70b-versatile,llama-3.1-8b-instant,llama3-70b-8192,llama3-8b-8192,mixtral-8x7b-32768
+    models: llama-3.3-70b-versatile,llama-3.1-8b-instant,llama3-70b-8192,llama3-8b-8192,mixtral-8x7b-32768
     
     # Default model settings (used for all models)
     timeout: 30000  # 30 seconds
@@ -101,7 +98,6 @@ encryption:
 google:
   client:
     id: 166511615962-bohur5q8d4i5hud6icr4185kcte9enk8.apps.googleusercontent.com
-    # secret: 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
   oauth:
     redirect-uri: ${server.servlet.context-path}/login/oauth2/code/google
     scope: profile,email
@@ -121,6 +117,16 @@ app:
     default-jurisdiction: IN  # India
     disclaimer: "This is an AI assistant, not a licensed lawyer. Consult a professional for legal advice."
 
+# ========== CORS CONFIGURATION ========== ⭐ UPDATED WITH X-REQUEST-ID SUPPORT
+# ✅ UPDATED: Added x-request-id and X-Request-Id headers
+cors:
+  allowed-origins: "https://legal-swami.github.io,http://localhost:3000,https://legal-swami.github.io/legalswami,http://localhost:8080,http://127.0.0.1:3000"
+  allowed-methods: "GET,POST,PUT,DELETE,OPTIONS,PATCH,HEAD"
+  allowed-headers: "Content-Type,X-User-ID,X-User-Id,x-user-id,Authorization,Accept,Origin,X-Requested-With,x-request-id,X-Request-Id,Cache-Control,Pragma,Access-Control-Request-Method,Access-Control-Request-Headers"
+  exposed-headers: "Authorization,X-User-Id,x-user-id,x-request-id,X-Request-Id"
+  allow-credentials: true
+  max-age: 3600
+
 # ========== LOGGING ==========
 logging:
   level:
@@ -130,6 +136,7 @@ logging:
     org.hibernate.SQL: WARN
     org.hibernate.type: WARN
     com.legalswami.service.GroqService: DEBUG  # Groq service logs
+    com.legalswami.config: DEBUG  # CORS config logs
   
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
@@ -143,22 +150,8 @@ logging:
       max-file-size: 10MB
       max-history: 30
 
-# ========== CORS CONFIGURATION ========== ⭐ UPDATED & CORRECTED
-# Spring Boot CORS properties (these work with WebConfig.java)
-# If using WebConfig.java, these can be removed
-# If NOT using WebConfig.java, uncomment and use these:
-
-cors:
-  allowed-origins: "https://legal-swami.github.io,http://localhost:3000"
-  allowed-methods: "GET,POST,PUT,DELETE,OPTIONS"
-  allowed-headers: "Content-Type,X-User-ID,X-User-Id,Authorization,Accept,Origin,X-Requested-With"
-  exposed-headers: "Authorization,X-User-Id"
-  allow-credentials: false
-  max-age: 3600
-
 # ========== RATE LIMITING ==========
-# Uncomment to enable rate limiting
-# rate-limit:
-#   enabled: false
-#   requests-per-minute: 60
-#   burst-capacity: 100
+rate-limit:
+  enabled: false
+  requests-per-minute: 60
+  burst-capacity: 100
