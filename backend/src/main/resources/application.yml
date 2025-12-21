@@ -1,5 +1,5 @@
 # LEGAL SWAMI BACKEND - PRODUCTION CONFIGURATION
-# ALL VALUES UPDATED WITH YOUR ACTUAL CREDENTIALS
+# WITH MULTIPLE GROQ MODELS & FALLBACK SUPPORT
 
 spring:
   application:
@@ -12,6 +12,9 @@ spring:
     username: legalswami_user
     password: T2YHqBezj3QJNKf7pnJJKUSk7A6BorNR
     driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 5
   
   # ========== JPA/HIBERNATE ==========
   jpa:
@@ -20,7 +23,10 @@ spring:
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
-    show-sql: true  # Changed to true for debugging
+        format_sql: true
+        jdbc:
+          batch_size: 20
+    show-sql: true  # Debugging ke liye
   
   # ========== ⭐⭐⭐ LOGIN PAGE FIX ⭐⭐⭐ ==========
   security:
@@ -30,22 +36,56 @@ spring:
   h2:
     console:
       enabled: false
+  
+  # ========== SERVLET CONFIG ==========
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
 
 # ========== SERVER ==========
 server:
   port: 8080
+  servlet:
+    context-path: /
+  compression:
+    enabled: true
+    mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/json,application/javascript
 
 # ========== JWT ==========
 jwt:
   secret: G3UF3OY6mWCjKbfa6l1S9pvIbKTt9cjr
   expiration: 86400000  # 24 hours
 
-# ========== GROQ AI ==========
+# ========== GROQ AI (WITH MULTIPLE MODELS) ==========
+# ⭐⭐ UPDATED: MULTIPLE MODELS WITH FALLBACK SUPPORT ⭐⭐
 groq:
   api:
+    # Your 3 API keys for rotation
     keys: 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,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,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
-    url: https://api.groq.com/openai/v1/chat/completions  # Fixed typo (gqo -> groq)
-    model: llama3-8b-8192
+    
+    # API URL
+    url: https://api.groq.com/openai/v1/chat/completions
+    
+    # ⭐ MULTIPLE MODELS FOR FALLBACK (comma-separated) ⭐
+    # Priority order: First model will be tried first
+    models: llama-4-scout-17b-16e-instruct,llama-3.1-8b-8192,llama3-70b-8192,mixtral-8x7b-32768,gemma2-9b-it
+    
+    # Default model settings (used for all models)
+    timeout: 30000  # 30 seconds
+    max-tokens: 4096
+    temperature: 0.7
+    
+    # Fallback configuration
+    fallback:
+      enabled: true
+      max-attempts: 3  # Max attempts per model
+      retry-delay: 1000  # 1 second delay between retries
+    
+    # Monitoring
+    monitoring:
+      log-failures: true
+      track-usage: true
 
 # ========== ENCRYPTION ==========
 encryption:
@@ -56,11 +96,58 @@ google:
   client:
     id: 166511615962-bohur5q8d4i5hud6icr4185kcte9enk8.apps.googleusercontent.com
     # secret: (add if you have it)
+  oauth:
+    redirect-uri: ${server.servlet.context-path}/login/oauth2/code/google
+    scope: profile,email
+
+# ========== APPLICATION SPECIFIC ==========
+app:
+  name: LegalSwami
+  version: 1.0.0
+  chat:
+    max-history: 50  # Max chat history per user
+    default-user-id: guest
+    streaming:
+      enabled: false  # SSE streaming support
+      timeout: 30000
+  
+  legal:
+    default-jurisdiction: IN  # India
+    disclaimer: "This is an AI assistant, not a licensed lawyer. Consult a professional for legal advice."
 
 # ========== LOGGING ==========
 logging:
   level:
+    root: INFO
     com.legalswami: DEBUG
-    org.springframework: INFO
+    org.springframework.web: INFO
+    org.hibernate.SQL: WARN
+    org.hibernate.type: WARN
+    com.legalswami.service.GroqService: DEBUG  # Groq service logs
+  
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+  
+  file:
+    name: logs/legalswami.log
+  
+  logback:
+    rollingpolicy:
+      max-file-size: 10MB
+      max-history: 30
+
+# ========== CORS CONFIGURATION ==========
+# Uncomment if frontend on different domain
+# cors:
+#   allowed-origins: "http://localhost:3000,https://legalswami-frontend.onrender.com"
+#   allowed-methods: "GET,POST,PUT,DELETE,OPTIONS"
+#   allowed-headers: "*"
+#   allow-credentials: true
+
+# ========== RATE LIMITING ==========
+# Uncomment to enable rate limiting
+# rate-limit:
+#   enabled: false
+#   requests-per-minute: 60
+#   burst-capacity: 100
