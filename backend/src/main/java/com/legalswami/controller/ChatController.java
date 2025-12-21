@@ -26,17 +26,6 @@ public class ChatController {
         return ResponseEntity.ok(response);
     }
     
-    @PostMapping("/send-stream")
-    public ResponseEntity<String> sendMessageStream(
-            @Valid @RequestBody ChatRequest request,
-            @RequestHeader(value = "X-User-Id", required = false, defaultValue = "guest") String userId) {
-        
-        // For streaming responses
-        return ResponseEntity.ok()
-            .header("Content-Type", "text/event-stream")
-            .body(chatService.processMessageStream(request, userId));
-    }
-    
     @GetMapping("/history")
     public ResponseEntity<List<ChatResponse>> getChatHistory(
             @RequestParam(defaultValue = "guest") String userId,
