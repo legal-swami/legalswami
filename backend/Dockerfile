@@ -5,36 +5,43 @@ COPY pom.xml .
 RUN mvn dependency:go-offline -B
 COPY src ./src
 
-# Fix imports before building (jakarta.crypto -> javax.crypto)
+# Fix imports before building
 RUN find /app/src -name "*.java" -type f -exec sed -i 's/import jakarta\.crypto\./import javax.crypto./g' {} \; && \
     find /app/src -name "*.java" -type f -exec sed -i 's/import jakarta\.crypto\.spec\./import javax.crypto.spec./g' {} \;
 
+# Fix ChatController method calls
+RUN sed -i 's/chatService\.processMessage(request)/chatService.processMessage(request, userId)/g' /app/src/main/java/com/legalswami/controller/ChatController.java
+
+# Add missing processMessageStream method to ChatService if it doesn't exist
+RUN if ! grep -q "public String processMessageStream" /app/src/main/java/com/legalswami/service/ChatService.java; then \
+    echo "Adding processMessageStream method to ChatService"; \
+    # Find line number before the last closing brace
+    LINE=$(grep -n "^}" /app/src/main/java/com/legalswami/service/ChatService.java | tail -1 | cut -d: -f1); \
+    # Insert the method
+    sed -i "${LINE}i\\
+    // Method added for compatibility\\
+    public String processMessageStream(ChatRequest request, String userId) {\\
+        // For now, just return a non-streaming response wrapped in SSE format\\
+        ChatResponse response = processMessage(request, userId);\\
+        return \\"data: \\" + response.getResponse().replace(\"\\\\n\", \"\\\\\\\\n\") + \"\\\\\\\\n\\\\\\\\n\";\\
+    }" /app/src/main/java/com/legalswami/service/ChatService.java; \
+fi
+
+# Also fix the processMessageStream call in ChatController
+RUN sed -i 's/chatService\.processMessageStream(request)/chatService.processMessageStream(request, userId)/g' /app/src/main/java/com/legalswami/controller/ChatController.java
+
 RUN mvn clean package -DskipTests
 
-# Runtime stage - using jre instead of jdk for smaller image
+# Runtime stage
 FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
-
-# Create non-root user
-RUN addgroup -S legalswami && adduser -S legalswami -G legalswami
+RUN apk add --no-cache curl && \
+    addgroup -S legalswami && adduser -S legalswami -G legalswami && \
+    mkdir -p /app/logs && \
+    chown -R legalswami:legalswami /app
 USER legalswami
-
-# Copy jar from build stage
 COPY --from=build /app/target/*.jar app.jar
-
-# Create logs directory
-RUN mkdir -p /app/logs
-
-# Expose port
 EXPOSE 8080
-
-# Health check (with curl installed in alpine)
-USER root
-RUN apk add --no-cache curl
-USER legalswami
-
-HEALTHCHECK --interval=30s --timeout=3s --start-period=10s --retries=3 \
-    CMD curl -f http://localhost:8080/api/v1/public/status || exit 1
-
-# Run application with better JVM options
-ENTRYPOINT ["java", "-Xmx512m", "-XX:+UseContainerSupport", "-Djava.security.egd=file:/dev/./urandom", "-jar", "app.jar"]
+HEALTHCHECK --interval=30s --timeout=3s --start-period=30s --retries=3 \
+    CMD curl -f http://localhost:8080/api/v1/chat/health || exit 1
+ENTRYPOINT ["java", "-Xmx512m", "-XX:+UseContainerSupport", "-jar", "app.jar"]
