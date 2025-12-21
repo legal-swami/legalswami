@@ -40,7 +40,7 @@ public class GroqService {
     // ⭐⭐ REMOVED: Constructor initialization
     // No constructor - will use @PostConstruct instead
     
-    @javax.annotation.PostConstruct  // or jakarta.annotation.PostConstruct
+    @jakarta.annotation.PostConstruct  // or jakarta.annotation.PostConstruct
     public void init() {
         // Initialize models from config string
         if (modelsConfig != null && !modelsConfig.trim().isEmpty()) {
