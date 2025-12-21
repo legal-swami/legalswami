@@ -10,10 +10,9 @@ import org.springframework.web.filter.CorsFilter;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.http.HttpServletResponse;
+import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Collections;
 
 @Configuration
 public class GlobalCorsConfig {
@@ -38,10 +37,10 @@ public class GlobalCorsConfig {
         ));
         
         // Allow all headers
-        config.setAllowedHeaders(Collections.singletonList("*"));
+        config.setAllowedHeaders(Arrays.asList("*"));
         
         // Expose all headers
-        config.setExposedHeaders(Collections.singletonList("*"));
+        config.setExposedHeaders(Arrays.asList("*"));
         
         // Set to false
         config.setAllowCredentials(false);
