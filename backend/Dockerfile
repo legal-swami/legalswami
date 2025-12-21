@@ -1,8 +1,14 @@
 # Build stage
 FROM maven:3.9.4-eclipse-temurin-17 AS build
 WORKDIR /app
+
+# Copy pom.xml first for better caching
 COPY pom.xml .
-RUN mvn dependency:go-offline -B
+
+# Instead of go-offline, just download dependencies normally
+RUN mvn dependency:resolve -B || true
+
+# Copy source code
 COPY src ./src
 
 # Fix imports before building
@@ -12,9 +18,7 @@ RUN find /app/src -name "*.java" -type f -exec sed -i 's/import jakarta\.crypto\
 # Fix ChatController method calls - add userId parameter
 RUN sed -i 's/chatService\.processMessage(request)/chatService.processMessage(request, "guest")/g' /app/src/main/java/com/legalswami/controller/ChatController.java
 
-# Remove the problematic streaming endpoint to avoid compilation errors
-RUN sed -i '/@PostMapping("\/send-stream")/,/^    }/d' /app/src/main/java/com/legalswami/controller/ChatController.java
-
+# Build the application
 RUN mvn clean package -DskipTests
 
 # Runtime stage
