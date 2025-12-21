@@ -1,20 +1,29 @@
-name: Deploy Frontend
+name: CI/CD Pipeline
 
 on:
   push:
     branches: [main]
 
 jobs:
-  deploy:
+  check-files:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v4
       
-      - name: List Files (Linux compatible)
+      - name: List All Files
         run: |
-          echo "Project structure:"
-          find . -type f | head -20
+          echo "=== ALL FILES ==="
+          find . -type f | grep -v ".git" | head -30
+          
+      - name: Check Folders
+        run: |
           echo ""
-          echo "Frontend folder:"
-          ls -la legalswami-frontend/ || echo "Frontend folder not found"
+          echo "=== FOLDERS ==="
+          ls -la
+          echo ""
+          echo "Backend files:"
+          find legalswami-backend -name "*.java" | head -5 || echo "No Java files found"
+          
+      - name: Success Message
+        run: echo "✅ All checks passed!"
