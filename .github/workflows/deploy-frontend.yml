@@ -1,29 +1,24 @@
-name: CI/CD Pipeline
+name: Build Pipeline
 
 on:
   push:
     branches: [main]
 
 jobs:
-  check-files:
+  check:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout code
         uses: actions/checkout@v4
       
-      - name: List All Files
+      - name: Show ACTUAL folder structure
         run: |
-          echo "=== ALL FILES ==="
-          find . -type f | grep -v ".git" | head -30
-          
-      - name: Check Folders
-        run: |
-          echo ""
-          echo "=== FOLDERS ==="
+          echo "📁 ACTUAL Project Structure:"
+          echo "============================="
           ls -la
           echo ""
-          echo "Backend files:"
-          find legalswami-backend -name "*.java" | head -5 || echo "No Java files found"
-          
-      - name: Success Message
-        run: echo "✅ All checks passed!"
+          echo "📂 Looking for 'backend' folder (not legalswami-backend):"
+          ls -la backend/ || echo "Trying different names..."
+          echo ""
+          echo "✅ Checking Java files:"
+          find . -name "*.java" | head -5
