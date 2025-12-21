@@ -1,6 +1,6 @@
 /**
  * LegalSwami Authentication Service
- * Version: 2.0.0
+ * Version: 2.0.1
  * Date: 2024-01-15
  * Handles user authentication, session management, and OAuth
  */
@@ -528,7 +528,12 @@ class LegalSwamiAuth {
             if (isAuthenticated && user.id !== 'guest') {
                 // User is logged in
                 userProfile.style.display = 'flex';
-                document.getElementById('headerLoginBtn')?.style.display = 'none';
+                
+                // Fix for the error - check if element exists before assignment
+                const headerLoginBtn = document.getElementById('headerLoginBtn');
+                if (headerLoginBtn) {
+                    headerLoginBtn.style.display = 'none';
+                }
                 
                 userName.textContent = user.name || 'User';
                 userEmail.textContent = user.email || '';
@@ -556,7 +561,18 @@ class LegalSwamiAuth {
             } else {
                 // User is not logged in
                 userProfile.style.display = 'none';
-                document.getElementById('headerLoginBtn')?.style.display = 'flex';
+                
+                // Fix for the error - check if element exists before assignment
+                const headerLoginBtn = document.getElementById('headerLoginBtn');
+                if (headerLoginBtn) {
+                    headerLoginBtn.style.display = 'flex';
+                }
+            }
+        } else {
+            // If user profile elements don't exist, still handle header login button
+            const headerLoginBtn = document.getElementById('headerLoginBtn');
+            if (headerLoginBtn) {
+                headerLoginBtn.style.display = isAuthenticated && user.id !== 'guest' ? 'none' : 'flex';
             }
         }
         
@@ -945,4 +961,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-console.log('✅ LegalSwami Authentication Service loaded'); 
+console.log('✅ LegalSwami Authentication Service loaded');
