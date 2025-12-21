@@ -17,7 +17,7 @@ import java.util.Map;
     "https://legal-swami.github.io",
     "http://localhost:3000", 
     "https://legal-swami.github.io/legalswami"
-}, allowedHeaders = "*")    
+}, allowedHeaders = "*")        
 public class ChatController {
     
     @Autowired
@@ -26,7 +26,7 @@ public class ChatController {
     @PostMapping("/send")
     public ResponseEntity<ChatResponse> sendMessage(
             @Valid @RequestBody ChatRequest request,
-            @RequestHeader Map<String, String> headers) {  // Get all headers
+            @RequestHeader Map<String, String> headers) {
         
         // Extract user ID from headers (case-insensitive)
         String userId = "guest";
@@ -36,25 +36,17 @@ public class ChatController {
             userId = headers.get("X-User-Id");
         }
         
+        System.out.println("📱 Received request from user: " + userId);
         ChatResponse response = chatService.processMessage(request, userId);
         return ResponseEntity.ok(response);
     }
     
-    // Or keep the original but add a helper method
-    /*
-    @PostMapping("/send")
-    public ResponseEntity<ChatResponse> sendMessage(
-            @Valid @RequestBody ChatRequest request,
-            @RequestHeader(value = "X-User-Id", required = false) String userId) {
-        
-        if (userId == null) {
-            userId = "guest";
-        }
-        
-        ChatResponse response = chatService.processMessage(request, userId);
-        return ResponseEntity.ok(response);
+    // Add explicit OPTIONS handler for /send
+    @RequestMapping(value = "/send", method = RequestMethod.OPTIONS)
+    public ResponseEntity<?> handleOptions() {
+        System.out.println("🔄 Handling OPTIONS request for /send");
+        return ResponseEntity.ok().build();
     }
-    */
     
     @GetMapping("/history")
     public ResponseEntity<List<ChatResponse>> getChatHistory(
