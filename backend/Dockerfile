@@ -17,14 +17,17 @@ RUN if ! grep -q "public String processMessageStream" /app/src/main/java/com/leg
     echo "Adding processMessageStream method to ChatService"; \
     # Find line number before the last closing brace
     LINE=$(grep -n "^}" /app/src/main/java/com/legalswami/service/ChatService.java | tail -1 | cut -d: -f1); \
-    # Insert the method
-    sed -i "${LINE}i\\
-    // Method added for compatibility\\
-    public String processMessageStream(ChatRequest request, String userId) {\\
-        // For now, just return a non-streaming response wrapped in SSE format\\
-        ChatResponse response = processMessage(request, userId);\\
-        return \\"data: \\" + response.getResponse().replace(\"\\\\n\", \"\\\\\\\\n\") + \"\\\\\\\\n\\\\\\\\n\";\\
-    }" /app/src/main/java/com/legalswami/service/ChatService.java; \
+    # Insert the method using a temporary file
+    cat > /tmp/add_method.java << 'EOF2'
+    // Method added for compatibility
+    public String processMessageStream(ChatRequest request, String userId) {
+        // For now, just return a non-streaming response wrapped in SSE format
+        ChatResponse response = processMessage(request, userId);
+        return "data: " + response.getResponse().replace("\n", "\\\\n") + "\\\\n\\\\n";
+    }
+EOF2
+    sed -i "${LINE}r /tmp/add_method.java" /app/src/main/java/com/legalswami/service/ChatService.java; \
+    rm -f /tmp/add_method.java; \
 fi
 
 # Also fix the processMessageStream call in ChatController
