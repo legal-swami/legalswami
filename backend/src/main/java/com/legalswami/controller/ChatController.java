@@ -18,17 +18,23 @@ public class ChatController {
     private ChatService chatService;
     
     @PostMapping("/send")
-    public ResponseEntity<ChatResponse> sendMessage(@Valid @RequestBody ChatRequest request) {
-        ChatResponse response = chatService.processMessage(request);
+    public ResponseEntity<ChatResponse> sendMessage(
+            @Valid @RequestBody ChatRequest request,
+            @RequestHeader(value = "X-User-Id", required = false, defaultValue = "guest") String userId) {
+        
+        ChatResponse response = chatService.processMessage(request, userId);
         return ResponseEntity.ok(response);
     }
     
     @PostMapping("/send-stream")
-    public ResponseEntity<String> sendMessageStream(@Valid @RequestBody ChatRequest request) {
+    public ResponseEntity<String> sendMessageStream(
+            @Valid @RequestBody ChatRequest request,
+            @RequestHeader(value = "X-User-Id", required = false, defaultValue = "guest") String userId) {
+        
         // For streaming responses
         return ResponseEntity.ok()
             .header("Content-Type", "text/event-stream")
-            .body(chatService.processMessageStream(request));
+            .body(chatService.processMessageStream(request, userId));
     }
     
     @GetMapping("/history")
