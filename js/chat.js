@@ -1,7 +1,8 @@
 /**
  * LegalSwami Chat Management
- * Version: 2.0.0
+ * Version: 3.0.0
  * Date: 2024-01-15
+ * Works with or without backend connection
  */
 
 class LegalSwamiChat {
@@ -9,15 +10,125 @@ class LegalSwamiChat {
         this.currentChatId = null;
         this.conversationHistory = [];
         this.isStreaming = false;
-        this.api = window.legalSwamiAPI || {
-            // Fallback API if not initialized
-            sendChatMessage: async () => ({ content: 'Backend not connected' }),
-            getChatHistory: async () => [],
-            user: { id: 'guest' }
-        };
+        this.isBackendConnected = false;
+        this.api = null;
         
         // DOM Elements cache
         this.elements = {};
+        
+        // Initialize API service
+        this.initializeAPI();
+    }
+
+    // Initialize API service
+    initializeAPI() {
+        // Check if API service exists
+        if (window.legalSwamiAPI) {
+            this.api = window.legalSwamiAPI;
+            this.isBackendConnected = true;
+            console.log('✅ Using external API service');
+        } else {
+            // Create mock API service for offline mode
+            this.api = this.createMockAPI();
+            this.isBackendConnected = false;
+            console.log('⚠️ Running in offline mode with mock API');
+        }
+    }
+
+    // Create mock API for offline mode
+    createMockAPI() {
+        return {
+            user: { 
+                id: 'guest_' + Date.now(),
+                name: 'Guest User',
+                email: 'guest@example.com'
+            },
+            
+            // Mock send message
+            sendMessage: async (message, attachments = [], chatId = null) => {
+                console.log('Mock API: Sending message:', message.substring(0, 50));
+                
+                // Simulate API delay
+                await new Promise(resolve => setTimeout(resolve, 1000));
+                
+                // Generate mock response
+                const responses = [
+                    `I understand you're asking about "${message.substring(0, 50)}...". As an AI legal assistant, I can provide general information. For specific legal advice, please consult a qualified attorney.`,
+                    
+                    `Regarding your query: "${message.substring(0, 30)}...", here's what I can tell you:\n\n1. Always verify information with official sources\n2. Laws vary by jurisdiction\n3. Document important details\n4. Seek professional advice for critical matters`,
+                    
+                    `Thank you for your legal question. While I can offer general guidance, please remember that:\n• I'm not a licensed attorney\n• This is not legal advice\n• Your situation may have unique aspects\n• Consult a lawyer for formal advice`,
+                    
+                    `I've analyzed your question about legal matters. Key points to consider:\n\n- Maintain proper documentation\n- Understand applicable laws\n- Consider timelines and deadlines\n- Preserve evidence when needed\n- Consult experts when uncertain`
+                ];
+                
+                const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                
+                return {
+                    id: chatId || 'chat_' + Date.now(),
+                    message: message,
+                    response: randomResponse,
+                    content: randomResponse,
+                    isDocument: false,
+                    createdAt: new Date().toISOString(),
+                    userId: this.user.id
+                };
+            },
+            
+            // Mock get chat history
+            getChatHistory: async (page = 0, size = 10) => {
+                console.log('Mock API: Loading chat history');
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                // Return history from localStorage
+                const history = this.loadHistoryFromStorage();
+                return history.slice(page * size, (page + 1) * size);
+            },
+            
+            // Mock verify token
+            verifyToken: async () => {
+                return { valid: true };
+            },
+            
+            // Mock login
+            loginWithGoogle: async (token) => {
+                return {
+                    token: 'mock_jwt_token_' + Date.now(),
+                    user: {
+                        id: 'user_' + Date.now(),
+                        name: 'Test User',
+                        email: 'test@example.com'
+                    }
+                };
+            },
+            
+            // Clear auth
+            clearAuth: () => {
+                console.log('Mock API: Auth cleared');
+            }
+        };
+    }
+
+    // Load history from localStorage
+    loadHistoryFromStorage() {
+        try {
+            const savedData = localStorage.getItem('legal_swami_chat_history');
+            if (savedData) {
+                return JSON.parse(savedData);
+            }
+        } catch (error) {
+            console.error('Error loading history from storage:', error);
+        }
+        return [];
+    }
+
+    // Save history to localStorage
+    saveHistoryToStorage(history) {
+        try {
+            localStorage.setItem('legal_swami_chat_history', JSON.stringify(history));
+        } catch (error) {
+            console.error('Error saving history to storage:', error);
+        }
     }
 
     // Initialize chat
@@ -26,7 +137,37 @@ class LegalSwamiChat {
         this.setupEventListeners();
         this.loadChatHistory();
         this.updateSendButton();
-        this.checkBackendConnection();
+        this.showConnectionStatus();
+    }
+
+    // Show connection status
+    showConnectionStatus() {
+        if (!this.isBackendConnected) {
+            this.showToast('Running in demo mode. Connect backend for full features.', 'info');
+            
+            // Add demo mode indicator
+            const demoIndicator = document.createElement('div');
+            demoIndicator.id = 'demoIndicator';
+            demoIndicator.style.cssText = `
+                position: fixed;
+                bottom: 10px;
+                left: 10px;
+                background: #f59e0b;
+                color: white;
+                padding: 5px 10px;
+                border-radius: 4px;
+                font-size: 12px;
+                z-index: 1000;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+            `;
+            demoIndicator.innerHTML = `
+                <i class="fas fa-exclamation-triangle"></i>
+                <span>Demo Mode</span>
+            `;
+            document.body.appendChild(demoIndicator);
+        }
     }
 
     // Cache DOM elements
@@ -34,7 +175,7 @@ class LegalSwamiChat {
         this.elements = {
             // Input elements
             messageInput: document.getElementById('messageInput'),
-            sendBtn: document.getElementById('sendMessage'), // Changed from sendBtn
+            sendBtn: document.getElementById('sendMessage'),
             attachFile: document.getElementById('attachFile'),
             voiceInput: document.getElementById('voiceInput'),
             
@@ -63,19 +204,6 @@ class LegalSwamiChat {
             // Typing indicator
             typingIndicator: document.getElementById('typingIndicator')
         };
-    }
-
-    // Check backend connection
-    async checkBackendConnection() {
-        try {
-            if (this.api.verifyToken) {
-                await this.api.verifyToken();
-                console.log('✅ Backend connected');
-            }
-        } catch (error) {
-            console.warn('⚠️ Backend not connected, using local mode');
-            this.showToast('Running in offline mode', 'warning');
-        }
     }
 
     // Setup event listeners
@@ -149,6 +277,9 @@ class LegalSwamiChat {
         if (generateDocument && documentType) {
             generateDocument.addEventListener('change', (e) => {
                 documentType.disabled = !e.target.checked;
+                if (e.target.checked) {
+                    this.showToast('Document generation enabled', 'info');
+                }
             });
         }
 
@@ -162,7 +293,7 @@ class LegalSwamiChat {
             voiceInput.addEventListener('click', () => this.startVoiceInput());
         }
 
-        // Theme toggle (if exists)
+        // Theme toggle
         const themeToggle = document.getElementById('themeToggle');
         if (themeToggle) {
             themeToggle.addEventListener('click', () => {
@@ -172,10 +303,11 @@ class LegalSwamiChat {
                     icon.classList.toggle('fa-moon');
                     icon.classList.toggle('fa-sun');
                 }
+                this.showToast('Theme changed', 'info');
             });
         }
 
-        // Sidebar toggle (if exists)
+        // Sidebar toggle
         const sidebarToggle = document.getElementById('sidebarToggle');
         if (sidebarToggle) {
             sidebarToggle.addEventListener('click', () => {
@@ -188,6 +320,7 @@ class LegalSwamiChat {
         document.addEventListener('click', (e) => {
             if (e.target.closest('.file-attachment .btn-icon')) {
                 e.target.closest('.file-attachment').remove();
+                this.showToast('Attachment removed', 'info');
             }
         });
     }
@@ -212,7 +345,7 @@ class LegalSwamiChat {
             '<i class="fas fa-paper-plane"></i>';
     }
 
-    // Send message to backend
+    // Send message
     async sendMessage() {
         const { messageInput, generateDocument, documentType, typingIndicator } = this.elements;
         if (!messageInput) return;
@@ -243,7 +376,7 @@ class LegalSwamiChat {
             const shouldGenerateDoc = generateDocument ? generateDocument.checked : false;
             const docType = documentType ? documentType.value : 'PDF';
 
-            // Send to backend
+            // Send to API
             const response = await this.api.sendMessage(message, [], this.currentChatId);
             
             // Hide typing indicator
@@ -253,7 +386,8 @@ class LegalSwamiChat {
             
             // Add AI response to UI
             const isDocument = response.isDocument || shouldGenerateDoc;
-            this.addMessageToUI(response.response || response.content, false, isDocument, docType);
+            const responseText = response.response || response.content || 'No response received';
+            this.addMessageToUI(responseText, false, isDocument, docType);
             
             // Update conversation history
             this.conversationHistory.push({
@@ -264,24 +398,30 @@ class LegalSwamiChat {
             
             this.conversationHistory.push({
                 role: 'assistant',
-                content: response.response || response.content,
+                content: responseText,
                 timestamp: new Date().toISOString(),
                 isDocument: isDocument,
                 documentType: docType
             });
 
-            // If this is a new chat, create chat ID
-            if (!this.currentChatId && response.id) {
+            // Update chat ID
+            if (response.id) {
                 this.currentChatId = response.id;
             }
 
-            // If document was generated, show download option
-            if (isDocument && response.documentUrl) {
-                this.showDocumentDownload(response.documentUrl, docType, response.fileName);
+            // Save to history
+            this.saveChatToHistory(message, responseText);
+
+            // If document was requested, show mock download
+            if (shouldGenerateDoc) {
+                this.showMockDocumentDownload(docType);
             }
 
             // Show success toast
-            this.showToast('Response received', 'success');
+            this.showToast(
+                this.isBackendConnected ? 'Response received' : 'Demo response generated',
+                'success'
+            );
 
         } catch (error) {
             console.error('Failed to send message:', error);
@@ -292,21 +432,43 @@ class LegalSwamiChat {
             }
             
             // Add error message to UI
-            this.addMessageToUI(
-                'Sorry, I encountered an error. Please check your connection and try again.',
-                false
-            );
+            const errorMessage = this.isBackendConnected 
+                ? 'Sorry, I encountered an error. Please check your connection and try again.'
+                : 'Demo mode: Error simulating response. Please try again.';
             
-            // Show error toast
-            this.showToast('Failed to send message: ' + error.message, 'error');
+            this.addMessageToUI(errorMessage, false);
+            this.showToast(errorMessage, 'error');
             
         } finally {
             this.isStreaming = false;
             this.updateSendButton();
             this.saveToLocalStorage();
+        }
+    }
+
+    // Save chat to history
+    saveChatToHistory(question, answer) {
+        try {
+            const history = this.loadHistoryFromStorage();
             
-            // Refresh history
-            this.loadChatHistory();
+            const chatEntry = {
+                id: 'chat_' + Date.now(),
+                message: question,
+                response: answer,
+                createdAt: new Date().toISOString(),
+                preview: question.substring(0, 50) + (question.length > 50 ? '...' : '')
+            };
+            
+            history.unshift(chatEntry); // Add to beginning
+            
+            // Keep only last 50 chats
+            if (history.length > 50) {
+                history.pop();
+            }
+            
+            this.saveHistoryToStorage(history);
+        } catch (error) {
+            console.error('Error saving chat to history:', error);
         }
     }
 
@@ -351,6 +513,24 @@ class LegalSwamiChat {
             `;
         } else {
             messageText.innerHTML = this.formatMessageText(content);
+        }
+        
+        // Add demo mode indicator if not connected to backend
+        if (!isUser && !this.isBackendConnected) {
+            const demoBadge = document.createElement('div');
+            demoBadge.className = 'demo-badge';
+            demoBadge.innerHTML = '<i class="fas fa-flask"></i> Demo Response';
+            demoBadge.style.cssText = `
+                display: inline-block;
+                background: #f59e0b;
+                color: white;
+                padding: 2px 8px;
+                border-radius: 4px;
+                font-size: 11px;
+                margin-left: 8px;
+                vertical-align: middle;
+            `;
+            messageText.appendChild(demoBadge);
         }
         
         const messageTime = document.createElement('div');
@@ -468,6 +648,7 @@ class LegalSwamiChat {
                                 <li>Legal research assistance</li>
                             </ul>
                             <p><strong>Note:</strong> I'm an AI assistant, not a substitute for a licensed attorney. For critical legal matters, please consult a qualified lawyer.</p>
+                            ${!this.isBackendConnected ? '<p><em>⚠️ Currently running in demo mode. Connect backend for real AI responses.</em></p>' : ''}
                         </div>
                         <div class="message-time">Just now</div>
                     </div>
@@ -518,7 +699,8 @@ class LegalSwamiChat {
         
         let exportText = 'LegalSwami Chat Export\n';
         exportText += '========================\n\n';
-        exportText += `Exported on: ${new Date().toLocaleString()}\n\n`;
+        exportText += `Exported on: ${new Date().toLocaleString()}\n`;
+        exportText += `Mode: ${this.isBackendConnected ? 'Connected' : 'Demo'}\n\n`;
         
         messages.forEach(message => {
             const isAI = message.classList.contains('ai-message');
@@ -568,7 +750,7 @@ class LegalSwamiChat {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // Load chat history from backend
+    // Load chat history
     async loadChatHistory() {
         const { historyList } = this.elements;
         if (!historyList) return;
@@ -584,6 +766,7 @@ class LegalSwamiChat {
                     <div class="empty-history">
                         <i class="fas fa-history"></i>
                         <p>No chat history yet</p>
+                        ${!this.isBackendConnected ? '<p class="demo-note">Demo mode: Start chatting to create history</p>' : ''}
                     </div>
                 `;
                 return;
@@ -596,6 +779,7 @@ class LegalSwamiChat {
                 <div class="empty-history">
                     <i class="fas fa-exclamation-triangle"></i>
                     <p>Failed to load history</p>
+                    <p class="error-note">${error.message}</p>
                 </div>
             `;
         }
@@ -609,8 +793,9 @@ class LegalSwamiChat {
         historyList.innerHTML = history.map((chat, index) => `
             <div class="history-item" data-index="${index}">
                 <div class="history-item-content">
-                    <p class="history-question">${this.truncateText(chat.message || 'Chat', 50)}</p>
-                    <span class="history-time">${this.formatRelativeTime(chat.createdAt)}</span>
+                    <p class="history-question">${this.truncateText(chat.message || chat.question || 'Chat', 50)}</p>
+                    <span class="history-time">${this.formatRelativeTime(chat.createdAt || chat.timestamp)}</span>
+                    ${!this.isBackendConnected ? '<span class="demo-tag">Demo</span>' : ''}
                 </div>
                 <button class="btn-icon load-history-btn">
                     <i class="fas fa-chevron-right"></i>
@@ -658,8 +843,8 @@ class LegalSwamiChat {
             this.addMessageToUI(chat.message, true);
         }
         
-        if (chat.response) {
-            this.addMessageToUI(chat.response, false);
+        if (chat.response || chat.answer) {
+            this.addMessageToUI(chat.response || chat.answer, false);
         }
 
         this.saveToLocalStorage();
@@ -741,25 +926,32 @@ class LegalSwamiChat {
         recognition.start();
     }
 
-    // Show document download
-    showDocumentDownload(url, type, filename = null) {
+    // Show mock document download
+    showMockDocumentDownload(type) {
         const { chatMessages } = this.elements;
         if (!chatMessages) return;
 
         const downloadDiv = document.createElement('div');
-        downloadDiv.className = 'document-download';
+        downloadDiv.className = 'document-download mock-download';
         downloadDiv.innerHTML = `
             <div class="download-content">
                 <i class="fas fa-file-download"></i>
                 <div>
-                    <p><strong>${type} Document Ready</strong></p>
-                    <p>Your legal document has been generated.</p>
+                    <p><strong>${type} Document Generated (Demo)</strong></p>
+                    <p>In real mode, this would download your document. Connect backend for actual document generation.</p>
                 </div>
-                <a href="${url}" class="btn-download" download="${filename || `legal-document.${type.toLowerCase()}`}">
-                    Download
-                </a>
+                <button class="btn-download mock-download-btn">
+                    Preview (Demo)
+                </button>
             </div>
         `;
+
+        const downloadBtn = downloadDiv.querySelector('.mock-download-btn');
+        downloadBtn.addEventListener('click', () => {
+            this.showToast('Document preview shown (demo mode)', 'info');
+            // Show preview modal or alert
+            alert(`This would show a ${type} document preview. Connect backend for actual document generation.`);
+        });
 
         chatMessages.appendChild(downloadDiv);
         
@@ -834,16 +1026,20 @@ class LegalSwamiChat {
     formatRelativeTime(dateString) {
         if (!dateString) return 'Recently';
         
-        const date = new Date(dateString);
-        const now = new Date();
-        const diffInSeconds = Math.floor((now - date) / 1000);
-        
-        if (diffInSeconds < 60) return 'Just now';
-        if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
-        if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
-        if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d ago`;
-        
-        return date.toLocaleDateString();
+        try {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diffInSeconds = Math.floor((now - date) / 1000);
+            
+            if (diffInSeconds < 60) return 'Just now';
+            if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)}m ago`;
+            if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)}h ago`;
+            if (diffInSeconds < 604800) return `${Math.floor(diffInSeconds / 86400)}d ago`;
+            
+            return date.toLocaleDateString();
+        } catch (error) {
+            return 'Recently';
+        }
     }
 
     // Utility: Show toast notification
@@ -889,25 +1085,47 @@ class LegalSwamiChat {
 
 // Initialize chat when DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
-    // Initialize API service if not exists
-    if (!window.legalSwamiAPI) {
-        console.warn('API service not found, creating fallback');
-        window.legalSwamiAPI = {
-            sendMessage: async () => ({ 
-                content: 'Please connect to backend for full functionality.',
-                response: 'Please connect to backend for full functionality.'
-            }),
-            getChatHistory: async () => [],
-            verifyToken: async () => {},
-            user: { id: 'guest' }
-        };
-    }
-    
     // Initialize chat
     window.legalSwamiChat = new LegalSwamiChat();
     window.legalSwamiChat.initialize();
     
     console.log('✅ LegalSwami Chat initialized');
+    
+    // Check for backend connection
+    setTimeout(() => {
+        if (!window.legalSwamiChat.isBackendConnected) {
+            console.log('ℹ️ Running in offline/demo mode');
+            
+            // Add reconnect button
+            const reconnectBtn = document.createElement('button');
+            reconnectBtn.id = 'reconnectBtn';
+            reconnectBtn.innerHTML = '<i class="fas fa-plug"></i> Connect Backend';
+            reconnectBtn.style.cssText = `
+                position: fixed;
+                bottom: 50px;
+                left: 10px;
+                background: #10b981;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 20px;
+                cursor: pointer;
+                font-size: 12px;
+                z-index: 1000;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            `;
+            
+            reconnectBtn.addEventListener('click', () => {
+                window.legalSwamiChat.showToast('Backend connection would be established here', 'info');
+                // In real implementation, this would trigger backend connection
+            });
+            
+            document.body.appendChild(reconnectBtn);
+        }
+    }, 1000);
 });
 
 // Make chat accessible globally
