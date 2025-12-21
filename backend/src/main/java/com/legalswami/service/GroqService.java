@@ -16,7 +16,7 @@ public class GroqService {
     private String apiUrl;
     
     // ⭐⭐ FIXED: Use String instead of array, initialize later
-    @Value("${groq.api.models:llama-4-scout-17b-16e-instruct,llama-3.1-8b-8192,llama3-70b-8192,mixtral-8x7b-32768}")
+    @Value("${llama-3.3-70b-versatile,llama-3.3-70b-versatile,llama-3.1-8b-instant,llama3-70b-8192,llama3-8b-8192,mixtral-8x7b-32768}")
     private String modelsConfig;
     
     private String[] availableModels;  // Will be initialized in @PostConstruct
@@ -52,9 +52,12 @@ public class GroqService {
         } else {
             // Default models if not configured
             this.availableModels = new String[]{
-                "llama-4-scout-17b-16e-instruct", 
-                "llama-3.1-8b-8192", 
-                "llama3-70b-8192"
+                "llama-3.3-70b-versatile",
+                "llama-3.3-70b-versatile",
+                "llama-3.1-8b-instant",
+                "llama3-70b-8192",
+                "llama3-8b-8192",
+                "mixtral-8x7b-32768"
             };
         }
         
