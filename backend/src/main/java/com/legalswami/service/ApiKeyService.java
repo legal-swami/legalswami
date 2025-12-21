@@ -3,9 +3,9 @@ package com.legalswami.service;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import javax.annotation.PostConstruct;
-import javax.crypto.Cipher;
-import javax.crypto.spec.SecretKeySpec;
+import jakarta.annotation.PostConstruct;
+import jakarta.crypto.Cipher;
+import jakarta.crypto.spec.SecretKeySpec;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
