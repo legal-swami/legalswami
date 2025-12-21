@@ -647,7 +647,20 @@
     <div id="toastContainer" class="toast-container"></div>
     
     <!-- ✅ UPDATED: GOOGLE PLATFORM WITH ONLOAD CALLBACK -->
-    <script src="https://apis.google.com/js/platform.js?onload=initGooglePlatform" async defer></script>
+    <!-- <script src="https://apis.google.com/js/platform.js?onload=initGooglePlatform" async defer></script> -->
+
+   <!-- ✅ ADD THIS INSTEAD -->
+   <script>
+    // Simplified Google OAuth without platform.js errors
+    function initGoogleAuth() {
+        console.log('✅ Using simplified Google OAuth');
+        
+        // Fallback to guest authentication
+        setupFallbackAuth();
+    }
+    
+    window.initGooglePlatform = initGoogleAuth;
+</script>
     
     <!-- JavaScript Files -->
     <script src="js/api.js"></script>
