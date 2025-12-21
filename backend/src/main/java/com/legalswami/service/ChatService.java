@@ -42,6 +42,13 @@ public class ChatService {
         return convertToResponse(savedChat);
     }
     
+    // Optional: Add this if you want to keep streaming support (simplified version)
+    public String processMessageStream(ChatRequest request, String userId) {
+        // For now, just return a non-streaming response wrapped in SSE format
+        ChatResponse response = processMessage(request, userId);
+        return "data: " + response.getResponse().replace("\n", "\\n") + "\n\n";
+    }
+    
     public List<ChatResponse> getChatHistory(String userId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size, Sort.by("createdAt").descending());
         
