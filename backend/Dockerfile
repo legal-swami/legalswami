@@ -35,13 +35,29 @@ RUN mvn clean package -DskipTests
 # Runtime stage
 FROM eclipse-temurin:17-jre-alpine
 WORKDIR /app
-RUN apk add --no-cache curl && \
-    addgroup -S legalswami && adduser -S legalswami -G legalswami && \
-    mkdir -p /app/logs && \
+
+# Install curl for healthcheck
+RUN apk add --no-cache curl
+
+# Create non-root user and group
+RUN addgroup -S legalswami && adduser -S legalswami -G legalswami
+
+# Create directories and set permissions as root
+RUN mkdir -p /app/logs && \
     chown -R legalswami:legalswami /app
+
+# Switch to non-root user
 USER legalswami
+
+# Copy jar from build stage
 COPY --from=build /app/target/*.jar app.jar
+
+# Expose port
 EXPOSE 8080
+
+# Health check
 HEALTHCHECK --interval=30s --timeout=3s --start-period=30s --retries=3 \
     CMD curl -f http://localhost:8080/api/v1/chat/health || exit 1
+
+# Run application with better JVM options
 ENTRYPOINT ["java", "-Xmx512m", "-XX:+UseContainerSupport", "-jar", "app.jar"]
