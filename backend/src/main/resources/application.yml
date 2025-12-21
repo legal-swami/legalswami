@@ -137,6 +137,16 @@ logging:
       max-file-size: 10MB
       max-history: 30
 
+
+cors:
+  allowed-origins: "https://legal-swami.github.io,http://localhost:3000,https://legalswami-frontend.onrender.com"
+  allowed-methods: "GET,POST,PUT,DELETE,OPTIONS"
+  allowed-headers: "Content-Type,X-User-ID,X-User-Id,Authorization,Accept,Origin,X-Requested-With"  # ⭐ X-User-Id ADD KARO
+  exposed-headers: "Authorization"
+  allow-credentials: false
+  max-age: 3600
+      
+
 # ========== CORS CONFIGURATION ==========
 # Uncomment if frontend on different domain
 # cors:
