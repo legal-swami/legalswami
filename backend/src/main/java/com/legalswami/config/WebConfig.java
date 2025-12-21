@@ -19,8 +19,8 @@ public class WebConfig implements WebMvcConfigurer {
             .allowedHeaders(
                 "Content-Type",
                 "Authorization", 
-                "X-User-Id",
-                "X-User-ID",
+                "X-User-Id",        // Capitalized version
+                "x-user-id",        // Lowercase version - ADD THIS!
                 "Accept",
                 "Origin",
                 "X-Requested-With",
@@ -29,7 +29,8 @@ public class WebConfig implements WebMvcConfigurer {
             )
             .exposedHeaders(
                 "Authorization",
-                "X-User-Id"
+                "X-User-Id",
+                "x-user-id"         // Also add lowercase here
             )
             .allowCredentials(false)
             .maxAge(3600);
