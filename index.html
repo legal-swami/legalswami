@@ -3,148 +3,1289 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>LegalSwami - AI Legal Assistant</title>
+    <title>LegalSwami - Your AI Legal Assistant</title>
     
-    <!-- CSS -->
-    <link rel="stylesheet" href="css/styles.css">
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="assets/icons/favicon.ico">
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&family=Roboto+Slab:wght@400;500;600;700&display=swap" rel="stylesheet">
     
-    <!-- jsPDF -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/chat.css">
+    <link rel="stylesheet" href="css/responsive.css">
     
     <!-- Google OAuth -->
-    <script src="https://accounts.google.com/gsi/client" async defer></script>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com">
+    
+    <style>
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --accent-color: #3b82f6;
+            --light-color: #f8fafc;
+            --dark-color: #1e293b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --text-primary: #334155;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --radius: 12px;
+            --transition: all 0.3s ease;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+    </style>
 </head>
 <body>
-    <!-- Login Modal -->
-    <div class="login-modal-overlay" id="loginModal">
-        <div class="login-modal">
-            <div class="login-header">
-                <div class="login-icon">
-                    <i class="fas fa-scale-balanced"></i>
-                </div>
-                <h2>Welcome to LegalSwami</h2>
-                <p>Your AI-powered legal assistant</p>
+    <!-- Loading Screen -->
+    <div id="loadingScreen" class="loading-screen">
+        <div class="loading-content">
+            <div class="loading-spinner">
+                <i class="fas fa-balance-scale fa-spin"></i>
             </div>
-            
-            <div class="login-content">
-                <div id="g_id_onload"
-                    data-client_id="YOUR_GOOGLE_CLIENT_ID"
-                    data-context="signin"
-                    data-ux_mode="popup"
-                    data-callback="handleGoogleSignIn"
-                    data-auto_prompt="false">
-                </div>
-
-                <div class="g_id_signin"
-                    data-type="standard"
-                    data-shape="rectangular"
-                    data-theme="outline"
-                    data-text="signin_with"
-                    data-size="large"
-                    data-logo_alignment="left">
-                </div>
-                
-                <button class="guest-login-btn" id="guestLoginBtn">
-                    <i class="fas fa-user"></i>
-                    Continue as Guest
-                </button>
-            </div>
+            <h2>Initializing LegalSwami</h2>
+            <p>Loading AI legal assistant...</p>
         </div>
     </div>
-    
-    <!-- Main App Container -->
-    <div class="container" id="appContainer">
+
+    <!-- Main Container -->
+    <div class="main-container">
         <!-- Header -->
-        <header>
-            <div class="logo">
-                <button class="sidebar-toggle" id="sidebarToggle">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <div class="logo-icon">
-                    <i class="fas fa-scale-balanced"></i>
-                </div>
-                <h1>LegalSwami</h1>
-            </div>
-            
-            <div class="header-actions">
-                <div class="status-indicator">
-                    <div class="status-dot" id="apiStatus"></div>
-                    <span id="statusText">Connecting...</span>
-                </div>
-                
-                <button class="header-btn" id="newChatBtn">
-                    <i class="fas fa-plus"></i>
-                    New Chat
-                </button>
-                
-                <button class="header-btn theme-toggle" id="themeToggle">
-                    <i class="fas fa-sun"></i>
-                </button>
-                
-                <div class="user-profile" id="userProfile">
-                    <div class="user-avatar" id="userAvatar">
-                        <i class="fas fa-user"></i>
+        <header class="main-header">
+            <div class="header-container">
+                <!-- Logo -->
+                <div class="logo-section">
+                    <div class="logo">
+                        <i class="fas fa-balance-scale"></i>
+                        <h1>Legal<span>Swami</span></h1>
                     </div>
-                    <div class="user-info">
-                        <div class="user-name" id="userName">Guest</div>
-                        <div class="user-email" id="userEmail">Click to login</div>
+                    <p class="tagline">Your AI Legal Assistant</p>
+                </div>
+
+                <!-- Navigation -->
+                <nav class="nav-links">
+                    <a href="#features" class="nav-link">
+                        <i class="fas fa-star"></i> Features
+                    </a>
+                    <a href="#how-it-works" class="nav-link">
+                        <i class="fas fa-play-circle"></i> How it Works
+                    </a>
+                    <a href="#testimonials" class="nav-link">
+                        <i class="fas fa-comments"></i> Testimonials
+                    </a>
+                    <a href="#faq" class="nav-link">
+                        <i class="fas fa-question-circle"></i> FAQ
+                    </a>
+                </nav>
+
+                <!-- User Section -->
+                <div class="user-section">
+                    <!-- Login Button (Initially Visible) -->
+                    <button id="headerLoginBtn" class="btn-login">
+                        <i class="fas fa-sign-in-alt"></i> Login with Google
+                    </button>
+
+                    <!-- User Profile (Hidden Initially) -->
+                    <div id="userProfile" class="user-profile" style="display: none;">
+                        <div class="user-avatar" id="userAvatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="user-info">
+                            <span id="userName" class="user-name"></span>
+                            <span id="userEmail" class="user-email"></span>
+                        </div>
+                        <button id="logoutBtn" class="btn-logout" title="Logout">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </button>
                     </div>
                 </div>
             </div>
         </header>
-        
-        <!-- Main Content -->
-        <div class="main-content">
-            <!-- Sidebar -->
-            <aside class="sidebar" id="sidebar">
-                <div class="chat-history">
-                    <h3><i class="fas fa-history"></i> Chat History</h3>
-                    <div id="historyList">
-                        <!-- History will be loaded here -->
+
+        <!-- Hero Section -->
+        <section class="hero-section">
+            <div class="hero-content">
+                <div class="hero-text">
+                    <h1 class="hero-title">
+                        Get <span class="highlight">Legal Advice</span> Instantly with AI
+                    </h1>
+                    <p class="hero-subtitle">
+                        LegalSwami is your 24/7 AI legal assistant. Ask legal questions, 
+                        generate documents, and get instant guidance on various legal matters.
+                    </p>
+                    
+                    <div class="hero-buttons">
+                        <button id="startChatBtn" class="btn-primary">
+                            <i class="fas fa-comments"></i> Start Free Chat
+                        </button>
+                        <button id="learnMoreBtn" class="btn-secondary">
+                            <i class="fas fa-play-circle"></i> See Demo
+                        </button>
+                    </div>
+
+                    <div class="hero-stats">
+                        <div class="stat">
+                            <i class="fas fa-bolt"></i>
+                            <span>Instant Responses</span>
+                        </div>
+                        <div class="stat">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>100% Secure</span>
+                        </div>
+                        <div class="stat">
+                            <i class="fas fa-clock"></i>
+                            <span>24/7 Available</span>
+                        </div>
                     </div>
                 </div>
-            </aside>
-            
-            <!-- Chat Area -->
-            <main class="chat-container">
-                <div class="chat-messages" id="chatMessages">
-                    <!-- Messages will appear here -->
+
+                <div class="hero-image">
+                    <div class="ai-illustration">
+                        <i class="fas fa-robot"></i>
+                        <div class="pulse-effect"></div>
+                    </div>
                 </div>
-                
-                <!-- Input Area -->
-                <div class="input-container">
-                    <div class="input-area">
-                        <textarea id="messageInput" 
-                                  placeholder="Ask any legal question... (Press Enter to send, Shift+Enter for new line)"
-                                  rows="1"></textarea>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="features-section">
+            <div class="section-header">
+                <h2>Powerful Features</h2>
+                <p>Everything you need for your legal queries</p>
+            </div>
+
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-comment-dots"></i>
+                    </div>
+                    <h3>AI Chat Assistant</h3>
+                    <p>Ask legal questions in natural language and get instant, accurate responses powered by advanced AI.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-file-contract"></i>
+                    </div>
+                    <h3>Document Generation</h3>
+                    <p>Generate legal documents (PDF, DOC, TXT) instantly with customizable templates.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <h3>Chat History</h3>
+                    <p>Access your complete chat history anytime. Never lose important legal conversations.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-shield-alt"></i>
+                    </div>
+                    <h3>Secure & Private</h3>
+                    <p>End-to-end encryption and secure authentication to protect your sensitive legal data.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-mobile-alt"></i>
+                    </div>
+                    <h3>Mobile Responsive</h3>
+                    <p>Access LegalSwami from any device - desktop, tablet, or mobile phone.</p>
+                </div>
+
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-language"></i>
+                    </div>
+                    <h3>Multi-Language</h3>
+                    <p>Get legal advice in multiple languages including Hindi, English, and more.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works Section -->
+        <section id="how-it-works" class="how-it-works">
+            <div class="section-header">
+                <h2>How It Works</h2>
+                <p>Get started in 3 simple steps</p>
+            </div>
+
+            <div class="steps-container">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <div class="step-content">
+                        <h3>Sign In</h3>
+                        <p>Login securely with your Google account in one click.</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <div class="step-content">
+                        <h3>Ask Your Question</h3>
+                        <p>Type your legal question in plain English or Hindi.</p>
+                    </div>
+                </div>
+
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <div class="step-content">
+                        <h3>Get Instant Help</h3>
+                        <p>Receive AI-powered legal guidance and generate documents if needed.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chat Interface (Initially Hidden) -->
+        <div id="chatInterface" class="chat-interface" style="display: none;">
+            <div class="chat-container">
+                <!-- Chat Header -->
+                <div class="chat-header">
+                    <div class="chat-header-left">
+                        <button id="backToHome" class="btn-icon">
+                            <i class="fas fa-arrow-left"></i>
+                        </button>
+                        <div class="chat-title">
+                            <i class="fas fa-robot"></i>
+                            <h3>LegalSwami Assistant</h3>
+                        </div>
+                    </div>
+                    <div class="chat-header-right">
+                        <button id="clearChat" class="btn-icon" title="Clear Chat">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                        <button id="exportChat" class="btn-icon" title="Export Chat">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <button id="historyToggle" class="btn-icon" title="Chat History">
+                            <i class="fas fa-history"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Main Chat Area -->
+                <div class="chat-main">
+                    <!-- Chat History Sidebar -->
+                    <div id="historySidebar" class="history-sidebar">
+                        <div class="history-header">
+                            <h4><i class="fas fa-history"></i> Chat History</h4>
+                            <button id="closeHistory" class="btn-icon">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="history-list" id="historyList">
+                            <!-- History items will be loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- Chat Messages Area -->
+                    <div class="chat-messages-container">
+                        <div class="chat-messages" id="chatMessages">
+                            <!-- Welcome Message -->
+                            <div class="message ai-message">
+                                <div class="message-avatar">
+                                    <i class="fas fa-robot"></i>
+                                </div>
+                                <div class="message-content">
+                                    <div class="message-text">
+                                        <h4>Welcome to LegalSwami! 👨‍⚖️</h4>
+                                        <p>I'm your AI legal assistant. I can help you with:</p>
+                                        <ul>
+                                            <li>Legal advice and guidance</li>
+                                            <li>Document review and analysis</li>
+                                            <li>Legal document generation</li>
+                                            <li>Explanation of laws and regulations</li>
+                                            <li>Legal research assistance</li>
+                                        </ul>
+                                        <p><strong>Note:</strong> I'm an AI assistant, not a substitute for a licensed attorney. For critical legal matters, please consult a qualified lawyer.</p>
+                                    </div>
+                                    <div class="message-time">Just now</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Questions -->
+                        <div class="quick-questions">
+                            <p>Try asking:</p>
+                            <div class="quick-buttons">
+                                <button class="quick-btn" data-question="What are the requirements for a valid contract?">
+                                    Contract Requirements
+                                </button>
+                                <button class="quick-btn" data-question="How to draft a rental agreement?">
+                                    Rental Agreement
+                                </button>
+                                <button class="quick-btn" data-question="What is consumer protection law?">
+                                    Consumer Rights
+                                </button>
+                                <button class="quick-btn" data-question="How to file a legal notice?">
+                                    Legal Notice
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Input Area -->
+                <div class="chat-input-area">
+                    <div class="input-container">
                         <div class="input-actions">
-                            <button class="action-btn" id="attachFileBtn">
+                            <button id="attachFile" class="btn-icon" title="Attach File">
                                 <i class="fas fa-paperclip"></i>
                             </button>
-                            <button class="action-btn" id="voiceInputBtn">
+                            <button id="voiceInput" class="btn-icon" title="Voice Input">
                                 <i class="fas fa-microphone"></i>
                             </button>
-                            <button class="send-btn" id="sendBtn">
+                        </div>
+                        
+                        <textarea 
+                            id="messageInput" 
+                            placeholder="Type your legal question here... (Press Shift+Enter for new line, Enter to send)"
+                            rows="1"
+                            onkeydown="handleInputKeydown(event)"
+                        ></textarea>
+                        
+                        <div class="input-actions">
+                            <button id="sendMessage" class="btn-send" title="Send Message">
                                 <i class="fas fa-paper-plane"></i>
                             </button>
                         </div>
                     </div>
+                    
+                    <div class="input-options">
+                        <div class="file-attachments" id="fileAttachments">
+                            <!-- Attached files will appear here -->
+                        </div>
+                        
+                        <div class="document-options">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="generateDocument">
+                                <span>Generate as Document</span>
+                            </label>
+                            
+                            <select id="documentType" disabled>
+                                <option value="PDF">PDF</option>
+                                <option value="DOC">Word Document</option>
+                                <option value="TXT">Text File</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="typing-indicator" id="typingIndicator" style="display: none;">
+                        <div class="typing-dots">
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                        </div>
+                        <span>LegalSwami is thinking...</span>
+                    </div>
                 </div>
-            </main>
+            </div>
         </div>
+
+        <!-- Login Modal -->
+        <div id="loginModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Welcome to LegalSwami</h3>
+                    <button id="closeLoginModal" class="btn-icon">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="login-illustration">
+                        <i class="fas fa-balance-scale"></i>
+                    </div>
+                    
+                    <h4>Login to Continue</h4>
+                    <p>Secure login with Google to access all features</p>
+                    
+                    <button id="googleLoginBtn" class="btn-google">
+                        <i class="fab fa-google"></i>
+                        Continue with Google
+                    </button>
+                    
+                    <div class="login-info">
+                        <p><i class="fas fa-lock"></i> Your data is encrypted and secure</p>
+                        <p><i class="fas fa-shield-alt"></i> We never share your personal information</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Testimonials -->
+        <section id="testimonials" class="testimonials-section">
+            <div class="section-header">
+                <h2>What Users Say</h2>
+                <p>Trusted by thousands of users</p>
+            </div>
+
+            <div class="testimonials-grid">
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <p>"LegalSwami helped me draft a rental agreement within minutes. Saved me hundreds of dollars!"</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="author-info">
+                            <h4>Rahul Sharma</h4>
+                            <span>Small Business Owner</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <p>"As a law student, this is an incredible tool for quick legal research and understanding complex concepts."</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="author-info">
+                            <h4>Priya Patel</h4>
+                            <span>Law Student</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <p>"The document generation feature is amazing. Got my legal notice ready in 2 minutes!"</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-avatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="author-info">
+                            <h4>Ankit Verma</h4>
+                            <span>Entrepreneur</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section id="faq" class="faq-section">
+            <div class="section-header">
+                <h2>Frequently Asked Questions</h2>
+                <p>Get answers to common questions</p>
+            </div>
+
+            <div class="faq-container">
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>Is LegalSwami a replacement for a lawyer?</h4>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>No, LegalSwami is an AI assistant designed to provide legal information and guidance. For critical legal matters, you should always consult a qualified attorney.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>Is my data secure?</h4>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes, we use end-to-end encryption and secure authentication. Your conversations are private and we never share your data with third parties.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>Can I generate legal documents?</h4>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Yes! You can generate various legal documents including agreements, notices, and letters in PDF, DOC, and TXT formats.</p>
+                    </div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question">
+                        <h4>Is there a cost to use LegalSwami?</h4>
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Currently, LegalSwami is free to use. We may introduce premium features in the future with clear communication to our users.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="main-footer">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <div class="footer-logo">
+                        <i class="fas fa-balance-scale"></i>
+                        <h3>Legal<span>Swami</span></h3>
+                    </div>
+                    <p>Your AI-powered legal assistant available 24/7.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-linkedin"></i></a>
+                        <a href="#"><i class="fab fa-github"></i></a>
+                    </div>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Quick Links</h4>
+                    <ul>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#how-it-works">How it Works</a></li>
+                        <li><a href="#testimonials">Testimonials</a></li>
+                        <li><a href="#faq">FAQ</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Legal</h4>
+                    <ul>
+                        <li><a href="#" id="termsLink">Terms of Service</a></li>
+                        <li><a href="#" id="privacyLink">Privacy Policy</a></li>
+                        <li><a href="#" id="disclaimerLink">Legal Disclaimer</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-section">
+                    <h4>Contact</h4>
+                    <ul>
+                        <li><i class="fas fa-envelope"></i> support@legalswami.com</li>
+                        <li><i class="fas fa-phone"></i> +91 9876543210</li>
+                        <li><i class="fas fa-map-marker-alt"></i> India</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="footer-bottom">
+                <p>&copy; 2024 LegalSwami. All rights reserved.</p>
+                <p class="disclaimer">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    LegalSwami is an AI assistant, not a licensed attorney. Use information at your own discretion.
+                </p>
+            </div>
+        </footer>
     </div>
-    
+
+    <!-- Toast Notifications -->
+    <div id="toastContainer" class="toast-container"></div>
+
     <!-- JavaScript Files -->
-    <script src="js/config.js"></script>
     <script src="js/api.js"></script>
     <script src="js/auth.js"></script>
     <script src="js/chat.js"></script>
-    <script src="js/app.js"></script>
+    <script src="js/utils.js"></script>
+    
+    <!-- Main App Script -->
+    <script>
+        // Global variables
+        let currentChatId = null;
+        let isProcessing = false;
+        
+        // DOM Content Loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('LegalSwami initialized');
+            
+            // Hide loading screen
+            setTimeout(() => {
+                document.getElementById('loadingScreen').style.display = 'none';
+            }, 1000);
+            
+            // Initialize backend connection
+            initializeAppWithBackend();
+            
+            // Setup event listeners
+            setupEventListeners();
+            
+            // Initialize Google Auth
+            initializeGoogleAuth();
+        });
+        
+        // Setup all event listeners
+        function setupEventListeners() {
+            // Header buttons
+            document.getElementById('headerLoginBtn').addEventListener('click', showLoginModal);
+            document.getElementById('logoutBtn').addEventListener('click', logout);
+            document.getElementById('startChatBtn').addEventListener('click', startChat);
+            document.getElementById('learnMoreBtn').addEventListener('click', showDemo);
+            
+            // Chat interface
+            document.getElementById('backToHome').addEventListener('click', goBackToHome);
+            document.getElementById('clearChat').addEventListener('click', clearChat);
+            document.getElementById('exportChat').addEventListener('click', exportChat);
+            document.getElementById('historyToggle').addEventListener('click', toggleHistory);
+            document.getElementById('closeHistory').addEventListener('click', toggleHistory);
+            document.getElementById('sendMessage').addEventListener('click', sendMessageHandler);
+            document.getElementById('attachFile').addEventListener('click', attachFile);
+            document.getElementById('voiceInput').addEventListener('click', startVoiceInput);
+            
+            // Quick questions
+            document.querySelectorAll('.quick-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const question = this.getAttribute('data-question');
+                    document.getElementById('messageInput').value = question;
+                    sendMessageHandler();
+                });
+            });
+            
+            // Login modal
+            document.getElementById('closeLoginModal').addEventListener('click', hideLoginModal);
+            document.getElementById('googleLoginBtn').addEventListener('click', handleGoogleLogin);
+            
+            // Document generation checkbox
+            document.getElementById('generateDocument').addEventListener('change', function() {
+                document.getElementById('documentType').disabled = !this.checked;
+            });
+            
+            // FAQ accordion
+            document.querySelectorAll('.faq-question').forEach(question => {
+                question.addEventListener('click', () => {
+                    const answer = question.nextElementSibling;
+                    const icon = question.querySelector('i');
+                    
+                    if (answer.style.display === 'block') {
+                        answer.style.display = 'none';
+                        icon.className = 'fas fa-chevron-down';
+                    } else {
+                        answer.style.display = 'block';
+                        icon.className = 'fas fa-chevron-up';
+                    }
+                });
+            });
+            
+            // Legal links
+            document.getElementById('termsLink').addEventListener('click', showTerms);
+            document.getElementById('privacyLink').addEventListener('click', showPrivacy);
+            document.getElementById('disclaimerLink').addEventListener('click', showDisclaimer);
+        }
+        
+        // Initialize Google OAuth
+        async function initializeGoogleAuth() {
+            if (typeof gapi === 'undefined') {
+                console.log('Google API not loaded');
+                return;
+            }
+            
+            try {
+                await gapi.load('auth2', async () => {
+                    const auth2 = gapi.auth2.init({
+                        client_id: 'YOUR_GOOGLE_CLIENT_ID.apps.googleusercontent.com',
+                        cookiepolicy: 'single_host_origin',
+                        scope: 'profile email'
+                    });
+                    
+                    // Listen for sign-in state changes
+                    auth2.isSignedIn.listen((isSignedIn) => {
+                        if (isSignedIn) {
+                            const googleUser = auth2.currentUser.get();
+                            handleGoogleSignIn(googleUser);
+                        }
+                    });
+                    
+                    // Check if already signed in
+                    if (auth2.isSignedIn.get()) {
+                        const googleUser = auth2.currentUser.get();
+                        handleGoogleSignIn(googleUser);
+                    }
+                });
+            } catch (error) {
+                console.error('Google Auth initialization failed:', error);
+            }
+        }
+        
+        // Handle Google Sign In
+        async function handleGoogleSignIn(googleUser) {
+            try {
+                const token = googleUser.getAuthResponse().id_token;
+                const profile = googleUser.getBasicProfile();
+                
+                // Send token to backend
+                const response = await window.legalSwamiAPI.loginWithGoogle(token);
+                
+                // Set auth token in API service
+                window.legalSwamiAPI.setAuthToken(response.token, {
+                    id: response.user.id,
+                    name: response.user.name,
+                    email: response.user.email,
+                    picture: response.user.profilePicture
+                });
+                
+                // Update UI
+                updateUserUI();
+                hideLoginModal();
+                showToast('Successfully logged in!', 'success');
+                
+            } catch (error) {
+                console.error('Google login failed:', error);
+                showToast('Login failed. Please try again.', 'error');
+            }
+        }
+        
+        // Handle manual Google login button click
+        async function handleGoogleLogin() {
+            if (typeof gapi === 'undefined') {
+                showToast('Google API not loaded. Please refresh the page.', 'error');
+                return;
+            }
+            
+            try {
+                const auth2 = gapi.auth2.getAuthInstance();
+                await auth2.signIn();
+            } catch (error) {
+                console.error('Google sign-in failed:', error);
+                showToast('Login failed: ' + error.message, 'error');
+            }
+        }
+        
+        // Update user UI
+        function updateUserUI() {
+            const user = window.legalSwamiAPI.user;
+            const userProfile = document.getElementById('userProfile');
+            const headerLoginBtn = document.getElementById('headerLoginBtn');
+            
+            if (user && user.id) {
+                headerLoginBtn.style.display = 'none';
+                userProfile.style.display = 'flex';
+                
+                document.getElementById('userName').textContent = user.name || 'User';
+                document.getElementById('userEmail').textContent = user.email || '';
+                
+                const avatar = document.getElementById('userAvatar');
+                if (user.picture) {
+                    avatar.innerHTML = `<img src="${user.picture}" alt="${user.name}" style="width: 100%; height: 100%; border-radius: 8px;">`;
+                } else {
+                    const initials = user.name ? user.name.charAt(0).toUpperCase() : 'U';
+                    avatar.innerHTML = `<span>${initials}</span>`;
+                }
+            } else {
+                headerLoginBtn.style.display = 'flex';
+                userProfile.style.display = 'none';
+            }
+        }
+        
+        // Initialize app with backend
+        async function initializeAppWithBackend() {
+            try {
+                const token = localStorage.getItem('legal_swami_token');
+                
+                if (token) {
+                    // Verify token with backend
+                    await window.legalSwamiAPI.verifyToken();
+                    updateUserUI();
+                    
+                    // Load chat history if user is logged in
+                    await loadChatHistory();
+                } else {
+                    // Show login modal after 2 seconds
+                    setTimeout(showLoginModal, 2000);
+                }
+            } catch (error) {
+                console.error('Initialization failed:', error);
+                showLoginModal();
+            }
+        }
+        
+        // Show login modal
+        function showLoginModal() {
+            document.getElementById('loginModal').style.display = 'flex';
+        }
+        
+        // Hide login modal
+        function hideLoginModal() {
+            document.getElementById('loginModal').style.display = 'none';
+        }
+        
+        // Logout function
+        function logout() {
+            if (typeof gapi !== 'undefined') {
+                const auth2 = gapi.auth2.getAuthInstance();
+                if (auth2) {
+                    auth2.signOut();
+                }
+            }
+            
+            window.legalSwamiAPI.clearAuth();
+            updateUserUI();
+            showToast('Logged out successfully', 'success');
+            
+            // Go back to home if in chat interface
+            if (document.getElementById('chatInterface').style.display !== 'none') {
+                goBackToHome();
+            }
+        }
+        
+        // Start chat
+        function startChat() {
+            const token = localStorage.getItem('legal_swami_token');
+            
+            if (!token) {
+                showLoginModal();
+                showToast('Please login to start chatting', 'warning');
+                return;
+            }
+            
+            // Show chat interface
+            document.getElementById('chatInterface').style.display = 'block';
+            document.querySelector('.main-container').style.background = '#f8fafc';
+            
+            // Scroll to chat input
+            setTimeout(() => {
+                document.getElementById('messageInput').focus();
+            }, 100);
+        }
+        
+        // Go back to home
+        function goBackToHome() {
+            document.getElementById('chatInterface').style.display = 'none';
+            document.querySelector('.main-container').style.background = '';
+            
+            // Scroll to top
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+        
+        // Clear chat
+        function clearChat() {
+            if (confirm('Are you sure you want to clear the chat?')) {
+                const chatMessages = document.getElementById('chatMessages');
+                const messages = chatMessages.querySelectorAll('.message');
+                
+                // Keep only the welcome message
+                messages.forEach((message, index) => {
+                    if (index > 0) { // Skip welcome message (index 0)
+                        message.remove();
+                    }
+                });
+                
+                currentChatId = null;
+                showToast('Chat cleared', 'success');
+            }
+        }
+        
+        // Export chat
+        function exportChat() {
+            const chatMessages = document.getElementById('chatMessages');
+            const messages = chatMessages.querySelectorAll('.message');
+            
+            let exportText = 'LegalSwami Chat Export\n';
+            exportText += 'Generated on: ' + new Date().toLocaleString() + '\n\n';
+            
+            messages.forEach(message => {
+                const isAI = message.classList.contains('ai-message');
+                const text = message.querySelector('.message-text')?.textContent || '';
+                const time = message.querySelector('.message-time')?.textContent || '';
+                
+                exportText += `${isAI ? 'AI' : 'You'} (${time}):\n${text}\n\n`;
+            });
+            
+            // Create and download file
+            const blob = new Blob([exportText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `legalswami-chat-${Date.now()}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast('Chat exported successfully', 'success');
+        }
+        
+        // Toggle history sidebar
+        function toggleHistory() {
+            const sidebar = document.getElementById('historySidebar');
+            if (sidebar.style.display === 'flex') {
+                sidebar.style.display = 'none';
+            } else {
+                sidebar.style.display = 'flex';
+                loadChatHistory();
+            }
+        }
+        
+        // Load chat history
+        async function loadChatHistory() {
+            try {
+                const history = await window.legalSwamiAPI.getChatHistory(0, 10);
+                updateHistoryList(history);
+            } catch (error) {
+                console.error('Failed to load history:', error);
+            }
+        }
+        
+        // Update history list UI
+        function updateHistoryList(history) {
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = '';
+            
+            if (!history || history.length === 0) {
+                historyList.innerHTML = `
+                    <div class="empty-history">
+                        <i class="fas fa-history"></i>
+                        <p>No chat history yet</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            history.forEach(item => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.innerHTML = `
+                    <div class="history-item-content">
+                        <p class="history-question">${item.message.substring(0, 50)}${item.message.length > 50 ? '...' : ''}</p>
+                        <span class="history-time">${formatTime(item.createdAt)}</span>
+                    </div>
+                    <button class="btn-icon" onclick="loadChatFromHistory('${item.id}')">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                `;
+                historyList.appendChild(historyItem);
+            });
+        }
+        
+        // Load chat from history
+        async function loadChatFromHistory(chatId) {
+            try {
+                // This would load a specific chat from history
+                // For now, just show a message
+                showToast('Loading chat from history...', 'info');
+                toggleHistory();
+            } catch (error) {
+                console.error('Failed to load chat:', error);
+                showToast('Failed to load chat', 'error');
+            }
+        }
+        
+        // Handle input keydown
+        function handleInputKeydown(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessageHandler();
+            }
+            
+            // Auto-resize textarea
+            const textarea = event.target;
+            textarea.style.height = 'auto';
+            textarea.style.height = (textarea.scrollHeight) + 'px';
+        }
+        
+        // Send message handler
+        async function sendMessageHandler() {
+            if (isProcessing) return;
+            
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message) {
+                showToast('Please enter a message', 'warning');
+                return;
+            }
+            
+            // Check if user is logged in
+            if (!window.legalSwamiAPI.token) {
+                showLoginModal();
+                showToast('Please login to send messages', 'warning');
+                return;
+            }
+            
+            isProcessing = true;
+            
+            try {
+                // Add user message to chat
+                addMessageToChat(message, true);
+                input.value = '';
+                input.style.height = 'auto';
+                
+                // Show typing indicator
+                showTypingIndicator(true);
+                
+                // Get document generation option
+                const generateDocument = document.getElementById('generateDocument').checked;
+                const documentType = document.getElementById('documentType').value;
+                
+                // Send to backend
+                const response = await window.legalSwamiAPI.sendMessage(
+                    message, 
+                    [], // attachments
+                    currentChatId
+                );
+                
+                // Add AI response to chat
+                addMessageToChat(response.response, false, generateDocument, response.documentType);
+                
+                // If document was generated, show download option
+                if (generateDocument && response.documentUrl) {
+                    showDocumentDownload(response.documentUrl, documentType);
+                }
+                
+                // Update chat history
+                await loadChatHistory();
+                
+            } catch (error) {
+                console.error('Failed to send message:', error);
+                addMessageToChat('Sorry, I encountered an error. Please try again.', false);
+                showToast('Failed to send message: ' + error.message, 'error');
+            } finally {
+                isProcessing = false;
+                showTypingIndicator(false);
+            }
+        }
+        
+        // Add message to chat UI
+        function addMessageToChat(content, isUser = false, isDocument = false, documentType = null) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            
+            messageDiv.className = `message ${isUser ? 'user-message' : 'ai-message'}`;
+            
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            let messageContent = content;
+            if (isDocument) {
+                messageContent = `📄 **${documentType} Document Generated:**\n\n${content}`;
+            }
+            
+            messageDiv.innerHTML = `
+                <div class="message-avatar">
+                    ${isUser ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>'}
+                </div>
+                <div class="message-content">
+                    <div class="message-text">${formatMessageText(messageContent)}</div>
+                    <div class="message-time">${time}</div>
+                </div>
+            `;
+            
+            chatMessages.appendChild(messageDiv);
+            
+            // Scroll to bottom
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+        
+        // Format message text (basic markdown)
+        function formatMessageText(text) {
+            // Convert line breaks
+            text = text.replace(/\n/g, '<br>');
+            
+            // Convert **bold**
+            text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            
+            // Convert *italic*
+            text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            
+            // Convert bullet points
+            text = text.replace(/^\s*[-•*]\s+(.*)$/gm, '<li>$1</li>');
+            text = text.replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>');
+            
+            return text;
+        }
+        
+        // Show typing indicator
+        function showTypingIndicator(show) {
+            const indicator = document.getElementById('typingIndicator');
+            indicator.style.display = show ? 'flex' : 'none';
+            
+            if (show) {
+                // Scroll to bottom
+                const chatMessages = document.getElementById('chatMessages');
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        }
+        
+        // Show document download option
+        function showDocumentDownload(url, type) {
+            const chatMessages = document.getElementById('chatMessages');
+            const downloadDiv = document.createElement('div');
+            
+            downloadDiv.className = 'document-download';
+            downloadDiv.innerHTML = `
+                <div class="download-content">
+                    <i class="fas fa-file-download"></i>
+                    <div>
+                        <p><strong>${type} Document Ready</strong></p>
+                        <p>Your legal document has been generated.</p>
+                    </div>
+                    <a href="${url}" class="btn-download" download>
+                        Download
+                    </a>
+                </div>
+            `;
+            
+            chatMessages.appendChild(downloadDiv);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            showToast(`${type} document generated successfully!`, 'success');
+        }
+        
+        // Attach file
+        function attachFile() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = '.pdf,.doc,.docx,.txt,.jpg,.jpeg,.png';
+            input.multiple = true;
+            
+            input.onchange = function(e) {
+                const files = Array.from(e.target.files);
+                const attachmentsDiv = document.getElementById('fileAttachments');
+                
+                files.forEach(file => {
+                    if (file.size > 10 * 1024 * 1024) { // 10MB limit
+                        showToast(`File ${file.name} is too large (max 10MB)`, 'error');
+                        return;
+                    }
+                    
+                    const attachment = document.createElement('div');
+                    attachment.className = 'file-attachment';
+                    attachment.innerHTML = `
+                        <i class="fas fa-file"></i>
+                        <span>${file.name}</span>
+                        <button class="btn-icon" onclick="removeAttachment(this)">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    `;
+                    
+                    attachmentsDiv.appendChild(attachment);
+                });
+                
+                if (files.length > 0) {
+                    showToast(`${files.length} file(s) attached`, 'success');
+                }
+            };
+            
+            input.click();
+        }
+        
+        // Remove attachment
+        function removeAttachment(button) {
+            const attachment = button.closest('.file-attachment');
+            attachment.remove();
+        }
+        
+        // Start voice input
+        function startVoiceInput() {
+            if (!('webkitSpeechRecognition' in window)) {
+                showToast('Voice input is not supported in your browser', 'warning');
+                return;
+            }
+            
+            const recognition = new webkitSpeechRecognition();
+            recognition.lang = 'en-IN';
+            recognition.continuous = false;
+            recognition.interimResults = false;
+            
+            recognition.onstart = function() {
+                showToast('Listening... Speak now', 'info');
+            };
+            
+            recognition.onresult = function(event) {
+                const transcript = event.results[0][0].transcript;
+                document.getElementById('messageInput').value = transcript;
+                showToast('Voice input captured', 'success');
+            };
+            
+            recognition.onerror = function(event) {
+                showToast('Voice input error: ' + event.error, 'error');
+            };
+            
+            recognition.start();
+        }
+        
+        // Show demo
+        function showDemo() {
+            showToast('Demo video would play here', 'info');
+            // In a real implementation, this would open a video modal
+        }
+        
+        // Show terms
+        function showTerms(e) {
+            e.preventDefault();
+            alert('Terms of Service\n\nBy using LegalSwami, you agree to our terms...');
+        }
+        
+        // Show privacy policy
+        function showPrivacy(e) {
+            e.preventDefault();
+            alert('Privacy Policy\n\nWe value your privacy...');
+        }
+        
+        // Show disclaimer
+        function showDisclaimer(e) {
+            e.preventDefault();
+            alert('Legal Disclaimer\n\nLegalSwami is an AI assistant, not a licensed attorney...');
+        }
+        
+        // Format time
+        function formatTime(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diff = now - date;
+            
+            if (diff < 60000) return 'Just now';
+            if (diff < 3600000) return Math.floor(diff / 60000) + 'm ago';
+            if (diff < 86400000) return Math.floor(diff / 3600000) + 'h ago';
+            return date.toLocaleDateString();
+        }
+        
+        // Show toast notification
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toastContainer');
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            
+            const icons = {
+                success: 'fas fa-check-circle',
+                error: 'fas fa-exclamation-circle',
+                warning: 'fas fa-exclamation-triangle',
+                info: 'fas fa-info-circle'
+            };
+            
+            toast.innerHTML = `
+                <i class="${icons[type]}"></i>
+                <span>${message}</span>
+            `;
+            
+            container.appendChild(toast);
+            
+            // Auto remove after 3 seconds
+            setTimeout(() => {
+                toast.classList.add('fade-out');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+        
+        // Make functions available globally
+        window.handleInputKeydown = handleInputKeydown;
+        window.removeAttachment = removeAttachment;
+        window.loadChatFromHistory = loadChatFromHistory;
+    </script>
 </body>
 </html>

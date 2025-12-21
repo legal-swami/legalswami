@@ -1,1 +1,445 @@
- 
+name: Deploy LegalSwami Frontend
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'legalswami-frontend/**'
+      - '.github/workflows/deploy-frontend.yml'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'legalswami-frontend/**'
+  workflow_dispatch:  # Manual trigger
+    inputs:
+      environment:
+        description: 'Deployment environment'
+        required: true
+        default: 'github-pages'
+        type: choice
+        options:
+        - github-pages
+        - netlify
+        - vercel
+        - firebase
+
+# Environment variables
+env:
+  NODE_VERSION: '18'
+  AWS_REGION: 'ap-south-1'
+  S3_BUCKET_PROD: 'legalswami-prod'
+  S3_BUCKET_STAGING: 'legalswami-staging'
+  CLOUDFRONT_DISTRIBUTION_PROD: ${{ secrets.CLOUDFRONT_DIST_PROD }}
+  CLOUDFRONT_DISTRIBUTION_STAGING: ${{ secrets.CLOUDFRONT_DIST_STAGING }}
+
+jobs:
+  # Job 1: Quality Check
+  quality-check:
+    name: Quality Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+        cache-dependency-path: 'legalswami-frontend/package-lock.json'
+
+    - name: Install Dependencies
+      run: |
+        if [ -f "legalswami-frontend/package.json" ]; then
+          cd legalswami-frontend
+          npm ci
+        else
+          echo "No package.json found, skipping npm install"
+        fi
+
+    - name: HTML Validation
+      uses: Cyb3r-Jak3/html5validator-action@v1
+      with:
+        root: legalswami-frontend
+        ignore: '/(node_modules|\.git)/'
+
+    - name: CSS Validation
+      uses: bokub/github-action-stylelint@v1
+      if: always()
+      with:
+        pattern: 'legalswami-frontend/**/*.css'
+        ignore-path: 'legalswami-frontend/.stylelintignore'
+
+    - name: JavaScript Linting
+      uses: reviewdog/action-eslint@v1
+      if: always()
+      with:
+        github_token: ${{ secrets.github_token }}
+        eslint_flags: 'legalswami-frontend/**/*.js'
+        level: warning
+
+    - name: Run Lighthouse CI
+      uses: treosh/lighthouse-ci-action@v10
+      if: always()
+      with:
+        configPath: './legalswami-frontend/.lighthouserc.json'
+        uploadArtifacts: true
+        temporaryPublicStorage: true
+
+    - name: Security Scan
+      uses: snyk/actions/node@master
+      if: always()
+      with:
+        args: --all-projects --severity-threshold=high
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+  # Job 2: Build Frontend
+  build:
+    name: Build Frontend
+    runs-on: ubuntu-latest
+    needs: quality-check
+    if: github.event_name != 'pull_request'
+    
+    outputs:
+      build-version: ${{ steps.version.outputs.build-version }}
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+        cache: 'npm'
+
+    - name: Generate Build Version
+      id: version
+      run: |
+        TIMESTAMP=$(date +%Y%m%d%H%M%S)
+        SHORT_SHA=${GITHUB_SHA::7}
+        BUILD_VERSION="${TIMESTAMP}-${SHORT_SHA}"
+        echo "build-version=${BUILD_VERSION}" >> $GITHUB_OUTPUT
+        echo "Build Version: ${BUILD_VERSION}"
+
+    - name: Create Config File
+      run: |
+        cat > legalswami-frontend/config/config.js << EOF
+        // Auto-generated configuration
+        window.LEGAL_SWAMI_CONFIG = {
+          version: '${{ steps.version.outputs.build-version }}',
+          buildDate: '$(date -Iseconds)',
+          environment: '${{ github.ref_name == 'main' && 'production' || 'staging' }}',
+          backendUrl: '${{ github.ref_name == 'main' && secrets.BACKEND_URL_PROD || secrets.BACKEND_URL_STAGING }}',
+          googleClientId: '${{ secrets.GOOGLE_CLIENT_ID }}',
+          features: {
+            chat: true,
+            documents: true,
+            history: true,
+            multiLanguage: true
+          }
+        };
+        EOF
+
+    - name: Minify and Optimize
+      run: |
+        cd legalswami-frontend
+        
+        # Create minified versions
+        for file in css/*.css; do
+          if [ -f "$file" ]; then
+            css-minify -f "$file" -o css/min/
+          fi
+        done
+        
+        for file in js/*.js; do
+          if [ -f "$file" ]; then
+            uglifyjs "$file" -c -m -o js/min/$(basename "$file")
+          fi
+        done
+        
+        # Create service worker
+        cat > service-worker.js << EOF
+        const CACHE_NAME = 'legal-swami-${{ steps.version.outputs.build-version }}';
+        const urlsToCache = [
+          './',
+          './index.html',
+          './legal-swami-ui.html'
+        ];
+        
+        self.addEventListener('install', event => {
+          event.waitUntil(
+            caches.open(CACHE_NAME)
+              .then(cache => cache.addAll(urlsToCache))
+          );
+        });
+        
+        self.addEventListener('fetch', event => {
+          event.respondWith(
+            caches.match(event.request)
+              .then(response => response || fetch(event.request))
+          );
+        });
+        EOF
+
+    - name: Create Build Artifact
+      run: |
+        mkdir -p dist
+        cp -r legalswami-frontend/* dist/
+        echo "${{ steps.version.outputs.build-version }}" > dist/version.txt
+        
+        # Create sitemap
+        cat > dist/sitemap.xml << EOF
+        <?xml version="1.0" encoding="UTF-8"?>
+        <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+          <url>
+            <loc>https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/</loc>
+            <lastmod>$(date -Iseconds)</lastmod>
+            <changefreq>daily</changefreq>
+            <priority>1.0</priority>
+          </url>
+        </urlset>
+        EOF
+
+    - name: Upload Build Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: legal-swami-frontend-build
+        path: |
+          dist/
+          !dist/node_modules
+        retention-days: 7
+
+  # Job 3: Deploy to GitHub Pages
+  deploy-github-pages:
+    name: Deploy to GitHub Pages
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/develop'
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Download Build Artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: legal-swami-frontend-build
+
+    - name: Setup Pages
+      uses: actions/configure-pages@v3
+
+    - name: Upload artifact
+      uses: actions/upload-pages-artifact@v2
+      with:
+        path: '.'
+
+    - name: Deploy to GitHub Pages
+      id: deployment
+      uses: actions/deploy-pages@v2
+
+    - name: Notify Deployment
+      run: |
+        echo "Deployed to: ${{ steps.deployment.outputs.page_url }}"
+        echo "::notice title=Deployment Complete::LegalSwami Frontend deployed to GitHub Pages"
+
+  # Job 4: Deploy to AWS S3 + CloudFront (Production)
+  deploy-aws:
+    name: Deploy to AWS S3
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/main'
+    environment:
+      name: production
+      url: https://${{ secrets.DOMAIN_PROD }}
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Download Build Artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: legal-swami-frontend-build
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v2
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        aws-region: ${{ env.AWS_REGION }}
+
+    - name: Deploy to S3
+      run: |
+        aws s3 sync ./dist s3://${{ env.S3_BUCKET_PROD }} \
+          --delete \
+          --cache-control "public, max-age=31536000" \
+          --exclude "*.html" \
+          --exclude "service-worker.js"
+        
+        # HTML files with no cache
+        aws s3 sync ./dist s3://${{ env.S3_BUCKET_PROD }} \
+          --cache-control "public, max-age=0, must-revalidate" \
+          --include "*.html" \
+          --include "service-worker.js"
+
+    - name: Create CloudFront Invalidation
+      run: |
+        aws cloudfront create-invalidation \
+          --distribution-id ${{ env.CLOUDFRONT_DISTRIBUTION_PROD }} \
+          --paths "/*"
+
+    - name: Update DNS Record (if using Route53)
+      if: env.DOMAIN_PROD != ''
+      run: |
+        # Update DNS if needed
+        echo "DNS update would go here for ${{ secrets.DOMAIN_PROD }}"
+
+  # Job 5: Deploy to Netlify
+  deploy-netlify:
+    name: Deploy to Netlify
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.ref == 'refs/heads/develop' || inputs.environment == 'netlify'
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Download Build Artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: legal-swami-frontend-build
+
+    - name: Deploy to Netlify
+      uses: nwtgck/actions-netlify@v2.0
+      with:
+        publish-dir: './dist'
+        production-branch: main
+        deploy-message: "Deploy from GitHub Actions ${{ github.sha }}"
+        enable-pull-request-comment: false
+        overwrites-pull-request-comment: false
+      env:
+        NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
+        NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+      timeout-minutes: 1
+
+  # Job 6: Deploy to Vercel
+  deploy-vercel:
+    name: Deploy to Vercel
+    runs-on: ubuntu-latest
+    needs: build
+    if: inputs.environment == 'vercel'
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Download Build Artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: legal-swami-frontend-build
+
+    - name: Deploy to Vercel
+      uses: amondnet/vercel-action@v20
+      with:
+        vercel-token: ${{ secrets.VERCEL_TOKEN }}
+        vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+        vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+        vercel-args: '--prod'
+
+  # Job 7: Deploy to Firebase Hosting
+  deploy-firebase:
+    name: Deploy to Firebase
+    runs-on: ubuntu-latest
+    needs: build
+    if: inputs.environment == 'firebase'
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Download Build Artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: legal-swami-frontend-build
+
+    - name: Deploy to Firebase
+      uses: w9jds/firebase-action@master
+      with:
+        args: deploy --only hosting
+      env:
+        FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
+
+  # Job 8: Post-Deployment Checks
+  post-deploy:
+    name: Post-Deployment Checks
+    runs-on: ubuntu-latest
+    needs: [deploy-github-pages, deploy-aws, deploy-netlify]
+    if: always()
+    
+    steps:
+    - name: Run Smoke Tests
+      run: |
+        echo "Running smoke tests on deployed applications..."
+        
+        # Test GitHub Pages
+        if [ "${{ needs.deploy-github-pages.result }}" == "success" ]; then
+          echo "Testing GitHub Pages deployment..."
+          curl -f ${{ needs.deploy-github-pages.outputs.page_url }} || echo "GitHub Pages test failed"
+        fi
+        
+        # Test AWS deployment
+        if [ "${{ needs.deploy-aws.result }}" == "success" ] && [ -n "${{ secrets.DOMAIN_PROD }}" ]; then
+          echo "Testing AWS deployment..."
+          curl -f https://${{ secrets.DOMAIN_PROD }} || echo "AWS deployment test failed"
+        fi
+
+    - name: Generate Deployment Report
+      run: |
+        echo "## Frontend Deployment Report" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Deployments:" >> $GITHUB_STEP_SUMMARY
+        
+        if [ "${{ needs.deploy-github-pages.result }}" == "success" ]; then
+          echo "- ✅ **GitHub Pages:** [${{ needs.deploy-github-pages.outputs.page_url }}](${{ needs.deploy-github-pages.outputs.page_url }})" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        if [ "${{ needs.deploy-aws.result }}" == "success" ]; then
+          echo "- ✅ **AWS S3/CloudFront:** https://${{ secrets.DOMAIN_PROD }}" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        if [ "${{ needs.deploy-netlify.result }}" == "success" ]; then
+          echo "- ✅ **Netlify:** [View Deployment](https://app.netlify.com/sites/${{ secrets.NETLIFY_SITE_ID }}/deploys)" >> $GITHUB_STEP_SUMMARY
+        fi
+        
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### Build Info:" >> $GITHUB_STEP_SUMMARY
+        echo "- **Version:** ${{ needs.build.outputs.build-version }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Branch:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Timestamp:** $(date)" >> $GITHUB_STEP_SUMMARY
+
+    - name: Send Slack Notification
+      uses: 8398a7/action-slack@v3
+      if: always()
+      with:
+        status: ${{ job.status }}
+        text: "Frontend deployment completed for LegalSwami"
+        fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
+        channel: '#deployments'
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }} 

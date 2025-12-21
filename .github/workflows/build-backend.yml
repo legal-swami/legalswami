@@ -1,1 +1,416 @@
- 
+name: Build and Deploy LegalSwami Backend
+
+on:
+  push:
+    branches: [ main, develop ]
+    paths:
+      - 'legalswami-backend/**'
+  pull_request:
+    branches: [ main ]
+    paths:
+      - 'legalswami-backend/**'
+  workflow_dispatch:  # Manual trigger
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository }}/legal-swami-backend
+
+jobs:
+  # Job 1: Code Quality and Testing
+  code-quality:
+    name: Code Quality & Tests
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Cache Maven dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.m2
+        key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
+        restore-keys: ${{ runner.os }}-m2
+
+    - name: Run Maven Dependency Check
+      run: |
+        cd legalswami-backend
+        mvn dependency:tree
+        mvn dependency:analyze
+
+    - name: Run Code Analysis with Spotless
+      run: |
+        cd legalswami-backend
+        mvn spotless:check
+
+    - name: Run Unit Tests
+      run: |
+        cd legalswami-backend
+        mvn test -B
+      env:
+        JWT_SECRET: test-secret-key-for-ci
+        ENCRYPTION_SECRET: test-encryption-secret-32-byte
+
+    - name: Generate Test Coverage Report
+      run: |
+        cd legalswami-backend
+        mvn jacoco:report
+        ls -la target/site/jacoco/
+
+    - name: Upload Test Coverage
+      uses: codecov/codecov-action@v3
+      with:
+        file: legalswami-backend/target/site/jacoco/jacoco.xml
+        flags: unittests
+
+    - name: SonarCloud Scan
+      uses: SonarSource/sonarcloud-github-action@master
+      if: github.event_name == 'push'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+      with:
+        projectBaseDir: legalswami-backend
+
+  # Job 2: Build and Package
+  build:
+    name: Build Backend
+    runs-on: ubuntu-latest
+    needs: code-quality
+    if: github.event_name != 'pull_request'
+    
+    outputs:
+      version: ${{ steps.extract_version.outputs.version }}
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+        cache: maven
+
+    - name: Extract Version
+      id: extract_version
+      run: |
+        cd legalswami-backend
+        VERSION=$(mvn help:evaluate -Dexpression=project.version -q -DforceStdout)
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "Extracted version: $VERSION"
+
+    - name: Build with Maven
+      run: |
+        cd legalswami-backend
+        mvn clean package -DskipTests
+      env:
+        JWT_SECRET: build-secret-key
+        ENCRYPTION_SECRET: build-encryption-secret-32-byte
+
+    - name: Verify JAR File
+      run: |
+        cd legalswami-backend
+        ls -la target/*.jar
+        jar tf target/*.jar | head -20
+
+    - name: Upload Build Artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: legal-swami-backend-jar
+        path: legalswami-backend/target/*.jar
+        retention-days: 7
+
+  # Job 3: Docker Build and Push
+  docker-build:
+    name: Build & Push Docker Image
+    runs-on: ubuntu-latest
+    needs: build
+    if: github.event_name != 'pull_request'
+    
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Log in to GitHub Container Registry
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: ${{ github.actor }}
+        password: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Extract metadata
+      id: meta
+      uses: docker/metadata-action@v5
+      with:
+        images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+        tags: |
+          type=ref,event=branch
+          type=ref,event=pr
+          type=semver,pattern={{version}}
+          type=semver,pattern={{major}}.{{minor}}
+          type=sha,prefix={{branch}}-
+          type=raw,value=latest,enable=${{ github.ref == 'refs/heads/main' }}
+
+    - name: Build and push Docker image
+      uses: docker/build-push-action@v5
+      with:
+        context: legalswami-backend
+        push: ${{ github.event_name != 'pull_request' }}
+        tags: ${{ steps.meta.outputs.tags }}
+        labels: ${{ steps.meta.outputs.labels }}
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
+
+    - name: Scan Docker image for vulnerabilities
+      uses: aquasecurity/trivy-action@master
+      if: github.event_name == 'push'
+      with:
+        image-ref: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:latest
+        format: 'sarif'
+        output: 'trivy-results.sarif'
+        severity: 'CRITICAL,HIGH'
+
+    - name: Upload Trivy scan results
+      uses: github/codeql-action/upload-sarif@v2
+      if: always()
+      with:
+        sarif_file: 'trivy-results.sarif'
+
+  # Job 4: Deploy to Staging (Heroku/Railway)
+  deploy-staging:
+    name: Deploy to Staging
+    runs-on: ubuntu-latest
+    needs: [code-quality, docker-build]
+    if: github.ref == 'refs/heads/develop' || github.event_name == 'workflow_dispatch'
+    environment:
+      name: staging
+      url: https://legal-swami-staging.herokuapp.com
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Download Build Artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: legal-swami-backend-jar
+
+    - name: Deploy to Heroku Staging
+      uses: akhileshns/heroku-deploy@v3.12.12
+      if: env.HEROKU_API_KEY != ''
+      with:
+        heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+        heroku_app_name: "legal-swami-staging"
+        heroku_email: ${{ secrets.HEROKU_EMAIL }}
+        usedocker: false
+        appdir: "legalswami-backend"
+        healthcheck: "https://legal-swami-staging.herokuapp.com/health"
+        rollbackonhealthcheckfailed: true
+        delay: 10
+
+    - name: Deploy to Railway (Alternative)
+      uses: railwayapp/action@v1.0.4
+      if: env.RAILWAY_TOKEN != ''
+      with:
+        railway_token: ${{ secrets.RAILWAY_TOKEN }}
+        service: legal-swami-backend
+        environment: staging
+
+    - name: Run Staging Tests
+      run: |
+        echo "Running smoke tests against staging environment..."
+        sleep 30  # Wait for deployment to complete
+        curl -f https://legal-swami-staging.herokuapp.com/health || exit 1
+        curl -f https://legal-swami-staging.herokuapp.com/health/liveness || exit 1
+        curl -f https://legal-swami-staging.herokuapp.com/health/readiness || exit 1
+
+    - name: Notify Slack on Success
+      uses: 8398a7/action-slack@v3
+      if: success()
+      with:
+        status: ${{ job.status }}
+        fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
+        channel: '#deployments'
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEPHOOK_URL }}
+
+  # Job 5: Deploy to Production
+  deploy-production:
+    name: Deploy to Production
+    runs-on: ubuntu-latest
+    needs: [code-quality, docker-build]
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
+    environment:
+      name: production
+      url: https://legal-swami.herokuapp.com
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Download Build Artifact
+      uses: actions/download-artifact@v3
+      with:
+        name: legal-swami-backend-jar
+
+    - name: Run Security Scan
+      run: |
+        echo "Running additional security checks..."
+        # Add security scanning tools here
+        # snyk test --all-projects
+        # npm audit
+
+    - name: Approval Required (Manual)
+      uses: trstringer/manual-approval@v1
+      with:
+        secret: ${{ github.TOKEN }}
+        approvers: ${{ secrets.PRODUCTION_APPROVERS }}
+        minimum-approvals: 1
+
+    - name: Deploy to Heroku Production
+      uses: akhileshns/heroku-deploy@v3.12.12
+      if: env.HEROKU_API_KEY != ''
+      with:
+        heroku_api_key: ${{ secrets.HEROKU_API_KEY }}
+        heroku_app_name: "legal-swami"
+        heroku_email: ${{ secrets.HEROKU_EMAIL }}
+        usedocker: true
+        docker_heroku_process_type: web
+        docker_build_args: |
+          GROQ_API_KEYS
+          JWT_SECRET
+          ENCRYPTION_SECRET
+        healthcheck: "https://legal-swami.herokuapp.com/health"
+        delay: 10
+
+    - name: Deploy to AWS Elastic Beanstalk
+      uses: einaregilsson/beanstalk-deploy@v21
+      if: env.AWS_ACCESS_KEY_ID != ''
+      with:
+        aws_access_key: ${{ secrets.AWS_ACCESS_KEY_ID }}
+        aws_secret_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        application_name: legal-swami
+        environment_name: LegalSwami-env
+        version_label: ${{ github.sha }}
+        region: ap-south-1
+        deployment_package: legalswami-backend/target/*.jar
+        wait_for_deployment: true
+        wait_for_environment_recovery: 300
+
+    - name: Run Production Health Checks
+      run: |
+        echo "Running production health checks..."
+        sleep 60  # Wait for deployment to stabilize
+        
+        # Basic health check
+        curl -f https://legal-swami.herokuapp.com/health || exit 1
+        
+        # Load test endpoints
+        for endpoint in health/liveness health/readiness; do
+          echo "Testing $endpoint..."
+          curl -s -o /dev/null -w "%{http_code}" https://legal-swami.herokuapp.com/$endpoint
+          echo ""
+        done
+
+    - name: Database Migration Check
+      run: |
+        echo "Checking database migrations..."
+        # Add database migration verification here
+        # flyway info -url=${{ secrets.DB_URL }} -user=${{ secrets.DB_USER }} -password=${{ secrets.DB_PASSWORD }}
+
+    - name: Notify Slack Production Deploy
+      uses: 8398a7/action-slack@v3
+      if: always()
+      with:
+        status: ${{ job.status }}
+        text: "Production deployment of LegalSwami ${{ github.sha }}"
+        fields: repo,message,commit,author,action,eventName,ref,workflow
+        channel: '#production-deploys'
+      env:
+        SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+
+    - name: Create GitHub Release
+      uses: softprops/action-gh-release@v1
+      if: success()
+      with:
+        tag_name: v${{ needs.build.outputs.version }}
+        name: LegalSwami v${{ needs.build.outputs.version }}
+        body: |
+          ## LegalSwami Backend Release v${{ needs.build.outputs.version }}
+          
+          **Deployed to Production** ✅
+          
+          **Changes:**
+          ${{ github.event.head_commit.message }}
+          
+          **SHA:** ${{ github.sha }}
+          
+          **Health Check:** https://legal-swami.herokuapp.com/health
+        draft: false
+        prerelease: false
+        files: |
+          legalswami-backend/target/*.jar
+          legalswami-backend/Dockerfile
+          legalswami-backend/docker-compose.yml
+
+  # Job 6: Post-Deployment Monitoring
+  post-deploy:
+    name: Post-Deployment Monitoring
+    runs-on: ubuntu-latest
+    needs: [deploy-production, deploy-staging]
+    if: always()
+    
+    steps:
+    - name: Setup Monitoring
+      run: |
+        echo "Setting up monitoring for deployed services..."
+        
+    - name: Monitor Application Logs
+      run: |
+        echo "Checking application logs..."
+        # Add log aggregation checks here
+        
+    - name: Performance Monitoring
+      run: |
+        echo "Starting performance monitoring..."
+        # Add performance tests
+        
+    - name: Uptime Check
+      uses: jtalk/url-health-check-action@v3
+      with:
+        url: https://legal-swami.herokuapp.com/health
+        max-attempts: 3
+        retry-delay: 10s
+        
+    - name: Generate Deployment Report
+      run: |
+        echo "## Deployment Summary" >> $GITHUB_STEP_SUMMARY
+        echo "- **Version:** ${{ needs.build.outputs.version }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Environment:** ${{ github.ref_name }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Status:** ${{ job.status }}" >> $GITHUB_STEP_SUMMARY
+        echo "- **Timestamp:** $(date)" >> $GITHUB_STEP_SUMMARY
+        echo "- **Commit:** ${{ github.sha }}" >> $GITHUB_STEP_SUMMARY
+        
+    - name: Cleanup Old Artifacts
+      if: always()
+      run: |
+        echo "Cleaning up old workflow artifacts..."
+        # Add cleanup logic here 
