@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LegalSwami Backend Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .test-btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        .result {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            white-space: pre-wrap;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .success {
+            color: #10b981;
+        }
+        .error {
+            color: #ef4444;
+        }
+    </style>
+</head>
+<body>
+    <h1>LegalSwami Backend Test</h1>
+    <button class="test-btn" onclick="runTest()">Test Backend Connection</button>
+    
+    <div id="result" class="result"></div>
+    
+    <script>
+        async function runTest() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = 'Testing...';
+            
+            try {
+                const response = await fetch('https://legal-swami-backend.onrender.com/api/v1/chat/send', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-user-id': 'test_user_' + Date.now()
+                    },
+                    body: JSON.stringify({
+                        message: 'What are the basic rights of a tenant in India?',
+                        generateDocument: false
+                    })
+                });
+                
+                const data = await response.json();
+                
+                resultDiv.innerHTML = `
+                    <div class="success">✅ BACKEND CONNECTION SUCCESSFUL</div>
+                    <hr>
+                    <strong>Response Data:</strong>
+                    ${JSON.stringify(data, null, 2)}
+                    <hr>
+                    <strong>Timestamp:</strong> ${new Date().toLocaleString()}
+                    <strong>Status:</strong> ${response.status} ${response.statusText}
+                `;
+                
+            } catch (error) {
+                resultDiv.innerHTML = `
+                    <div class="error">❌ BACKEND CONNECTION FAILED</div>
+                    <hr>
+                    <strong>Error:</strong> ${error.message}
+                    <hr>
+                    <strong>Timestamp:</strong> ${new Date().toLocaleString()}
+                `;
+            }
+        }
+        
+        // Auto-run test on page load
+        window.onload = runTest;
+    </script>
+</body>
+</html>
