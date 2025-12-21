@@ -13,6 +13,11 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1/chat")
+@CrossOrigin(origins = {
+    "https://legal-swami.github.io",
+    "http://localhost:3000", 
+    "https://legal-swami.github.io/legalswami"
+}, allowedHeaders = "*")    
 public class ChatController {
     
     @Autowired
