@@ -15,11 +15,11 @@ public class GroqService {
     @Value("${groq.api.url:https://api.groq.com/openai/v1/chat/completions}")
     private String apiUrl;
     
-    // ⭐⭐ FIXED: Use String instead of array, initialize later
-    @Value("${llama-3.3-70b-versatile,llama-3.3-70b-versatile,llama-3.1-8b-instant,llama3-70b-8192,llama3-8b-8192,mixtral-8x7b-32768}")
+    // ✅ CORRECTED: Proper property name with your models as default value
+    @Value("${groq.api.models:llama-3.3-70b-versatile,llama-3.3-70b-versatile,llama-3.1-8b-instant,llama3-70b-8192,llama3-8b-8192,mixtral-8x7b-32768}")
     private String modelsConfig;
     
-    private String[] availableModels;  // Will be initialized in @PostConstruct
+    private String[] availableModels;
     
     @Value("${groq.api.fallback.enabled:true}")
     private boolean fallbackEnabled;
@@ -32,33 +32,31 @@ public class GroqService {
     
     private final WebClient webClient = WebClient.builder().build();
     
-    // Track current model index and failure counts
     private int currentModelIndex = 0;
     private final Map<String, Integer> modelFailureCount = new HashMap<>();
     private final Map<String, Integer> modelSuccessCount = new HashMap<>();
     
-    // ⭐⭐ REMOVED: Constructor initialization
-    // No constructor - will use @PostConstruct instead
-    
-    @jakarta.annotation.PostConstruct  // or jakarta.annotation.PostConstruct
+    @jakarta.annotation.PostConstruct
     public void init() {
         // Initialize models from config string
         if (modelsConfig != null && !modelsConfig.trim().isEmpty()) {
             this.availableModels = modelsConfig.split(",");
-            // Trim whitespace from each model
-            for (int i = 0; i < availableModels.length; i++) {
-                availableModels[i] = availableModels[i].trim();
+            // Trim whitespace and remove duplicates
+            Set<String> uniqueModels = new LinkedHashSet<>();
+            for (String model : availableModels) {
+                uniqueModels.add(model.trim());
             }
+            this.availableModels = uniqueModels.toArray(new String[0]);
         } else {
-            // Default models if not configured
-            this.availableModels = new String[]{
-                "llama-3.3-70b-versatile",
+            // Default models if not configured (with duplicates removed)
+            Set<String> defaultModels = new LinkedHashSet<>(Arrays.asList(
                 "llama-3.3-70b-versatile",
                 "llama-3.1-8b-instant",
                 "llama3-70b-8192",
                 "llama3-8b-8192",
                 "mixtral-8x7b-32768"
-            };
+            ));
+            this.availableModels = defaultModels.toArray(new String[0]);
         }
         
         // Initialize tracking for all models
@@ -79,20 +77,13 @@ public class GroqService {
         if (fallbackEnabled) {
             return sendWithModelFallback(messages);
         } else {
-            // Use only current model (backward compatibility)
             return sendWithSingleModel(messages, availableModels[currentModelIndex]);
         }
     }
     
-    /**
-     * ⭐⭐ NEW: Method with automatic model fallback ⭐⭐
-     * Tries models in order, moves to next if current fails
-     */
     private String sendWithModelFallback(List<Map<String, String>> messages) {
         String lastError = "";
         int totalModelsTried = 0;
-        
-        // Start from current model index
         int startIndex = currentModelIndex;
         
         do {
@@ -104,11 +95,8 @@ public class GroqService {
             
             try {
                 String response = sendWithSingleModel(messages, currentModel);
-                
-                // Success - update statistics
                 modelSuccessCount.put(currentModel, modelSuccessCount.get(currentModel) + 1);
-                modelFailureCount.put(currentModel, 0); // Reset failures
-                
+                modelFailureCount.put(currentModel, 0);
                 System.out.println("[GroqService] Success with model: " + currentModel);
                 return response;
                 
@@ -119,20 +107,16 @@ public class GroqService {
                 System.err.println("[GroqService] Model " + currentModel + " failed: " + 
                                  e.getMessage().substring(0, Math.min(100, e.getMessage().length())));
                 
-                // Check if error is model-specific (decommissioned, etc.)
                 if (isModelSpecificError(e.getMessage())) {
                     System.err.println("[GroqService] Model-specific error detected. Moving to next model.");
                 }
                 
-                // Move to next model (circular)
                 currentModelIndex = (currentModelIndex + 1) % availableModels.length;
                 
-                // If we've tried all models
                 if (currentModelIndex == startIndex) {
                     break;
                 }
                 
-                // Small delay before trying next model
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException ie) {
@@ -141,15 +125,11 @@ public class GroqService {
             }
         } while (totalModelsTried < availableModels.length);
         
-        // All models failed
         throw new RuntimeException("All Groq models failed. Models tried: " + 
                                  Arrays.toString(availableModels) + 
                                  "\nLast error: " + lastError);
     }
     
-    /**
-     * Original method (updated for any model)
-     */
     private String sendWithSingleModel(List<Map<String, String>> messages, String specificModel) {
         String apiKey = apiKeyService.getRotatedKey();
         
@@ -158,7 +138,7 @@ public class GroqService {
         }
         
         Map<String, Object> requestBody = new HashMap<>();
-        requestBody.put("model", specificModel);  // ⭐ Use the specific model parameter
+        requestBody.put("model", specificModel);
         requestBody.put("messages", messages);
         requestBody.put("temperature", 0.7);
         requestBody.put("max_tokens", 4000);
@@ -179,7 +159,6 @@ public class GroqService {
                         return clientResponse.bodyToMono(String.class)
                             .flatMap(error -> {
                                 String errorMsg = "API Error: " + error;
-                                // Check if it's a model decommissioned error
                                 if (error.contains("model_decommissioned") || 
                                     error.contains("decommissioned")) {
                                     errorMsg = "MODEL_DECOMMISSIONED: " + specificModel + " - " + error;
@@ -197,9 +176,6 @@ public class GroqService {
         }
     }
     
-    /**
-     * Detect if error is specific to a model (decommissioned, not found, etc.)
-     */
     private boolean isModelSpecificError(String errorMessage) {
         if (errorMessage == null) return false;
         
@@ -223,15 +199,11 @@ public class GroqService {
         }
     }
     
-    /**
-     * Streaming method (updated for fallback)
-     */
     public Mono<String> sendChatCompletionStream(List<Map<String, String>> messages) {
         if (!fallbackEnabled) {
             return sendStreamWithSingleModel(messages, availableModels[currentModelIndex]);
         }
         
-        // For streaming, we'll use the first successful model approach
         return Mono.fromCallable(() -> {
             try {
                 return sendWithModelFallback(messages);
@@ -260,27 +232,16 @@ public class GroqService {
             .bodyToMono(String.class);
     }
     
-    // ⭐⭐ NEW: Utility methods for monitoring ⭐⭐
-    
-    /**
-     * Get current active model
-     */
     public String getCurrentModel() {
         return availableModels != null && availableModels.length > currentModelIndex 
                ? availableModels[currentModelIndex] 
                : "No model available";
     }
     
-    /**
-     * Get list of all available models
-     */
     public String[] getAvailableModels() {
         return availableModels != null ? Arrays.copyOf(availableModels, availableModels.length) : new String[0];
     }
     
-    /**
-     * Get model statistics (success/failure counts)
-     */
     public Map<String, Map<String, Integer>> getModelStatistics() {
         Map<String, Map<String, Integer>> stats = new HashMap<>();
         
@@ -296,9 +257,6 @@ public class GroqService {
         return stats;
     }
     
-    /**
-     * Manually switch to a specific model
-     */
     public void switchToModel(String modelName) {
         if (availableModels != null) {
             for (int i = 0; i < availableModels.length; i++) {
@@ -312,9 +270,6 @@ public class GroqService {
         throw new IllegalArgumentException("Model not found: " + modelName);
     }
     
-    /**
-     * Reset all failure counts
-     */
     public void resetFailureCounts() {
         if (availableModels != null) {
             for (String model : availableModels) {
