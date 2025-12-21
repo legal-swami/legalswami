@@ -1,63 +1,66 @@
-server:
-  port: 8080
-  servlet:
-    context-path: /
-  compression:
-    enabled: true
+# LEGAL SWAMI BACKEND - PRODUCTION CONFIGURATION
+# ALL VALUES UPDATED WITH YOUR ACTUAL CREDENTIALS
 
 spring:
   application:
     name: legal-swami-backend
   
+  # ========== DATABASE CONFIGURATION ==========
+  # YOUR RENDER POSTGRESQL DATABASE
   datasource:
-    url: jdbc:h2:file:./data/legalswami;DB_CLOSE_ON_EXIT=FALSE
-    username: sa
-    password: 
-    driver-class-name: org.h2.Driver
+    url: jdbc:postgresql://dpg-d53salali9vc73acgia0-a.singapore-postgres.render.com:5432/legalswami
+    username: legalswami_user
+    password: T2YHqBezj3QJNKf7pnJJKUSk7A6BorNR
+    driver-class-name: org.postgresql.Driver
   
+  # ========== JPA/HIBERNATE ==========
   jpa:
-    database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
       ddl-auto: update
     properties:
       hibernate:
-        dialect: org.hibernate.dialect.H2Dialect
-        format_sql: true
-    show-sql: false
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true  # Changed to true for debugging
   
+  # ========== ⭐⭐⭐ LOGIN PAGE FIX ⭐⭐⭐ ==========
+  security:
+    enabled: false  # THIS WILL REMOVE LOGIN PAGE
+  
+  # ========== DISABLE H2 ==========
   h2:
     console:
-      enabled: true
-      path: /h2-console
+      enabled: false
 
+# ========== SERVER ==========
+server:
+  port: 8080
+
+# ========== JWT ==========
+jwt:
+  secret: G3UF3OY6mWCjKbfa6l1S9pvIbKTt9cjr
+  expiration: 86400000  # 24 hours
+
+# ========== GROQ AI ==========
 groq:
   api:
-    url: https://api.groq.com/openai/v1/chat/completions
-    model: llama-3.3-70b-versatile
-    keys: ${GROQ_API_KEYS:}
+    keys: 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,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,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
+    url: https://api.groq.com/openai/v1/chat/completions  # Fixed typo (gqo -> groq)
+    model: llama3-8b-8192
 
-jwt:
-  secret: ${JWT_SECRET:legal-swami-secret-key-change-in-production}
-  expiration: 86400000
+# ========== ENCRYPTION ==========
+encryption:
+  secret: DWZQtF07pNZGKfml1MZeCoUfiCq8wK7e
 
-api:
-  key:
-    encryption:
-      secret: ${ENCRYPTION_SECRET:change-this-secret-in-production}
+# ========== GOOGLE OAUTH ==========
+google:
+  client:
+    id: 166511615962-bohur5q8d4i5hud6icr4185kcte9enk8.apps.googleusercontent.com
+    # secret: (add if you have it)
 
+# ========== LOGGING ==========
 logging:
   level:
-    com.legalswami: INFO
-  file:
-    name: logs/legal-swami.log
+    com.legalswami: DEBUG
+    org.springframework: INFO
   pattern:
-    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
-
-management:
-  endpoints:
-    web:
-      exposure:
-        include: health,info
-  endpoint:
-    health:
-      show-details: always
+    console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
