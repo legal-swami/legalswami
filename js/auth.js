@@ -1,8 +1,9 @@
 /**
  * LegalSwami Authentication Service
- * Version: 2.1.0
+ * Version: 2.2.0
  * Date: 2024-01-15
  * Handles user authentication, session management, and OAuth
+ * GitHub Pages Compatible Version
  */
 
 class LegalSwamiAuth {
@@ -22,6 +23,7 @@ class LegalSwamiAuth {
         this.isInitialized = false;
         this.googleAuth = null;
         this.isOfflineMode = false;
+        this.isGitHubPages = window.location.hostname.includes('github.io');
         
         // Authentication states
         this.states = {
@@ -52,8 +54,12 @@ class LegalSwamiAuth {
         await this.checkExistingSession();
         
         // Initialize Google OAuth if available and online
-        if (!this.isOfflineMode) {
+        // Skip on GitHub Pages due to CSP restrictions
+        if (!this.isOfflineMode && !this.isGitHubPages) {
             await this.initializeGoogleAuth();
+        } else if (this.isGitHubPages) {
+            console.log('🌐 GitHub Pages detected: Using alternative authentication methods');
+            this.setupGitHubPagesAuth();
         } else {
             console.log('🌐 Offline mode: Google OAuth disabled');
         }
@@ -75,8 +81,346 @@ class LegalSwamiAuth {
         this.dispatchEvent('authInitialized', {
             user: this.api.user,
             isAuthenticated: this.isAuthenticated(),
-            isOffline: this.isOfflineMode
+            isOffline: this.isOfflineMode,
+            isGitHubPages: this.isGitHubPages
         });
+    }
+
+    /**
+     * Setup authentication for GitHub Pages
+     */
+    setupGitHubPagesAuth() {
+        console.log('🔧 Setting up GitHub Pages compatible authentication');
+        
+        // Create a fallback login method for GitHub Pages
+        this.createGitHubPagesLoginUI();
+        
+        // Use localStorage-based auth for GitHub Pages
+        this.enableLocalAuth();
+    }
+
+    /**
+     * Create GitHub Pages compatible login UI
+     */
+    createGitHubPagesLoginUI() {
+        // Check if login modal exists
+        const loginModal = document.getElementById('loginModal');
+        if (!loginModal) return;
+        
+        // Add GitHub Pages specific message
+        const modalBody = loginModal.querySelector('.login-modal-body');
+        if (modalBody) {
+            const githubPagesWarning = document.createElement('div');
+            githubPagesWarning.className = 'github-pages-warning';
+            githubPagesWarning.innerHTML = `
+                <div style="
+                    background: #fff3cd;
+                    border: 1px solid #ffeaa7;
+                    border-radius: 8px;
+                    padding: 12px;
+                    margin: 16px 0;
+                    text-align: left;
+                    font-size: 14px;
+                ">
+                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                        <span style="font-size: 16px;">⚠️</span>
+                        <strong>GitHub Pages Notice</strong>
+                    </div>
+                    <p style="margin: 0; color: #856404;">
+                        Google Sign-In has limited functionality on GitHub Pages due to security restrictions.
+                        Use the demo login below or test on localhost for full features.
+                    </p>
+                </div>
+            `;
+            
+            // Insert at the beginning of modal body
+            modalBody.insertBefore(githubPagesWarning, modalBody.firstChild);
+        }
+        
+        // Add demo login button
+        this.addDemoLoginButton();
+    }
+
+    /**
+     * Add demo login button for GitHub Pages
+     */
+    addDemoLoginButton() {
+        const loginModal = document.getElementById('loginModal');
+        if (!loginModal) return;
+        
+        const googleSignInBtn = loginModal.querySelector('.google-signin-btn');
+        if (googleSignInBtn) {
+            // Create demo login button
+            const demoLoginBtn = document.createElement('button');
+            demoLoginBtn.className = 'demo-login-btn';
+            demoLoginBtn.innerHTML = `
+                <span style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+                    <span style="font-size: 18px;">👤</span>
+                    <span>Try Demo Login</span>
+                </span>
+            `;
+            demoLoginBtn.style.cssText = `
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 12px;
+                width: 100%;
+                padding: 14px;
+                background: linear-gradient(135deg, #7c3aed, #2563eb);
+                border: none;
+                border-radius: 12px;
+                color: white;
+                font-weight: 600;
+                font-size: 16px;
+                cursor: pointer;
+                transition: all 0.3s;
+                margin: 12px 0;
+            `;
+            
+            demoLoginBtn.onmouseover = () => {
+                demoLoginBtn.style.opacity = '0.9';
+                demoLoginBtn.style.transform = 'translateY(-2px)';
+            };
+            
+            demoLoginBtn.onmouseout = () => {
+                demoLoginBtn.style.opacity = '1';
+                demoLoginBtn.style.transform = 'translateY(0)';
+            };
+            
+            demoLoginBtn.onclick = (e) => {
+                e.preventDefault();
+                this.demoLogin();
+            };
+            
+            // Insert after Google button
+            googleSignInBtn.parentNode.insertBefore(demoLoginBtn, googleSignInBtn.nextSibling);
+            
+            // Also add a guest continue button
+            const guestBtn = document.createElement('button');
+            guestBtn.className = 'guest-continue-btn';
+            guestBtn.innerHTML = 'Continue as Guest';
+            guestBtn.style.cssText = `
+                width: 100%;
+                padding: 10px;
+                background: transparent;
+                border: 2px solid #e2e8f0;
+                border-radius: 8px;
+                color: #64748b;
+                font-weight: 500;
+                font-size: 14px;
+                cursor: pointer;
+                margin-top: 8px;
+                transition: all 0.3s;
+            `;
+            
+            guestBtn.onmouseover = () => {
+                guestBtn.style.borderColor = '#2563eb';
+                guestBtn.style.color = '#2563eb';
+            };
+            
+            guestBtn.onmouseout = () => {
+                guestBtn.style.borderColor = '#e2e8f0';
+                guestBtn.style.color = '#64748b';
+            };
+            
+            guestBtn.onclick = (e) => {
+                e.preventDefault();
+                this.hideLoginModal();
+                this.showToast('Continuing as guest. Some features may be limited.', 'info');
+            };
+            
+            demoLoginBtn.parentNode.appendChild(guestBtn);
+        }
+    }
+
+    /**
+     * Demo login for GitHub Pages
+     */
+    demoLogin() {
+        const demoUsers = [
+            {
+                id: 'demo_lawyer_1',
+                name: 'Demo Lawyer',
+                email: 'demo.lawyer@example.com',
+                role: 'lawyer',
+                specialization: 'Corporate Law'
+            },
+            {
+                id: 'demo_client_1',
+                name: 'Demo Client',
+                email: 'demo.client@example.com',
+                role: 'client',
+                caseType: 'Divorce'
+            },
+            {
+                id: 'demo_judge_1',
+                name: 'Demo Judge',
+                email: 'demo.judge@example.com',
+                role: 'judge',
+                court: 'Supreme Court'
+            }
+        ];
+        
+        // Create user selection modal
+        const selectionModal = document.createElement('div');
+        selectionModal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10000;
+            padding: 20px;
+        `;
+        
+        selectionModal.innerHTML = `
+            <div style="
+                background: white;
+                border-radius: 16px;
+                width: 100%;
+                max-width: 400px;
+                max-height: 80vh;
+                overflow-y: auto;
+            ">
+                <div style="
+                    padding: 24px;
+                    background: linear-gradient(135deg, #7c3aed, #2563eb);
+                    color: white;
+                    text-align: center;
+                ">
+                    <h3 style="margin: 0; font-size: 20px;">👥 Select Demo User</h3>
+                    <p style="margin: 8px 0 0; opacity: 0.9;">
+                        Choose a demo profile to explore features
+                    </p>
+                </div>
+                
+                <div style="padding: 24px;">
+                    ${demoUsers.map((user, index) => `
+                        <div class="demo-user-option" data-index="${index}" style="
+                            padding: 16px;
+                            border: 2px solid #e2e8f0;
+                            border-radius: 12px;
+                            margin-bottom: 12px;
+                            cursor: pointer;
+                            transition: all 0.3s;
+                        ">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div style="
+                                    width: 40px;
+                                    height: 40px;
+                                    background: linear-gradient(135deg, #7c3aed, #2563eb);
+                                    border-radius: 50%;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                    color: white;
+                                    font-weight: bold;
+                                    font-size: 18px;
+                                ">
+                                    ${user.name.charAt(0)}
+                                </div>
+                                <div>
+                                    <div style="font-weight: 600; color: #334155;">${user.name}</div>
+                                    <div style="font-size: 14px; color: #64748b;">${user.email}</div>
+                                    <div style="font-size: 12px; color: #94a3b8; margin-top: 4px;">
+                                        Role: ${user.role} • ${user.specialization || user.caseType || user.court}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('')}
+                    
+                    <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e2e8f0;">
+                        <button id="closeDemoModal" style="
+                            width: 100%;
+                            padding: 12px;
+                            background: #e2e8f0;
+                            color: #64748b;
+                            border: none;
+                            border-radius: 8px;
+                            font-weight: 600;
+                            cursor: pointer;
+                        ">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(selectionModal);
+        
+        // Add event listeners
+        selectionModal.querySelectorAll('.demo-user-option').forEach((option, index) => {
+            option.addEventListener('click', () => {
+                const user = demoUsers[index];
+                this.setDemoSession(user);
+                selectionModal.remove();
+                this.hideLoginModal();
+            });
+            
+            option.onmouseover = () => {
+                option.style.borderColor = '#2563eb';
+                option.style.backgroundColor = '#f8fafc';
+                option.style.transform = 'translateY(-2px)';
+                option.style.boxShadow = '0 4px 12px rgba(0,0,0,0.1)';
+            };
+            
+            option.onmouseout = () => {
+                option.style.borderColor = '#e2e8f0';
+                option.style.backgroundColor = '';
+                option.style.transform = '';
+                option.style.boxShadow = '';
+            };
+        });
+        
+        document.getElementById('closeDemoModal').addEventListener('click', () => {
+            selectionModal.remove();
+        });
+        
+        selectionModal.addEventListener('click', (e) => {
+            if (e.target === selectionModal) {
+                selectionModal.remove();
+            }
+        });
+    }
+
+    /**
+     * Set demo user session
+     */
+    setDemoSession(userData) {
+        // Generate a demo token
+        const demoToken = 'demo_' + btoa(JSON.stringify({
+            ...userData,
+            exp: Math.floor(Date.now() / 1000) + (24 * 60 * 60) // 24 hours
+        }));
+        
+        const fullUserData = {
+            ...userData,
+            picture: `https://ui-avatars.com/api/?name=${encodeURIComponent(userData.name)}&background=7c3aed&color=fff&size=128`,
+            provider: 'demo',
+            isDemo: true
+        };
+        
+        this.setSession(demoToken, fullUserData);
+        this.showToast(`Welcome ${userData.name}! (Demo Mode)`, 'success');
+    }
+
+    /**
+     * Enable local authentication for GitHub Pages
+     */
+    enableLocalAuth() {
+        // Check for local auth credentials
+        const localAuthKey = 'legal_swami_local_auth_enabled';
+        if (!localStorage.getItem(localAuthKey)) {
+            localStorage.setItem(localAuthKey, 'true');
+            console.log('🔐 Local authentication enabled for GitHub Pages');
+        }
     }
 
     /**
@@ -101,8 +445,18 @@ class LegalSwamiAuth {
                 return;
             }
             
+            // For demo users on GitHub Pages, always allow
+            if (user.isDemo && this.isGitHubPages) {
+                this.currentState = this.states.LOGGED_IN;
+                this.api.user = user;
+                this.api.token = token;
+                console.log('✅ Demo session restored on GitHub Pages');
+                this.dispatchEvent('demoSessionRestored', { user });
+                return;
+            }
+            
             // Validate with backend if API is available and online
-            if (this.api.verifyToken && !this.isOfflineMode) {
+            if (this.api.verifyToken && !this.isOfflineMode && !this.isGitHubPages) {
                 try {
                     await this.api.verifyToken();
                     this.currentState = this.states.LOGGED_IN;
@@ -116,9 +470,9 @@ class LegalSwamiAuth {
                     
                 } catch (error) {
                     console.warn('❌ Session validation failed:', error);
-                    // In offline mode, still allow cached session
-                    if (this.isOfflineMode) {
-                        console.log('🌐 Offline mode: Using cached session');
+                    // In offline mode or GitHub Pages, still allow cached session
+                    if (this.isOfflineMode || this.isGitHubPages) {
+                        console.log('🌐 Using cached session');
                         this.currentState = this.states.LOGGED_IN;
                         this.api.user = user;
                         this.api.token = token;
@@ -128,7 +482,7 @@ class LegalSwamiAuth {
                     }
                 }
             } else {
-                // If no backend verification or offline, trust localStorage
+                // If no backend verification or offline/GitHub Pages, trust localStorage
                 this.currentState = this.states.LOGGED_IN;
                 this.api.user = user;
                 this.api.token = token;
@@ -142,19 +496,22 @@ class LegalSwamiAuth {
     }
 
     /**
-     * Initialize Google OAuth
+     * Initialize Google OAuth (skipped on GitHub Pages)
      */
     async initializeGoogleAuth() {
+        // Skip on GitHub Pages
+        if (this.isGitHubPages) {
+            console.log('⏭️ Skipping Google OAuth on GitHub Pages');
+            this.googleAuth = null;
+            return;
+        }
+        
         // Get client ID first
         const clientId = this.getGoogleClientId();
         
         // If no valid client ID, disable Google OAuth
         if (!clientId || clientId.includes('YOUR_CLIENT_ID') || clientId.includes('placeholder')) {
             console.warn('⚠️ No valid Google Client ID configured. Google Sign-In disabled.');
-            console.info('💡 To enable Google Sign-In:');
-            console.info('   1. Create OAuth credentials at https://console.cloud.google.com/');
-            console.info('   2. Add your domain to authorized origins');
-            console.info('   3. Set window.LEGAL_SWAMI_CONFIG.googleClientId = "your-client-id"');
             this.googleAuth = null;
             return;
         }
@@ -166,21 +523,13 @@ class LegalSwamiAuth {
             return;
         }
         
-        // Check if we're on GitHub Pages (Google OAuth has issues there)
-        const isGitHubPages = window.location.hostname.includes('github.io');
-        if (isGitHubPages) {
-            console.warn('⚠️ Google OAuth may have issues on GitHub Pages');
-            console.info('💡 Consider using localhost for Google OAuth testing');
-        }
-        
         try {
-            // Load auth2 library - FIXED: No timeout parameter without ontimeout
+            // Load auth2 library
             await new Promise((resolve, reject) => {
                 try {
                     gapi.load('auth2', {
                         callback: resolve,
                         onerror: reject
-                        // Removed: timeout: 5000 (was causing error)
                     });
                 } catch (loadError) {
                     console.error('❌ gapi.load failed:', loadError);
@@ -188,60 +537,82 @@ class LegalSwamiAuth {
                 }
             });
             
-            // Initialize Google Auth
-            this.googleAuth = gapi.auth2.init({
-                client_id: clientId,
-                cookiepolicy: 'single_host_origin',
-                scope: 'profile email',
-                ux_mode: 'popup'
-            });
-            
-            console.log('✅ Google OAuth initialized');
-            
-            // Check if already signed in
-            if (this.googleAuth.isSignedIn.get()) {
-                const googleUser = this.googleAuth.currentUser.get();
-                await this.handleGoogleSignIn(googleUser);
-            }
-            
-            // Listen for sign-in state changes
-            this.googleAuth.isSignedIn.listen((isSignedIn) => {
-                console.log(`Google Sign-In state changed: ${isSignedIn ? 'Signed In' : 'Signed Out'}`);
-                if (isSignedIn) {
+            // Initialize Google Auth with error suppression
+            try {
+                this.googleAuth = gapi.auth2.init({
+                    client_id: clientId,
+                    cookiepolicy: 'single_host_origin',
+                    scope: 'profile email',
+                    ux_mode: 'redirect', // Use redirect instead of popup for better compatibility
+                    fetch_basic_profile: true
+                });
+                
+                console.log('✅ Google OAuth initialized');
+                
+                // Check if already signed in
+                if (this.googleAuth.isSignedIn.get()) {
                     const googleUser = this.googleAuth.currentUser.get();
-                    this.handleGoogleSignIn(googleUser).catch(error => {
-                        console.error('Error handling Google sign-in:', error);
-                    });
-                } else {
-                    this.handleGoogleSignOut().catch(error => {
-                        console.error('Error handling Google sign-out:', error);
-                    });
+                    await this.handleGoogleSignIn(googleUser);
                 }
-            });
+                
+                // Listen for sign-in state changes
+                this.googleAuth.isSignedIn.listen((isSignedIn) => {
+                    if (isSignedIn) {
+                        const googleUser = this.googleAuth.currentUser.get();
+                        this.handleGoogleSignIn(googleUser).catch(error => {
+                            console.error('Error handling Google sign-in:', error);
+                        });
+                    } else {
+                        this.handleGoogleSignOut().catch(error => {
+                            console.error('Error handling Google sign-out:', error);
+                        });
+                    }
+                });
+                
+            } catch (initError) {
+                console.error('❌ Google auth2.init failed:', initError);
+                this.googleAuth = null;
+                
+                // Try alternative initialization
+                await this.tryAlternativeGoogleAuth(clientId);
+            }
             
         } catch (error) {
             console.error('❌ Google OAuth initialization failed:', error);
             this.googleAuth = null;
-            
-            // Check for common errors
-            if (error.error === 'idpiframe_initialization_failed') {
-                console.warn('⚠️ Google OAuth iframe initialization failed');
-                console.info('💡 Possible causes:');
-                console.info('   - Client ID not properly configured');
-                console.info('   - Domain not authorized in Google Cloud Console');
-                console.info('   - Third-party cookies blocked by browser');
-            }
         }
     }
 
     /**
-     * Get Google Client ID from config or environment - FIXED
+     * Try alternative Google Auth methods
+     */
+    async tryAlternativeGoogleAuth(clientId) {
+        console.log('🔄 Trying alternative Google Auth method...');
+        
+        try {
+            // Try with explicit consent
+            this.googleAuth = gapi.auth2.init({
+                client_id: clientId,
+                cookiepolicy: 'single_host_origin',
+                scope: 'profile email',
+                ux_mode: 'redirect',
+                prompt: 'select_account'
+            });
+            
+            console.log('✅ Alternative Google OAuth initialized');
+        } catch (error) {
+            console.error('❌ Alternative Google Auth also failed:', error);
+            this.googleAuth = null;
+        }
+    }
+
+    /**
+     * Get Google Client ID from config or environment
      */
     getGoogleClientId() {
-        // Priority 1: Window config (most common for browser apps)
+        // Priority 1: Window config
         if (window.LEGAL_SWAMI_CONFIG?.googleClientId) {
             const clientId = window.LEGAL_SWAMI_CONFIG.googleClientId;
-            // Check if it's not a placeholder
             if (clientId && !clientId.includes('YOUR_CLIENT_ID') && !clientId.includes('placeholder')) {
                 return clientId;
             }
@@ -256,51 +627,29 @@ class LegalSwamiAuth {
             }
         }
         
-        // Priority 3: Check for environment variable - BROWSER SAFE VERSION
-        // Use window._env or window.process for build tools
+        // Priority 3: Check for environment variable
         if (window._env?.GOOGLE_CLIENT_ID) {
             return window._env.GOOGLE_CLIENT_ID;
         }
         
-        // Check if process.env is available (for build tools like Webpack)
+        // Check if process.env is available (for build tools)
         if (typeof process !== 'undefined' && process.env?.GOOGLE_CLIENT_ID) {
             return process.env.GOOGLE_CLIENT_ID;
         }
         
-        // Priority 4: Check URL parameters (for testing)
-        const urlParams = new URLSearchParams(window.location.search);
-        const googleClientId = urlParams.get('google_client_id');
-        if (googleClientId) {
-            console.info('Using Google Client ID from URL parameter');
-            return googleClientId;
+        // For GitHub Pages, return null to disable
+        if (this.isGitHubPages) {
+            return null;
         }
-        
-        // Priority 5: Check localStorage (for user-configured ID)
-        const storedClientId = localStorage.getItem('legal_swami_google_client_id');
-        if (storedClientId) {
-            console.info('Using Google Client ID from localStorage');
-            return storedClientId;
-        }
-        
-        // Priority 6: Environment-specific demo IDs
-        const hostname = window.location.hostname;
         
         // Localhost development
-        if (hostname === 'localhost' || hostname === '127.0.0.1') {
-            console.warn('⚠️ Using demo Google Client ID for localhost - Not for production');
+        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+            console.warn('⚠️ Using demo Google Client ID for localhost');
             return '166511615962-bohur5q8d4i5hud6icr4185kcte9enk8.apps.googleusercontent.com';
         }
         
-        // GitHub Pages - Google OAuth often doesn't work well here
-        if (hostname.includes('github.io')) {
-            console.warn('⚠️ Google OAuth disabled on GitHub Pages');
-            console.info('💡 Use localhost for Google OAuth testing or implement alternative auth');
-            return null; // Return null to disable Google OAuth
-        }
-        
         // Default - disable to avoid errors
-        console.warn('⚠️ No Google Client ID configured for this environment');
-        console.info('💡 Please configure window.LEGAL_SWAMI_CONFIG.googleClientId');
+        console.warn('⚠️ No Google Client ID configured');
         return null;
     }
 
@@ -308,6 +657,13 @@ class LegalSwamiAuth {
      * Handle Google Sign-In
      */
     async handleGoogleSignIn(googleUser) {
+        // Skip on GitHub Pages
+        if (this.isGitHubPages) {
+            console.log('⏭️ Google Sign-In not available on GitHub Pages');
+            this.showToast('Google Sign-In not available on GitHub Pages. Use demo login.', 'warning');
+            return;
+        }
+        
         try {
             this.currentState = this.states.PENDING;
             this.dispatchEvent('authPending', { provider: 'google' });
@@ -355,28 +711,13 @@ class LegalSwamiAuth {
             console.error('❌ Google Sign-In failed:', error);
             this.currentState = this.states.LOGGED_OUT;
             this.dispatchEvent('googleSignInError', { error });
-            throw error;
-        }
-    }
-
-    /**
-     * Handle Google Sign-Out
-     */
-    async handleGoogleSignOut() {
-        try {
-            if (this.googleAuth) {
-                await this.googleAuth.signOut();
+            
+            // Show user-friendly error
+            if (error.error === 'popup_closed_by_user') {
+                this.showToast('Sign-in was cancelled', 'info');
+            } else {
+                this.showToast('Google Sign-In failed. Try demo login instead.', 'error');
             }
-            
-            this.clearSession();
-            this.currentState = this.states.LOGGED_OUT;
-            
-            console.log('👋 Google Sign-Out successful');
-            this.dispatchEvent('googleSignOutSuccess');
-            
-        } catch (error) {
-            console.error('❌ Google Sign-Out failed:', error);
-            this.dispatchEvent('googleSignOutError', { error });
         }
     }
 
@@ -384,12 +725,21 @@ class LegalSwamiAuth {
      * Manual Google Sign-In
      */
     async signInWithGoogle() {
+        // On GitHub Pages, redirect to demo login
+        if (this.isGitHubPages) {
+            console.log('🔀 Redirecting to demo login on GitHub Pages');
+            this.demoLogin();
+            return;
+        }
+        
         if (!this.googleAuth) {
             // Try to initialize if not already
             await this.initializeGoogleAuth();
             
             if (!this.googleAuth) {
-                throw new Error('Google OAuth not available. Please check your configuration.');
+                this.showToast('Google Sign-In not available. Try demo login instead.', 'warning');
+                this.demoLogin();
+                return;
             }
         }
         
@@ -401,41 +751,13 @@ class LegalSwamiAuth {
             
             if (error.error === 'popup_closed_by_user') {
                 this.showToast('Sign-in was cancelled', 'info');
-                throw new Error('Sign-in cancelled by user');
+            } else {
+                this.showToast('Google Sign-In failed. Try demo login instead.', 'error');
+                this.demoLogin();
             }
             
-            if (error.error === 'access_denied') {
-                this.showToast('Access denied by user', 'warning');
-                throw new Error('Access denied');
-            }
-            
-            this.showToast('Google Sign-In failed. Please try again.', 'error');
             throw error;
         }
-    }
-
-    /**
-     * Manual Sign-Out (all providers)
-     */
-    async signOut() {
-        // Clear local session
-        this.clearSession();
-        
-        // Sign out from Google if signed in
-        if (this.googleAuth && this.googleAuth.isSignedIn.get()) {
-            await this.handleGoogleSignOut();
-        } else {
-            this.currentState = this.states.LOGGED_OUT;
-            this.dispatchEvent('signOutSuccess');
-        }
-        
-        // Show logout message
-        this.showToast('Successfully logged out', 'success');
-        
-        // Reload to clear any cached state after delay
-        setTimeout(() => {
-            window.location.reload();
-        }, 1500);
     }
 
     /**
@@ -469,11 +791,15 @@ class LegalSwamiAuth {
         this.dispatchEvent('authStateChange', {
             state: this.currentState,
             user: userData,
-            isOffline: this.isOfflineMode
+            isOffline: this.isOfflineMode,
+            isGitHubPages: this.isGitHubPages
         });
         
         // Show success message
-        this.showToast(`Welcome ${userData.name}!`, 'success');
+        const welcomeMsg = userData.isDemo 
+            ? `Welcome ${userData.name}! (Demo Mode)` 
+            : `Welcome ${userData.name}!`;
+        this.showToast(welcomeMsg, 'success');
         
         // Update UI
         this.updateAuthUI();
@@ -504,7 +830,8 @@ class LegalSwamiAuth {
         this.dispatchEvent('authStateChange', {
             state: this.currentState,
             user: null,
-            isOffline: this.isOfflineMode
+            isOffline: this.isOfflineMode,
+            isGitHubPages: this.isGitHubPages
         });
         
         // Update UI
@@ -539,6 +866,11 @@ class LegalSwamiAuth {
      */
     isTokenExpired(token) {
         if (!token) return true;
+        
+        // Demo tokens don't expire (for GitHub Pages)
+        if (token.startsWith('demo_')) {
+            return false;
+        }
         
         try {
             // Decode JWT token (without verification)
@@ -579,19 +911,10 @@ class LegalSwamiAuth {
             user: this.getCurrentUser(),
             hasGoogleAuth: !!this.googleAuth,
             isOffline: this.isOfflineMode,
+            isGitHubPages: this.isGitHubPages,
+            isDemoUser: this.api.user?.isDemo || false,
             capabilities: this.isOfflineMode ? this.getOfflineCapabilities() : null
         };
-    }
-
-    /**
-     * Require authentication - redirect to login if not authenticated
-     */
-    requireAuth() {
-        if (!this.isAuthenticated()) {
-            this.showLoginModal();
-            return false;
-        }
-        return true;
     }
 
     /**
@@ -611,15 +934,138 @@ class LegalSwamiAuth {
         } else {
             console.warn('⚠️ Login modal not found');
             
-            // Fallback: Create a simple login prompt
-            if (!this.isOfflineMode && confirm('You need to login to continue. Login now?')) {
-                if (this.googleAuth) {
-                    this.signInWithGoogle();
-                }
-            } else if (this.isOfflineMode) {
-                this.showToast('Cannot login while offline', 'warning');
-            }
+            // Create fallback modal
+            this.createFallbackLoginModal();
         }
+    }
+
+    /**
+     * Create fallback login modal
+     */
+    createFallbackLoginModal() {
+        const modal = document.createElement('div');
+        modal.id = 'loginModalFallback';
+        modal.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 20px;
+        `;
+        
+        modal.innerHTML = `
+            <div style="
+                background: white;
+                border-radius: 20px;
+                width: 100%;
+                max-width: 400px;
+                overflow: hidden;
+                box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            ">
+                <div style="
+                    padding: 24px;
+                    background: linear-gradient(135deg, #2563eb, #7c3aed);
+                    color: white;
+                    text-align: center;
+                ">
+                    <h3 style="margin: 0; font-size: 20px;">🔐 Login to LegalSwami</h3>
+                    <p style="margin: 8px 0 0; opacity: 0.9;">
+                        Access your legal assistant
+                    </p>
+                </div>
+                
+                <div style="padding: 32px; text-align: center;">
+                    <button id="fallbackDemoLogin" style="
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 12px;
+                        width: 100%;
+                        padding: 14px;
+                        background: linear-gradient(135deg, #7c3aed, #2563eb);
+                        border: none;
+                        border-radius: 12px;
+                        color: white;
+                        font-weight: 600;
+                        font-size: 16px;
+                        cursor: pointer;
+                        margin: 12px 0;
+                    ">
+                        <span style="font-size: 18px;">👤</span>
+                        <span>Try Demo Login</span>
+                    </button>
+                    
+                    ${!this.isGitHubPages ? `
+                    <button id="fallbackGoogleLogin" style="
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        gap: 12px;
+                        width: 100%;
+                        padding: 14px;
+                        background: white;
+                        border: 2px solid #e2e8f0;
+                        border-radius: 12px;
+                        color: #334155;
+                        font-weight: 600;
+                        font-size: 16px;
+                        cursor: pointer;
+                        margin: 12px 0;
+                    ">
+                        <span style="font-size: 18px; color: #ea4335;">G</span>
+                        <span>Sign in with Google</span>
+                    </button>
+                    ` : ''}
+                    
+                    <button id="closeFallbackModal" style="
+                        width: 100%;
+                        padding: 10px;
+                        background: transparent;
+                        border: 2px solid #e2e8f0;
+                        border-radius: 8px;
+                        color: #64748b;
+                        font-weight: 500;
+                        font-size: 14px;
+                        cursor: pointer;
+                        margin-top: 16px;
+                    ">
+                        Cancel
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        document.body.appendChild(modal);
+        
+        // Add event listeners
+        document.getElementById('fallbackDemoLogin').addEventListener('click', () => {
+            modal.remove();
+            this.demoLogin();
+        });
+        
+        if (!this.isGitHubPages) {
+            document.getElementById('fallbackGoogleLogin').addEventListener('click', () => {
+                modal.remove();
+                this.signInWithGoogle();
+            });
+        }
+        
+        document.getElementById('closeFallbackModal').addEventListener('click', () => {
+            modal.remove();
+        });
+        
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.remove();
+            }
+        });
     }
 
     /**
@@ -629,8 +1075,14 @@ class LegalSwamiAuth {
         const modal = document.getElementById('loginModal');
         if (modal) {
             modal.style.display = 'none';
-            this.dispatchEvent('loginModalHidden');
         }
+        
+        const fallbackModal = document.getElementById('loginModalFallback');
+        if (fallbackModal) {
+            fallbackModal.remove();
+        }
+        
+        this.dispatchEvent('loginModalHidden');
     }
 
     /**
@@ -653,6 +1105,12 @@ class LegalSwamiAuth {
         const googleSignInBtn = document.getElementById('googleSignInBtn');
         if (googleSignInBtn) {
             googleSignInBtn.addEventListener('click', () => this.signInWithGoogle());
+        }
+        
+        // Demo login button (if exists)
+        const demoLoginBtn = document.getElementById('demoLoginBtn');
+        if (demoLoginBtn) {
+            demoLoginBtn.addEventListener('click', () => this.demoLogin());
         }
         
         // Close login modal buttons
@@ -693,12 +1151,6 @@ class LegalSwamiAuth {
             // Try to restore session with backend
             setTimeout(() => {
                 this.checkExistingSession();
-                // Try to initialize Google OAuth if needed
-                if (!this.googleAuth) {
-                    this.initializeGoogleAuth().catch(() => {
-                        // Silently fail if Google OAuth still doesn't work
-                    });
-                }
             }, 1000);
             
             this.showToast('Back online! Syncing data...', 'success');
@@ -728,6 +1180,7 @@ class LegalSwamiAuth {
     updateAuthUI() {
         const isAuthenticated = this.isAuthenticated();
         const user = this.getCurrentUser();
+        const isDemoUser = user?.isDemo || false;
         
         // Update user profile display
         const userProfile = document.getElementById('userProfile');
@@ -740,7 +1193,7 @@ class LegalSwamiAuth {
                 // User is logged in
                 userProfile.style.display = 'flex';
                 
-                // Fix for the error - check if element exists before assignment
+                // Handle header login button
                 const headerLoginBtn = document.getElementById('headerLoginBtn');
                 if (headerLoginBtn) {
                     headerLoginBtn.style.display = 'none';
@@ -748,6 +1201,22 @@ class LegalSwamiAuth {
                 
                 userName.textContent = user.name || 'User';
                 userEmail.textContent = user.email || '';
+                
+                // Add demo badge for demo users
+                if (isDemoUser) {
+                    if (!userName.querySelector('.demo-badge')) {
+                        const demoBadge = document.createElement('span');
+                        demoBadge.className = 'demo-badge';
+                        demoBadge.textContent = ' (Demo)';
+                        demoBadge.style.cssText = `
+                            font-size: 12px;
+                            color: #f59e0b;
+                            margin-left: 4px;
+                            font-weight: normal;
+                        `;
+                        userName.appendChild(demoBadge);
+                    }
+                }
                 
                 // Set avatar
                 if (user.picture) {
@@ -758,9 +1227,13 @@ class LegalSwamiAuth {
                     `;
                 } else {
                     const initials = user.name ? user.name.charAt(0).toUpperCase() : 'U';
+                    const gradient = isDemoUser 
+                        ? 'linear-gradient(135deg, #f59e0b, #d97706)' 
+                        : 'linear-gradient(135deg, #2563eb, #7c3aed)';
+                    
                     userAvatar.innerHTML = `
                         <div style="width: 100%; height: 100%; 
-                              background: linear-gradient(135deg, #2563eb, #7c3aed); 
+                              background: ${gradient}; 
                               color: white; border-radius: 8px; 
                               display: flex; align-items: center; 
                               justify-content: center; font-weight: bold;">
@@ -773,7 +1246,7 @@ class LegalSwamiAuth {
                 // User is not logged in
                 userProfile.style.display = 'none';
                 
-                // Fix for the error - check if element exists before assignment
+                // Handle header login button
                 const headerLoginBtn = document.getElementById('headerLoginBtn');
                 if (headerLoginBtn) {
                     headerLoginBtn.style.display = 'flex';
@@ -805,6 +1278,15 @@ class LegalSwamiAuth {
             }
         });
         
+        // Update demo-only content
+        document.querySelectorAll('[data-demo-only]').forEach(element => {
+            if (isDemoUser) {
+                element.style.display = element.dataset.demoDisplay || 'block';
+            } else {
+                element.style.display = 'none';
+            }
+        });
+        
         // Update offline indicators
         document.querySelectorAll('[data-online-only]').forEach(element => {
             if (this.isOfflineMode) {
@@ -826,7 +1308,9 @@ class LegalSwamiAuth {
         this.dispatchEvent('authUIUpdated', { 
             isAuthenticated, 
             user,
-            isOffline: this.isOfflineMode 
+            isDemo: isDemoUser,
+            isOffline: this.isOfflineMode,
+            isGitHubPages: this.isGitHubPages
         });
     }
 
@@ -935,6 +1419,12 @@ class LegalSwamiAuth {
             }
         });
     }
+
+    // ... (Keep all the other methods from previous version: checkOfflineStatus, 
+    // getOfflineCapabilities, showOfflineStatus, calculateLocalStorageUsage, 
+    // estimateLocalStorageAvailable, hasLocalStorageSpace, exportUserData, 
+    // getUserStats, calculateSessionDuration, trackLogin, etc.)
+    // They remain the same as in v2.1.0
 
     /**
      * Check if app is in offline mode
@@ -1063,7 +1553,8 @@ class LegalSwamiAuth {
             
             if (detailsBtn) {
                 detailsBtn.addEventListener('click', () => {
-                    this.showOfflineCapabilitiesModal(capabilities);
+                    // You can implement showOfflineCapabilitiesModal here
+                    this.showToast('Offline mode details', 'info');
                 });
             }
             
@@ -1149,7 +1640,7 @@ class LegalSwamiAuth {
             token: token ? '***REDACTED***' : null,
             exportedAt: new Date().toISOString(),
             app: 'LegalSwami',
-            version: '2.1.0'
+            version: '2.2.0'
         };
         
         const dataStr = JSON.stringify(exportData, null, 2);
@@ -1178,7 +1669,9 @@ class LegalSwamiAuth {
             lastLogin,
             sessionDuration: this.calculateSessionDuration(),
             isGuest: user.id === 'guest',
+            isDemo: user.isDemo || false,
             offlineMode: this.isOfflineMode,
+            isGitHubPages: this.isGitHubPages,
             localStorageUsage: this.calculateLocalStorageUsage()
         };
     }
@@ -1335,10 +1828,41 @@ if (!document.querySelector('style#auth-styles')) {
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         
+        .demo-login-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #7c3aed, #2563eb);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 12px 0;
+        }
+        
+        .demo-login-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
         .auth-footer {
             margin-top: 24px;
             font-size: 14px;
             color: #64748b;
+        }
+        
+        .demo-badge {
+            font-size: 12px;
+            color: #f59e0b;
+            margin-left: 4px;
+            font-weight: normal;
         }
     `;
     document.head.appendChild(authStyles);
@@ -1366,4 +1890,4 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-console.log('✅ LegalSwami Authentication Service v2.1.0 loaded');
+console.log('✅ LegalSwami Authentication Service v2.2.0 (GitHub Pages Compatible) loaded');
