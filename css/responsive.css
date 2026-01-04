@@ -5,10 +5,9 @@
 
 /* ===== EXTRA LARGE SCREENS ===== */
 @media (min-width: 1400px) {
-    .header-container,
-    .hero-content,
-    .features-grid,
-    .testimonials-grid,
+    .nav-container,
+    .hero-container,
+    .container,
     .footer-content {
         max-width: 1320px;
     }
@@ -20,10 +19,9 @@
 
 /* ===== LARGE SCREENS (1200px - 1399px) ===== */
 @media (max-width: 1399px) {
-    .header-container,
-    .hero-content,
-    .features-grid,
-    .testimonials-grid,
+    .nav-container,
+    .hero-container,
+    .container,
     .footer-content {
         max-width: 1140px;
     }
@@ -35,20 +33,20 @@
 
 /* ===== DESKTOP (992px - 1199px) ===== */
 @media (max-width: 1199px) {
-    .header-container,
-    .hero-content,
-    .features-grid,
-    .testimonials-grid,
+    .nav-container,
+    .hero-container,
+    .container,
     .footer-content {
         max-width: 960px;
+        padding: 0 var(--space-4);
     }
     
-    .hero-content {
+    .hero-container {
         grid-template-columns: 1fr;
         gap: var(--space-12);
     }
     
-    .hero-text {
+    .hero-content {
         padding-right: 0;
         text-align: center;
     }
@@ -59,7 +57,7 @@
         margin-right: auto;
     }
     
-    .hero-buttons {
+    .hero-actions {
         justify-content: center;
     }
     
@@ -67,20 +65,20 @@
         justify-content: center;
     }
     
-    .ai-illustration {
+    .ai-assistant-card {
         width: 280px;
-        height: 280px;
+        height: auto;
         margin: 0 auto;
     }
 }
 
 /* ===== TABLET (768px - 991px) ===== */
 @media (max-width: 991px) {
-    .header-container {
+    .nav-container {
         padding: 0 var(--space-4);
     }
     
-    .nav-links {
+    .nav-menu {
         gap: var(--space-2);
     }
     
@@ -101,14 +99,14 @@
         font-size: 1rem;
     }
     
-    .hero-buttons {
+    .hero-actions {
         flex-direction: column;
         align-items: center;
         gap: var(--space-3);
     }
     
-    .btn-primary,
-    .btn-secondary {
+    .btn-hero-primary,
+    .btn-hero-secondary {
         width: 100%;
         max-width: 300px;
         justify-content: center;
@@ -121,8 +119,10 @@
     }
     
     .features-section,
-    .how-it-works,
+    .documents-section,
     .testimonials-section,
+    .pricing-section,
+    .cta-section,
     .faq-section {
         padding: var(--space-12) var(--space-4);
     }
@@ -136,11 +136,15 @@
         gap: var(--space-4);
     }
     
-    .testimonials-grid {
+    .documents-grid {
         grid-template-columns: repeat(2, 1fr);
     }
     
-    .main-footer {
+    .testimonials-carousel {
+        grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .premium-footer {
         padding: var(--space-8) var(--space-4) var(--space-6);
     }
     
@@ -148,40 +152,58 @@
         grid-template-columns: repeat(2, 1fr);
         gap: var(--space-8);
     }
+    
+    /* Chat Interface */
+    .chat-history-sidebar {
+        width: 280px;
+    }
+    
+    .welcome-features {
+        grid-template-columns: repeat(2, 1fr);
+    }
 }
 
 /* ===== MOBILE LANDSCAPE (576px - 767px) ===== */
 @media (max-width: 767px) {
-    .header-container {
+    .premium-navbar {
+        padding: var(--space-2) 0;
+    }
+    
+    .nav-container {
         height: 60px;
     }
     
-    .logo h1 {
+    .logo-title {
         font-size: 1.25rem;
     }
     
-    .tagline {
+    .logo-subtitle {
         display: none;
     }
     
-    .nav-links {
+    .nav-menu {
         display: none;
     }
     
-    .user-section {
+    .nav-actions {
         gap: var(--space-2);
     }
     
     .btn-login {
         padding: var(--space-2) var(--space-3);
+        font-size: 0.8125rem;
     }
     
     .user-profile {
         padding: var(--space-1) var(--space-2) var(--space-1) var(--space-1);
     }
     
-    .user-info {
+    .profile-info {
         display: none;
+    }
+    
+    .mobile-toggle {
+        display: flex;
     }
     
     .hero-title {
@@ -192,9 +214,9 @@
         font-size: 0.9375rem;
     }
     
-    .ai-illustration {
+    .ai-assistant-card {
         width: 240px;
-        height: 240px;
+        height: auto;
         font-size: 4rem;
     }
     
@@ -206,8 +228,18 @@
         grid-template-columns: 1fr;
     }
     
-    .testimonials-grid {
+    .documents-grid {
         grid-template-columns: 1fr;
+    }
+    
+    .testimonials-carousel {
+        grid-template-columns: 1fr;
+        gap: var(--space-4);
+    }
+    
+    .pricing-cards {
+        grid-template-columns: 1fr;
+        gap: var(--space-4);
     }
     
     .footer-content {
@@ -222,28 +254,82 @@
     .social-links {
         justify-content: center;
     }
+    
+    /* Chat Interface */
+    .chat-history-sidebar {
+        width: 100%;
+        max-width: 320px;
+    }
+    
+    .chat-header {
+        padding: var(--space-3);
+    }
+    
+    .chat-title-text h3 {
+        font-size: 1rem;
+    }
+    
+    .chat-title-text p {
+        font-size: 0.75rem;
+    }
+    
+    .welcome-features {
+        grid-template-columns: 1fr;
+    }
+    
+    .quick-buttons {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        padding-bottom: var(--space-2);
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .quick-btn {
+        flex-shrink: 0;
+    }
+    
+    /* Modal */
+    .modal {
+        padding: var(--space-2);
+    }
+    
+    .modal-content {
+        margin: var(--space-2);
+        max-width: calc(100% - var(--space-4));
+    }
 }
 
 /* ===== MOBILE PORTRAIT (320px - 575px) ===== */
 @media (max-width: 575px) {
     .hero-title {
         font-size: 2rem;
+        line-height: 1.2;
     }
     
     .hero-subtitle {
         font-size: 0.875rem;
+        line-height: 1.6;
     }
     
-    .btn-primary,
-    .btn-secondary {
+    .btn-hero-primary,
+    .btn-hero-secondary {
         padding: var(--space-3) var(--space-6);
         font-size: 0.875rem;
+        width: 100%;
     }
     
-    .ai-illustration {
+    .ai-assistant-card {
         width: 200px;
-        height: 200px;
-        font-size: 3rem;
+        height: auto;
+    }
+    
+    .assistant-avatar {
+        width: 80px !important;
+        height: 80px !important;
+    }
+    
+    .assistant-title {
+        font-size: 1.25rem;
     }
     
     .section-header h2 {
@@ -255,7 +341,9 @@
     }
     
     .feature-card,
-    .testimonial-card {
+    .document-category,
+    .testimonial-card,
+    .pricing-card {
         padding: var(--space-4);
     }
     
@@ -271,11 +359,12 @@
     }
     
     .modal-content {
-        margin: var(--space-4);
+        margin: var(--space-2);
+        border-radius: var(--radius-lg);
     }
     
     .modal-body {
-        padding: var(--space-6);
+        padding: var(--space-4);
     }
     
     .chat-messages {
@@ -285,6 +374,39 @@
     .message-content {
         padding: var(--space-3);
     }
+    
+    .message {
+        max-width: 95%;
+    }
+    
+    .chat-input-area {
+        padding: var(--space-3);
+    }
+    
+    .input-container {
+        padding: var(--space-2);
+    }
+    
+    .document-options {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: var(--space-2);
+    }
+    
+    .select-group {
+        width: 100%;
+    }
+    
+    select#documentType {
+        width: 100%;
+        max-width: 200px;
+    }
+    
+    /* Mobile Menu */
+    .mobile-menu-container {
+        width: 100%;
+        max-width: 300px;
+    }
 }
 
 /* ===== VERY SMALL MOBILE (< 320px) ===== */
@@ -293,13 +415,14 @@
         font-size: 1.75rem;
     }
     
-    .hero-buttons {
+    .hero-actions {
         gap: var(--space-2);
     }
     
-    .btn-primary,
-    .btn-secondary {
+    .btn-hero-primary,
+    .btn-hero-secondary {
         padding: var(--space-2) var(--space-4);
+        font-size: 0.8125rem;
     }
     
     .hero-stats {
@@ -307,27 +430,60 @@
     }
     
     .feature-card,
-    .testimonial-card {
+    .document-category,
+    .testimonial-card,
+    .pricing-card {
         padding: var(--space-3);
+    }
+    
+    .nav-container {
+        padding: 0 var(--space-2);
+    }
+    
+    .logo-title {
+        font-size: 1.125rem;
+    }
+    
+    .chat-header {
+        padding: var(--space-2);
+    }
+    
+    .chat-action-btn,
+    .chat-back-btn {
+        width: 36px;
+        height: 36px;
+    }
+    
+    .quick-btn {
+        font-size: 0.75rem;
+        padding: var(--space-2) var(--space-3);
     }
 }
 
 /* ===== PRINT STYLES ===== */
 @media print {
-    .main-header,
+    .premium-navbar,
     .hero-section,
-    .how-it-works,
+    .documents-section,
     .testimonials-section,
-    .main-footer,
+    .pricing-section,
+    .cta-section,
+    .premium-footer,
+    .chat-interface,
     .chat-input-area,
     .btn-icon,
-    .input-container {
+    .input-container,
+    .mobile-toggle,
+    .mobile-menu-overlay,
+    .back-to-top,
+    .toast-container {
         display: none !important;
     }
     
     body {
         background: white !important;
         color: black !important;
+        font-size: 12pt;
     }
     
     .features-section {
@@ -338,6 +494,22 @@
         break-inside: avoid;
         box-shadow: none !important;
         border: 1px solid #ddd !important;
+        margin-bottom: 20pt !important;
+    }
+    
+    a {
+        color: black !important;
+        text-decoration: underline;
+    }
+    
+    .section-header h2 {
+        color: black !important;
+        font-size: 16pt !important;
+    }
+    
+    .container {
+        max-width: 100% !important;
+        padding: 0 !important;
     }
 }
 
@@ -365,9 +537,13 @@
         color: var(--gray-300);
     }
     
-    .main-header {
+    .premium-navbar {
         background: rgba(15, 23, 42, 0.95);
         border-bottom: 1px solid var(--gray-100);
+    }
+    
+    .premium-navbar.scrolled {
+        background: rgba(15, 23, 42, 0.98);
     }
     
     .hero-section {
@@ -375,7 +551,9 @@
     }
     
     .feature-card,
+    .document-category,
     .testimonial-card,
+    .pricing-card,
     .faq-item {
         background: var(--gray-50);
         border-color: var(--gray-100);
@@ -387,16 +565,39 @@
     }
     
     .modal-header {
+        background: linear-gradient(135deg, var(--gray-100), var(--gray-200));
+    }
+    
+    .google-signin-btn {
+        background: var(--gray-50);
+        border-color: var(--gray-200);
+        color: var(--gray-300);
+    }
+    
+    .google-signin-btn:hover {
         background: var(--gray-100);
+        border-color: var(--gray-300);
     }
     
     .chat-interface {
         background: var(--gray-50);
     }
     
-    .message-content {
+    .chat-header {
         background: var(--gray-50);
         border-color: var(--gray-100);
+    }
+    
+    .message-text {
+        background: var(--gray-50);
+        border-color: var(--gray-100);
+        color: var(--gray-300);
+    }
+    
+    .message.user-message .message-text {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: var(--white);
     }
     
     .input-container {
@@ -408,6 +609,65 @@
         background: transparent;
         color: var(--gray-300);
     }
+    
+    .quick-btn {
+        background: var(--gray-50);
+        border-color: var(--gray-100);
+        color: var(--gray-300);
+    }
+    
+    .quick-btn:hover {
+        background: var(--gray-100);
+        border-color: var(--gray-200);
+    }
+    
+    .chat-history-sidebar {
+        background: var(--gray-50);
+        border-color: var(--gray-100);
+    }
+    
+    .history-search input {
+        background: var(--gray-50);
+        border-color: var(--gray-100);
+        color: var(--gray-300);
+    }
+    
+    .mobile-menu-container {
+        background: var(--gray-50);
+    }
+    
+    .mobile-link {
+        color: var(--gray-300);
+    }
+    
+    .mobile-link:hover,
+    .mobile-link.active {
+        color: var(--primary-light);
+        background: var(--gray-100);
+    }
+    
+    .premium-footer {
+        background: var(--gray-900);
+    }
+    
+    .toast {
+        background: var(--gray-50);
+        border-color: var(--gray-100);
+    }
+    
+    .toast span {
+        color: var(--gray-300);
+    }
+    
+    /* Premium animations in dark mode */
+    .shimmer-text {
+        background: linear-gradient(90deg, #FFD700, #FFA000, #FFD700);
+        background-size: 200% auto;
+        background-clip: text;
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        animation: shimmer 2s linear infinite;
+    }
 }
 
 /* ===== REDUCED MOTION ===== */
@@ -418,16 +678,40 @@
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+    
+    .loading-spinner,
+    .gavel-animation,
+    .floating,
+    .pulse-glow,
+    .text-reveal,
+    .typewriter,
+    .progress-fill,
+    .legal-seal::after {
+        animation: none !important;
+    }
+    
+    .btn-premium:hover::before {
+        display: none !important;
+    }
+    
+    .btn-premium:hover,
+    .premium-card:hover {
+        transform: none !important;
     }
 }
 
 /* ===== TOUCH DEVICES ===== */
 @media (hover: none) and (pointer: coarse) {
-    .btn-primary,
-    .btn-secondary,
+    .btn-hero-primary,
+    .btn-hero-secondary,
     .nav-link,
     .feature-card,
-    .testimonial-card {
+    .testimonial-card,
+    .pricing-card,
+    .btn-generate,
+    .btn-pricing {
         min-height: 44px;
     }
     
@@ -435,9 +719,13 @@
         padding: var(--space-3) var(--space-4);
     }
     
-    .btn-icon,
+    .btn-login,
+    .chat-action-btn,
+    .chat-back-btn,
     .input-action-btn,
-    .message-action-btn {
+    .message-action-btn,
+    .mobile-close,
+    .history-close {
         min-width: 44px;
         min-height: 44px;
     }
@@ -445,6 +733,290 @@
     input,
     select,
     textarea {
-        font-size: 16px;
+        font-size: 16px !important;
+    }
+    
+    #messageInput {
+        font-size: 16px !important;
+    }
+    
+    .quick-btn {
+        padding: var(--space-3) var(--space-4);
+        min-height: 44px;
+    }
+    
+    /* Better touch targets */
+    .chat-messages {
+        padding: var(--space-4);
+    }
+    
+    .message {
+        margin-bottom: var(--space-3);
+    }
+    
+    .message-actions {
+        opacity: 1 !important;
+    }
+    
+    .message-action-btn {
+        width: 44px;
+        height: 44px;
+    }
+    
+    /* Disable hover effects for touch */
+    .btn-premium:hover {
+        transform: none !important;
+    }
+    
+    .premium-card:hover {
+        transform: none !important;
+    }
+}
+
+/* ===== HIGH CONTRAST MODE ===== */
+@media (prefers-contrast: high) {
+    :root {
+        --primary: #0000ff;
+        --primary-dark: #00008b;
+        --accent: #008000;
+        --accent-dark: #006400;
+    }
+    
+    .btn-hero-primary,
+    .btn-login,
+    .demo-login-btn,
+    .btn-send {
+        border: 2px solid #000000;
+    }
+    
+    .feature-card,
+    .document-category,
+    .testimonial-card,
+    .pricing-card {
+        border: 2px solid #000000;
+    }
+    
+    .modal-content {
+        border: 2px solid #000000;
+    }
+    
+    .input-container {
+        border: 2px solid #000000;
+    }
+    
+    .nav-link.active {
+        border: 2px solid var(--primary);
+    }
+}
+
+/* ===== ULTRA-WIDE SCREENS ===== */
+@media (min-width: 1920px) {
+    .nav-container,
+    .hero-container,
+    .container,
+    .footer-content {
+        max-width: 1600px;
+    }
+    
+    .hero-title {
+        font-size: 4.5rem;
+    }
+    
+    .features-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: var(--space-8);
+    }
+    
+    .documents-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-8);
+    }
+    
+    .testimonials-carousel {
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-8);
+    }
+    
+    .pricing-cards {
+        grid-template-columns: repeat(3, 1fr);
+        gap: var(--space-8);
+    }
+    
+    /* Chat Interface */
+    .chat-container {
+        max-width: 1600px;
+    }
+    
+    .chat-messages {
+        padding: var(--space-8);
+    }
+    
+    .message {
+        max-width: 70%;
+    }
+}
+
+/* ===== FOLDABLE DEVICES ===== */
+@media (max-width: 350px) and (max-height: 650px) {
+    .hero-title {
+        font-size: 1.5rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 0.75rem;
+    }
+    
+    .hero-actions {
+        flex-direction: column;
+        gap: var(--space-2);
+    }
+    
+    .btn-hero-primary,
+    .btn-hero-secondary {
+        font-size: 0.75rem;
+        padding: var(--space-2) var(--space-3);
+    }
+    
+    .feature-card,
+    .document-category {
+        padding: var(--space-3);
+    }
+    
+    .feature-icon {
+        width: 48px;
+        height: 48px;
+        font-size: 1.25rem;
+    }
+    
+    .feature-title {
+        font-size: 1rem;
+    }
+    
+    /* Chat Interface for foldables */
+    .chat-header {
+        padding: var(--space-2);
+    }
+    
+    .chat-title-icon {
+        width: 32px;
+        height: 32px;
+        font-size: 1rem;
+    }
+    
+    .chat-title-text h3 {
+        font-size: 0.875rem;
+    }
+    
+    .chat-title-text p {
+        display: none;
+    }
+    
+    .chat-messages {
+        padding: var(--space-2);
+    }
+    
+    .message {
+        max-width: 100%;
+    }
+    
+    .message-avatar {
+        width: 32px;
+        height: 32px;
+        font-size: 0.875rem;
+    }
+    
+    .message-text {
+        font-size: 0.875rem;
+        padding: var(--space-2);
+    }
+}
+
+/* ===== LANDSCAPE ORIENTATION ===== */
+@media (max-height: 600px) and (orientation: landscape) {
+    .premium-navbar {
+        padding: var(--space-1) 0;
+    }
+    
+    .nav-container {
+        height: 50px;
+    }
+    
+    .hero-section {
+        padding: 4rem var(--space-4) 2rem;
+    }
+    
+    .hero-title {
+        font-size: 2rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 0.875rem;
+        margin-bottom: var(--space-4);
+    }
+    
+    .hero-stats {
+        display: none;
+    }
+    
+    /* Chat Interface in landscape */
+    .chat-interface {
+        height: 100vh;
+    }
+    
+    .chat-header {
+        padding: var(--space-2);
+    }
+    
+    .chat-messages {
+        max-height: 60vh;
+    }
+    
+    .chat-input-area {
+        padding: var(--space-2);
+    }
+    
+    .welcome-features {
+        display: none;
+    }
+    
+    .quick-questions {
+        display: none;
+    }
+}
+
+/* ===== SAFARI SPECIFIC FIXES ===== */
+@supports (-webkit-touch-callout: none) {
+    .modal {
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .chat-messages {
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .history-list {
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Fix for Safari input zoom */
+    @media screen and (max-width: 767px) {
+        input,
+        select,
+        textarea {
+            font-size: 16px !important;
+        }
+    }
+}
+
+/* ===== FIREFOX SCROLLBAR ===== */
+@-moz-document url-prefix() {
+    .chat-messages {
+        scrollbar-width: thin;
+        scrollbar-color: var(--gray-400) var(--gray-100);
+    }
+    
+    .history-list {
+        scrollbar-width: thin;
+        scrollbar-color: var(--gray-400) var(--gray-100);
     }
 }
