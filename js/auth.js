@@ -133,7 +133,7 @@ class LegalSwamiAuth {
                 gapi.load('auth2', {
                     callback: resolve,
                     onerror: reject,
-                    timeout: 5000
+                    //timeout: 5000
                 });
             });
             
