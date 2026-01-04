@@ -9,7 +9,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
     <!-- CSS Files -->
     <link rel="stylesheet" href="css/styles.css">
@@ -31,205 +31,6 @@
     <meta property="og:description" content="Get instant legal advice, generate documents, and understand laws with AI">
     <meta property="og:image" content="https://legalswami.com/og-image.jpg">
     <meta property="og:url" content="https://legalswami.com">
-    
-    <style>
-        /* Premium Custom Styles */
-        :root {
-            --gold-gradient: linear-gradient(135deg, #FFD700 0%, #FFA000 100%);
-            --blue-gradient: linear-gradient(135deg, #1a237e 0%, #283593 100%);
-            --premium-shadow: 0 20px 60px rgba(0, 0, 0, 0.15);
-            --glow-effect: 0 0 30px rgba(26, 35, 126, 0.3);
-        }
-        
-        /* Premium Loading Animation */
-        .loading-spinner {
-            border: 4px solid rgba(255, 215, 0, 0.1);
-            border-top-color: #FFD700;
-            border-right-color: #1a237e;
-            border-bottom-color: #FFD700;
-            border-left-color: #1a237e;
-            animation: premium-spin 2s linear infinite;
-        }
-        
-        @keyframes premium-spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* Gavel Animation */
-        .gavel-animation {
-            animation: gavelSwing 3s ease-in-out infinite;
-            transform-origin: center bottom;
-        }
-        
-        @keyframes gavelSwing {
-            0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(-10deg); }
-            75% { transform: rotate(10deg); }
-        }
-        
-        /* Floating Animation */
-        .floating {
-            animation: floating 3s ease-in-out infinite;
-        }
-        
-        @keyframes floating {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-        }
-        
-        /* Pulse Animation */
-        .pulse-glow {
-            animation: pulseGlow 2s infinite;
-        }
-        
-        @keyframes pulseGlow {
-            0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
-            50% { box-shadow: 0 0 40px rgba(255, 215, 0, 0.6); }
-        }
-        
-        /* Text Reveal Animation */
-        .text-reveal {
-            animation: textReveal 1.5s ease-out;
-        }
-        
-        @keyframes textReveal {
-            from { 
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to { 
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-        
-        /* Premium Button Hover Effect */
-        .btn-premium {
-            position: relative;
-            overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        
-        .btn-premium::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.7s ease;
-        }
-        
-        .btn-premium:hover::before {
-            left: 100%;
-        }
-        
-        .btn-premium:hover {
-            transform: translateY(-5px) scale(1.05);
-            box-shadow: var(--premium-shadow);
-        }
-        
-        /* Legal Seal Effect */
-        .legal-seal {
-            position: relative;
-            border: 3px solid #FFD700;
-            border-radius: 50%;
-            padding: 2px;
-            background: var(--blue-gradient);
-        }
-        
-        .legal-seal::after {
-            content: '';
-            position: absolute;
-            top: -6px;
-            left: -6px;
-            right: -6px;
-            bottom: -6px;
-            border: 2px dashed rgba(255, 215, 0, 0.3);
-            border-radius: 50%;
-            animation: rotate 20s linear infinite;
-        }
-        
-        @keyframes rotate {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        
-        /* Glowing Border */
-        .glow-border {
-            position: relative;
-        }
-        
-        .glow-border::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: var(--gold-gradient);
-            border-radius: inherit;
-            z-index: -1;
-            opacity: 0.5;
-            filter: blur(10px);
-        }
-        
-        /* Shimmer Text */
-        .shimmer-text {
-            background: linear-gradient(90deg, #FFD700, #FFA000, #FFD700);
-            background-size: 200% auto;
-            background-clip: text;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            animation: shimmer 2s linear infinite;
-        }
-        
-        @keyframes shimmer {
-            0% { background-position: 200% center; }
-            100% { background-position: -200% center; }
-        }
-        
-        /* Premium Card Hover */
-        .premium-card {
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            transform-style: preserve-3d;
-        }
-        
-        .premium-card:hover {
-            transform: translateY(-15px) rotateX(5deg);
-            box-shadow: var(--premium-shadow), 0 0 40px rgba(26, 35, 126, 0.2);
-        }
-        
-        /* Typewriter Effect */
-        .typewriter {
-            overflow: hidden;
-            border-right: 3px solid #FFD700;
-            white-space: nowrap;
-            animation: typing 3.5s steps(40, end), blink-caret 0.75s step-end infinite;
-        }
-        
-        @keyframes typing {
-            from { width: 0 }
-            to { width: 100% }
-        }
-        
-        @keyframes blink-caret {
-            from, to { border-color: transparent }
-            50% { border-color: #FFD700; }
-        }
-        
-        /* Progress Bar Animation */
-        .progress-fill {
-            animation: progressLoad 2s ease-out forwards;
-        }
-        
-        @keyframes progressLoad {
-            0% { width: 0%; }
-            100% { width: 100%; }
-        }
-    </style>
 </head>
 <body>
     <!-- Premium Loading Screen -->
@@ -239,7 +40,7 @@
             <h2 class="shimmer-text mt-4">LegalSwami</h2>
             <p class="text-light">Initializing AI Legal Assistant...</p>
             <div class="progress-bar mt-4" style="width: 200px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px;">
-                <div class="progress-fill" style="width: 0%; height: 100%; background: var(--gold-gradient); border-radius: 2px;"></div>
+                <div class="progress-fill" style="width: 100%; height: 100%; background: linear-gradient(90deg, #FFD700, #FFA000); border-radius: 2px;"></div>
             </div>
         </div>
     </div>
@@ -352,7 +153,7 @@
             </div>
         </div>
 
-        <!-- Hero Section with Parallax -->
+        <!-- Hero Section -->
         <section id="home" class="hero-section">
             <div class="hero-container">
                 <!-- Animated Background Elements -->
@@ -463,7 +264,7 @@
                             </div>
                         </div>
                         
-                        <button class="btn-assistant">
+                        <button class="btn-assistant" id="heroAssistantBtn">
                             <i class="fas fa-comment-alt"></i>
                             Ask Legal Question
                         </button>
@@ -778,7 +579,7 @@
                             <li><i class="fas fa-times-circle" style="color: #f44336;"></i> No Document History</li>
                         </ul>
                         
-                        <button class="btn-pricing">
+                        <button class="btn-pricing" id="freePlanBtn">
                             Get Started Free
                         </button>
                     </div>
@@ -802,7 +603,7 @@
                             <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Complete Chat History</li>
                         </ul>
                         
-                        <button class="btn-pricing btn-premium">
+                        <button class="btn-pricing btn-premium" id="proPlanBtn">
                             <i class="fas fa-crown"></i>
                             Get Professional
                         </button>
@@ -827,7 +628,7 @@
                             <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Dedicated Account Manager</li>
                         </ul>
                         
-                        <button class="btn-pricing">
+                        <button class="btn-pricing" id="businessPlanBtn">
                             Contact Sales
                         </button>
                     </div>
@@ -879,7 +680,7 @@
         </section>
 
         <!-- Chat Interface -->
-        <div id="chatInterface" class="chat-interface" style="display: none;">
+        <div id="chatInterface" class="chat-interface">
             <div class="chat-container">
                 <!-- Chat Header -->
                 <div class="chat-header">
@@ -969,7 +770,7 @@
                         </div>
 
                         <!-- Chat Messages Container -->
-                        <div class="chat-messages-container" id="chatMessagesContainer" style="display: none;">
+                        <div class="chat-messages-container" id="chatMessagesContainer">
                             <div class="chat-messages" id="chatMessages">
                                 <!-- Messages will be loaded here -->
                             </div>
@@ -1019,7 +820,6 @@
                             id="messageInput" 
                             placeholder="Type your legal question here... (Press Shift+Enter for new line, Enter to send)"
                             rows="1"
-                            onkeydown="handleInputKeydown(event)"
                         ></textarea>
                         
                         <div class="input-actions-right">
@@ -1053,7 +853,7 @@
                         </div>
                     </div>
                     
-                    <div class="typing-indicator" id="typingIndicator" style="display: none;">
+                    <div class="typing-indicator" id="typingIndicator">
                         <div class="typing-dots">
                             <div class="dot"></div>
                             <div class="dot"></div>
@@ -1066,7 +866,7 @@
         </div>
 
         <!-- Modern Login Modal -->
-        <div id="loginModal" class="modal" style="display: none;">
+        <div id="loginModal" class="modal">
             <div class="modal-overlay"></div>
             <div class="modal-content">
                 <button id="closeLoginModal" class="modal-close">
@@ -1083,9 +883,7 @@
                 
                 <div class="modal-body">
                     <!-- Google Sign-In Container -->
-                    <div id="googleSignInContainer" style="width: 100%; margin: 1.5rem 0;">
-                        <!-- Google button will be rendered here -->
-                    </div>
+                    <div id="googleSignInContainer" style="width: 100%; margin: 1.5rem 0;"></div>
                     
                     <!-- Custom Google Button -->
                     <button id="customGoogleBtn" class="google-signin-btn">
@@ -1219,6 +1017,7 @@
         let isProcessing = false;
         let googleGISInitialized = false;
         let isMobileMenuOpen = false;
+        let isChatOpen = false;
         
         // DOM Content Loaded
         document.addEventListener('DOMContentLoaded', function() {
@@ -1228,8 +1027,11 @@
             setTimeout(() => {
                 const loadingScreen = document.getElementById('loadingScreen');
                 if (loadingScreen) {
-                    loadingScreen.style.display = 'none';
-                    console.log('✅ Loading screen hidden');
+                    loadingScreen.style.opacity = '0';
+                    setTimeout(() => {
+                        loadingScreen.style.display = 'none';
+                        console.log('✅ Loading screen hidden');
+                    }, 300);
                 }
             }, 1500);
             
@@ -1250,6 +1052,9 @@
             
             // Setup mobile menu
             setupMobileMenu();
+            
+            // Initialize chat interface
+            initializeChat();
         });
         
         // ✅ SETUP SCROLL EFFECTS
@@ -1276,23 +1081,34 @@
                 }
                 
                 // Update active nav link based on scroll position
-                const sections = document.querySelectorAll('section[id]');
-                let currentSection = '';
-                
-                sections.forEach(section => {
-                    const sectionTop = section.offsetTop - 100;
-                    const sectionHeight = section.clientHeight;
-                    if (scrollY >= sectionTop && scrollY < sectionTop + sectionHeight) {
-                        currentSection = section.getAttribute('id') || 'home';
-                    }
-                });
-                
-                navLinks.forEach(link => {
-                    link.classList.remove('active');
-                    if (link.getAttribute('href') === `#${currentSection}`) {
-                        link.classList.add('active');
-                    }
-                });
+                if (!isChatOpen) {
+                    const sections = document.querySelectorAll('section[id]');
+                    let currentSection = '';
+                    
+                    sections.forEach(section => {
+                        const sectionTop = section.offsetTop - 100;
+                        const sectionHeight = section.clientHeight;
+                        if (scrollY >= sectionTop && scrollY < sectionTop + sectionHeight) {
+                            currentSection = section.getAttribute('id') || 'home';
+                        }
+                    });
+                    
+                    navLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === `#${currentSection}`) {
+                            link.classList.add('active');
+                        }
+                    });
+                    
+                    // Update mobile links
+                    const mobileLinks = document.querySelectorAll('.mobile-link');
+                    mobileLinks.forEach(link => {
+                        link.classList.remove('active');
+                        if (link.getAttribute('href') === `#${currentSection}`) {
+                            link.classList.add('active');
+                        }
+                    });
+                }
             });
             
             // Back to top functionality
@@ -1315,8 +1131,18 @@
                 mobileToggle.addEventListener('click', function() {
                     isMobileMenuOpen = !isMobileMenuOpen;
                     if (mobileMenu) {
-                        mobileMenu.style.display = isMobileMenuOpen ? 'block' : 'none';
-                        mobileToggle.innerHTML = isMobileMenuOpen ? 
+                        if (isMobileMenuOpen) {
+                            mobileMenu.style.display = 'block';
+                            setTimeout(() => {
+                                mobileMenu.style.opacity = '1';
+                            }, 10);
+                        } else {
+                            mobileMenu.style.opacity = '0';
+                            setTimeout(() => {
+                                mobileMenu.style.display = 'none';
+                            }, 300);
+                        }
+                        this.innerHTML = isMobileMenuOpen ? 
                             '<i class="fas fa-times"></i>' : 
                             '<i class="fas fa-bars"></i>';
                     }
@@ -1327,7 +1153,10 @@
                 mobileClose.addEventListener('click', function() {
                     isMobileMenuOpen = false;
                     if (mobileMenu) {
-                        mobileMenu.style.display = 'none';
+                        mobileMenu.style.opacity = '0';
+                        setTimeout(() => {
+                            mobileMenu.style.display = 'none';
+                        }, 300);
                         if (mobileToggle) {
                             mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
                         }
@@ -1337,10 +1166,22 @@
             
             // Close menu when clicking a link
             mobileLinks.forEach(link => {
-                link.addEventListener('click', function() {
+                link.addEventListener('click', function(e) {
+                    if (this.getAttribute('href') !== '#chat') {
+                        e.preventDefault();
+                        const targetId = this.getAttribute('href').substring(1);
+                        const targetSection = document.getElementById(targetId);
+                        if (targetSection) {
+                            targetSection.scrollIntoView({ behavior: 'smooth' });
+                        }
+                    }
+                    
                     isMobileMenuOpen = false;
                     if (mobileMenu) {
-                        mobileMenu.style.display = 'none';
+                        mobileMenu.style.opacity = '0';
+                        setTimeout(() => {
+                            mobileMenu.style.display = 'none';
+                        }, 300);
                         if (mobileToggle) {
                             mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
                         }
@@ -1354,7 +1195,10 @@
                     e.preventDefault();
                     startChat();
                     if (mobileMenu) {
-                        mobileMenu.style.display = 'none';
+                        mobileMenu.style.opacity = '0';
+                        setTimeout(() => {
+                            mobileMenu.style.display = 'none';
+                        }, 300);
                         isMobileMenuOpen = false;
                         if (mobileToggle) {
                             mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
@@ -1368,7 +1212,10 @@
                 mobileMenu.addEventListener('click', function(e) {
                     if (e.target === this) {
                         isMobileMenuOpen = false;
-                        this.style.display = 'none';
+                        this.style.opacity = '0';
+                        setTimeout(() => {
+                            this.style.display = 'none';
+                        }, 300);
                         if (mobileToggle) {
                             mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
                         }
@@ -1582,6 +1429,11 @@
                 startChatBtn.addEventListener('click', startChat);
             }
             
+            const heroAssistantBtn = document.getElementById('heroAssistantBtn');
+            if (heroAssistantBtn) {
+                heroAssistantBtn.addEventListener('click', startChat);
+            }
+            
             const watchDemo = document.getElementById('watchDemo');
             if (watchDemo) {
                 watchDemo.addEventListener('click', showDemo);
@@ -1590,6 +1442,24 @@
             const ctaStartChat = document.getElementById('ctaStartChat');
             if (ctaStartChat) {
                 ctaStartChat.addEventListener('click', startChat);
+            }
+            
+            // Pricing buttons
+            const freePlanBtn = document.getElementById('freePlanBtn');
+            if (freePlanBtn) {
+                freePlanBtn.addEventListener('click', startChat);
+            }
+            
+            const proPlanBtn = document.getElementById('proPlanBtn');
+            if (proPlanBtn) {
+                proPlanBtn.addEventListener('click', showLoginModal);
+            }
+            
+            const businessPlanBtn = document.getElementById('businessPlanBtn');
+            if (businessPlanBtn) {
+                businessPlanBtn.addEventListener('click', function() {
+                    showToast('Contact sales feature coming soon!', 'info');
+                });
             }
             
             // Login modal buttons
@@ -1616,12 +1486,12 @@
             
             const clearChat = document.getElementById('clearChat');
             if (clearChat) {
-                clearChat.addEventListener('click', clearChat);
+                clearChat.addEventListener('click', clearChatHandler);
             }
             
             const exportChat = document.getElementById('exportChat');
             if (exportChat) {
-                exportChat.addEventListener('click', exportChat);
+                exportChat.addEventListener('click', exportChatHandler);
             }
             
             const historyToggle = document.getElementById('historyToggle');
@@ -1641,12 +1511,19 @@
             
             const attachFile = document.getElementById('attachFile');
             if (attachFile) {
-                attachFile.addEventListener('click', attachFile);
+                attachFile.addEventListener('click', attachFileHandler);
             }
             
             const voiceInput = document.getElementById('voiceInput');
             if (voiceInput) {
                 voiceInput.addEventListener('click', startVoiceInput);
+            }
+            
+            // Message input handling
+            const messageInput = document.getElementById('messageInput');
+            if (messageInput) {
+                messageInput.addEventListener('keydown', handleInputKeydown);
+                messageInput.addEventListener('input', autoResizeTextarea);
             }
             
             // Quick questions
@@ -1672,22 +1549,6 @@
                 });
             }
             
-            // FAQ accordion (if exists)
-            document.querySelectorAll('.faq-question').forEach(question => {
-                question.addEventListener('click', function() {
-                    const answer = this.nextElementSibling;
-                    const icon = this.querySelector('i');
-                    
-                    if (answer.style.display === 'block') {
-                        answer.style.display = 'none';
-                        icon.className = 'fas fa-chevron-down';
-                    } else {
-                        answer.style.display = 'block';
-                        icon.className = 'fas fa-chevron-up';
-                    }
-                });
-            });
-            
             // Legal links
             const termsLink = document.getElementById('termsLink');
             if (termsLink) {
@@ -1709,6 +1570,21 @@
                 cookieLink.addEventListener('click', showCookiePolicy);
             }
             
+            // Schedule demo button
+            const scheduleDemo = document.getElementById('ctaScheduleDemo');
+            if (scheduleDemo) {
+                scheduleDemo.addEventListener('click', function() {
+                    showToast('Demo scheduling feature coming soon!', 'info');
+                });
+            }
+            
+            // Generate document buttons
+            document.querySelectorAll('.btn-generate').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    showToast('Document generation feature coming soon!', 'info');
+                });
+            }
+            
             // Close modal when clicking outside
             const loginModal = document.getElementById('loginModal');
             if (loginModal) {
@@ -1719,56 +1595,37 @@
                 });
             }
             
-            // Smooth scroll for anchor links
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function(e) {
-                    const href = this.getAttribute('href');
-                    if (href === '#' || href === '#chat') return;
-                    
-                    e.preventDefault();
-                    const target = document.querySelector(href);
-                    if (target) {
-                        target.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-                    }
-                });
-            });
-            
-            // Chat assistant button
-            const chatAssistantBtn = document.querySelector('.btn-assistant');
-            if (chatAssistantBtn) {
-                chatAssistantBtn.addEventListener('click', startChat);
-            }
-            
-            // Generate document buttons
-            document.querySelectorAll('.btn-generate').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    showToast('Document generation feature coming soon!', 'info');
-                });
-            });
-            
-            // Pricing buttons
-            document.querySelectorAll('.btn-pricing').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    if (this.textContent.includes('Contact')) {
-                        showToast('Contact form coming soon!', 'info');
-                    } else {
-                        startChat();
-                    }
-                });
-            });
-            
-            // Schedule demo button
-            const scheduleDemo = document.getElementById('ctaScheduleDemo');
-            if (scheduleDemo) {
-                scheduleDemo.addEventListener('click', function() {
-                    showToast('Demo scheduling feature coming soon!', 'info');
-                });
-            }
-            
             console.log('✅ All event listeners set up');
+        }
+        
+        // ✅ INITIALIZE CHAT
+        function initializeChat() {
+            // Hide typing indicator initially
+            const typingIndicator = document.getElementById('typingIndicator');
+            if (typingIndicator) {
+                typingIndicator.style.display = 'none';
+            }
+            
+            // Hide chat messages container initially
+            const chatMessagesContainer = document.getElementById('chatMessagesContainer');
+            if (chatMessagesContainer) {
+                chatMessagesContainer.style.display = 'none';
+            }
+        }
+        
+        // ✅ AUTO RESIZE TEXTAREA
+        function autoResizeTextarea() {
+            const textarea = this;
+            textarea.style.height = 'auto';
+            textarea.style.height = (textarea.scrollHeight) + 'px';
+        }
+        
+        // ✅ HANDLE INPUT KEYDOWN
+        function handleInputKeydown(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessageHandler();
+            }
         }
         
         // ✅ SHOW LOGIN MODAL
@@ -1898,8 +1755,7 @@
             showToast('Logged out successfully', 'success');
             
             // Go back to home if in chat interface
-            const chatInterface = document.getElementById('chatInterface');
-            if (chatInterface && chatInterface.style.display !== 'none') {
+            if (isChatOpen) {
                 goBackToHome();
             }
         }
@@ -1979,7 +1835,7 @@
             }
         }
         
-        // ✅ START CHAT - FIXED VERSION
+        // ✅ START CHAT
         function startChat() {
             console.log('💬 Starting chat...');
             
@@ -1997,7 +1853,8 @@
             const mainContainer = document.querySelector('.main-container');
             
             if (chatInterface) {
-                chatInterface.style.display = 'block';
+                chatInterface.style.display = 'flex';
+                isChatOpen = true;
                 console.log('✅ Chat interface shown');
             }
             
@@ -2028,13 +1885,14 @@
             }, 300);
         }
         
-        // ✅ GO BACK TO HOME - FIXED VERSION
+        // ✅ GO BACK TO HOME
         function goBackToHome() {
             const chatInterface = document.getElementById('chatInterface');
             const mainContainer = document.querySelector('.main-container');
             
             if (chatInterface) {
                 chatInterface.style.display = 'none';
+                isChatOpen = false;
                 console.log('✅ Chat interface hidden');
             }
             
@@ -2056,22 +1914,29 @@
                 chatMessagesContainer.style.display = 'none';
             }
             
+            // Clear messages
+            const chatMessages = document.getElementById('chatMessages');
+            if (chatMessages) {
+                chatMessages.innerHTML = '';
+            }
+            
+            // Reset message input
+            const messageInput = document.getElementById('messageInput');
+            if (messageInput) {
+                messageInput.value = '';
+                messageInput.style.height = 'auto';
+            }
+            
             window.scrollTo({ top: 0, behavior: 'smooth' });
             console.log('🏠 Returned to home');
         }
         
-        // ✅ CLEAR CHAT
-        function clearChat() {
+        // ✅ CLEAR CHAT HANDLER
+        function clearChatHandler() {
             if (confirm('Are you sure you want to clear the chat? This action cannot be undone.')) {
                 const chatMessages = document.getElementById('chatMessages');
                 if (chatMessages) {
-                    // Keep only the welcome message or first message
-                    const messages = chatMessages.querySelectorAll('.message');
-                    messages.forEach((message, index) => {
-                        if (index > 0) {
-                            message.remove();
-                        }
-                    });
+                    chatMessages.innerHTML = '';
                 }
                 
                 currentChatId = null;
@@ -2080,8 +1945,8 @@
             }
         }
         
-        // ✅ EXPORT CHAT
-        function exportChat() {
+        // ✅ EXPORT CHAT HANDLER
+        function exportChatHandler() {
             const chatMessages = document.getElementById('chatMessages');
             if (!chatMessages) return;
             
@@ -2207,18 +2072,6 @@
                 showToast('Chat deleted successfully', 'success');
                 console.log('🗑️ Chat deleted:', chatId);
             }
-        }
-        
-        // ✅ HANDLE INPUT KEYDOWN
-        function handleInputKeydown(event) {
-            if (event.key === 'Enter' && !event.shiftKey) {
-                event.preventDefault();
-                sendMessageHandler();
-            }
-            
-            const textarea = event.target;
-            textarea.style.height = 'auto';
-            textarea.style.height = (textarea.scrollHeight) + 'px';
         }
         
         // ✅ SEND MESSAGE HANDLER
@@ -2409,8 +2262,8 @@
             }
         }
         
-        // ✅ ATTACH FILE
-        function attachFile() {
+        // ✅ ATTACH FILE HANDLER
+        function attachFileHandler() {
             showToast('File attachment feature coming soon in version 2.1!', 'info');
             console.log('📎 File attachment clicked');
         }
