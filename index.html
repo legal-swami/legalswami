@@ -16,19 +16,8 @@
     <link rel="stylesheet" href="css/chat.css">
     <link rel="stylesheet" href="css/responsive.css">
     
-    <!-- ✅ SIMPLIFIED CSP - ALLOWING ALL RESOURCES -->
-    <meta http-equiv="Content-Security-Policy" 
-          content="default-src * 'unsafe-inline' 'unsafe-eval' data: blob:;
-                   script-src * 'unsafe-inline' 'unsafe-eval' data: blob:;
-                   style-src * 'unsafe-inline';
-                   font-src * data:;
-                   img-src * data: blob:;
-                   connect-src *;
-                   frame-src *;
-                   media-src * data:;">
-    
-    <!-- ✅ GOOGLE OAUTH META -->
-    <meta name="google-signin-client_id" 
+    <!-- ✅ GOOGLE CLIENT ID CONFIGURATION -->
+    <meta name="google-client-id" 
           content="166511615962-bohur5q8d4i5hud6icr4185kcte9enk8.apps.googleusercontent.com">
     
     <!-- ✅ SIMPLE FAVICON FIX -->
@@ -101,12 +90,7 @@
         }
         
         /* Google Sign-In Button Styles */
-        .g-signin2 {
-            margin: 20px 0;
-        }
-        
-        /* Fallback Google Button */
-        .custom-google-btn {
+        .google-signin-btn {
             display: flex;
             align-items: center;
             justify-content: center;
@@ -124,16 +108,49 @@
             margin: 24px 0;
         }
         
-        .custom-google-btn:hover {
+        .google-signin-btn:hover {
             background: #f8fafc;
             border-color: #ea4335;
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         
-        .custom-google-btn i {
+        .google-signin-btn i {
             font-size: 18px;
             color: #ea4335;
+        }
+        
+        /* Demo Button Styles */
+        .demo-login-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #7c3aed, #2563eb);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 12px 0;
+        }
+        
+        .demo-login-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
+        /* Google One Tap Positioning */
+        #google-one-tap {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9998;
         }
     </style>
 </head>
@@ -505,14 +522,14 @@
                     <h4>Login to Continue</h4>
                     <p>Secure login with Google to access all features</p>
                     
-                    <!-- ✅ FIXED: SIMPLE GOOGLE SIGN-IN BUTTON -->
-                    <div id="googleSignInButton" class="custom-google-btn">
+                    <!-- ✅ GOOGLE SIGN-IN BUTTON -->
+                    <button id="googleSignInButton" class="google-signin-btn">
                         <i class="fab fa-google"></i>
                         Sign in with Google
-                    </div>
+                    </button>
                     
-                    <!-- ✅ DEMO LOGIN BUTTON FOR TESTING -->
-                    <button id="demoLoginBtn" class="btn-primary" style="margin-top: 10px; width: 100%;">
+                    <!-- ✅ DEMO LOGIN BUTTON -->
+                    <button id="demoLoginBtn" class="demo-login-btn">
                         <i class="fas fa-user"></i> Try Demo Login
                     </button>
                     
@@ -687,12 +704,11 @@
     <!-- Toast Notifications -->
     <div id="toastContainer" class="toast-container"></div>
     
-    <!-- ✅ FIXED: GOOGLE OAUTH SCRIPT WITH PROPER LOADING -->
-    <script src="https://apis.google.com/js/api.js" async defer></script>
+    <!-- ✅ NEW GOOGLE IDENTITY SERVICES (GIS) -->
+    <script src="https://accounts.google.com/gsi/client" async defer></script>
     
     <!-- JavaScript Files -->
     <script src="js/api.js"></script>
-    <script src="js/auth.js"></script>
     <script src="js/chat.js"></script>
     <script src="js/utils.js"></script>
     
@@ -701,7 +717,7 @@
         // Global variables
         let currentChatId = null;
         let isProcessing = false;
-        let googleAuthInstance = null;
+        let googleTokenClient = null;
         
         // DOM Content Loaded
         document.addEventListener('DOMContentLoaded', function() {
@@ -719,145 +735,186 @@
             // Setup event listeners
             setupEventListeners();
             
-            // Initialize Google OAuth after page load
-            setTimeout(initializeGoogleOAuth, 2000);
+            // Initialize Google Identity Services
+            initializeGoogleIdentityServices();
+            
+            // Check for existing user
+            checkExistingUser();
         });
         
-        // ✅ FIXED: Initialize Google OAuth
-        function initializeGoogleOAuth() {
-            console.log('🔐 Initializing Google OAuth...');
+        // ✅ FIXED: Initialize Google Identity Services (New GIS)
+        function initializeGoogleIdentityServices() {
+            console.log('🔐 Initializing Google Identity Services...');
             
-            // Load Google API
-            if (typeof gapi === 'undefined') {
-                console.warn('⚠️ Google API not loaded yet, will retry...');
-                setTimeout(initializeGoogleOAuth, 1000);
+            // Wait for Google Identity Services to load
+            if (typeof google === 'undefined') {
+                console.warn('⚠️ Google Identity Services not loaded yet, will retry...');
+                setTimeout(initializeGoogleIdentityServices, 1000);
                 return;
             }
             
-            // Load auth2 library
-            gapi.load('auth2', () => {
-                console.log('✅ Google auth2 library loaded');
+            // Initialize token client
+            try {
+                google.accounts.id.initialize({
+                    client_id: '166511615962-bohur5q8d4i5hud6icr4185kcte9enk8.apps.googleusercontent.com',
+                    callback: handleGoogleCredentialResponse,
+                    auto_select: false,
+                    cancel_on_tap_outside: false,
+                    context: 'signin'
+                });
                 
-                try {
-                    // Initialize Google Auth
-                    gapi.auth2.init({
-                        client_id: '166511615962-bohur5q8d4i5hud6icr4185kcte9enk8.apps.googleusercontent.com',
-                        cookiepolicy: 'single_host_origin',
-                        scope: 'profile email'
-                    }).then(auth2 => {
-                        console.log('✅ Google Auth initialized successfully');
-                        googleAuthInstance = auth2;
-                        
-                        // Update UI based on current sign-in state
-                        updateAuthUI();
-                        
-                        // Listen for sign-in changes
-                        auth2.isSignedIn.listen(updateAuthUI);
-                    }).catch(error => {
-                        console.error('❌ Google Auth initialization failed:', error);
-                        setupFallbackAuth();
-                    });
-                } catch (error) {
-                    console.error('❌ Error initializing Google Auth:', error);
-                    setupFallbackAuth();
+                console.log('✅ Google Identity Services initialized');
+                
+                // Display One Tap UI if user is not logged in
+                if (!localStorage.getItem('legal_swami_user')) {
+                    setTimeout(() => {
+                        showGoogleOneTap();
+                    }, 2000);
                 }
-            });
+                
+            } catch (error) {
+                console.error('❌ Google Identity Services initialization failed:', error);
+            }
         }
         
-        // ✅ FIXED: Update authentication UI
-        function updateAuthUI() {
-            console.log('👤 Updating auth UI...');
+        // ✅ FIXED: Show Google One Tap UI
+        function showGoogleOneTap() {
+            try {
+                google.accounts.id.prompt((notification) => {
+                    if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
+                        // One Tap was not displayed, that's okay
+                        console.log('ℹ️ Google One Tap not shown:', notification.getNotDisplayedReason());
+                    }
+                });
+                console.log('✅ Google One Tap UI displayed');
+            } catch (error) {
+                console.error('❌ Failed to show Google One Tap:', error);
+            }
+        }
+        
+        // ✅ FIXED: Handle Google credential response
+        function handleGoogleCredentialResponse(response) {
+            console.log('🔐 Google credential received');
             
-            const userProfile = document.getElementById('userProfile');
-            const headerLoginBtn = document.getElementById('headerLoginBtn');
-            
-            if (googleAuthInstance && googleAuthInstance.isSignedIn.get()) {
-                // User is signed in with Google
-                const googleUser = googleAuthInstance.currentUser.get();
-                const profile = googleUser.getBasicProfile();
+            try {
+                // Decode the JWT token to get user info
+                const payload = JSON.parse(atob(response.credential.split('.')[1]));
                 
-                console.log('✅ User signed in:', profile.getName());
-                
-                // Update UI
-                headerLoginBtn.style.display = 'none';
-                userProfile.style.display = 'flex';
-                
-                document.getElementById('userName').textContent = profile.getName();
-                document.getElementById('userEmail').textContent = profile.getEmail();
-                
-                const avatar = document.getElementById('userAvatar');
-                avatar.innerHTML = '<i class="fas fa-user-check" style="color: #10b981;"></i>';
-                
-                // Store user data
                 const userData = {
-                    id: 'google_' + profile.getId(),
-                    name: profile.getName(),
-                    email: profile.getEmail(),
-                    picture: profile.getImageUrl(),
-                    provider: 'google'
+                    id: 'google_' + payload.sub,
+                    name: payload.name,
+                    email: payload.email,
+                    picture: payload.picture,
+                    provider: 'google',
+                    token: response.credential
                 };
                 
+                console.log('✅ Google user authenticated:', userData.email);
+                
+                // Store user data
                 localStorage.setItem('legal_swami_user', JSON.stringify(userData));
-                localStorage.setItem('legal_swami_token', googleUser.getAuthResponse().id_token);
+                localStorage.setItem('legal_swami_token', response.credential);
                 
                 // Update API if exists
                 if (window.legalSwamiAPI) {
                     window.legalSwamiAPI.user = userData;
-                    window.legalSwamiAPI.token = googleUser.getAuthResponse().id_token;
+                    window.legalSwamiAPI.token = response.credential;
                 }
                 
-            } else {
-                // User is not signed in or using fallback
-                const userStr = localStorage.getItem('legal_swami_user');
+                // Update UI
+                updateUserUI();
+                hideLoginModal();
                 
-                if (userStr) {
-                    // User has saved data (demo or previous login)
-                    try {
-                        const user = JSON.parse(userStr);
-                        console.log('👤 Found saved user:', user.name);
-                        
-                        headerLoginBtn.style.display = 'none';
-                        userProfile.style.display = 'flex';
-                        
-                        document.getElementById('userName').textContent = user.name;
-                        document.getElementById('userEmail').textContent = user.email || '';
-                        
-                        const avatar = document.getElementById('userAvatar');
-                        if (user.picture) {
-                            avatar.innerHTML = `<img src="${user.picture}" alt="${user.name}" style="width: 100%; height: 100%; border-radius: 8px;">`;
-                        } else {
-                            avatar.innerHTML = '<i class="fas fa-user"></i>';
-                        }
-                        
-                        // Update API if exists
-                        if (window.legalSwamiAPI) {
-                            window.legalSwamiAPI.user = user;
-                        }
-                        
-                    } catch (e) {
-                        console.error('Error parsing user data:', e);
-                        showGuestUI();
-                    }
-                } else {
-                    // No user data, show guest UI
-                    showGuestUI();
-                }
+                // Hide One Tap after successful login
+                try {
+                    google.accounts.id.disableAutoSelect();
+                } catch (e) {}
+                
+                showToast('Successfully logged in with Google!', 'success');
+                
+            } catch (error) {
+                console.error('❌ Failed to process Google credential:', error);
+                showToast('Login failed. Please try again.', 'error');
             }
         }
         
-        // Show guest UI
-        function showGuestUI() {
-            console.log('👤 Showing guest UI');
+        // ✅ FIXED: Check for existing user
+        function checkExistingUser() {
+            console.log('👤 Checking for existing user...');
+            
+            const userStr = localStorage.getItem('legal_swami_user');
+            if (userStr) {
+                try {
+                    const user = JSON.parse(userStr);
+                    console.log('✅ Found existing user:', user.name);
+                    
+                    // Update API if exists
+                    if (window.legalSwamiAPI) {
+                        window.legalSwamiAPI.user = user;
+                        window.legalSwamiAPI.token = localStorage.getItem('legal_swami_token');
+                    }
+                    
+                    updateUserUI();
+                    return;
+                } catch (e) {
+                    console.error('Error parsing user data:', e);
+                    localStorage.removeItem('legal_swami_user');
+                    localStorage.removeItem('legal_swami_token');
+                }
+            }
+            
+            // No existing user, show guest UI
+            updateUserUI();
+        }
+        
+        // ✅ FIXED: Update user UI
+        function updateUserUI() {
+            console.log('👤 Updating user UI...');
             
             const userProfile = document.getElementById('userProfile');
             const headerLoginBtn = document.getElementById('headerLoginBtn');
             
-            headerLoginBtn.style.display = 'flex';
-            userProfile.style.display = 'none';
+            // Get user data
+            let user = null;
+            const userStr = localStorage.getItem('legal_swami_user');
             
-            // Setup fallback guest ID
-            if (!localStorage.getItem('legalSwamiGuestId')) {
-                localStorage.setItem('legalSwamiGuestId', 'guest_' + Date.now());
+            if (userStr) {
+                try {
+                    user = JSON.parse(userStr);
+                } catch (e) {
+                    console.error('Error parsing user data:', e);
+                }
+            }
+            
+            if (user && user.id) {
+                console.log('✅ User logged in:', user.name);
+                
+                // User is logged in
+                headerLoginBtn.style.display = 'none';
+                userProfile.style.display = 'flex';
+                
+                document.getElementById('userName').textContent = user.name || 'User';
+                document.getElementById('userEmail').textContent = user.email || '';
+                
+                const avatar = document.getElementById('userAvatar');
+                if (user.picture) {
+                    avatar.innerHTML = `<img src="${user.picture}" alt="${user.name}" style="width: 100%; height: 100%; border-radius: 8px; object-fit: cover;">`;
+                } else {
+                    const initials = user.name ? user.name.charAt(0).toUpperCase() : 'U';
+                    avatar.innerHTML = `<span style="font-size: 14px; font-weight: bold;">${initials}</span>`;
+                }
+                
+            } else {
+                console.log('👤 No user logged in, showing login button');
+                
+                // User is not logged in
+                headerLoginBtn.style.display = 'flex';
+                userProfile.style.display = 'none';
+                
+                // Setup guest ID if not exists
+                if (!localStorage.getItem('legalSwamiGuestId')) {
+                    localStorage.setItem('legalSwamiGuestId', 'guest_' + Date.now());
+                }
             }
         }
         
@@ -865,13 +922,13 @@
         function setupEventListeners() {
             console.log('🔧 Setting up event listeners');
             
-            // ✅ FIXED: Header login button
+            // Header buttons
             document.getElementById('headerLoginBtn').addEventListener('click', showLoginModal);
             document.getElementById('logoutBtn').addEventListener('click', handleLogout);
             document.getElementById('startChatBtn').addEventListener('click', startChat);
             document.getElementById('learnMoreBtn').addEventListener('click', showDemo);
             
-            // ✅ FIXED: Google login button in modal
+            // ✅ FIXED: Google login button
             document.getElementById('googleSignInButton').addEventListener('click', handleGoogleLogin);
             document.getElementById('demoLoginBtn').addEventListener('click', handleDemoLogin);
             
@@ -926,37 +983,43 @@
             console.log('✅ All event listeners set up');
         }
         
-        // ✅ FIXED: Handle Google Login
-        async function handleGoogleLogin() {
+        // ✅ FIXED: Handle Google Login with new GIS
+        function handleGoogleLogin() {
             console.log('🔐 Manual Google login triggered');
             
-            if (!googleAuthInstance) {
-                console.warn('⚠️ Google Auth not initialized yet');
-                showToast('Google authentication is still initializing. Please wait...', 'warning');
-                
-                // Try to initialize again
-                setTimeout(initializeGoogleOAuth, 500);
-                return;
-            }
-            
             try {
-                console.log('🔄 Signing in with Google...');
-                await googleAuthInstance.signIn();
-                
-                // Success - UI will update via listener
-                hideLoginModal();
-                showToast('Successfully logged in with Google!', 'success');
+                // Use Google Identity Services to trigger login
+                google.accounts.id.prompt((notification) => {
+                    if (notification.isNotDisplayed()) {
+                        // If One Tap not shown, render button
+                        renderGoogleSignInButton();
+                    }
+                });
                 
             } catch (error) {
-                console.error('❌ Google sign-in failed:', error);
-                
-                if (error.error === 'popup_closed_by_user') {
-                    showToast('Login was cancelled', 'info');
-                } else if (error.error === 'access_denied') {
-                    showToast('Access denied', 'warning');
-                } else {
-                    showToast('Login failed. Please try again or use demo login.', 'error');
-                }
+                console.error('❌ Google login failed:', error);
+                showToast('Google login not available. Using demo login instead.', 'warning');
+                handleDemoLogin();
+            }
+        }
+        
+        // Render Google Sign-In button (fallback)
+        function renderGoogleSignInButton() {
+            try {
+                google.accounts.id.renderButton(
+                    document.getElementById('googleSignInButton'),
+                    {
+                        theme: 'outline',
+                        size: 'large',
+                        text: 'signin_with',
+                        shape: 'rectangular',
+                        logo_alignment: 'left',
+                        width: '100%'
+                    }
+                );
+                console.log('✅ Google Sign-In button rendered');
+            } catch (error) {
+                console.error('❌ Failed to render Google button:', error);
             }
         }
         
@@ -1010,22 +1073,32 @@
             }
             
             // Update UI
-            updateAuthUI();
+            updateUserUI();
             hideLoginModal();
             showToast(`Welcome ${userData.name}! (Demo Mode)`, 'success');
         }
         
         // ✅ FIXED: Handle Logout
-        async function handleLogout() {
+        function handleLogout() {
             console.log('🚪 Logging out...');
             
-            // Sign out from Google if signed in
-            if (googleAuthInstance && googleAuthInstance.isSignedIn.get()) {
+            // Try to revoke Google token if exists
+            const userStr = localStorage.getItem('legal_swami_user');
+            if (userStr) {
                 try {
-                    await googleAuthInstance.signOut();
-                    console.log('✅ Google sign-out completed');
-                } catch (error) {
-                    console.error('Google sign-out error:', error);
+                    const user = JSON.parse(userStr);
+                    if (user.provider === 'google') {
+                        try {
+                            // Revoke Google access
+                            google.accounts.id.revoke(user.email, (done) => {
+                                console.log('✅ Google access revoked');
+                            });
+                        } catch (e) {
+                            console.warn('Could not revoke Google access:', e);
+                        }
+                    }
+                } catch (e) {
+                    console.error('Error parsing user data:', e);
                 }
             }
             
@@ -1040,38 +1113,18 @@
             }
             
             // Update UI
-            updateAuthUI();
+            updateUserUI();
             showToast('Logged out successfully', 'success');
+            
+            // Show One Tap again
+            setTimeout(() => {
+                showGoogleOneTap();
+            }, 1000);
             
             // Go back to home if in chat interface
             if (document.getElementById('chatInterface').style.display !== 'none') {
                 goBackToHome();
             }
-        }
-        
-        // Setup fallback authentication
-        function setupFallbackAuth() {
-            console.log('🔄 Setting up fallback authentication');
-            
-            // Check if user ID exists in localStorage
-            let userId = localStorage.getItem('legalSwamiGuestId');
-            if (!userId) {
-                userId = 'guest_' + Date.now();
-                localStorage.setItem('legalSwamiGuestId', userId);
-            }
-            
-            // Set user info in API
-            if (window.legalSwamiAPI) {
-                window.legalSwamiAPI.user = {
-                    id: userId,
-                    name: 'Guest User',
-                    email: '',
-                    isGuest: true
-                };
-            }
-            
-            console.log('✅ Fallback auth set up for user:', userId);
-            updateAuthUI();
         }
         
         // Initialize app with backend
@@ -1144,12 +1197,11 @@
                 }
                 
                 // Update user UI
-                updateAuthUI();
+                updateUserUI();
                 
             } catch (error) {
                 console.error('❌ Initialization failed:', error);
                 showToast('Note: Some features may be limited', 'warning');
-                setupFallbackAuth();
             }
         }
         
