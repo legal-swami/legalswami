@@ -1,6 +1,6 @@
 /**
  * LegalSwami Authentication Service
- * Version: 2.0.1
+ * Version: 2.1.0
  * Date: 2024-01-15
  * Handles user authentication, session management, and OAuth
  */
@@ -21,6 +21,7 @@ class LegalSwamiAuth {
         
         this.isInitialized = false;
         this.googleAuth = null;
+        this.isOfflineMode = false;
         
         // Authentication states
         this.states = {
@@ -44,11 +45,18 @@ class LegalSwamiAuth {
         
         console.log('🔐 Initializing LegalSwami Authentication...');
         
+        // Check offline status first
+        this.checkOfflineStatus();
+        
         // Check existing session
         await this.checkExistingSession();
         
-        // Initialize Google OAuth if available
-        await this.initializeGoogleAuth();
+        // Initialize Google OAuth if available and online
+        if (!this.isOfflineMode) {
+            await this.initializeGoogleAuth();
+        } else {
+            console.log('🌐 Offline mode: Google OAuth disabled');
+        }
         
         // Setup event listeners
         this.setupEventListeners();
@@ -56,10 +64,18 @@ class LegalSwamiAuth {
         this.isInitialized = true;
         console.log('✅ Authentication initialized');
         
+        // Show offline status if needed
+        if (this.isOfflineMode) {
+            setTimeout(() => {
+                this.showOfflineStatus();
+            }, 1000);
+        }
+        
         // Dispatch initialization event
         this.dispatchEvent('authInitialized', {
             user: this.api.user,
-            isAuthenticated: this.isAuthenticated()
+            isAuthenticated: this.isAuthenticated(),
+            isOffline: this.isOfflineMode
         });
     }
 
@@ -85,8 +101,8 @@ class LegalSwamiAuth {
                 return;
             }
             
-            // Validate with backend if API is available
-            if (this.api.verifyToken) {
+            // Validate with backend if API is available and online
+            if (this.api.verifyToken && !this.isOfflineMode) {
                 try {
                     await this.api.verifyToken();
                     this.currentState = this.states.LOGGED_IN;
@@ -100,11 +116,19 @@ class LegalSwamiAuth {
                     
                 } catch (error) {
                     console.warn('❌ Session validation failed:', error);
-                    this.currentState = this.states.EXPIRED;
-                    await this.handleTokenExpired();
+                    // In offline mode, still allow cached session
+                    if (this.isOfflineMode) {
+                        console.log('🌐 Offline mode: Using cached session');
+                        this.currentState = this.states.LOGGED_IN;
+                        this.api.user = user;
+                        this.api.token = token;
+                    } else {
+                        this.currentState = this.states.EXPIRED;
+                        await this.handleTokenExpired();
+                    }
                 }
             } else {
-                // If no backend verification, trust localStorage
+                // If no backend verification or offline, trust localStorage
                 this.currentState = this.states.LOGGED_IN;
                 this.api.user = user;
                 this.api.token = token;
@@ -121,25 +145,52 @@ class LegalSwamiAuth {
      * Initialize Google OAuth
      */
     async initializeGoogleAuth() {
-        // Check if Google API is available
-        if (typeof gapi === 'undefined') {
-            console.warn('⚠️ Google API not loaded. Google Sign-In will not work.');
+        // Get client ID first
+        const clientId = this.getGoogleClientId();
+        
+        // If no valid client ID, disable Google OAuth
+        if (!clientId || clientId.includes('YOUR_CLIENT_ID') || clientId.includes('placeholder')) {
+            console.warn('⚠️ No valid Google Client ID configured. Google Sign-In disabled.');
+            console.info('💡 To enable Google Sign-In:');
+            console.info('   1. Create OAuth credentials at https://console.cloud.google.com/');
+            console.info('   2. Add your domain to authorized origins');
+            console.info('   3. Set window.LEGAL_SWAMI_CONFIG.googleClientId = "your-client-id"');
+            this.googleAuth = null;
             return;
         }
         
+        // Check if Google API is available
+        if (typeof gapi === 'undefined') {
+            console.warn('⚠️ Google API not loaded. Google Sign-In will not work.');
+            this.googleAuth = null;
+            return;
+        }
+        
+        // Check if we're on GitHub Pages (Google OAuth has issues there)
+        const isGitHubPages = window.location.hostname.includes('github.io');
+        if (isGitHubPages) {
+            console.warn('⚠️ Google OAuth may have issues on GitHub Pages');
+            console.info('💡 Consider using localhost for Google OAuth testing');
+        }
+        
         try {
-            // Load auth2 library
+            // Load auth2 library - FIXED: No timeout parameter without ontimeout
             await new Promise((resolve, reject) => {
-                gapi.load('auth2', {
-                    callback: resolve,
-                    onerror: reject,
-                    //timeout: 5000
-                });
+                try {
+                    gapi.load('auth2', {
+                        callback: resolve,
+                        onerror: reject
+                        // Removed: timeout: 5000 (was causing error)
+                    });
+                } catch (loadError) {
+                    console.error('❌ gapi.load failed:', loadError);
+                    reject(loadError);
+                }
             });
             
             // Initialize Google Auth
             this.googleAuth = gapi.auth2.init({
-                client_id: this.getGoogleClientId(),
+                client_id: clientId,
                 cookiepolicy: 'single_host_origin',
                 scope: 'profile email',
                 ux_mode: 'popup'
@@ -147,37 +198,110 @@ class LegalSwamiAuth {
             
             console.log('✅ Google OAuth initialized');
             
+            // Check if already signed in
+            if (this.googleAuth.isSignedIn.get()) {
+                const googleUser = this.googleAuth.currentUser.get();
+                await this.handleGoogleSignIn(googleUser);
+            }
+            
             // Listen for sign-in state changes
             this.googleAuth.isSignedIn.listen((isSignedIn) => {
+                console.log(`Google Sign-In state changed: ${isSignedIn ? 'Signed In' : 'Signed Out'}`);
                 if (isSignedIn) {
-                    this.handleGoogleSignIn(this.googleAuth.currentUser.get());
+                    const googleUser = this.googleAuth.currentUser.get();
+                    this.handleGoogleSignIn(googleUser).catch(error => {
+                        console.error('Error handling Google sign-in:', error);
+                    });
                 } else {
-                    this.handleGoogleSignOut();
+                    this.handleGoogleSignOut().catch(error => {
+                        console.error('Error handling Google sign-out:', error);
+                    });
                 }
             });
             
         } catch (error) {
             console.error('❌ Google OAuth initialization failed:', error);
             this.googleAuth = null;
+            
+            // Check for common errors
+            if (error.error === 'idpiframe_initialization_failed') {
+                console.warn('⚠️ Google OAuth iframe initialization failed');
+                console.info('💡 Possible causes:');
+                console.info('   - Client ID not properly configured');
+                console.info('   - Domain not authorized in Google Cloud Console');
+                console.info('   - Third-party cookies blocked by browser');
+            }
         }
     }
 
     /**
-     * Get Google Client ID from config or environment
+     * Get Google Client ID from config or environment - FIXED
      */
     getGoogleClientId() {
-        // Try to get from window config
+        // Priority 1: Window config (most common for browser apps)
         if (window.LEGAL_SWAMI_CONFIG?.googleClientId) {
-            return window.LEGAL_SWAMI_CONFIG.googleClientId;
+            const clientId = window.LEGAL_SWAMI_CONFIG.googleClientId;
+            // Check if it's not a placeholder
+            if (clientId && !clientId.includes('YOUR_CLIENT_ID') && !clientId.includes('placeholder')) {
+                return clientId;
+            }
         }
         
-        // Try to get from environment variable (if using build system)
-        if (process?.env?.GOOGLE_CLIENT_ID) {
+        // Priority 2: Check meta tags
+        const metaTag = document.querySelector('meta[name="google-signin-client_id"]');
+        if (metaTag) {
+            const clientId = metaTag.getAttribute('content');
+            if (clientId && !clientId.includes('YOUR_CLIENT_ID')) {
+                return clientId;
+            }
+        }
+        
+        // Priority 3: Check for environment variable - BROWSER SAFE VERSION
+        // Use window._env or window.process for build tools
+        if (window._env?.GOOGLE_CLIENT_ID) {
+            return window._env.GOOGLE_CLIENT_ID;
+        }
+        
+        // Check if process.env is available (for build tools like Webpack)
+        if (typeof process !== 'undefined' && process.env?.GOOGLE_CLIENT_ID) {
             return process.env.GOOGLE_CLIENT_ID;
         }
         
-        // Default demo client ID (replace with your actual client ID)
-        return '166511615962-bohur5q8d4i5hud6icr4185kcte9enk8.apps.googleusercontent.com';
+        // Priority 4: Check URL parameters (for testing)
+        const urlParams = new URLSearchParams(window.location.search);
+        const googleClientId = urlParams.get('google_client_id');
+        if (googleClientId) {
+            console.info('Using Google Client ID from URL parameter');
+            return googleClientId;
+        }
+        
+        // Priority 5: Check localStorage (for user-configured ID)
+        const storedClientId = localStorage.getItem('legal_swami_google_client_id');
+        if (storedClientId) {
+            console.info('Using Google Client ID from localStorage');
+            return storedClientId;
+        }
+        
+        // Priority 6: Environment-specific demo IDs
+        const hostname = window.location.hostname;
+        
+        // Localhost development
+        if (hostname === 'localhost' || hostname === '127.0.0.1') {
+            console.warn('⚠️ Using demo Google Client ID for localhost - Not for production');
+            return '166511615962-bohur5q8d4i5hud6icr4185kcte9enk8.apps.googleusercontent.com';
+        }
+        
+        // GitHub Pages - Google OAuth often doesn't work well here
+        if (hostname.includes('github.io')) {
+            console.warn('⚠️ Google OAuth disabled on GitHub Pages');
+            console.info('💡 Use localhost for Google OAuth testing or implement alternative auth');
+            return null; // Return null to disable Google OAuth
+        }
+        
+        // Default - disable to avoid errors
+        console.warn('⚠️ No Google Client ID configured for this environment');
+        console.info('💡 Please configure window.LEGAL_SWAMI_CONFIG.googleClientId');
+        return null;
     }
 
     /**
@@ -203,8 +327,8 @@ class LegalSwamiAuth {
                 provider: 'google'
             };
             
-            // If backend API is available, verify with backend
-            if (this.api.loginWithGoogle) {
+            // If backend API is available and online, verify with backend
+            if (this.api.loginWithGoogle && !this.isOfflineMode) {
                 try {
                     const result = await this.api.loginWithGoogle(authResponse.id_token);
                     
@@ -216,12 +340,12 @@ class LegalSwamiAuth {
                     });
                     
                 } catch (backendError) {
-                    console.warn('⚠️ Backend login failed, using local session:', backendError);
+                    console.warn('⚠️ Backend login failed:', backendError);
                     // Fallback to local session
                     this.setSession(authResponse.id_token, userData);
                 }
             } else {
-                // No backend, use local session
+                // No backend or offline, use local session
                 this.setSession(authResponse.id_token, userData);
             }
             
@@ -261,24 +385,37 @@ class LegalSwamiAuth {
      */
     async signInWithGoogle() {
         if (!this.googleAuth) {
-            throw new Error('Google OAuth not initialized');
+            // Try to initialize if not already
+            await this.initializeGoogleAuth();
+            
+            if (!this.googleAuth) {
+                throw new Error('Google OAuth not available. Please check your configuration.');
+            }
         }
         
         try {
             await this.googleAuth.signIn();
+            return true;
         } catch (error) {
             console.error('❌ Manual Google Sign-In failed:', error);
             
             if (error.error === 'popup_closed_by_user') {
-                throw new Error('Sign-in was cancelled');
+                this.showToast('Sign-in was cancelled', 'info');
+                throw new Error('Sign-in cancelled by user');
             }
             
+            if (error.error === 'access_denied') {
+                this.showToast('Access denied by user', 'warning');
+                throw new Error('Access denied');
+            }
+            
+            this.showToast('Google Sign-In failed. Please try again.', 'error');
             throw error;
         }
     }
 
     /**
-     * Manual Google Sign-Out
+     * Manual Sign-Out (all providers)
      */
     async signOut() {
         // Clear local session
@@ -292,10 +429,13 @@ class LegalSwamiAuth {
             this.dispatchEvent('signOutSuccess');
         }
         
-        // Reload to clear any cached state
+        // Show logout message
+        this.showToast('Successfully logged out', 'success');
+        
+        // Reload to clear any cached state after delay
         setTimeout(() => {
             window.location.reload();
-        }, 1000);
+        }, 1500);
     }
 
     /**
@@ -305,6 +445,9 @@ class LegalSwamiAuth {
         // Store in localStorage
         localStorage.setItem('legal_swami_token', token);
         localStorage.setItem('legal_swami_user', JSON.stringify(userData));
+        
+        // Update last sync time
+        localStorage.setItem('last_sync_time', Date.now().toString());
         
         // Update API service
         if (this.api.setAuth) {
@@ -318,15 +461,22 @@ class LegalSwamiAuth {
         
         console.log('🔐 Session set for user:', userData.email);
         
+        // Track login
+        this.trackLogin();
+        
         // Dispatch events
         this.dispatchEvent('sessionSet', { user: userData });
         this.dispatchEvent('authStateChange', {
             state: this.currentState,
-            user: userData
+            user: userData,
+            isOffline: this.isOfflineMode
         });
         
         // Show success message
         this.showToast(`Welcome ${userData.name}!`, 'success');
+        
+        // Update UI
+        this.updateAuthUI();
     }
 
     /**
@@ -353,8 +503,12 @@ class LegalSwamiAuth {
         this.dispatchEvent('sessionCleared');
         this.dispatchEvent('authStateChange', {
             state: this.currentState,
-            user: null
+            user: null,
+            isOffline: this.isOfflineMode
         });
+        
+        // Update UI
+        this.updateAuthUI();
     }
 
     /**
@@ -372,19 +526,26 @@ class LegalSwamiAuth {
         // Dispatch event
         this.dispatchEvent('tokenExpired');
         
-        // Show login modal after delay
-        setTimeout(() => {
-            this.showLoginModal();
-        }, 2000);
+        // Show login modal after delay if online
+        if (!this.isOfflineMode) {
+            setTimeout(() => {
+                this.showLoginModal();
+            }, 2000);
+        }
     }
 
     /**
      * Check if token is expired (basic implementation)
      */
     isTokenExpired(token) {
+        if (!token) return true;
+        
         try {
             // Decode JWT token (without verification)
-            const payload = JSON.parse(atob(token.split('.')[1]));
+            const parts = token.split('.');
+            if (parts.length !== 3) return true;
+            
+            const payload = JSON.parse(atob(parts[1]));
             const expiry = payload.exp * 1000; // Convert to milliseconds
             
             return Date.now() > expiry;
@@ -416,7 +577,9 @@ class LegalSwamiAuth {
             state: this.currentState,
             isAuthenticated: this.isAuthenticated(),
             user: this.getCurrentUser(),
-            hasGoogleAuth: !!this.googleAuth
+            hasGoogleAuth: !!this.googleAuth,
+            isOffline: this.isOfflineMode,
+            capabilities: this.isOfflineMode ? this.getOfflineCapabilities() : null
         };
     }
 
@@ -435,6 +598,12 @@ class LegalSwamiAuth {
      * Show login modal
      */
     showLoginModal() {
+        // Don't show login modal in offline mode if we have cached session
+        if (this.isOfflineMode && this.isAuthenticated()) {
+            this.showToast('Using cached session (offline mode)', 'info');
+            return;
+        }
+        
         const modal = document.getElementById('loginModal');
         if (modal) {
             modal.style.display = 'flex';
@@ -443,10 +612,12 @@ class LegalSwamiAuth {
             console.warn('⚠️ Login modal not found');
             
             // Fallback: Create a simple login prompt
-            if (confirm('You need to login to continue. Login now?')) {
+            if (!this.isOfflineMode && confirm('You need to login to continue. Login now?')) {
                 if (this.googleAuth) {
                     this.signInWithGoogle();
                 }
+            } else if (this.isOfflineMode) {
+                this.showToast('Cannot login while offline', 'warning');
             }
         }
     }
@@ -507,6 +678,46 @@ class LegalSwamiAuth {
             if ((e.ctrlKey || e.metaKey) && e.key === 'l') {
                 e.preventDefault();
                 this.showLoginModal();
+            }
+        });
+        
+        // Network status listeners
+        window.addEventListener('online', () => {
+            console.log('🌐 Internet connection restored');
+            this.checkOfflineStatus();
+            
+            // Hide offline status bar
+            const offlineBar = document.getElementById('offlineStatusBar');
+            if (offlineBar) offlineBar.remove();
+            
+            // Try to restore session with backend
+            setTimeout(() => {
+                this.checkExistingSession();
+                // Try to initialize Google OAuth if needed
+                if (!this.googleAuth) {
+                    this.initializeGoogleAuth().catch(() => {
+                        // Silently fail if Google OAuth still doesn't work
+                    });
+                }
+            }, 1000);
+            
+            this.showToast('Back online! Syncing data...', 'success');
+            this.dispatchEvent('connectionRestored');
+        });
+        
+        window.addEventListener('offline', () => {
+            console.log('🌐 Internet connection lost');
+            this.checkOfflineStatus();
+            this.showOfflineStatus();
+            this.dispatchEvent('connectionLost');
+        });
+        
+        // Listen for storage changes (for multi-tab sync)
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'legal_swami_token' || e.key === 'legal_swami_user') {
+                console.log('🔄 Auth storage changed in another tab');
+                this.checkExistingSession();
+                this.updateAuthUI();
             }
         });
     }
@@ -594,8 +805,29 @@ class LegalSwamiAuth {
             }
         });
         
+        // Update offline indicators
+        document.querySelectorAll('[data-online-only]').forEach(element => {
+            if (this.isOfflineMode) {
+                element.style.display = 'none';
+            } else {
+                element.style.display = element.dataset.onlineDisplay || 'block';
+            }
+        });
+        
+        document.querySelectorAll('[data-offline-only]').forEach(element => {
+            if (this.isOfflineMode) {
+                element.style.display = element.dataset.offlineDisplay || 'block';
+            } else {
+                element.style.display = 'none';
+            }
+        });
+        
         // Dispatch UI update event
-        this.dispatchEvent('authUIUpdated', { isAuthenticated, user });
+        this.dispatchEvent('authUIUpdated', { 
+            isAuthenticated, 
+            user,
+            isOffline: this.isOfflineMode 
+        });
     }
 
     /**
@@ -629,7 +861,7 @@ class LegalSwamiAuth {
             gap: 10px;
             z-index: 10000;
             border-left: 4px solid;
-            animation: slideIn 0.3s ease;
+            animation: authSlideIn 0.3s ease;
         `;
         
         const colors = {
@@ -642,15 +874,16 @@ class LegalSwamiAuth {
         toast.style.borderLeftColor = colors[type] || colors.info;
         
         const icons = {
-            success: 'fa-check-circle',
-            error: 'fa-exclamation-circle',
-            warning: 'fa-exclamation-triangle',
-            info: 'fa-info-circle'
+            success: '✓',
+            error: '✗',
+            warning: '⚠',
+            info: 'ℹ'
         };
         
         toast.innerHTML = `
-            <i class="fas ${icons[type] || icons.info}" 
-               style="color: ${colors[type] || colors.info}"></i>
+            <span style="font-size: 18px; font-weight: bold; color: ${colors[type] || colors.info}">
+                ${icons[type] || icons.info}
+            </span>
             <span style="font-size: 14px; color: #334155;">${message}</span>
         `;
         
@@ -658,8 +891,12 @@ class LegalSwamiAuth {
         
         // Auto remove
         setTimeout(() => {
-            toast.style.animation = 'slideOut 0.3s ease';
-            setTimeout(() => toast.remove(), 300);
+            toast.style.animation = 'authSlideOut 0.3s ease';
+            setTimeout(() => {
+                if (toast.parentNode) {
+                    toast.parentNode.removeChild(toast);
+                }
+            }, 300);
         }, 3000);
     }
 
@@ -700,6 +937,207 @@ class LegalSwamiAuth {
     }
 
     /**
+     * Check if app is in offline mode
+     */
+    checkOfflineStatus() {
+        const isOnline = navigator.onLine;
+        const hasValidToken = !!localStorage.getItem('legal_swami_token');
+        const token = localStorage.getItem('legal_swami_token');
+        const tokenExpired = token ? this.isTokenExpired(token) : true;
+        
+        this.isOfflineMode = !isOnline || (hasValidToken && !tokenExpired && !this.isAuthenticated());
+        
+        if (this.isOfflineMode) {
+            console.log('🌐 Offline mode activated');
+            this.dispatchEvent('offlineModeActivated', {
+                isInternetOffline: !isOnline,
+                hasCachedSession: hasValidToken && !tokenExpired
+            });
+        }
+        
+        return this.isOfflineMode;
+    }
+
+    /**
+     * Get offline capabilities
+     */
+    getOfflineCapabilities() {
+        const user = this.getCurrentUser();
+        const isGuest = user.id === 'guest';
+        
+        return {
+            canViewDocuments: !isGuest,
+            canEditDocuments: !isGuest && this.hasLocalStorageSpace(),
+            canAccessCachedResearch: !isGuest,
+            canUseBasicTemplates: true,
+            canExportDocuments: !isGuest,
+            canPrintDocuments: true,
+            canUseLocalSearch: !isGuest,
+            canAccessHelp: true,
+            canManageProfile: !isGuest,
+            
+            // Timestamp for sync
+            lastSyncTime: localStorage.getItem('last_sync_time'),
+            
+            // Storage info
+            localStorageUsed: this.calculateLocalStorageUsage(),
+            localStorageAvailable: this.estimateLocalStorageAvailable(),
+            
+            // Limitations
+            limitations: [
+                'Real-time legal updates unavailable',
+                'New AI analysis disabled',
+                'Cloud sync paused',
+                'Team collaboration disabled',
+                'Payment features unavailable',
+                'Google Sign-In disabled'
+            ]
+        };
+    }
+
+    /**
+     * Show offline status UI
+     */
+    showOfflineStatus() {
+        if (!this.isOfflineMode) return;
+        
+        const capabilities = this.getOfflineCapabilities();
+        const user = this.getCurrentUser();
+        
+        // Remove existing offline bar if any
+        const existingBar = document.getElementById('offlineStatusBar');
+        if (existingBar) existingBar.remove();
+        
+        // Create offline status bar
+        const offlineBar = document.createElement('div');
+        offlineBar.id = 'offlineStatusBar';
+        offlineBar.style.cssText = `
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #f59e0b, #d97706);
+            color: white;
+            padding: 12px 20px;
+            text-align: center;
+            font-size: 14px;
+            font-weight: 500;
+            z-index: 9998;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        `;
+        
+        const userName = user.name || 'Guest';
+        offlineBar.innerHTML = `
+            <span style="font-size: 16px;">📶</span>
+            <span>${userName}, you're in offline mode. Some features are limited.</span>
+            <button id="offlineDetailsBtn" style="
+                background: rgba(255,255,255,0.2);
+                border: 1px solid rgba(255,255,255,0.3);
+                color: white;
+                padding: 4px 12px;
+                border-radius: 4px;
+                font-size: 12px;
+                cursor: pointer;
+                margin-left: 10px;
+            ">Details</button>
+            <button id="dismissOfflineBtn" style="
+                background: transparent;
+                border: none;
+                color: white;
+                font-size: 18px;
+                cursor: pointer;
+                margin-left: 15px;
+            ">×</button>
+        `;
+        
+        document.body.appendChild(offlineBar);
+        
+        // Add event listeners
+        setTimeout(() => {
+            const detailsBtn = document.getElementById('offlineDetailsBtn');
+            const dismissBtn = document.getElementById('dismissOfflineBtn');
+            
+            if (detailsBtn) {
+                detailsBtn.addEventListener('click', () => {
+                    this.showOfflineCapabilitiesModal(capabilities);
+                });
+            }
+            
+            if (dismissBtn) {
+                dismissBtn.addEventListener('click', () => {
+                    offlineBar.style.display = 'none';
+                });
+            }
+        }, 100);
+    }
+
+    /**
+     * Calculate localStorage usage
+     */
+    calculateLocalStorageUsage() {
+        let total = 0;
+        for (let key in localStorage) {
+            if (localStorage.hasOwnProperty(key)) {
+                total += (key.length + localStorage[key].length) * 2;
+            }
+        }
+        
+        if (total < 1024) return total + ' B';
+        if (total < 1024 * 1024) return (total / 1024).toFixed(1) + ' KB';
+        return (total / (1024 * 1024)).toFixed(1) + ' MB';
+    }
+
+    /**
+     * Estimate available localStorage
+     */
+    estimateLocalStorageAvailable() {
+        try {
+            const total = 5 * 1024 * 1024; // Assume 5MB typical localStorage limit
+            const used = this.calculateLocalStorageUsage();
+            const usedMatch = used.match(/([\d.]+)\s*(\w+)/);
+            
+            if (!usedMatch) return 'Unknown';
+            
+            let usedBytes = parseFloat(usedMatch[1]);
+            const unit = usedMatch[2].toUpperCase();
+            
+            // Convert to bytes
+            if (unit === 'KB') usedBytes *= 1024;
+            if (unit === 'MB') usedBytes *= 1024 * 1024;
+            
+            const available = total - usedBytes;
+            
+            if (available < 1024) return '< 1 KB';
+            if (available < 1024 * 1024) return (available / 1024).toFixed(0) + ' KB';
+            return (available / (1024 * 1024)).toFixed(1) + ' MB';
+            
+        } catch (error) {
+            return 'Unknown';
+        }
+    }
+
+    /**
+     * Check if there's enough local storage space
+     */
+    hasLocalStorageSpace() {
+        const available = this.estimateLocalStorageAvailable();
+        const numericValue = parseFloat(available);
+        
+        // Consider space available if more than 500KB
+        if (available.includes('KB')) {
+            return numericValue > 500;
+        }
+        if (available.includes('MB')) {
+            return numericValue > 0.5;
+        }
+        return false;
+    }
+
+    /**
      * Export user data (for backup/download)
      */
     exportUserData() {
@@ -710,7 +1148,8 @@ class LegalSwamiAuth {
             user: userData,
             token: token ? '***REDACTED***' : null,
             exportedAt: new Date().toISOString(),
-            app: 'LegalSwami'
+            app: 'LegalSwami',
+            version: '2.1.0'
         };
         
         const dataStr = JSON.stringify(exportData, null, 2);
@@ -727,44 +1166,6 @@ class LegalSwamiAuth {
     }
 
     /**
-     * Import user data
-     */
-    importUserData(file) {
-        return new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            
-            reader.onload = (e) => {
-                try {
-                    const data = JSON.parse(e.target.result);
-                    
-                    // Validate imported data
-                    if (!data.user || !data.app === 'LegalSwami') {
-                        throw new Error('Invalid user data file');
-                    }
-                    
-                    // Set session from imported data
-                    const token = localStorage.getItem('legal_swami_token'); // Keep current token
-                    this.setSession(token, data.user);
-                    
-                    this.showToast('User data imported successfully', 'success');
-                    resolve(data.user);
-                    
-                } catch (error) {
-                    this.showToast('Failed to import user data', 'error');
-                    reject(error);
-                }
-            };
-            
-            reader.onerror = () => {
-                this.showToast('Failed to read file', 'error');
-                reject(new Error('File read error'));
-            };
-            
-            reader.readAsText(file);
-        });
-    }
-
-    /**
      * Get user statistics
      */
     getUserStats() {
@@ -776,7 +1177,9 @@ class LegalSwamiAuth {
             loginCount,
             lastLogin,
             sessionDuration: this.calculateSessionDuration(),
-            isGuest: user.id === 'guest'
+            isGuest: user.id === 'guest',
+            offlineMode: this.isOfflineMode,
+            localStorageUsage: this.calculateLocalStorageUsage()
         };
     }
 
@@ -812,153 +1215,155 @@ if (typeof module !== 'undefined' && module.exports) {
 }
 
 // Add CSS for auth-specific styles
-const authStyles = document.createElement('style');
-authStyles.textContent = `
-    .auth-toast {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        background: white;
-        padding: 12px 20px;
-        border-radius: 8px;
-        box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        z-index: 10000;
-        border-left: 4px solid;
-        animation: authSlideIn 0.3s ease;
-    }
-    
-    .auth-toast-success {
-        border-left-color: #10b981;
-    }
-    
-    .auth-toast-error {
-        border-left-color: #ef4444;
-    }
-    
-    .auth-toast-warning {
-        border-left-color: #f59e0b;
-    }
-    
-    .auth-toast-info {
-        border-left-color: #3b82f6;
-    }
-    
-    @keyframes authSlideIn {
-        from {
-            transform: translateX(100%);
-            opacity: 0;
+if (!document.querySelector('style#auth-styles')) {
+    const authStyles = document.createElement('style');
+    authStyles.id = 'auth-styles';
+    authStyles.textContent = `
+        .auth-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 10000;
+            border-left: 4px solid;
+            animation: authSlideIn 0.3s ease;
         }
-        to {
-            transform: translateX(0);
-            opacity: 1;
+        
+        .auth-toast-success {
+            border-left-color: #10b981;
         }
-    }
-    
-    @keyframes authSlideOut {
-        from {
-            transform: translateX(0);
-            opacity: 1;
+        
+        .auth-toast-error {
+            border-left-color: #ef4444;
         }
-        to {
-            transform: translateX(100%);
-            opacity: 0;
+        
+        .auth-toast-warning {
+            border-left-color: #f59e0b;
         }
-    }
-    
-    /* Login modal styles */
-    .login-modal {
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
-        backdrop-filter: blur(4px);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 9999;
-        padding: 20px;
-    }
-    
-    .login-modal-content {
-        background: white;
-        border-radius: 20px;
-        width: 100%;
-        max-width: 400px;
-        overflow: hidden;
-        box-shadow: 0 20px 60px rgba(0,0,0,0.3);
-    }
-    
-    .login-modal-header {
-        padding: 24px;
-        background: linear-gradient(135deg, #2563eb, #7c3aed);
-        color: white;
-        text-align: center;
-    }
-    
-    .login-modal-body {
-        padding: 32px;
-        text-align: center;
-    }
-    
-    .google-signin-btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 12px;
-        width: 100%;
-        padding: 14px;
-        background: white;
-        border: 2px solid #e2e8f0;
-        border-radius: 12px;
-        color: #334155;
-        font-weight: 600;
-        font-size: 16px;
-        cursor: pointer;
-        transition: all 0.3s;
-        margin: 24px 0;
-    }
-    
-    .google-signin-btn:hover {
-        background: #f8fafc;
-        border-color: #2563eb;
-        transform: translateY(-2px);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    }
-    
-    .google-signin-btn i {
-        font-size: 18px;
-        color: #ea4335;
-    }
-    
-    .auth-footer {
-        margin-top: 24px;
-        font-size: 14px;
-        color: #64748b;
-    }
-`;
-document.head.appendChild(authStyles);
+        
+        .auth-toast-info {
+            border-left-color: #3b82f6;
+        }
+        
+        @keyframes authSlideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes authSlideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+        }
+        
+        /* Login modal styles */
+        .login-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            padding: 20px;
+        }
+        
+        .login-modal-content {
+            background: white;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 400px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .login-modal-header {
+            padding: 24px;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: white;
+            text-align: center;
+        }
+        
+        .login-modal-body {
+            padding: 32px;
+            text-align: center;
+        }
+        
+        .google-signin-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            padding: 14px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            color: #334155;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 24px 0;
+        }
+        
+        .google-signin-btn:hover {
+            background: #f8fafc;
+            border-color: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .auth-footer {
+            margin-top: 24px;
+            font-size: 14px;
+            color: #64748b;
+        }
+    `;
+    document.head.appendChild(authStyles);
+}
 
 // Initialize on DOM load
 document.addEventListener('DOMContentLoaded', () => {
     // Update UI after auth initialization
     setTimeout(() => {
-        window.legalSwamiAuth.updateAuthUI();
+        if (window.legalSwamiAuth) {
+            window.legalSwamiAuth.updateAuthUI();
+        }
     }, 500);
     
     // Listen for auth state changes
-    window.legalSwamiAuth.on('authStateChange', () => {
-        window.legalSwamiAuth.updateAuthUI();
-    });
-    
-    // Track login if user is authenticated
-    if (window.legalSwamiAuth.isAuthenticated()) {
-        window.legalSwamiAuth.trackLogin();
+    if (window.legalSwamiAuth) {
+        window.legalSwamiAuth.on('authStateChange', () => {
+            window.legalSwamiAuth.updateAuthUI();
+        });
+        
+        // Track login if user is authenticated
+        if (window.legalSwamiAuth.isAuthenticated()) {
+            window.legalSwamiAuth.trackLogin();
+        }
     }
 });
 
-console.log('✅ LegalSwami Authentication Service loaded');
+console.log('✅ LegalSwami Authentication Service v2.1.0 loaded');
