@@ -24,289 +24,376 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚖️</text></svg>">
     
     <style>
-        /* ✅ FIXED MODAL STYLES */
-        #loginModal {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100% !important;
-            height: 100% !important;
-            background: rgba(0, 0, 0, 0.85) !important;
-            display: none !important;
-            justify-content: center !important;
-            align-items: center !important;
-            z-index: 99999 !important;
-            padding: 20px !important;
-            opacity: 0 !important;
-            transition: opacity 0.3s ease !important;
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #1e40af;
+            --accent-color: #3b82f6;
+            --light-color: #f8fafc;
+            --dark-color: #1e293b;
+            --success-color: #10b981;
+            --warning-color: #f59e0b;
+            --danger-color: #ef4444;
+            --text-primary: #334155;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --radius: 12px;
+            --transition: all 0.3s ease;
         }
         
-        #loginModal.active {
-            display: flex !important;
-            opacity: 1 !important;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: var(--text-primary);
+            overflow-x: hidden;
+        }
+        
+        /* Loading Screen Styles */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--primary-color);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            transition: opacity 0.5s ease;
+        }
+        
+        .loading-content {
+            text-align: center;
+            color: white;
+        }
+        
+        .loading-spinner {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+        
+        .loading-spinner .fa-spin {
+            animation: fa-spin 2s infinite linear;
+        }
+        
+        @keyframes fa-spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* ✅ MODAL STYLES */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            padding: 20px;
         }
         
         .modal-content {
-            background: white !important;
-            border-radius: 20px !important;
-            width: 100% !important;
-            max-width: 450px !important;
-            overflow: hidden !important;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5) !important;
-            animation: modalAppear 0.4s ease forwards !important;
+            background: white;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 450px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
         }
         
-        @keyframes modalAppear {
+        @keyframes modalSlideIn {
             from {
-                transform: translateY(-30px) !important;
-                opacity: 0 !important;
+                transform: translateY(-50px);
+                opacity: 0;
             }
             to {
-                transform: translateY(0) !important;
-                opacity: 1 !important;
+                transform: translateY(0);
+                opacity: 1;
             }
         }
         
         .modal-header {
-            padding: 24px !important;
-            background: linear-gradient(135deg, #2563eb, #7c3aed) !important;
-            color: white !important;
-            display: flex !important;
-            justify-content: space-between !important;
-            align-items: center !important;
+            padding: 24px;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         
         .modal-header h3 {
-            margin: 0 !important;
-            font-size: 24px !important;
+            margin: 0;
+            font-size: 24px;
         }
         
         .btn-icon {
-            background: transparent !important;
-            border: none !important;
-            color: white !important;
-            font-size: 20px !important;
-            cursor: pointer !important;
-            padding: 8px !important;
-            border-radius: 8px !important;
-            transition: all 0.3s !important;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.3s;
         }
         
         .btn-icon:hover {
-            background: rgba(255,255,255,0.2) !important;
+            background: rgba(255,255,255,0.2);
         }
         
         .modal-body {
-            padding: 32px !important;
-            text-align: center !important;
+            padding: 32px;
+            text-align: center;
         }
         
         .login-illustration {
-            font-size: 60px !important;
-            color: #2563eb !important;
-            margin-bottom: 20px !important;
+            font-size: 60px;
+            color: #2563eb;
+            margin-bottom: 20px;
         }
         
         .modal-body h4 {
-            font-size: 20px !important;
-            margin-bottom: 8px !important;
-            color: #1e293b !important;
+            font-size: 20px;
+            margin-bottom: 8px;
+            color: #1e293b;
         }
         
         .modal-body p {
-            color: #64748b !important;
-            margin-bottom: 24px !important;
-            font-size: 15px !important;
+            color: #64748b;
+            margin-bottom: 24px;
+            font-size: 15px;
         }
         
         /* Google Sign-In Button Styles */
         .google-signin-btn {
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            gap: 12px !important;
-            width: 100% !important;
-            padding: 14px !important;
-            background: white !important;
-            border: 2px solid #e2e8f0 !important;
-            border-radius: 12px !important;
-            color: #334155 !important;
-            font-weight: 600 !important;
-            font-size: 16px !important;
-            cursor: pointer !important;
-            transition: all 0.3s !important;
-            margin: 24px 0 !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            padding: 14px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            color: #334155;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 24px 0;
         }
         
         .google-signin-btn:hover {
-            background: #f8fafc !important;
-            border-color: #ea4335 !important;
-            transform: translateY(-2px) !important;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+            background: #f8fafc;
+            border-color: #ea4335;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
         }
         
         .google-signin-btn i {
-            font-size: 18px !important;
-            color: #ea4335 !important;
+            font-size: 18px;
+            color: #ea4335;
         }
         
         /* Demo Button Styles */
         .demo-login-btn {
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            gap: 12px !important;
-            width: 100% !important;
-            padding: 14px !important;
-            background: linear-gradient(135deg, #7c3aed, #2563eb) !important;
-            border: none !important;
-            border-radius: 12px !important;
-            color: white !important;
-            font-weight: 600 !important;
-            font-size: 16px !important;
-            cursor: pointer !important;
-            transition: all 0.3s !important;
-            margin: 12px 0 !important;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #7c3aed, #2563eb);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-weight: 600;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin: 12px 0;
         }
         
         .demo-login-btn:hover {
-            opacity: 0.9 !important;
-            transform: translateY(-2px) !important;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2) !important;
+            opacity: 0.9;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
         
         .login-info {
-            margin-top: 24px !important;
-            padding-top: 20px !important;
-            border-top: 1px solid #e2e8f0 !important;
-            text-align: left !important;
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+            text-align: left;
         }
         
         .login-info p {
-            display: flex !important;
-            align-items: center !important;
-            gap: 10px !important;
-            margin: 8px 0 !important;
-            color: #64748b !important;
-            font-size: 14px !important;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 8px 0;
+            color: #64748b;
+            font-size: 14px;
         }
         
         .login-info i {
-            color: #10b981 !important;
+            color: #10b981;
         }
         
         /* Header Login Button */
         .btn-login {
-            display: flex !important;
-            align-items: center !important;
-            gap: 8px !important;
-            padding: 10px 20px !important;
-            background: white !important;
-            border: 2px solid #2563eb !important;
-            border-radius: 8px !important;
-            color: #2563eb !important;
-            font-weight: 600 !important;
-            font-size: 14px !important;
-            cursor: pointer !important;
-            transition: all 0.3s !important;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: white;
+            border: 2px solid #2563eb;
+            border-radius: 8px;
+            color: #2563eb;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
         }
         
         .btn-login:hover {
-            background: #2563eb !important;
-            color: white !important;
-            transform: translateY(-2px) !important;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2) !important;
+            background: #2563eb;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
         }
         
         /* User Profile Styles */
         .user-profile {
-            display: flex !important;
-            align-items: center !important;
-            gap: 12px !important;
-            padding: 8px 16px !important;
-            background: rgba(255,255,255,0.9) !important;
-            border-radius: 12px !important;
-            border: 2px solid #e2e8f0 !important;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
         }
         
         .user-avatar {
-            width: 40px !important;
-            height: 40px !important;
-            background: linear-gradient(135deg, #2563eb, #7c3aed) !important;
-            border-radius: 8px !important;
-            display: flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            color: white !important;
-            font-size: 18px !important;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
         }
         
         .user-info {
-            display: flex !important;
-            flex-direction: column !important;
+            display: flex;
+            flex-direction: column;
         }
         
         .user-name {
-            font-weight: 600 !important;
-            color: #1e293b !important;
-            font-size: 14px !important;
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 14px;
         }
         
         .user-email {
-            font-size: 12px !important;
-            color: #64748b !important;
+            font-size: 12px;
+            color: #64748b;
         }
         
         .btn-logout {
-            background: transparent !important;
-            border: none !important;
-            color: #64748b !important;
-            font-size: 16px !important;
-            cursor: pointer !important;
-            padding: 8px !important;
-            border-radius: 6px !important;
-            transition: all 0.3s !important;
+            background: transparent;
+            border: none;
+            color: #64748b;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            transition: all 0.3s;
         }
         
         .btn-logout:hover {
-            background: #f8fafc !important;
-            color: #ef4444 !important;
-        }
-        
-        /* Loading Screen */
-        .loading-screen {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100% !important;
-            height: 100% !important;
-            background: var(--primary-color) !important;
-            display: flex !important;
-            justify-content: center !important;
-            align-items: center !important;
-            z-index: 99999 !important;
+            background: #f8fafc;
+            color: #ef4444;
         }
         
         /* Toast Styles */
         .toast-container {
-            position: fixed !important;
-            top: 20px !important;
-            right: 20px !important;
-            z-index: 100000 !important;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10001;
         }
         
-        /* Force show modal during testing */
-        .force-show-modal {
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100% !important;
-            height: 100% !important;
-            background: rgba(0,0,0,0.8) !important;
-            display: flex !important;
-            justify-content: center !important;
-            align-items: center !important;
-            z-index: 999999 !important;
+        .toast {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            margin-bottom: 10px;
+            border-left: 4px solid;
+            animation: toastSlideIn 0.3s ease;
+        }
+        
+        .toast-success {
+            border-left-color: #10b981;
+        }
+        
+        .toast-error {
+            border-left-color: #ef4444;
+        }
+        
+        .toast-warning {
+            border-left-color: #f59e0b;
+        }
+        
+        .toast-info {
+            border-left-color: #3b82f6;
+        }
+        
+        .toast.fade-out {
+            animation: toastSlideOut 0.3s ease;
+            opacity: 0;
+        }
+        
+        @keyframes toastSlideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes toastSlideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
         }
     </style>
 </head>
@@ -319,48 +406,6 @@
             </div>
             <h2>Initializing LegalSwami</h2>
             <p>Loading AI legal assistant...</p>
-        </div>
-    </div>
-
-    <!-- ✅ LOGIN MODAL - FIXED -->
-    <div id="loginModal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 99999;">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Welcome to LegalSwami</h3>
-                <button id="closeLoginModal" class="btn-icon">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            
-            <div class="modal-body">
-                <div class="login-illustration">
-                    <i class="fas fa-balance-scale"></i>
-                </div>
-                
-                <h4>Login to Continue</h4>
-                <p>Secure login to access all features</p>
-                
-                <!-- Google Sign-In Container -->
-                <div id="googleSignInContainer" style="width: 100%; margin: 24px 0; min-height: 44px; display: none;">
-                    <!-- Google button will be rendered here -->
-                </div>
-                
-                <!-- Custom Google Button -->
-                <button id="customGoogleBtn" class="google-signin-btn">
-                    <i class="fab fa-google"></i>
-                    Sign in with Google
-                </button>
-                
-                <!-- Demo Login Button -->
-                <button id="demoLoginBtn" class="demo-login-btn">
-                    <i class="fas fa-user"></i> Try Demo Login
-                </button>
-                
-                <div class="login-info">
-                    <p><i class="fas fa-lock"></i> Your data is encrypted and secure</p>
-                    <p><i class="fas fa-shield-alt"></i> We never share your personal information</p>
-                </div>
-            </div>
         </div>
     </div>
 
@@ -396,12 +441,12 @@
 
                 <!-- User Section -->
                 <div class="user-section">
-                    <!-- Login Button -->
+                    <!-- Login Button (Initially Visible) -->
                     <button id="headerLoginBtn" class="btn-login">
                         <i class="fas fa-sign-in-alt"></i> Login with Google
                     </button>
 
-                    <!-- User Profile -->
+                    <!-- User Profile (Hidden Initially) -->
                     <div id="userProfile" class="user-profile" style="display: none;">
                         <div class="user-avatar" id="userAvatar">
                             <i class="fas fa-user"></i>
@@ -418,7 +463,6 @@
             </div>
         </header>
 
-        <!-- Rest of your HTML remains exactly the same... -->
         <!-- Hero Section -->
         <section class="hero-section">
             <div class="hero-content">
@@ -557,9 +601,192 @@
             </div>
         </section>
 
-        <!-- Chat Interface -->
+        <!-- Chat Interface (Initially Hidden) -->
         <div id="chatInterface" class="chat-interface" style="display: none;">
-            <!-- Chat interface code remains the same -->
+            <div class="chat-container">
+                <!-- Chat Header -->
+                <div class="chat-header">
+                    <div class="chat-header-left">
+                        <button id="backToHome" class="btn-icon">
+                            <i class="fas fa-arrow-left"></i>
+                        </button>
+                        <div class="chat-title">
+                            <i class="fas fa-robot"></i>
+                            <h3>LegalSwami Assistant</h3>
+                        </div>
+                    </div>
+                    <div class="chat-header-right">
+                        <button id="clearChat" class="btn-icon" title="Clear Chat">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                        <button id="exportChat" class="btn-icon" title="Export Chat">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <button id="historyToggle" class="btn-icon" title="Chat History">
+                            <i class="fas fa-history"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Main Chat Area -->
+                <div class="chat-main">
+                    <!-- Chat History Sidebar -->
+                    <div id="historySidebar" class="history-sidebar">
+                        <div class="history-header">
+                            <h4><i class="fas fa-history"></i> Chat History</h4>
+                            <button id="closeHistory" class="btn-icon">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="history-list" id="historyList">
+                            <!-- History items will be loaded here -->
+                        </div>
+                    </div>
+
+                    <!-- Chat Messages Area -->
+                    <div class="chat-messages-container">
+                        <div class="chat-messages" id="chatMessages">
+                            <!-- Welcome Message -->
+                            <div class="message ai-message">
+                                <div class="message-avatar">
+                                    <i class="fas fa-robot"></i>
+                                </div>
+                                <div class="message-content">
+                                    <div class="message-text">
+                                        <h4>Welcome to LegalSwami! 👨‍⚖️</h4>
+                                        <p>I'm your AI legal assistant. I can help you with:</p>
+                                        <ul>
+                                            <li>Legal advice and guidance</li>
+                                            <li>Document review and analysis</li>
+                                            <li>Legal document generation</li>
+                                            <li>Explanation of laws and regulations</li>
+                                            <li>Legal research assistance</li>
+                                        </ul>
+                                        <p><strong>Note:</strong> I'm an AI assistant, not a substitute for a licensed attorney. For critical legal matters, please consult a qualified lawyer.</p>
+                                    </div>
+                                    <div class="message-time">Just now</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Questions -->
+                        <div class="quick-questions">
+                            <p>Try asking:</p>
+                            <div class="quick-buttons">
+                                <button class="quick-btn" data-question="What are the requirements for a valid contract?">
+                                    Contract Requirements
+                                </button>
+                                <button class="quick-btn" data-question="How to draft a rental agreement?">
+                                    Rental Agreement
+                                </button>
+                                <button class="quick-btn" data-question="What is consumer protection law?">
+                                    Consumer Rights
+                                </button>
+                                <button class="quick-btn" data-question="How to file a legal notice?">
+                                    Legal Notice
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Input Area -->
+                <div class="chat-input-area">
+                    <div class="input-container">
+                        <div class="input-actions">
+                            <button id="attachFile" class="btn-icon" title="Attach File">
+                                <i class="fas fa-paperclip"></i>
+                            </button>
+                            <button id="voiceInput" class="btn-icon" title="Voice Input">
+                                <i class="fas fa-microphone"></i>
+                            </button>
+                        </div>
+                        
+                        <textarea 
+                            id="messageInput" 
+                            placeholder="Type your legal question here... (Press Shift+Enter for new line, Enter to send)"
+                            rows="1"
+                            onkeydown="handleInputKeydown(event)"
+                        ></textarea>
+                        
+                        <div class="input-actions">
+                            <button id="sendMessage" class="btn-send" title="Send Message">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="input-options">
+                        <div class="file-attachments" id="fileAttachments">
+                            <!-- Attached files will appear here -->
+                        </div>
+                        
+                        <div class="document-options">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="generateDocument">
+                                <span>Generate as Document</span>
+                            </label>
+                            
+                            <select id="documentType" disabled>
+                                <option value="PDF">PDF</option>
+                                <option value="DOC">Word Document</option>
+                                <option value="TXT">Text File</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="typing-indicator" id="typingIndicator" style="display: none;">
+                        <div class="typing-dots">
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                        </div>
+                        <span>LegalSwami is thinking...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ✅ LOGIN MODAL (UPDATED WITH PROPER STYLING) -->
+        <div id="loginModal" class="modal" style="display: none;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>Welcome to LegalSwami</h3>
+                    <button id="closeLoginModal" class="btn-icon">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="login-illustration">
+                        <i class="fas fa-balance-scale"></i>
+                    </div>
+                    
+                    <h4>Login to Continue</h4>
+                    <p>Secure login to access all features</p>
+                    
+                    <!-- ✅ GOOGLE SIGN-IN BUTTON (FIXED WIDTH) -->
+                    <div id="googleSignInContainer" style="width: 100%; margin: 24px 0;">
+                        <!-- Google button will be rendered here -->
+                    </div>
+                    
+                    <!-- ✅ CUSTOM GOOGLE BUTTON (FALLBACK) -->
+                    <button id="customGoogleBtn" class="google-signin-btn">
+                        <i class="fab fa-google"></i>
+                        Sign in with Google
+                    </button>
+                    
+                    <!-- ✅ DEMO LOGIN BUTTON -->
+                    <button id="demoLoginBtn" class="demo-login-btn">
+                        <i class="fas fa-user"></i> Try Demo Login
+                    </button>
+                    
+                    <div class="login-info">
+                        <p><i class="fas fa-lock"></i> Your data is encrypted and secure</p>
+                        <p><i class="fas fa-shield-alt"></i> We never share your personal information</p>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <!-- Testimonials -->
@@ -761,78 +988,28 @@
             
             // Check for existing user
             checkExistingUser();
-            
-            // ✅ TEST MODAL - Show modal for 5 seconds on load (for testing only)
-            setTimeout(() => {
-                console.log('🧪 Testing modal display...');
-                showLoginModal();
-                
-                // Auto hide after 5 seconds for testing
-                setTimeout(() => {
-                    if (document.getElementById('loginModal').classList.contains('active')) {
-                        hideLoginModal();
-                        console.log('✅ Test modal closed');
-                    }
-                }, 5000);
-            }, 2000);
         });
-        
-        // ✅ FIXED MODAL FUNCTIONS
-        function showLoginModal() {
-            console.log('🔐 Showing login modal...');
-            
-            const modal = document.getElementById('loginModal');
-            
-            // Remove any conflicting styles
-            modal.style.display = 'flex';
-            modal.style.opacity = '0';
-            
-            // Force reflow
-            modal.offsetHeight;
-            
-            // Add active class for animation
-            setTimeout(() => {
-                modal.classList.add('active');
-                modal.style.opacity = '1';
-            }, 10);
-            
-            // Render Google button
-            setTimeout(renderGoogleSignInButton, 100);
-            
-            console.log('✅ Modal should be visible');
-            console.log('Modal display:', modal.style.display);
-            console.log('Modal classes:', modal.className);
-        }
-        
-        function hideLoginModal() {
-            console.log('🔐 Hiding login modal...');
-            
-            const modal = document.getElementById('loginModal');
-            modal.classList.remove('active');
-            modal.style.opacity = '0';
-            
-            setTimeout(() => {
-                modal.style.display = 'none';
-            }, 300);
-        }
         
         // ✅ SIMPLE GOOGLE AUTH
         function initializeSimpleGoogleAuth() {
             console.log('🔐 Initializing Google Authentication...');
             
+            // Wait for Google Identity Services to load
             if (typeof google === 'undefined') {
-                console.warn('⚠️ Google Identity Services not loaded yet');
+                console.warn('⚠️ Google Identity Services not loaded yet, will retry...');
                 setTimeout(initializeSimpleGoogleAuth, 1000);
                 return;
             }
             
             try {
+                // Initialize Google Identity Services
                 google.accounts.id.initialize({
                     client_id: '166511615962-bohur5q8d4i5hud6icr4185kcte9enk8.apps.googleusercontent.com',
                     callback: handleGoogleCredentialResponse,
                     auto_select: false,
-                    cancel_on_tap_outside: false,
-                    context: 'signin'
+                    cancel_on_tap_outside: true,
+                    context: 'signin',
+                    itp_support: false
                 });
                 
                 googleGISInitialized = true;
@@ -843,43 +1020,42 @@
             }
         }
         
-        // ✅ RENDER GOOGLE SIGN-IN BUTTON
+        // ✅ RENDER GOOGLE SIGN-IN BUTTON (ON MODAL SHOW)
         function renderGoogleSignInButton() {
-            console.log('🔐 Rendering Google Sign-In button...');
-            
-            const container = document.getElementById('googleSignInContainer');
-            const customBtn = document.getElementById('customGoogleBtn');
-            
-            if (!container || !googleGISInitialized) {
-                console.warn('⚠️ Cannot render Google button');
-                if (customBtn) customBtn.style.display = 'flex';
-                return;
-            }
-            
             try {
+                const container = document.getElementById('googleSignInContainer');
+                if (!container || !googleGISInitialized) {
+                    // Show custom button if Google button can't be rendered
+                    document.getElementById('customGoogleBtn').style.display = 'flex';
+                    return;
+                }
+                
+                // Clear container
                 container.innerHTML = '';
                 
+                // Render Google button
                 google.accounts.id.renderButton(
                     container,
                     {
-                        type: 'standard',
                         theme: 'outline',
                         size: 'large',
                         text: 'signin_with',
                         shape: 'rectangular',
                         logo_alignment: 'left',
-                        width: container.offsetWidth
+                        width: 400, // Fixed width in pixels
+                        locale: 'en_US'
                     }
                 );
                 
-                container.style.display = 'block';
-                if (customBtn) customBtn.style.display = 'none';
-                
                 console.log('✅ Google Sign-In button rendered');
                 
+                // Hide custom button
+                document.getElementById('customGoogleBtn').style.display = 'none';
+                
             } catch (error) {
-                console.error('❌ Failed to render Google button:', error);
-                if (customBtn) customBtn.style.display = 'flex';
+                console.error('❌ Failed to render Google Sign-In button:', error);
+                // Show custom button as fallback
+                document.getElementById('customGoogleBtn').style.display = 'flex';
             }
         }
         
@@ -888,6 +1064,7 @@
             console.log('🔐 Google credential received');
             
             try {
+                // Decode the JWT token
                 const payload = JSON.parse(atob(response.credential.split('.')[1]));
                 
                 const userData = {
@@ -901,54 +1078,26 @@
                 
                 console.log('✅ Google user authenticated:', userData.email);
                 
+                // Store user data
                 localStorage.setItem('legal_swami_user', JSON.stringify(userData));
                 localStorage.setItem('legal_swami_token', response.credential);
                 
+                // Update API if exists
+                if (window.legalSwamiAPI) {
+                    window.legalSwamiAPI.user = userData;
+                    window.legalSwamiAPI.token = response.credential;
+                }
+                
+                // Update UI
                 updateUserUI();
                 hideLoginModal();
+                
                 showToast('Successfully logged in with Google!', 'success');
                 
             } catch (error) {
                 console.error('❌ Failed to process Google credential:', error);
                 showToast('Login failed. Please try again.', 'error');
             }
-        }
-        
-        // ✅ SETUP EVENT LISTENERS
-        function setupEventListeners() {
-            console.log('🔧 Setting up event listeners');
-            
-            // Header login button
-            document.getElementById('headerLoginBtn').addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log('🖱️ Header login button clicked');
-                showLoginModal();
-            });
-            
-            // Close modal button
-            document.getElementById('closeLoginModal').addEventListener('click', hideLoginModal);
-            
-            // Demo login button
-            document.getElementById('demoLoginBtn').addEventListener('click', handleDemoLogin);
-            
-            // Custom Google button
-            document.getElementById('customGoogleBtn').addEventListener('click', handleCustomGoogleLogin);
-            
-            // Logout button
-            document.getElementById('logoutBtn').addEventListener('click', handleLogout);
-            
-            // Start chat button
-            document.getElementById('startChatBtn').addEventListener('click', startChat);
-            
-            // Close modal when clicking outside
-            document.getElementById('loginModal').addEventListener('click', function(e) {
-                if (e.target === this) {
-                    hideLoginModal();
-                }
-            });
-            
-            console.log('✅ All event listeners set up');
         }
         
         // ✅ CHECK FOR EXISTING USER
@@ -961,6 +1110,7 @@
                     const user = JSON.parse(userStr);
                     console.log('✅ Found existing user:', user.name);
                     
+                    // Update API if exists
                     if (window.legalSwamiAPI) {
                         window.legalSwamiAPI.user = user;
                         window.legalSwamiAPI.token = localStorage.getItem('legal_swami_token');
@@ -975,6 +1125,7 @@
                 }
             }
             
+            // No existing user, show guest UI
             updateUserUI();
         }
         
@@ -985,36 +1136,137 @@
             const userProfile = document.getElementById('userProfile');
             const headerLoginBtn = document.getElementById('headerLoginBtn');
             
-            if (!userProfile || !headerLoginBtn) return;
-            
+            // Get user data
+            let user = null;
             const userStr = localStorage.getItem('legal_swami_user');
             
             if (userStr) {
                 try {
-                    const user = JSON.parse(userStr);
-                    
-                    headerLoginBtn.style.display = 'none';
-                    userProfile.style.display = 'flex';
-                    
-                    document.getElementById('userName').textContent = user.name || 'User';
-                    document.getElementById('userEmail').textContent = user.email || '';
-                    
-                    const avatar = document.getElementById('userAvatar');
-                    if (user.picture) {
-                        avatar.innerHTML = `<img src="${user.picture}" alt="${user.name}" style="width: 100%; height: 100%; border-radius: 8px; object-fit: cover;">`;
-                    }
-                    
+                    user = JSON.parse(userStr);
                 } catch (e) {
-                    console.error('Error parsing user:', e);
+                    console.error('Error parsing user data:', e);
                 }
+            }
+            
+            if (user && user.id) {
+                console.log('✅ User logged in:', user.name);
+                
+                // User is logged in
+                headerLoginBtn.style.display = 'none';
+                userProfile.style.display = 'flex';
+                
+                document.getElementById('userName').textContent = user.name || 'User';
+                document.getElementById('userEmail').textContent = user.email || '';
+                
+                const avatar = document.getElementById('userAvatar');
+                if (user.picture) {
+                    avatar.innerHTML = `<img src="${user.picture}" alt="${user.name}" style="width: 100%; height: 100%; border-radius: 8px; object-fit: cover;">`;
+                } else {
+                    const initials = user.name ? user.name.charAt(0).toUpperCase() : 'U';
+                    avatar.innerHTML = `<span style="font-size: 14px; font-weight: bold;">${initials}</span>`;
+                }
+                
             } else {
+                console.log('👤 No user logged in, showing login button');
+                
+                // User is not logged in
                 headerLoginBtn.style.display = 'flex';
                 userProfile.style.display = 'none';
                 
+                // Setup guest ID if not exists
                 if (!localStorage.getItem('legalSwamiGuestId')) {
                     localStorage.setItem('legalSwamiGuestId', 'guest_' + Date.now());
                 }
             }
+        }
+        
+        // ✅ SETUP ALL EVENT LISTENERS
+        function setupEventListeners() {
+            console.log('🔧 Setting up event listeners');
+            
+            // Header buttons
+            document.getElementById('headerLoginBtn').addEventListener('click', showLoginModal);
+            document.getElementById('logoutBtn').addEventListener('click', handleLogout);
+            document.getElementById('startChatBtn').addEventListener('click', startChat);
+            document.getElementById('learnMoreBtn').addEventListener('click', showDemo);
+            
+            // Login modal buttons
+            document.getElementById('demoLoginBtn').addEventListener('click', handleDemoLogin);
+            document.getElementById('closeLoginModal').addEventListener('click', hideLoginModal);
+            document.getElementById('customGoogleBtn').addEventListener('click', handleCustomGoogleLogin);
+            
+            // Chat interface
+            document.getElementById('backToHome').addEventListener('click', goBackToHome);
+            document.getElementById('clearChat').addEventListener('click', clearChat);
+            document.getElementById('exportChat').addEventListener('click', exportChat);
+            document.getElementById('historyToggle').addEventListener('click', toggleHistory);
+            document.getElementById('closeHistory').addEventListener('click', toggleHistory);
+            document.getElementById('sendMessage').addEventListener('click', sendMessageHandler);
+            document.getElementById('attachFile').addEventListener('click', attachFile);
+            document.getElementById('voiceInput').addEventListener('click', startVoiceInput);
+            
+            // Quick questions
+            document.querySelectorAll('.quick-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const question = this.getAttribute('data-question');
+                    document.getElementById('messageInput').value = question;
+                    sendMessageHandler();
+                });
+            });
+            
+            // Document generation checkbox
+            document.getElementById('generateDocument').addEventListener('change', function() {
+                document.getElementById('documentType').disabled = !this.checked;
+            });
+            
+            // FAQ accordion
+            document.querySelectorAll('.faq-question').forEach(question => {
+                question.addEventListener('click', () => {
+                    const answer = question.nextElementSibling;
+                    const icon = question.querySelector('i');
+                    
+                    if (answer.style.display === 'block') {
+                        answer.style.display = 'none';
+                        icon.className = 'fas fa-chevron-down';
+                    } else {
+                        answer.style.display = 'block';
+                        icon.className = 'fas fa-chevron-up';
+                    }
+                });
+            });
+            
+            // Legal links
+            document.getElementById('termsLink').addEventListener('click', showTerms);
+            document.getElementById('privacyLink').addEventListener('click', showPrivacy);
+            document.getElementById('disclaimerLink').addEventListener('click', showDisclaimer);
+            
+            // Close modal when clicking outside
+            document.getElementById('loginModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    hideLoginModal();
+                }
+            });
+            
+            console.log('✅ All event listeners set up');
+        }
+        
+        // ✅ SHOW LOGIN MODAL
+        function showLoginModal() {
+            const modal = document.getElementById('loginModal');
+            modal.style.display = 'flex';
+            
+            // Render Google button when modal is shown
+            setTimeout(() => {
+                renderGoogleSignInButton();
+            }, 100);
+            
+            console.log('🔐 Login modal shown');
+        }
+        
+        // ✅ HIDE LOGIN MODAL
+        function hideLoginModal() {
+            document.getElementById('loginModal').style.display = 'none';
+            console.log('🔐 Login modal hidden');
         }
         
         // ✅ HANDLE CUSTOM GOOGLE LOGIN
@@ -1023,15 +1275,15 @@
             
             if (!googleGISInitialized) {
                 showToast('Google Sign-In is not available. Please use demo login.', 'warning');
-                handleDemoLogin();
                 return;
             }
             
+            // Trigger Google Sign-In prompt
             try {
                 google.accounts.id.prompt();
             } catch (error) {
                 console.error('❌ Google login failed:', error);
-                showToast('Google Sign-In failed. Using demo login.', 'warning');
+                showToast('Google Sign-In failed. Using demo login instead.', 'warning');
                 handleDemoLogin();
             }
         }
@@ -1042,15 +1294,32 @@
             
             const demoUsers = [
                 {
-                    id: 'demo_user_1',
-                    name: 'Demo User',
-                    email: 'demo.user@example.com',
-                    role: 'client'
+                    id: 'demo_lawyer_1',
+                    name: 'Demo Lawyer',
+                    email: 'demo.lawyer@example.com',
+                    role: 'lawyer',
+                    specialization: 'Corporate Law'
+                },
+                {
+                    id: 'demo_client_1',
+                    name: 'Demo Client',
+                    email: 'demo.client@example.com',
+                    role: 'client',
+                    caseType: 'Divorce'
+                },
+                {
+                    id: 'demo_judge_1',
+                    name: 'Demo Judge',
+                    email: 'demo.judge@example.com',
+                    role: 'judge',
+                    court: 'Supreme Court'
                 }
             ];
             
+            // Select random demo user
             const randomUser = demoUsers[Math.floor(Math.random() * demoUsers.length)];
             
+            // Create demo user data
             const userData = {
                 ...randomUser,
                 picture: `https://ui-avatars.com/api/?name=${encodeURIComponent(randomUser.name)}&background=7c3aed&color=fff&size=128`,
@@ -1058,9 +1327,17 @@
                 isDemo: true
             };
             
+            // Store demo user data
             localStorage.setItem('legal_swami_user', JSON.stringify(userData));
             localStorage.setItem('legal_swami_token', 'demo_token_' + Date.now());
             
+            // Update API if exists
+            if (window.legalSwamiAPI) {
+                window.legalSwamiAPI.user = userData;
+                window.legalSwamiAPI.token = 'demo_token';
+            }
+            
+            // Update UI
             updateUserUI();
             hideLoginModal();
             showToast(`Welcome ${userData.name}! (Demo Mode)`, 'success');
@@ -1070,11 +1347,43 @@
         function handleLogout() {
             console.log('🚪 Logging out...');
             
+            // Try to revoke Google token if exists
+            const userStr = localStorage.getItem('legal_swami_user');
+            if (userStr) {
+                try {
+                    const user = JSON.parse(userStr);
+                    if (user.provider === 'google') {
+                        try {
+                            google.accounts.id.revoke(user.email, (done) => {
+                                console.log('✅ Google access revoked');
+                            });
+                        } catch (e) {
+                            console.warn('Could not revoke Google access:', e);
+                        }
+                    }
+                } catch (e) {
+                    console.error('Error parsing user data:', e);
+                }
+            }
+            
+            // Clear local data
             localStorage.removeItem('legal_swami_token');
             localStorage.removeItem('legal_swami_user');
             
+            // Clear API data if exists
+            if (window.legalSwamiAPI) {
+                window.legalSwamiAPI.token = null;
+                window.legalSwamiAPI.user = null;
+            }
+            
+            // Update UI
             updateUserUI();
             showToast('Logged out successfully', 'success');
+            
+            // Go back to home if in chat interface
+            if (document.getElementById('chatInterface').style.display !== 'none') {
+                goBackToHome();
+            }
         }
         
         // ✅ INITIALIZE APP WITH BACKEND
@@ -1084,6 +1393,7 @@
             try {
                 const backendUrl = 'https://legal-swami-backend.onrender.com';
                 
+                // Create API object if not exists
                 if (!window.legalSwamiAPI) {
                     window.legalSwamiAPI = {
                         token: localStorage.getItem('legal_swami_token'),
@@ -1111,10 +1421,30 @@
                             }
                             
                             return await response.json();
+                        },
+                        getChatHistory: async function(page = 0, size = 10) {
+                            const userId = this.user ? this.user.id : 'guest';
+                            
+                            const response = await fetch(
+                                `${backendUrl}/api/v1/chat/history?userId=${userId}&page=${page}&size=${size}`,
+                                {
+                                    headers: {
+                                        'x-user-id': userId,
+                                        'x-request-id': 'req_' + Date.now()
+                                    }
+                                }
+                            );
+                            
+                            if (!response.ok) {
+                                throw new Error(`HTTP ${response.status}`);
+                            }
+                            
+                            return await response.json();
                         }
                     };
                 }
                 
+                // Test backend health
                 const healthResponse = await fetch(`${backendUrl}/api/v1/public/health`);
                 if (healthResponse.ok) {
                     const healthData = await healthResponse.json();
@@ -1123,6 +1453,8 @@
                 } else {
                     console.warn('⚠️ Backend health check failed:', healthResponse.status);
                 }
+                
+                updateUserUI();
                 
             } catch (error) {
                 console.error('❌ Initialization failed:', error);
@@ -1136,21 +1468,342 @@
             
             const user = window.legalSwamiAPI ? window.legalSwamiAPI.user : null;
             const token = localStorage.getItem('legal_swami_token');
+            const guestId = localStorage.getItem('legalSwamiGuestId');
             
-            if (!user && !token) {
+            if (!user && !guestId && !token) {
                 showLoginModal();
                 showToast('Please login to start chatting', 'warning');
                 return;
             }
             
-            showToast('Chat feature coming soon!', 'info');
+            document.getElementById('chatInterface').style.display = 'block';
+            document.querySelector('.main-container').style.background = '#f8fafc';
+            
+            setTimeout(() => {
+                document.getElementById('messageInput').focus();
+                console.log('✅ Chat interface ready');
+            }, 100);
+        }
+        
+        // ✅ GO BACK TO HOME
+        function goBackToHome() {
+            document.getElementById('chatInterface').style.display = 'none';
+            document.querySelector('.main-container').style.background = '';
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            console.log('🏠 Returned to home');
+        }
+        
+        // ✅ CLEAR CHAT
+        function clearChat() {
+            if (confirm('Are you sure you want to clear the chat?')) {
+                const chatMessages = document.getElementById('chatMessages');
+                const messages = chatMessages.querySelectorAll('.message');
+                
+                messages.forEach((message, index) => {
+                    if (index > 0) {
+                        message.remove();
+                    }
+                });
+                
+                currentChatId = null;
+                showToast('Chat cleared', 'success');
+                console.log('🗑️ Chat cleared');
+            }
+        }
+        
+        // ✅ EXPORT CHAT
+        function exportChat() {
+            const chatMessages = document.getElementById('chatMessages');
+            const messages = chatMessages.querySelectorAll('.message');
+            
+            let exportText = 'LegalSwami Chat Export\n';
+            exportText += 'Generated on: ' + new Date().toLocaleString() + '\n\n';
+            
+            messages.forEach(message => {
+                const isAI = message.classList.contains('ai-message');
+                const text = message.querySelector('.message-text')?.textContent || '';
+                const time = message.querySelector('.message-time')?.textContent || '';
+                
+                exportText += `${isAI ? 'AI' : 'You'} (${time}):\n${text}\n\n`;
+            });
+            
+            const blob = new Blob([exportText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `legalswami-chat-${Date.now()}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast('Chat exported successfully', 'success');
+            console.log('📥 Chat exported');
+        }
+        
+        // ✅ TOGGLE HISTORY SIDEBAR
+        function toggleHistory() {
+            const sidebar = document.getElementById('historySidebar');
+            if (sidebar.style.display === 'flex') {
+                sidebar.style.display = 'none';
+                console.log('📜 History sidebar hidden');
+            } else {
+                sidebar.style.display = 'flex';
+                loadChatHistory();
+                console.log('📜 History sidebar shown');
+            }
+        }
+        
+        // ✅ LOAD CHAT HISTORY
+        async function loadChatHistory() {
+            try {
+                if (!window.legalSwamiAPI) {
+                    console.warn('API not initialized');
+                    return;
+                }
+                
+                console.log('📜 Loading chat history...');
+                const history = await window.legalSwamiAPI.getChatHistory(0, 10);
+                updateHistoryList(history);
+                console.log('✅ Chat history loaded:', history.length, 'items');
+            } catch (error) {
+                console.error('Failed to load history:', error);
+                showToast('Failed to load chat history', 'error');
+            }
+        }
+        
+        // ✅ UPDATE HISTORY LIST UI
+        function updateHistoryList(history) {
+            const historyList = document.getElementById('historyList');
+            historyList.innerHTML = '';
+            
+            if (!history || history.length === 0) {
+                historyList.innerHTML = `
+                    <div class="empty-history">
+                        <i class="fas fa-history"></i>
+                        <p>No chat history yet</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            history.forEach(item => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.innerHTML = `
+                    <div class="history-item-content">
+                        <p class="history-question">${item.message.substring(0, 50)}${item.message.length > 50 ? '...' : ''}</p>
+                        <span class="history-time">${formatTime(item.createdAt)}</span>
+                    </div>
+                    <button class="btn-icon" onclick="loadChatFromHistory('${item.id}')">
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                `;
+                historyList.appendChild(historyItem);
+            });
+        }
+        
+        // ✅ LOAD CHAT FROM HISTORY
+        async function loadChatFromHistory(chatId) {
+            try {
+                showToast('Loading chat from history...', 'info');
+                toggleHistory();
+                console.log('📜 Loading chat:', chatId);
+            } catch (error) {
+                console.error('Failed to load chat:', error);
+                showToast('Failed to load chat', 'error');
+            }
+        }
+        
+        // ✅ HANDLE INPUT KEYDOWN
+        function handleInputKeydown(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessageHandler();
+            }
+            
+            const textarea = event.target;
+            textarea.style.height = 'auto';
+            textarea.style.height = (textarea.scrollHeight) + 'px';
+        }
+        
+        // ✅ SEND MESSAGE HANDLER
+        async function sendMessageHandler() {
+            if (isProcessing) {
+                console.warn('⚠️ Message already being processed');
+                return;
+            }
+            
+            const input = document.getElementById('messageInput');
+            const message = input.value.trim();
+            
+            if (!message) {
+                showToast('Please enter a message', 'warning');
+                return;
+            }
+            
+            let userId = 'guest';
+            if (window.legalSwamiAPI && window.legalSwamiAPI.user) {
+                userId = window.legalSwamiAPI.user.id;
+            } else {
+                userId = localStorage.getItem('legalSwamiGuestId') || 'guest_' + Date.now();
+                localStorage.setItem('legalSwamiGuestId', userId);
+            }
+            
+            isProcessing = true;
+            
+            try {
+                console.log('💬 Sending message:', message.substring(0, 100));
+                
+                addMessageToChat(message, true);
+                input.value = '';
+                input.style.height = 'auto';
+                
+                showTypingIndicator(true);
+                
+                const generateDocument = document.getElementById('generateDocument').checked;
+                const documentType = document.getElementById('documentType').value;
+                
+                const backendUrl = 'https://legal-swami-backend.onrender.com';
+                const response = await fetch(`${backendUrl}/api/v1/chat/send`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-user-id': userId,
+                        'x-request-id': 'req_' + Date.now()
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        generateDocument: generateDocument
+                    })
+                });
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                }
+                
+                const data = await response.json();
+                console.log('✅ Received response:', data.id);
+                
+                addMessageToChat(data.response || 'No response received', false, generateDocument, documentType);
+                
+                await loadChatHistory();
+                
+            } catch (error) {
+                console.error('❌ Failed to send message:', error);
+                addMessageToChat('Sorry, I encountered an error. Please try again.', false);
+                showToast('Failed to send message: ' + error.message, 'error');
+            } finally {
+                isProcessing = false;
+                showTypingIndicator(false);
+            }
+        }
+        
+        // ✅ ADD MESSAGE TO CHAT UI
+        function addMessageToChat(content, isUser = false, isDocument = false, documentType = null) {
+            const chatMessages = document.getElementById('chatMessages');
+            const messageDiv = document.createElement('div');
+            
+            messageDiv.className = `message ${isUser ? 'user-message' : 'ai-message'}`;
+            
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            let messageContent = content;
+            if (isDocument) {
+                messageContent = `📄 **${documentType} Document Generated:**\n\n${content}`;
+            }
+            
+            messageDiv.innerHTML = `
+                <div class="message-avatar">
+                    ${isUser ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>'}
+                </div>
+                <div class="message-content">
+                    <div class="message-text">${formatMessageText(messageContent)}</div>
+                    <div class="message-time">${time}</div>
+                </div>
+            `;
+            
+            chatMessages.appendChild(messageDiv);
+            
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            console.log('💬 Message added to chat:', isUser ? 'User' : 'AI');
+        }
+        
+        // ✅ FORMAT MESSAGE TEXT
+        function formatMessageText(text) {
+            text = text.replace(/\n/g, '<br>');
+            text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            text = text.replace(/^\s*[-•*]\s+(.*)$/gm, '<li>$1</li>');
+            text = text.replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>');
+            return text;
+        }
+        
+        // ✅ SHOW TYPING INDICATOR
+        function showTypingIndicator(show) {
+            const indicator = document.getElementById('typingIndicator');
+            indicator.style.display = show ? 'flex' : 'none';
+            
+            if (show) {
+                const chatMessages = document.getElementById('chatMessages');
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+        }
+        
+        // ✅ ATTACH FILE
+        function attachFile() {
+            showToast('File attachment feature coming soon!', 'info');
+            console.log('📎 File attachment clicked');
+        }
+        
+        // ✅ START VOICE INPUT
+        function startVoiceInput() {
+            showToast('Voice input feature coming soon!', 'info');
+            console.log('🎤 Voice input clicked');
+        }
+        
+        // ✅ SHOW DEMO
+        function showDemo() {
+            showToast('Demo feature coming soon!', 'info');
+            console.log('🎬 Demo clicked');
+        }
+        
+        // ✅ SHOW TERMS
+        function showTerms(e) {
+            e.preventDefault();
+            alert('Terms of Service\n\nBy using LegalSwami, you agree to our terms...');
+        }
+        
+        // ✅ SHOW PRIVACY POLICY
+        function showPrivacy(e) {
+            e.preventDefault();
+            alert('Privacy Policy\n\nWe value your privacy...');
+        }
+        
+        // ✅ SHOW DISCLAIMER
+        function showDisclaimer(e) {
+            e.preventDefault();
+            alert('Legal Disclaimer\n\nLegalSwami is an AI assistant, not a licensed attorney...');
+        }
+        
+        // ✅ FORMAT TIME
+        function formatTime(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diff = now - date;
+            
+            if (diff < 60000) return 'Just now';
+            if (diff < 3600000) return Math.floor(diff / 60000) + 'm ago';
+            if (diff < 86400000) return Math.floor(diff / 3600000) + 'h ago';
+            return date.toLocaleDateString();
         }
         
         // ✅ SHOW TOAST NOTIFICATION
         function showToast(message, type = 'info') {
             const container = document.getElementById('toastContainer');
-            if (!container) return;
-            
             const toast = document.createElement('div');
             toast.className = `toast toast-${type}`;
             
@@ -1162,18 +1815,23 @@
             };
             
             toast.innerHTML = `
-                <i class="${icons[type] || icons.info}"></i>
+                <i class="${icons[type]}"></i>
                 <span>${message}</span>
             `;
             
             container.appendChild(toast);
             
             setTimeout(() => {
-                toast.remove();
+                toast.classList.add('fade-out');
+                setTimeout(() => toast.remove(), 300);
             }, 3000);
             
-            console.log(`📢 Toast: ${message}`);
+            console.log(`📢 Toast (${type}):`, message);
         }
+        
+        // ✅ MAKE FUNCTIONS AVAILABLE GLOBALLY
+        window.handleInputKeydown = handleInputKeydown;
+        window.loadChatFromHistory = loadChatFromHistory;
         
         console.log('✅ LegalSwami App Initialization Complete!');
     </script>
