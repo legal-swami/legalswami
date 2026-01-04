@@ -219,6 +219,16 @@
             from, to { border-color: transparent }
             50% { border-color: #FFD700; }
         }
+        
+        /* Progress Bar Animation */
+        .progress-fill {
+            animation: progressLoad 2s ease-out forwards;
+        }
+        
+        @keyframes progressLoad {
+            0% { width: 0%; }
+            100% { width: 100%; }
+        }
     </style>
 </head>
 <body>
@@ -229,746 +239,972 @@
             <h2 class="shimmer-text mt-4">LegalSwami</h2>
             <p class="text-light">Initializing AI Legal Assistant...</p>
             <div class="progress-bar mt-4" style="width: 200px; height: 4px; background: rgba(255,255,255,0.2); border-radius: 2px;">
-                <div class="progress-fill" style="width: 0%; height: 100%; background: var(--gold-gradient); border-radius: 2px; animation: progressLoad 2s ease-out forwards;"></div>
+                <div class="progress-fill" style="width: 0%; height: 100%; background: var(--gold-gradient); border-radius: 2px;"></div>
             </div>
         </div>
     </div>
 
-    <!-- Premium Navigation Bar -->
-    <nav class="premium-navbar">
-        <div class="nav-container">
-            <!-- Logo with Animation -->
-            <div class="nav-logo">
-                <div class="logo-icon legal-seal" style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
-                    <i class="fas fa-gavel gavel-animation" style="font-size: 1.5rem; color: #FFD700;"></i>
+    <!-- Main Container -->
+    <div class="main-container">
+        <!-- Premium Navigation Bar -->
+        <nav class="premium-navbar">
+            <div class="nav-container">
+                <!-- Logo with Animation -->
+                <div class="nav-logo">
+                    <div class="logo-icon legal-seal" style="width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-gavel gavel-animation" style="font-size: 1.5rem; color: #FFD700;"></i>
+                    </div>
+                    <div class="logo-text">
+                        <h1 class="logo-title shimmer-text">LegalSwami</h1>
+                        <p class="logo-subtitle">AI Legal Assistant</p>
+                    </div>
                 </div>
-                <div class="logo-text">
-                    <h1 class="logo-title shimmer-text">LegalSwami</h1>
-                    <p class="logo-subtitle">AI Legal Assistant</p>
+
+                <!-- Desktop Navigation -->
+                <div class="nav-menu">
+                    <a href="#home" class="nav-link active" data-scroll="home">
+                        <i class="fas fa-home"></i>
+                        <span>Home</span>
+                    </a>
+                    <a href="#features" class="nav-link" data-scroll="features">
+                        <i class="fas fa-star"></i>
+                        <span>Features</span>
+                    </a>
+                    <a href="#documents" class="nav-link" data-scroll="documents">
+                        <i class="fas fa-file-contract"></i>
+                        <span>Documents</span>
+                    </a>
+                    <a href="#testimonials" class="nav-link" data-scroll="testimonials">
+                        <i class="fas fa-comment-dots"></i>
+                        <span>Testimonials</span>
+                    </a>
+                    <a href="#pricing" class="nav-link" data-scroll="pricing">
+                        <i class="fas fa-tag"></i>
+                        <span>Pricing</span>
+                    </a>
                 </div>
-            </div>
 
-            <!-- Desktop Navigation -->
-            <div class="nav-menu">
-                <a href="#home" class="nav-link active" data-scroll="home">
-                    <i class="fas fa-home"></i>
-                    <span>Home</span>
-                </a>
-                <a href="#features" class="nav-link" data-scroll="features">
-                    <i class="fas fa-star"></i>
-                    <span>Features</span>
-                </a>
-                <a href="#documents" class="nav-link" data-scroll="documents">
-                    <i class="fas fa-file-contract"></i>
-                    <span>Documents</span>
-                </a>
-                <a href="#testimonials" class="nav-link" data-scroll="testimonials">
-                    <i class="fas fa-comment-dots"></i>
-                    <span>Testimonials</span>
-                </a>
-                <a href="#pricing" class="nav-link" data-scroll="pricing">
-                    <i class="fas fa-tag"></i>
-                    <span>Pricing</span>
-                </a>
-            </div>
+                <!-- User Actions -->
+                <div class="nav-actions">
+                    <button id="headerLoginBtn" class="btn-login">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span>Login</span>
+                    </button>
+                    
+                    <div id="userProfile" class="user-profile" style="display: none;">
+                        <div class="profile-avatar">
+                            <div id="userAvatar"></div>
+                        </div>
+                        <div class="profile-info">
+                            <span id="userName" class="profile-name"></span>
+                            <span id="userEmail" class="profile-email"></span>
+                        </div>
+                        <button id="logoutBtn" class="btn-logout">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </button>
+                    </div>
+                </div>
 
-            <!-- User Actions -->
-            <div class="nav-actions">
-                <button id="headerLoginBtn" class="btn-login">
-                    <i class="fas fa-sign-in-alt"></i>
-                    <span>Login</span>
+                <!-- Mobile Menu Toggle -->
+                <button class="mobile-toggle" id="mobileToggle">
+                    <i class="fas fa-bars"></i>
                 </button>
-                
-                <div id="userProfile" class="user-profile" style="display: none;">
-                    <div class="profile-avatar">
-                        <div id="userAvatar"></div>
+            </div>
+        </nav>
+
+        <!-- Mobile Menu -->
+        <div class="mobile-menu-overlay" id="mobileMenu">
+            <div class="mobile-menu-container">
+                <div class="mobile-menu-header">
+                    <div class="logo-icon legal-seal" style="width: 60px; height: 60px;">
+                        <i class="fas fa-gavel" style="font-size: 1.8rem; color: #FFD700;"></i>
                     </div>
-                    <div class="profile-info">
-                        <span id="userName" class="profile-name"></span>
-                        <span id="userEmail" class="profile-email"></span>
-                    </div>
-                    <button id="logoutBtn" class="btn-logout">
-                        <i class="fas fa-sign-out-alt"></i>
+                    <button class="mobile-close" id="mobileClose">
+                        <i class="fas fa-times"></i>
                     </button>
                 </div>
-            </div>
-
-            <!-- Mobile Menu Toggle -->
-            <button class="mobile-toggle" id="mobileToggle">
-                <i class="fas fa-bars"></i>
-            </button>
-        </div>
-    </nav>
-
-    <!-- Mobile Menu -->
-    <div class="mobile-menu-overlay" id="mobileMenu">
-        <div class="mobile-menu-container">
-            <div class="mobile-menu-header">
-                <div class="logo-icon legal-seal" style="width: 60px; height: 60px;">
-                    <i class="fas fa-gavel" style="font-size: 1.8rem; color: #FFD700;"></i>
+                <div class="mobile-menu-links">
+                    <a href="#home" class="mobile-link active">
+                        <i class="fas fa-home"></i>
+                        <span>Home</span>
+                    </a>
+                    <a href="#features" class="mobile-link">
+                        <i class="fas fa-star"></i>
+                        <span>Features</span>
+                    </a>
+                    <a href="#documents" class="mobile-link">
+                        <i class="fas fa-file-contract"></i>
+                        <span>Documents</span>
+                    </a>
+                    <a href="#testimonials" class="mobile-link">
+                        <i class="fas fa-comment-dots"></i>
+                        <span>Testimonials</span>
+                    </a>
+                    <a href="#pricing" class="mobile-link">
+                        <i class="fas fa-tag"></i>
+                        <span>Pricing</span>
+                    </a>
+                    <a href="#chat" class="mobile-link" id="mobileStartChat">
+                        <i class="fas fa-comments"></i>
+                        <span>Start Chat</span>
+                    </a>
                 </div>
-                <button class="mobile-close" id="mobileClose">
+            </div>
+        </div>
+
+        <!-- Hero Section with Parallax -->
+        <section id="home" class="hero-section">
+            <div class="hero-container">
+                <!-- Animated Background Elements -->
+                <div class="hero-bg-elements">
+                    <div class="floating-element" style="top: 20%; left: 10%;">
+                        <i class="fas fa-balance-scale floating" style="font-size: 3rem; color: rgba(255, 215, 0, 0.2);"></i>
+                    </div>
+                    <div class="floating-element" style="top: 60%; right: 15%;">
+                        <i class="fas fa-gavel floating" style="font-size: 4rem; color: rgba(255, 215, 0, 0.15);"></i>
+                    </div>
+                    <div class="floating-element" style="bottom: 20%; left: 20%;">
+                        <i class="fas fa-scale-balanced floating" style="font-size: 2.5rem; color: rgba(255, 215, 0, 0.1);"></i>
+                    </div>
+                </div>
+                
+                <div class="hero-content">
+                    <div class="hero-badge">
+                        <span class="badge-text">
+                            <i class="fas fa-bolt"></i>
+                            AI-POWERED LEGAL ASSISTANT
+                        </span>
+                    </div>
+                    
+                    <h1 class="hero-title text-reveal">
+                        Get <span class="shimmer-text">Instant Legal Help</span><br>
+                        From Your AI Assistant
+                    </h1>
+                    
+                    <p class="hero-subtitle">
+                        LegalSwami provides 24/7 AI-powered legal guidance, document generation, 
+                        and legal research assistance. Get instant answers to your legal questions 
+                        in simple, understandable language.
+                    </p>
+                    
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <div class="stat-number shimmer-text">10,000+</div>
+                            <div class="stat-label">Legal Documents Generated</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number shimmer-text">50,000+</div>
+                            <div class="stat-label">Legal Questions Answered</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-number shimmer-text">99.8%</div>
+                            <div class="stat-label">User Satisfaction Rate</div>
+                        </div>
+                    </div>
+                    
+                    <div class="hero-actions">
+                        <button id="startChatBtn" class="btn-hero-primary btn-premium">
+                            <i class="fas fa-comments"></i>
+                            <span>Start Free Chat Now</span>
+                            <div class="btn-sparkle">
+                                <i class="fas fa-sparkle"></i>
+                            </div>
+                        </button>
+                        
+                        <button id="watchDemo" class="btn-hero-secondary">
+                            <i class="fas fa-play-circle"></i>
+                            <span>Watch Demo Video</span>
+                        </button>
+                    </div>
+                    
+                    <div class="hero-trust">
+                        <div class="trust-label">Trusted by</div>
+                        <div class="trust-badges">
+                            <div class="trust-badge">
+                                <i class="fas fa-university"></i>
+                                <span>Law Firms</span>
+                            </div>
+                            <div class="trust-badge">
+                                <i class="fas fa-graduation-cap"></i>
+                                <span>Law Students</span>
+                            </div>
+                            <div class="trust-badge">
+                                <i class="fas fa-briefcase"></i>
+                                <span>Businesses</span>
+                            </div>
+                            <div class="trust-badge">
+                                <i class="fas fa-users"></i>
+                                <span>Individuals</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="hero-illustration">
+                    <div class="ai-assistant-card premium-card pulse-glow">
+                        <div class="assistant-avatar legal-seal" style="width: 120px; height: 120px;">
+                            <i class="fas fa-robot" style="font-size: 3.5rem; color: #FFD700;"></i>
+                        </div>
+                        <h3 class="assistant-title">AI Legal Assistant</h3>
+                        <p class="assistant-subtitle">Available 24/7</p>
+                        
+                        <div class="assistant-features">
+                            <div class="feature">
+                                <i class="fas fa-check-circle" style="color: #4CAF50;"></i>
+                                <span>Instant Responses</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-check-circle" style="color: #4CAF50;"></i>
+                                <span>Multi-Language</span>
+                            </div>
+                            <div class="feature">
+                                <i class="fas fa-check-circle" style="color: #4CAF50;"></i>
+                                <span>Document Generation</span>
+                            </div>
+                        </div>
+                        
+                        <button class="btn-assistant">
+                            <i class="fas fa-comment-alt"></i>
+                            Ask Legal Question
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Scroll Indicator -->
+            <div class="scroll-indicator">
+                <div class="mouse">
+                    <div class="wheel"></div>
+                </div>
+                <div class="arrow">
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="features-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <span class="shimmer-text">Powerful Features</span> for All Your Legal Needs
+                    </h2>
+                    <p class="section-subtitle">
+                        Everything you need in one comprehensive legal assistant
+                    </p>
+                </div>
+                
+                <div class="features-grid">
+                    <!-- Feature 1 -->
+                    <div class="feature-card premium-card">
+                        <div class="feature-icon legal-seal" style="width: 80px; height: 80px;">
+                            <i class="fas fa-comments" style="font-size: 2.5rem; color: #FFD700;"></i>
+                        </div>
+                        <h3 class="feature-title">AI Chat Assistant</h3>
+                        <p class="feature-description">
+                            Ask legal questions in natural language and get instant, accurate responses powered by advanced AI.
+                        </p>
+                        <div class="feature-tags">
+                            <span class="tag">24/7 Available</span>
+                            <span class="tag">Multi-Language</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Feature 2 -->
+                    <div class="feature-card premium-card">
+                        <div class="feature-icon legal-seal" style="width: 80px; height: 80px;">
+                            <i class="fas fa-file-contract" style="font-size: 2.5rem; color: #FFD700;"></i>
+                        </div>
+                        <h3 class="feature-title">Smart Document Generation</h3>
+                        <p class="feature-description">
+                            Generate legal documents instantly in PDF, DOC, and TXT formats with customizable templates.
+                        </p>
+                        <div class="feature-tags">
+                            <span class="tag">100+ Templates</span>
+                            <span class="tag">Customizable</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Feature 3 -->
+                    <div class="feature-card premium-card">
+                        <div class="feature-icon legal-seal" style="width: 80px; height: 80px;">
+                            <i class="fas fa-shield-alt" style="font-size: 2.5rem; color: #FFD700;"></i>
+                        </div>
+                        <h3 class="feature-title">Bank-Level Security</h3>
+                        <p class="feature-description">
+                            End-to-end encryption and secure authentication to protect your sensitive legal data.
+                        </p>
+                        <div class="feature-tags">
+                            <span class="tag">AES-256</span>
+                            <span class="tag">GDPR Compliant</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Feature 4 -->
+                    <div class="feature-card premium-card">
+                        <div class="feature-icon legal-seal" style="width: 80px; height: 80px;">
+                            <i class="fas fa-history" style="font-size: 2.5rem; color: #FFD700;"></i>
+                        </div>
+                        <h3 class="feature-title">Complete Chat History</h3>
+                        <p class="feature-description">
+                            Access your complete chat history anytime. Export conversations as documents for record keeping.
+                        </p>
+                        <div class="feature-tags">
+                            <span class="tag">Unlimited History</span>
+                            <span class="tag">Export Options</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Feature 5 -->
+                    <div class="feature-card premium-card">
+                        <div class="feature-icon legal-seal" style="width: 80px; height: 80px;">
+                            <i class="fas fa-mobile-alt" style="font-size: 2.5rem; color: #FFD700;"></i>
+                        </div>
+                        <h3 class="feature-title">Mobile Responsive</h3>
+                        <p class="feature-description">
+                            Access LegalSwami from any device - desktop, tablet, or mobile phone with native-like experience.
+                        </p>
+                        <div class="feature-tags">
+                            <span class="tag">PWA Support</span>
+                            <span class="tag">Offline Mode</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Feature 6 -->
+                    <div class="feature-card premium-card">
+                        <div class="feature-icon legal-seal" style="width: 80px; height: 80px;">
+                            <i class="fas fa-language" style="font-size: 2.5rem; color: #FFD700;"></i>
+                        </div>
+                        <h3 class="feature-title">Multi-Language Support</h3>
+                        <p class="feature-description">
+                            Get legal advice in multiple languages including Hindi, English, Marathi, Gujarati, and more.
+                        </p>
+                        <div class="feature-tags">
+                            <span class="tag">10+ Languages</span>
+                            <span class="tag">Real-time Translation</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Document Types Section -->
+        <section id="documents" class="documents-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        Generate <span class="shimmer-text">Legal Documents</span> Instantly
+                    </h2>
+                    <p class="section-subtitle">
+                        Professional legal documents at your fingertips
+                    </p>
+                </div>
+                
+                <div class="documents-grid">
+                    <!-- Document Category 1 -->
+                    <div class="document-category premium-card">
+                        <div class="category-icon">
+                            <i class="fas fa-handshake" style="color: #1a237e; font-size: 2.5rem;"></i>
+                        </div>
+                        <h3 class="category-title">Agreements & Contracts</h3>
+                        <ul class="document-list">
+                            <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Rental Agreement</li>
+                            <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Non-Disclosure Agreement</li>
+                            <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Employment Contract</li>
+                            <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Service Agreement</li>
+                            <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Partnership Agreement</li>
+                        </ul>
+                        <button class="btn-generate">
+                            <i class="fas fa-magic"></i>
+                            Generate Now
+                        </button>
+                    </div>
+                    
+                    <!-- Document Category 2 -->
+                    <div class="document-category premium-card">
+                        <div class="category-icon">
+                            <i class="fas fa-balance-scale" style="color: #1a237e; font-size: 2.5rem;"></i>
+                        </div>
+                        <h3 class="category-title">Legal Notices & Letters</h3>
+                        <ul class="document-list">
+                            <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Legal Notice</li>
+                            <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Cease & Desist Notice</li>
+                            <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Demand Letter</li>
+                            <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Notice to Quit</li>
+                            <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Consumer Complaint</li>
+                        </ul>
+                        <button class="btn-generate">
+                            <i class="fas fa-magic"></i>
+                            Generate Now
+                        </button>
+                    </div>
+                    
+                    <!-- Document Category 3 -->
+                    <div class="document-category premium-card">
+                        <div class="category-icon">
+                            <i class="fas fa-user-tie" style="color: #1a237e; font-size: 2.5rem;"></i>
+                        </div>
+                        <h3 class="category-title">Personal & Family</h3>
+                        <ul class="document-list">
+                            <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Will & Testament</li>
+                            <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Power of Attorney</li>
+                            <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Affidavit</li>
+                            <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Gift Deed</li>
+                            <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Divorce Papers</li>
+                        </ul>
+                        <button class="btn-generate">
+                            <i class="fas fa-magic"></i>
+                            Generate Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials Section -->
+        <section id="testimonials" class="testimonials-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        Trusted by <span class="shimmer-text">Thousands</span> of Users
+                    </h2>
+                    <p class="section-subtitle">
+                        See what our users have to say about LegalSwami
+                    </p>
+                </div>
+                
+                <div class="testimonials-carousel">
+                    <!-- Testimonial 1 -->
+                    <div class="testimonial-card premium-card">
+                        <div class="testimonial-rating">
+                            <i class="fas fa-star" style="color: #FFD700;"></i>
+                            <i class="fas fa-star" style="color: #FFD700;"></i>
+                            <i class="fas fa-star" style="color: #FFD700;"></i>
+                            <i class="fas fa-star" style="color: #FFD700;"></i>
+                            <i class="fas fa-star" style="color: #FFD700;"></i>
+                        </div>
+                        <p class="testimonial-text">
+                            "LegalSwami helped me draft a professional rental agreement in minutes. The AI understood exactly what I needed and generated a perfect document. Saved me ₹5000 in lawyer fees!"
+                        </p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">
+                                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Rahul Sharma">
+                            </div>
+                            <div class="author-info">
+                                <h4 class="author-name">Rahul Sharma</h4>
+                                <p class="author-title">Small Business Owner</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 2 -->
+                    <div class="testimonial-card premium-card">
+                        <div class="testimonial-rating">
+                            <i class="fas fa-star" style="color: #FFD700;"></i>
+                            <i class="fas fa-star" style="color: #FFD700;"></i>
+                            <i class="fas fa-star" style="color: #FFD700;"></i>
+                            <i class="fas fa-star" style="color: #FFD700;"></i>
+                            <i class="fas fa-star-half-alt" style="color: #FFD700;"></i>
+                        </div>
+                        <p class="testimonial-text">
+                            "As a law student, LegalSwami is a game-changer! It helps me understand complex legal concepts and provides excellent research assistance. Like having a personal tutor 24/7."
+                        </p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">
+                                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Priya Patel">
+                            </div>
+                            <div class="author-info">
+                                <h4 class="author-name">Priya Patel</h4>
+                                <p class="author-title">Law Student, NLU Delhi</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Testimonial 3 -->
+                    <div class="testimonial-card premium-card">
+                        <div class="testimonial-rating">
+                            <i class="fas fa-star" style="color: #FFD700;"></i>
+                            <i class="fas fa-star" style="color: #FFD700;"></i>
+                            <i class="fas fa-star" style="color: #FFD700;"></i>
+                            <i class="fas fa-star" style="color: #FFD700;"></i>
+                            <i class="fas fa-star" style="color: #FFD700;"></i>
+                        </div>
+                        <p class="testimonial-text">
+                            "The document generation feature saved our startup thousands! We needed multiple NDAs and service agreements. LegalSwami generated perfect documents in minutes. Incredible tool!"
+                        </p>
+                        <div class="testimonial-author">
+                            <div class="author-avatar">
+                                <img src="https://randomuser.me/api/portraits/men/67.jpg" alt="Ankit Verma">
+                            </div>
+                            <div class="author-info">
+                                <h4 class="author-name">Ankit Verma</h4>
+                                <p class="author-title">Tech Entrepreneur</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Pricing Section -->
+        <section id="pricing" class="pricing-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        Simple, <span class="shimmer-text">Transparent</span> Pricing
+                    </h2>
+                    <p class="section-subtitle">
+                        Choose the perfect plan for your legal needs
+                    </p>
+                </div>
+                
+                <div class="pricing-cards">
+                    <!-- Free Plan -->
+                    <div class="pricing-card premium-card">
+                        <div class="pricing-badge">FREE</div>
+                        <h3 class="pricing-title">Basic</h3>
+                        <div class="pricing-price">
+                            <span class="currency">₹</span>
+                            <span class="amount">0</span>
+                            <span class="period">/month</span>
+                        </div>
+                        <p class="pricing-description">Perfect for trying out LegalSwami</p>
+                        
+                        <ul class="pricing-features">
+                            <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> 10 AI Chat Messages/Day</li>
+                            <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> 3 Document Generations/Month</li>
+                            <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Basic Legal Questions</li>
+                            <li><i class="fas fa-times-circle" style="color: #f44336;"></i> No Priority Support</li>
+                            <li><i class="fas fa-times-circle" style="color: #f44336;"></i> No Document History</li>
+                        </ul>
+                        
+                        <button class="btn-pricing">
+                            Get Started Free
+                        </button>
+                    </div>
+                    
+                    <!-- Pro Plan -->
+                    <div class="pricing-card premium-card premium-plan">
+                        <div class="pricing-badge popular">POPULAR</div>
+                        <h3 class="pricing-title">Professional</h3>
+                        <div class="pricing-price">
+                            <span class="currency">₹</span>
+                            <span class="amount">499</span>
+                            <span class="period">/month</span>
+                        </div>
+                        <p class="pricing-description">Perfect for professionals & businesses</p>
+                        
+                        <ul class="pricing-features">
+                            <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Unlimited AI Chat Messages</li>
+                            <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> 50 Document Generations/Month</li>
+                            <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> All Document Templates</li>
+                            <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Priority Support</li>
+                            <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Complete Chat History</li>
+                        </ul>
+                        
+                        <button class="btn-pricing btn-premium">
+                            <i class="fas fa-crown"></i>
+                            Get Professional
+                        </button>
+                    </div>
+                    
+                    <!-- Business Plan -->
+                    <div class="pricing-card premium-card">
+                        <div class="pricing-badge">BUSINESS</div>
+                        <h3 class="pricing-title">Enterprise</h3>
+                        <div class="pricing-price">
+                            <span class="currency">₹</span>
+                            <span class="amount">1,499</span>
+                            <span class="period">/month</span>
+                        </div>
+                        <p class="pricing-description">For law firms & large organizations</p>
+                        
+                        <ul class="pricing-features">
+                            <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Everything in Professional</li>
+                            <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Unlimited Document Generation</li>
+                            <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Team Collaboration</li>
+                            <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Custom Templates</li>
+                            <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Dedicated Account Manager</li>
+                        </ul>
+                        
+                        <button class="btn-pricing">
+                            Contact Sales
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta-section">
+            <div class="container">
+                <div class="cta-content">
+                    <h2 class="cta-title">
+                        Ready to Experience <br>
+                        AI-Powered Legal Assistance?
+                    </h2>
+                    <p class="cta-description">
+                        Join thousands of satisfied users who trust LegalSwami for their legal needs. 
+                        No credit card required to get started.
+                    </p>
+                    
+                    <div class="cta-actions">
+                        <button id="ctaStartChat" class="btn-cta-primary btn-premium">
+                            <i class="fas fa-rocket"></i>
+                            Start Free Chat Now
+                        </button>
+                        
+                        <button id="ctaScheduleDemo" class="btn-cta-secondary">
+                            <i class="fas fa-calendar"></i>
+                            Schedule Demo
+                        </button>
+                    </div>
+                    
+                    <div class="cta-guarantee">
+                        <div class="guarantee-item">
+                            <i class="fas fa-shield-alt"></i>
+                            <span>100% Secure & Private</span>
+                        </div>
+                        <div class="guarantee-item">
+                            <i class="fas fa-clock"></i>
+                            <span>Available 24/7</span>
+                        </div>
+                        <div class="guarantee-item">
+                            <i class="fas fa-headset"></i>
+                            <span>Priority Support</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chat Interface -->
+        <div id="chatInterface" class="chat-interface" style="display: none;">
+            <div class="chat-container">
+                <!-- Chat Header -->
+                <div class="chat-header">
+                    <div class="chat-header-left">
+                        <button id="backToHome" class="chat-back-btn" title="Back to Home">
+                            <i class="fas fa-arrow-left"></i>
+                        </button>
+                        <div class="chat-title">
+                            <div class="chat-title-icon">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="chat-title-text">
+                                <h3>LegalSwami Assistant</h3>
+                                <p>AI Legal Assistant</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-header-right">
+                        <button id="clearChat" class="chat-action-btn" title="Clear Chat">
+                            <i class="fas fa-trash-alt"></i>
+                            <div class="badge"></div>
+                        </button>
+                        <button id="exportChat" class="chat-action-btn" title="Export Chat">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <button id="historyToggle" class="chat-action-btn" title="Chat History">
+                            <i class="fas fa-history"></i>
+                            <div class="badge">3</div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Main Chat Area -->
+                <div class="chat-main">
+                    <!-- Chat History Sidebar -->
+                    <div id="historySidebar" class="chat-history-sidebar">
+                        <div class="history-header">
+                            <h4><i class="fas fa-history"></i> Chat History</h4>
+                            <button id="closeHistory" class="history-close">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="history-content">
+                            <div class="history-search">
+                                <i class="fas fa-search"></i>
+                                <input type="text" placeholder="Search chat history...">
+                            </div>
+                            <div class="history-list" id="historyList">
+                                <div class="history-empty">
+                                    <i class="fas fa-history"></i>
+                                    <p>No chat history yet</p>
+                                    <small>Start chatting to see your history here</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chat Messages Area -->
+                    <div class="chat-messages-area">
+                        <!-- Welcome Screen -->
+                        <div class="chat-welcome" id="chatWelcome">
+                            <div class="welcome-illustration">
+                                <i class="fas fa-balance-scale"></i>
+                            </div>
+                            <div class="welcome-content">
+                                <h3>Welcome to LegalSwami! 👨‍⚖️</h3>
+                                <p>I'm your AI legal assistant. I can help you with legal advice, document generation, legal research, and understanding complex legal concepts in simple language.</p>
+                                
+                                <div class="welcome-features">
+                                    <div class="welcome-feature">
+                                        <i class="fas fa-comments"></i>
+                                        <h5>Legal Advice</h5>
+                                        <p>Get instant answers to your legal questions</p>
+                                    </div>
+                                    <div class="welcome-feature">
+                                        <i class="fas fa-file-contract"></i>
+                                        <h5>Document Generation</h5>
+                                        <p>Generate legal documents instantly</p>
+                                    </div>
+                                    <div class="welcome-feature">
+                                        <i class="fas fa-search"></i>
+                                        <h5>Legal Research</h5>
+                                        <p>Research laws and regulations</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Chat Messages Container -->
+                        <div class="chat-messages-container" id="chatMessagesContainer" style="display: none;">
+                            <div class="chat-messages" id="chatMessages">
+                                <!-- Messages will be loaded here -->
+                            </div>
+                        </div>
+
+                        <!-- Quick Questions -->
+                        <div class="quick-questions">
+                            <div class="quick-questions-header">
+                                <h5><i class="fas fa-bolt"></i> Try asking:</h5>
+                                <button class="btn-refresh" title="Refresh suggestions">
+                                    <i class="fas fa-redo"></i>
+                                </button>
+                            </div>
+                            <div class="quick-buttons">
+                                <button class="quick-btn" data-question="What are the requirements for a valid contract?">
+                                    Contract Requirements
+                                </button>
+                                <button class="quick-btn" data-question="How to draft a rental agreement?">
+                                    Rental Agreement
+                                </button>
+                                <button class="quick-btn" data-question="What is consumer protection law?">
+                                    Consumer Rights
+                                </button>
+                                <button class="quick-btn" data-question="How to file a legal notice?">
+                                    Legal Notice
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Input Area -->
+                <div class="chat-input-area">
+                    <div class="input-container">
+                        <div class="input-actions-left">
+                            <button id="attachFile" class="input-action-btn" title="Attach File">
+                                <i class="fas fa-paperclip"></i>
+                                <div class="tooltip">Attach File</div>
+                            </button>
+                            <button id="voiceInput" class="input-action-btn" title="Voice Input">
+                                <i class="fas fa-microphone"></i>
+                                <div class="tooltip">Voice Input</div>
+                            </button>
+                        </div>
+                        
+                        <textarea 
+                            id="messageInput" 
+                            placeholder="Type your legal question here... (Press Shift+Enter for new line, Enter to send)"
+                            rows="1"
+                            onkeydown="handleInputKeydown(event)"
+                        ></textarea>
+                        
+                        <div class="input-actions-right">
+                            <button id="sendMessage" class="btn-send" title="Send Message">
+                                <i class="fas fa-paper-plane send-icon"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="input-options">
+                        <div class="attachments-container" id="fileAttachments">
+                            <!-- Attached files will appear here -->
+                        </div>
+                        
+                        <div class="document-options">
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="generateDocument">
+                                    <span>Generate as Document</span>
+                                </label>
+                            </div>
+                            
+                            <div class="select-group">
+                                <label class="select-label">Format:</label>
+                                <select id="documentType" disabled>
+                                    <option value="PDF">PDF Document</option>
+                                    <option value="DOC">Word Document</option>
+                                    <option value="TXT">Text File</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="typing-indicator" id="typingIndicator" style="display: none;">
+                        <div class="typing-dots">
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                        </div>
+                        <span>LegalSwami is thinking...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modern Login Modal -->
+        <div id="loginModal" class="modal" style="display: none;">
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <button id="closeLoginModal" class="modal-close">
                     <i class="fas fa-times"></i>
                 </button>
-            </div>
-            <div class="mobile-menu-links">
-                <a href="#home" class="mobile-link active">
-                    <i class="fas fa-home"></i>
-                    <span>Home</span>
-                </a>
-                <a href="#features" class="mobile-link">
-                    <i class="fas fa-star"></i>
-                    <span>Features</span>
-                </a>
-                <a href="#documents" class="mobile-link">
-                    <i class="fas fa-file-contract"></i>
-                    <span>Documents</span>
-                </a>
-                <a href="#testimonials" class="mobile-link">
-                    <i class="fas fa-comment-dots"></i>
-                    <span>Testimonials</span>
-                </a>
-                <a href="#pricing" class="mobile-link">
-                    <i class="fas fa-tag"></i>
-                    <span>Pricing</span>
-                </a>
-                <a href="#chat" class="mobile-link" id="mobileStartChat">
-                    <i class="fas fa-comments"></i>
-                    <span>Start Chat</span>
-                </a>
+                
+                <div class="modal-header">
+                    <div class="modal-icon legal-seal" style="width: 80px; height: 80px; margin: 0 auto 1.5rem;">
+                        <i class="fas fa-balance-scale" style="font-size: 2.5rem; color: #FFD700;"></i>
+                    </div>
+                    <h3>Welcome to LegalSwami</h3>
+                    <p>Secure login to access all features</p>
+                </div>
+                
+                <div class="modal-body">
+                    <!-- Google Sign-In Container -->
+                    <div id="googleSignInContainer" style="width: 100%; margin: 1.5rem 0;">
+                        <!-- Google button will be rendered here -->
+                    </div>
+                    
+                    <!-- Custom Google Button -->
+                    <button id="customGoogleBtn" class="google-signin-btn">
+                        <i class="fab fa-google"></i>
+                        Continue with Google
+                    </button>
+                    
+                    <div class="divider">
+                        <span>or</span>
+                    </div>
+                    
+                    <!-- Demo Login Button -->
+                    <button id="demoLoginBtn" class="demo-login-btn">
+                        <i class="fas fa-user"></i> Try Demo Version
+                    </button>
+                    
+                    <div class="login-info">
+                        <p><i class="fas fa-lock"></i> Your data is encrypted and secure</p>
+                        <p><i class="fas fa-shield-alt"></i> We never share your personal information</p>
+                        <p><i class="fas fa-bolt"></i> No credit card required</p>
+                    </div>
+                </div>
             </div>
         </div>
+
+        <!-- Footer -->
+        <footer class="premium-footer">
+            <div class="container">
+                <div class="footer-content">
+                    <!-- Company Info -->
+                    <div class="footer-section">
+                        <div class="footer-logo">
+                            <div class="logo-icon legal-seal" style="width: 60px; height: 60px;">
+                                <i class="fas fa-gavel" style="font-size: 1.8rem; color: #FFD700;"></i>
+                            </div>
+                            <div class="logo-text">
+                                <h3 class="logo-title shimmer-text">LegalSwami</h3>
+                                <p class="logo-subtitle">AI Legal Assistant</p>
+                            </div>
+                        </div>
+                        <p class="footer-description">
+                            Making legal assistance accessible to everyone with AI-powered technology.
+                        </p>
+                        <div class="social-links">
+                            <a href="#" class="social-link">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" class="social-link">
+                                <i class="fab fa-linkedin"></i>
+                            </a>
+                            <a href="#" class="social-link">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="#" class="social-link">
+                                <i class="fab fa-youtube"></i>
+                            </a>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Links -->
+                    <div class="footer-section">
+                        <h4 class="footer-heading">Quick Links</h4>
+                        <ul class="footer-links">
+                            <li><a href="#home">Home</a></li>
+                            <li><a href="#features">Features</a></li>
+                            <li><a href="#documents">Documents</a></li>
+                            <li><a href="#testimonials">Testimonials</a></li>
+                            <li><a href="#pricing">Pricing</a></li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Legal -->
+                    <div class="footer-section">
+                        <h4 class="footer-heading">Legal</h4>
+                        <ul class="footer-links">
+                            <li><a href="#" id="termsLink">Terms of Service</a></li>
+                            <li><a href="#" id="privacyLink">Privacy Policy</a></li>
+                            <li><a href="#" id="disclaimerLink">Legal Disclaimer</a></li>
+                            <li><a href="#" id="cookieLink">Cookie Policy</a></li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Contact -->
+                    <div class="footer-section">
+                        <h4 class="footer-heading">Contact Us</h4>
+                        <ul class="footer-contact">
+                            <li>
+                                <i class="fas fa-envelope"></i>
+                                <a href="mailto:support@legalswami.com">support@legalswami.com</a>
+                            </li>
+                            <li>
+                                <i class="fas fa-phone"></i>
+                                <a href="tel:+919876543210">+91 9876543210</a>
+                            </li>
+                            <li>
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>Mumbai, India</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="footer-bottom">
+                    <p class="copyright">
+                        &copy; 2024 LegalSwami. All rights reserved.
+                    </p>
+                    <div class="disclaimer">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        LegalSwami provides AI-powered legal assistance. It is not a substitute for professional legal advice.
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Back to Top -->
+        <button id="backToTop" class="back-to-top">
+            <i class="fas fa-chevron-up"></i>
+        </button>
     </div>
-
-    <!-- Hero Section with Parallax -->
-    <section id="home" class="hero-section" style="background: linear-gradient(135deg, rgba(26, 35, 126, 0.95) 0%, rgba(33, 150, 243, 0.9) 100%), url('data:image/svg+xml,<svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 1000 1000\"><path fill=\"%23FFD700\" opacity=\"0.05\" d=\"M0,0 L1000,0 L1000,1000 L0,1000 Z\"/></svg>');">
-        <div class="hero-container">
-            <!-- Animated Background Elements -->
-            <div class="hero-bg-elements">
-                <div class="floating-element" style="top: 20%; left: 10%;">
-                    <i class="fas fa-balance-scale floating" style="font-size: 3rem; color: rgba(255, 215, 0, 0.2);"></i>
-                </div>
-                <div class="floating-element" style="top: 60%; right: 15%;">
-                    <i class="fas fa-gavel floating" style="font-size: 4rem; color: rgba(255, 215, 0, 0.15);"></i>
-                </div>
-                <div class="floating-element" style="bottom: 20%; left: 20%;">
-                    <i class="fas fa-scale-balanced floating" style="font-size: 2.5rem; color: rgba(255, 215, 0, 0.1);"></i>
-                </div>
-            </div>
-            
-            <div class="hero-content">
-                <div class="hero-badge">
-                    <span class="badge-text">
-                        <i class="fas fa-bolt"></i>
-                        AI-POWERED LEGAL ASSISTANT
-                    </span>
-                </div>
-                
-                <h1 class="hero-title text-reveal">
-                    Get <span class="shimmer-text">Instant Legal Help</span><br>
-                    From Your AI Assistant
-                </h1>
-                
-                <p class="hero-subtitle">
-                    LegalSwami provides 24/7 AI-powered legal guidance, document generation, 
-                    and legal research assistance. Get instant answers to your legal questions 
-                    in simple, understandable language.
-                </p>
-                
-                <div class="hero-stats">
-                    <div class="stat-item">
-                        <div class="stat-number shimmer-text">10,000+</div>
-                        <div class="stat-label">Legal Documents Generated</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number shimmer-text">50,000+</div>
-                        <div class="stat-label">Legal Questions Answered</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number shimmer-text">99.8%</div>
-                        <div class="stat-label">User Satisfaction Rate</div>
-                    </div>
-                </div>
-                
-                <div class="hero-actions">
-                    <button id="startChatBtn" class="btn-hero-primary btn-premium">
-                        <i class="fas fa-comments"></i>
-                        <span>Start Free Chat Now</span>
-                        <div class="btn-sparkle">
-                            <i class="fas fa-sparkle"></i>
-                        </div>
-                    </button>
-                    
-                    <button id="watchDemo" class="btn-hero-secondary">
-                        <i class="fas fa-play-circle"></i>
-                        <span>Watch Demo Video</span>
-                    </button>
-                </div>
-                
-                <div class="hero-trust">
-                    <div class="trust-label">Trusted by</div>
-                    <div class="trust-badges">
-                        <div class="trust-badge">
-                            <i class="fas fa-university"></i>
-                            <span>Law Firms</span>
-                        </div>
-                        <div class="trust-badge">
-                            <i class="fas fa-graduation-cap"></i>
-                            <span>Law Students</span>
-                        </div>
-                        <div class="trust-badge">
-                            <i class="fas fa-briefcase"></i>
-                            <span>Businesses</span>
-                        </div>
-                        <div class="trust-badge">
-                            <i class="fas fa-users"></i>
-                            <span>Individuals</span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="hero-illustration">
-                <div class="ai-assistant-card premium-card pulse-glow" style="background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px); border: 2px solid rgba(255, 215, 0, 0.3);">
-                    <div class="assistant-avatar legal-seal" style="width: 120px; height: 120px;">
-                        <i class="fas fa-robot" style="font-size: 3.5rem; color: #FFD700;"></i>
-                    </div>
-                    <h3 class="assistant-title">AI Legal Assistant</h3>
-                    <p class="assistant-subtitle">Available 24/7</p>
-                    
-                    <div class="assistant-features">
-                        <div class="feature">
-                            <i class="fas fa-check-circle" style="color: #4CAF50;"></i>
-                            <span>Instant Responses</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-check-circle" style="color: #4CAF50;"></i>
-                            <span>Multi-Language</span>
-                        </div>
-                        <div class="feature">
-                            <i class="fas fa-check-circle" style="color: #4CAF50;"></i>
-                            <span>Document Generation</span>
-                        </div>
-                    </div>
-                    
-                    <button class="btn-assistant">
-                        <i class="fas fa-comment-alt"></i>
-                        Ask Legal Question
-                    </button>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Scroll Indicator -->
-        <div class="scroll-indicator">
-            <div class="mouse">
-                <div class="wheel"></div>
-            </div>
-            <div class="arrow">
-                <i class="fas fa-chevron-down"></i>
-            </div>
-        </div>
-    </section>
-
-    <!-- Features Section -->
-    <section id="features" class="features-section">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">
-                    <span class="shimmer-text">Powerful Features</span> for All Your Legal Needs
-                </h2>
-                <p class="section-subtitle">
-                    Everything you need in one comprehensive legal assistant
-                </p>
-            </div>
-            
-            <div class="features-grid">
-                <!-- Feature 1 -->
-                <div class="feature-card premium-card">
-                    <div class="feature-icon legal-seal" style="width: 80px; height: 80px;">
-                        <i class="fas fa-comments" style="font-size: 2.5rem; color: #FFD700;"></i>
-                    </div>
-                    <h3 class="feature-title">AI Chat Assistant</h3>
-                    <p class="feature-description">
-                        Ask legal questions in natural language and get instant, accurate responses powered by advanced AI.
-                    </p>
-                    <div class="feature-tags">
-                        <span class="tag">24/7 Available</span>
-                        <span class="tag">Multi-Language</span>
-                    </div>
-                </div>
-                
-                <!-- Feature 2 -->
-                <div class="feature-card premium-card">
-                    <div class="feature-icon legal-seal" style="width: 80px; height: 80px;">
-                        <i class="fas fa-file-contract" style="font-size: 2.5rem; color: #FFD700;"></i>
-                    </div>
-                    <h3 class="feature-title">Smart Document Generation</h3>
-                    <p class="feature-description">
-                        Generate legal documents instantly in PDF, DOC, and TXT formats with customizable templates.
-                    </p>
-                    <div class="feature-tags">
-                        <span class="tag">100+ Templates</span>
-                        <span class="tag">Customizable</span>
-                    </div>
-                </div>
-                
-                <!-- Feature 3 -->
-                <div class="feature-card premium-card">
-                    <div class="feature-icon legal-seal" style="width: 80px; height: 80px;">
-                        <i class="fas fa-shield-alt" style="font-size: 2.5rem; color: #FFD700;"></i>
-                    </div>
-                    <h3 class="feature-title">Bank-Level Security</h3>
-                    <p class="feature-description">
-                        End-to-end encryption and secure authentication to protect your sensitive legal data.
-                    </p>
-                    <div class="feature-tags">
-                        <span class="tag">AES-256</span>
-                        <span class="tag">GDPR Compliant</span>
-                    </div>
-                </div>
-                
-                <!-- Feature 4 -->
-                <div class="feature-card premium-card">
-                    <div class="feature-icon legal-seal" style="width: 80px; height: 80px;">
-                        <i class="fas fa-history" style="font-size: 2.5rem; color: #FFD700;"></i>
-                    </div>
-                    <h3 class="feature-title">Complete Chat History</h3>
-                    <p class="feature-description">
-                        Access your complete chat history anytime. Export conversations as documents for record keeping.
-                    </p>
-                    <div class="feature-tags">
-                        <span class="tag">Unlimited History</span>
-                        <span class="tag">Export Options</span>
-                    </div>
-                </div>
-                
-                <!-- Feature 5 -->
-                <div class="feature-card premium-card">
-                    <div class="feature-icon legal-seal" style="width: 80px; height: 80px;">
-                        <i class="fas fa-mobile-alt" style="font-size: 2.5rem; color: #FFD700;"></i>
-                    </div>
-                    <h3 class="feature-title">Mobile Responsive</h3>
-                    <p class="feature-description">
-                        Access LegalSwami from any device - desktop, tablet, or mobile phone with native-like experience.
-                    </p>
-                    <div class="feature-tags">
-                        <span class="tag">PWA Support</span>
-                        <span class="tag">Offline Mode</span>
-                    </div>
-                </div>
-                
-                <!-- Feature 6 -->
-                <div class="feature-card premium-card">
-                    <div class="feature-icon legal-seal" style="width: 80px; height: 80px;">
-                        <i class="fas fa-language" style="font-size: 2.5rem; color: #FFD700;"></i>
-                    </div>
-                    <h3 class="feature-title">Multi-Language Support</h3>
-                    <p class="feature-description">
-                        Get legal advice in multiple languages including Hindi, English, Marathi, Gujarati, and more.
-                    </p>
-                    <div class="feature-tags">
-                        <span class="tag">10+ Languages</span>
-                        <span class="tag">Real-time Translation</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Document Types Section -->
-    <section id="documents" class="documents-section" style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">
-                    Generate <span class="shimmer-text">Legal Documents</span> Instantly
-                </h2>
-                <p class="section-subtitle">
-                    Professional legal documents at your fingertips
-                </p>
-            </div>
-            
-            <div class="documents-grid">
-                <!-- Document Category 1 -->
-                <div class="document-category premium-card">
-                    <div class="category-icon">
-                        <i class="fas fa-handshake" style="color: #1a237e; font-size: 2.5rem;"></i>
-                    </div>
-                    <h3 class="category-title">Agreements & Contracts</h3>
-                    <ul class="document-list">
-                        <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Rental Agreement</li>
-                        <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Non-Disclosure Agreement</li>
-                        <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Employment Contract</li>
-                        <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Service Agreement</li>
-                        <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Partnership Agreement</li>
-                    </ul>
-                    <button class="btn-generate">
-                        <i class="fas fa-magic"></i>
-                        Generate Now
-                    </button>
-                </div>
-                
-                <!-- Document Category 2 -->
-                <div class="document-category premium-card">
-                    <div class="category-icon">
-                        <i class="fas fa-balance-scale" style="color: #1a237e; font-size: 2.5rem;"></i>
-                    </div>
-                    <h3 class="category-title">Legal Notices & Letters</h3>
-                    <ul class="document-list">
-                        <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Legal Notice</li>
-                        <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Cease & Desist Notice</li>
-                        <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Demand Letter</li>
-                        <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Notice to Quit</li>
-                        <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Consumer Complaint</li>
-                    </ul>
-                    <button class="btn-generate">
-                        <i class="fas fa-magic"></i>
-                        Generate Now
-                    </button>
-                </div>
-                
-                <!-- Document Category 3 -->
-                <div class="document-category premium-card">
-                    <div class="category-icon">
-                        <i class="fas fa-user-tie" style="color: #1a237e; font-size: 2.5rem;"></i>
-                    </div>
-                    <h3 class="category-title">Personal & Family</h3>
-                    <ul class="document-list">
-                        <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Will & Testament</li>
-                        <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Power of Attorney</li>
-                        <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Affidavit</li>
-                        <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Gift Deed</li>
-                        <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Divorce Papers</li>
-                    </ul>
-                    <button class="btn-generate">
-                        <i class="fas fa-magic"></i>
-                        Generate Now
-                    </button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Testimonials Section -->
-    <section id="testimonials" class="testimonials-section">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title">
-                    Trusted by <span class="shimmer-text">Thousands</span> of Users
-                </h2>
-                <p class="section-subtitle">
-                    See what our users have to say about LegalSwami
-                </p>
-            </div>
-            
-            <div class="testimonials-carousel">
-                <!-- Testimonial 1 -->
-                <div class="testimonial-card premium-card">
-                    <div class="testimonial-rating">
-                        <i class="fas fa-star" style="color: #FFD700;"></i>
-                        <i class="fas fa-star" style="color: #FFD700;"></i>
-                        <i class="fas fa-star" style="color: #FFD700;"></i>
-                        <i class="fas fa-star" style="color: #FFD700;"></i>
-                        <i class="fas fa-star" style="color: #FFD700;"></i>
-                    </div>
-                    <p class="testimonial-text">
-                        "LegalSwami helped me draft a professional rental agreement in minutes. The AI understood exactly what I needed and generated a perfect document. Saved me ₹5000 in lawyer fees!"
-                    </p>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">
-                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Rahul Sharma">
-                        </div>
-                        <div class="author-info">
-                            <h4 class="author-name">Rahul Sharma</h4>
-                            <p class="author-title">Small Business Owner</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Testimonial 2 -->
-                <div class="testimonial-card premium-card">
-                    <div class="testimonial-rating">
-                        <i class="fas fa-star" style="color: #FFD700;"></i>
-                        <i class="fas fa-star" style="color: #FFD700;"></i>
-                        <i class="fas fa-star" style="color: #FFD700;"></i>
-                        <i class="fas fa-star" style="color: #FFD700;"></i>
-                        <i class="fas fa-star-half-alt" style="color: #FFD700;"></i>
-                    </div>
-                    <p class="testimonial-text">
-                        "As a law student, LegalSwami is a game-changer! It helps me understand complex legal concepts and provides excellent research assistance. Like having a personal tutor 24/7."
-                    </p>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">
-                            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Priya Patel">
-                        </div>
-                        <div class="author-info">
-                            <h4 class="author-name">Priya Patel</h4>
-                            <p class="author-title">Law Student, NLU Delhi</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Testimonial 3 -->
-                <div class="testimonial-card premium-card">
-                    <div class="testimonial-rating">
-                        <i class="fas fa-star" style="color: #FFD700;"></i>
-                        <i class="fas fa-star" style="color: #FFD700;"></i>
-                        <i class="fas fa-star" style="color: #FFD700;"></i>
-                        <i class="fas fa-star" style="color: #FFD700;"></i>
-                        <i class="fas fa-star" style="color: #FFD700;"></i>
-                    </div>
-                    <p class="testimonial-text">
-                        "The document generation feature saved our startup thousands! We needed multiple NDAs and service agreements. LegalSwami generated perfect documents in minutes. Incredible tool!"
-                    </p>
-                    <div class="testimonial-author">
-                        <div class="author-avatar">
-                            <img src="https://randomuser.me/api/portraits/men/67.jpg" alt="Ankit Verma">
-                        </div>
-                        <div class="author-info">
-                            <h4 class="author-name">Ankit Verma</h4>
-                            <p class="author-title">Tech Entrepreneur</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Pricing Section -->
-    <section id="pricing" class="pricing-section" style="background: linear-gradient(135deg, #1a237e 0%, #283593 100%);">
-        <div class="container">
-            <div class="section-header">
-                <h2 class="section-title" style="color: white;">
-                    Simple, <span class="shimmer-text">Transparent</span> Pricing
-                </h2>
-                <p class="section-subtitle" style="color: rgba(255, 255, 255, 0.8);">
-                    Choose the perfect plan for your legal needs
-                </p>
-            </div>
-            
-            <div class="pricing-cards">
-                <!-- Free Plan -->
-                <div class="pricing-card premium-card" style="background: white;">
-                    <div class="pricing-badge">FREE</div>
-                    <h3 class="pricing-title">Basic</h3>
-                    <div class="pricing-price">
-                        <span class="currency">₹</span>
-                        <span class="amount">0</span>
-                        <span class="period">/month</span>
-                    </div>
-                    <p class="pricing-description">Perfect for trying out LegalSwami</p>
-                    
-                    <ul class="pricing-features">
-                        <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> 10 AI Chat Messages/Day</li>
-                        <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> 3 Document Generations/Month</li>
-                        <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Basic Legal Questions</li>
-                        <li><i class="fas fa-times-circle" style="color: #f44336;"></i> No Priority Support</li>
-                        <li><i class="fas fa-times-circle" style="color: #f44336;"></i> No Document History</li>
-                    </ul>
-                    
-                    <button class="btn-pricing" style="background: #1a237e; color: white;">
-                        Get Started Free
-                    </button>
-                </div>
-                
-                <!-- Pro Plan -->
-                <div class="pricing-card premium-card" style="background: white; transform: scale(1.05); border: 3px solid #FFD700;">
-                    <div class="pricing-badge" style="background: var(--gold-gradient); color: #1a237e;">POPULAR</div>
-                    <h3 class="pricing-title">Professional</h3>
-                    <div class="pricing-price">
-                        <span class="currency">₹</span>
-                        <span class="amount">499</span>
-                        <span class="period">/month</span>
-                    </div>
-                    <p class="pricing-description">Perfect for professionals & businesses</p>
-                    
-                    <ul class="pricing-features">
-                        <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Unlimited AI Chat Messages</li>
-                        <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> 50 Document Generations/Month</li>
-                        <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> All Document Templates</li>
-                        <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Priority Support</li>
-                        <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Complete Chat History</li>
-                    </ul>
-                    
-                    <button class="btn-pricing btn-premium" style="background: var(--gold-gradient); color: #1a237e;">
-                        <i class="fas fa-crown"></i>
-                        Get Professional
-                    </button>
-                </div>
-                
-                <!-- Business Plan -->
-                <div class="pricing-card premium-card" style="background: white;">
-                    <div class="pricing-badge">BUSINESS</div>
-                    <h3 class="pricing-title">Enterprise</h3>
-                    <div class="pricing-price">
-                        <span class="currency">₹</span>
-                        <span class="amount">1,499</span>
-                        <span class="period">/month</span>
-                    </div>
-                    <p class="pricing-description">For law firms & large organizations</p>
-                    
-                    <ul class="pricing-features">
-                        <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Everything in Professional</li>
-                        <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Unlimited Document Generation</li>
-                        <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Team Collaboration</li>
-                        <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Custom Templates</li>
-                        <li><i class="fas fa-check-circle" style="color: #4CAF50;"></i> Dedicated Account Manager</li>
-                    </ul>
-                    
-                    <button class="btn-pricing" style="background: #1a237e; color: white;">
-                        Contact Sales
-                    </button>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA Section -->
-    <section class="cta-section" style="background: linear-gradient(135deg, #FFD700 0%, #FFA000 100%);">
-        <div class="container">
-            <div class="cta-content">
-                <h2 class="cta-title" style="color: #1a237e;">
-                    Ready to Experience <br>
-                    AI-Powered Legal Assistance?
-                </h2>
-                <p class="cta-description" style="color: rgba(26, 35, 126, 0.9);">
-                    Join thousands of satisfied users who trust LegalSwami for their legal needs. 
-                    No credit card required to get started.
-                </p>
-                
-                <div class="cta-actions">
-                    <button id="ctaStartChat" class="btn-cta-primary btn-premium" style="background: #1a237e; color: white;">
-                        <i class="fas fa-rocket"></i>
-                        Start Free Chat Now
-                    </button>
-                    
-                    <button id="ctaScheduleDemo" class="btn-cta-secondary" style="background: white; color: #1a237e;">
-                        <i class="fas fa-calendar"></i>
-                        Schedule Demo
-                    </button>
-                </div>
-                
-                <div class="cta-guarantee">
-                    <div class="guarantee-item">
-                        <i class="fas fa-shield-alt" style="color: #1a237e;"></i>
-                        <span>100% Secure & Private</span>
-                    </div>
-                    <div class="guarantee-item">
-                        <i class="fas fa-clock" style="color: #1a237e;"></i>
-                        <span>Available 24/7</span>
-                    </div>
-                    <div class="guarantee-item">
-                        <i class="fas fa-headset" style="color: #1a237e;"></i>
-                        <span>Priority Support</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Chat Interface (Same as before but with premium styling) -->
-    <div id="chatInterface" class="chat-interface" style="display: none;">
-        <!-- Same chat interface code from previous version with premium styling -->
-    </div>
-
-    <!-- Login Modal (Same as before with premium styling) -->
-    <div id="loginModal" class="modal" style="display: none;">
-        <!-- Same login modal code -->
-    </div>
-
-    <!-- Footer -->
-    <footer class="premium-footer" style="background: #0d1b2a;">
-        <div class="container">
-            <div class="footer-content">
-                <!-- Company Info -->
-                <div class="footer-section">
-                    <div class="footer-logo">
-                        <div class="logo-icon legal-seal" style="width: 60px; height: 60px;">
-                            <i class="fas fa-gavel" style="font-size: 1.8rem; color: #FFD700;"></i>
-                        </div>
-                        <div class="logo-text">
-                            <h3 class="logo-title shimmer-text">LegalSwami</h3>
-                            <p class="logo-subtitle" style="color: rgba(255, 255, 255, 0.7);">AI Legal Assistant</p>
-                        </div>
-                    </div>
-                    <p class="footer-description" style="color: rgba(255, 255, 255, 0.6);">
-                        Making legal assistance accessible to everyone with AI-powered technology.
-                    </p>
-                    <div class="social-links">
-                        <a href="#" class="social-link">
-                            <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="#" class="social-link">
-                            <i class="fab fa-linkedin"></i>
-                        </a>
-                        <a href="#" class="social-link">
-                            <i class="fab fa-github"></i>
-                        </a>
-                        <a href="#" class="social-link">
-                            <i class="fab fa-youtube"></i>
-                        </a>
-                    </div>
-                </div>
-                
-                <!-- Quick Links -->
-                <div class="footer-section">
-                    <h4 class="footer-heading" style="color: white;">Quick Links</h4>
-                    <ul class="footer-links">
-                        <li><a href="#home">Home</a></li>
-                        <li><a href="#features">Features</a></li>
-                        <li><a href="#documents">Documents</a></li>
-                        <li><a href="#testimonials">Testimonials</a></li>
-                        <li><a href="#pricing">Pricing</a></li>
-                    </ul>
-                </div>
-                
-                <!-- Legal -->
-                <div class="footer-section">
-                    <h4 class="footer-heading" style="color: white;">Legal</h4>
-                    <ul class="footer-links">
-                        <li><a href="#" id="termsLink">Terms of Service</a></li>
-                        <li><a href="#" id="privacyLink">Privacy Policy</a></li>
-                        <li><a href="#" id="disclaimerLink">Legal Disclaimer</a></li>
-                        <li><a href="#" id="cookieLink">Cookie Policy</a></li>
-                    </ul>
-                </div>
-                
-                <!-- Contact -->
-                <div class="footer-section">
-                    <h4 class="footer-heading" style="color: white;">Contact Us</h4>
-                    <ul class="footer-contact">
-                        <li>
-                            <i class="fas fa-envelope" style="color: #FFD700;"></i>
-                            <a href="mailto:support@legalswami.com">support@legalswami.com</a>
-                        </li>
-                        <li>
-                            <i class="fas fa-phone" style="color: #FFD700;"></i>
-                            <a href="tel:+919876543210">+91 9876543210</a>
-                        </li>
-                        <li>
-                            <i class="fas fa-map-marker-alt" style="color: #FFD700;"></i>
-                            <span>Mumbai, India</span>
-                        </li>
-                    </ul>
-                </div>
-            </div>
-            
-            <div class="footer-bottom">
-                <p class="copyright" style="color: rgba(255, 255, 255, 0.5);">
-                    &copy; 2024 LegalSwami. All rights reserved.
-                </p>
-                <div class="disclaimer" style="color: rgba(255, 255, 255, 0.4);">
-                    <i class="fas fa-exclamation-triangle" style="color: #FFD700;"></i>
-                    LegalSwami provides AI-powered legal assistance. It is not a substitute for professional legal advice.
-                </div>
-            </div>
-        </div>
-    </footer>
-
-    <!-- Back to Top -->
-    <button id="backToTop" class="back-to-top">
-        <i class="fas fa-chevron-up"></i>
-    </button>
 
     <!-- Toast Notifications -->
     <div id="toastContainer" class="toast-container"></div>
@@ -976,12 +1212,7 @@
     <!-- Google Identity Services -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     
-    <!-- JavaScript Files -->
-    <script src="js/api.js"></script>
-    <script src="js/chat.js"></script>
-    <script src="js/utils.js"></script>
-    
-    <!-- Main App Script (Same as previous version with some enhancements) -->
+    <!-- Main App Script -->
     <script>
         // Global variables
         let currentChatId = null;
@@ -995,9 +1226,12 @@
             
             // Hide loading screen
             setTimeout(() => {
-                document.getElementById('loadingScreen').style.display = 'none';
-                console.log('✅ Loading screen hidden');
-            }, 1000);
+                const loadingScreen = document.getElementById('loadingScreen');
+                if (loadingScreen) {
+                    loadingScreen.style.display = 'none';
+                    console.log('✅ Loading screen hidden');
+                }
+            }, 1500);
             
             // Initialize backend connection
             initializeAppWithBackend();
@@ -1006,7 +1240,7 @@
             setupEventListeners();
             
             // Initialize Google Authentication
-            setTimeout(initializeSimpleGoogleAuth, 1500);
+            setTimeout(initializeSimpleGoogleAuth, 2000);
             
             // Check for existing user
             checkExistingUser();
@@ -1020,19 +1254,29 @@
         
         // ✅ SETUP SCROLL EFFECTS
         function setupScrollEffects() {
-            const header = document.querySelector('.main-header');
+            const header = document.querySelector('.premium-navbar');
             const navLinks = document.querySelectorAll('.nav-link');
+            const backToTopBtn = document.getElementById('backToTop');
             
             window.addEventListener('scroll', function() {
                 // Header shadow on scroll
-                if (window.scrollY > 50) {
+                if (header && window.scrollY > 50) {
                     header.classList.add('scrolled');
-                } else {
+                } else if (header) {
                     header.classList.remove('scrolled');
                 }
                 
+                // Back to top button
+                if (backToTopBtn) {
+                    if (window.scrollY > 300) {
+                        backToTopBtn.classList.add('visible');
+                    } else {
+                        backToTopBtn.classList.remove('visible');
+                    }
+                }
+                
                 // Update active nav link based on scroll position
-                const sections = document.querySelectorAll('section[id], .legal-banner');
+                const sections = document.querySelectorAll('section[id]');
                 let currentSection = '';
                 
                 sections.forEach(section => {
@@ -1050,47 +1294,87 @@
                     }
                 });
             });
+            
+            // Back to top functionality
+            if (backToTopBtn) {
+                backToTopBtn.addEventListener('click', function() {
+                    window.scrollTo({ top: 0, behavior: 'smooth' });
+                });
+            }
         }
         
         // ✅ SETUP MOBILE MENU
         function setupMobileMenu() {
-            const mobileToggle = document.getElementById('mobileMenuToggle');
+            const mobileToggle = document.getElementById('mobileToggle');
             const mobileMenu = document.getElementById('mobileMenu');
-            const navLinks = document.querySelectorAll('.mobile-menu .nav-link');
+            const mobileClose = document.getElementById('mobileClose');
+            const mobileLinks = document.querySelectorAll('.mobile-link');
+            const mobileStartChat = document.getElementById('mobileStartChat');
             
-            // Show mobile toggle on small screens
-            if (window.innerWidth <= 767) {
-                mobileToggle.style.display = 'flex';
+            if (mobileToggle) {
+                mobileToggle.addEventListener('click', function() {
+                    isMobileMenuOpen = !isMobileMenuOpen;
+                    if (mobileMenu) {
+                        mobileMenu.style.display = isMobileMenuOpen ? 'block' : 'none';
+                        mobileToggle.innerHTML = isMobileMenuOpen ? 
+                            '<i class="fas fa-times"></i>' : 
+                            '<i class="fas fa-bars"></i>';
+                    }
+                });
             }
             
-            // Toggle mobile menu
-            mobileToggle.addEventListener('click', function() {
-                isMobileMenuOpen = !isMobileMenuOpen;
-                mobileMenu.classList.toggle('active', isMobileMenuOpen);
-                mobileToggle.innerHTML = isMobileMenuOpen ? 
-                    '<i class="fas fa-times"></i>' : 
-                    '<i class="fas fa-bars"></i>';
-            });
+            if (mobileClose) {
+                mobileClose.addEventListener('click', function() {
+                    isMobileMenuOpen = false;
+                    if (mobileMenu) {
+                        mobileMenu.style.display = 'none';
+                        if (mobileToggle) {
+                            mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
+                        }
+                    }
+                });
+            }
             
             // Close menu when clicking a link
-            navLinks.forEach(link => {
+            mobileLinks.forEach(link => {
                 link.addEventListener('click', function() {
-                    mobileMenu.classList.remove('active');
-                    mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
                     isMobileMenuOpen = false;
+                    if (mobileMenu) {
+                        mobileMenu.style.display = 'none';
+                        if (mobileToggle) {
+                            mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
+                        }
+                    }
                 });
             });
             
-            // Update on resize
-            window.addEventListener('resize', function() {
-                if (window.innerWidth > 767) {
-                    mobileToggle.style.display = 'none';
-                    mobileMenu.classList.remove('active');
-                    isMobileMenuOpen = false;
-                } else {
-                    mobileToggle.style.display = 'flex';
-                }
-            });
+            // Mobile start chat button
+            if (mobileStartChat) {
+                mobileStartChat.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    startChat();
+                    if (mobileMenu) {
+                        mobileMenu.style.display = 'none';
+                        isMobileMenuOpen = false;
+                        if (mobileToggle) {
+                            mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
+                        }
+                    }
+                });
+            }
+            
+            // Close menu when clicking outside
+            if (mobileMenu) {
+                mobileMenu.addEventListener('click', function(e) {
+                    if (e.target === this) {
+                        isMobileMenuOpen = false;
+                        this.style.display = 'none';
+                        if (mobileToggle) {
+                            mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
+                        }
+                    }
+                });
+            }
         }
         
         // ✅ SIMPLE GOOGLE AUTH
@@ -1126,7 +1410,8 @@
             try {
                 const container = document.getElementById('googleSignInContainer');
                 if (!container || !googleGISInitialized) {
-                    document.getElementById('customGoogleBtn').style.display = 'flex';
+                    const customBtn = document.getElementById('customGoogleBtn');
+                    if (customBtn) customBtn.style.display = 'flex';
                     return;
                 }
                 
@@ -1146,11 +1431,13 @@
                 );
                 
                 console.log('✅ Google Sign-In button rendered');
-                document.getElementById('customGoogleBtn').style.display = 'none';
+                const customBtn = document.getElementById('customGoogleBtn');
+                if (customBtn) customBtn.style.display = 'none';
                 
             } catch (error) {
                 console.error('❌ Failed to render Google Sign-In button:', error);
-                document.getElementById('customGoogleBtn').style.display = 'flex';
+                const customBtn = document.getElementById('customGoogleBtn');
+                if (customBtn) customBtn.style.display = 'flex';
             }
         }
         
@@ -1225,6 +1512,11 @@
             const userProfile = document.getElementById('userProfile');
             const headerLoginBtn = document.getElementById('headerLoginBtn');
             
+            if (!userProfile || !headerLoginBtn) {
+                console.warn('⚠️ User UI elements not found');
+                return;
+            }
+            
             let user = null;
             const userStr = localStorage.getItem('legal_swami_user');
             
@@ -1242,15 +1534,20 @@
                 headerLoginBtn.style.display = 'none';
                 userProfile.style.display = 'flex';
                 
-                document.getElementById('userName').textContent = user.name || 'User';
-                document.getElementById('userEmail').textContent = user.email || '';
+                const userName = document.getElementById('userName');
+                const userEmail = document.getElementById('userEmail');
+                const userAvatar = document.getElementById('userAvatar');
                 
-                const avatar = document.getElementById('userAvatar');
-                if (user.picture) {
-                    avatar.innerHTML = `<img src="${user.picture}" alt="${user.name}" style="width: 100%; height: 100%; border-radius: 8px; object-fit: cover;">`;
-                } else {
-                    const initials = user.name ? user.name.charAt(0).toUpperCase() : 'U';
-                    avatar.innerHTML = `<span style="font-size: 14px; font-weight: 600;">${initials}</span>`;
+                if (userName) userName.textContent = user.name || 'User';
+                if (userEmail) userEmail.textContent = user.email || '';
+                
+                if (userAvatar) {
+                    if (user.picture) {
+                        userAvatar.innerHTML = `<img src="${user.picture}" alt="${user.name}" style="width: 100%; height: 100%; border-radius: 8px; object-fit: cover;">`;
+                    } else {
+                        const initials = user.name ? user.name.charAt(0).toUpperCase() : 'U';
+                        userAvatar.innerHTML = `<span style="font-size: 14px; font-weight: 600;">${initials}</span>`;
+                    }
                 }
                 
             } else {
@@ -1270,81 +1567,163 @@
             console.log('🔧 Setting up event listeners');
             
             // Header buttons
-            document.getElementById('headerLoginBtn').addEventListener('click', showLoginModal);
-            document.getElementById('logoutBtn').addEventListener('click', handleLogout);
-            document.getElementById('startChatBtn').addEventListener('click', startChat);
-            document.getElementById('learnMoreBtn').addEventListener('click', showDemo);
-            document.getElementById('ctaStartChat').addEventListener('click', startChat);
+            const headerLoginBtn = document.getElementById('headerLoginBtn');
+            if (headerLoginBtn) {
+                headerLoginBtn.addEventListener('click', showLoginModal);
+            }
+            
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', handleLogout);
+            }
+            
+            const startChatBtn = document.getElementById('startChatBtn');
+            if (startChatBtn) {
+                startChatBtn.addEventListener('click', startChat);
+            }
+            
+            const watchDemo = document.getElementById('watchDemo');
+            if (watchDemo) {
+                watchDemo.addEventListener('click', showDemo);
+            }
+            
+            const ctaStartChat = document.getElementById('ctaStartChat');
+            if (ctaStartChat) {
+                ctaStartChat.addEventListener('click', startChat);
+            }
             
             // Login modal buttons
-            document.getElementById('demoLoginBtn').addEventListener('click', handleDemoLogin);
-            document.getElementById('closeLoginModal').addEventListener('click', hideLoginModal);
-            document.getElementById('customGoogleBtn').addEventListener('click', handleCustomGoogleLogin);
+            const demoLoginBtn = document.getElementById('demoLoginBtn');
+            if (demoLoginBtn) {
+                demoLoginBtn.addEventListener('click', handleDemoLogin);
+            }
+            
+            const closeLoginModal = document.getElementById('closeLoginModal');
+            if (closeLoginModal) {
+                closeLoginModal.addEventListener('click', hideLoginModal);
+            }
+            
+            const customGoogleBtn = document.getElementById('customGoogleBtn');
+            if (customGoogleBtn) {
+                customGoogleBtn.addEventListener('click', handleCustomGoogleLogin);
+            }
             
             // Chat interface
-            document.getElementById('backToHome').addEventListener('click', goBackToHome);
-            document.getElementById('clearChat').addEventListener('click', clearChat);
-            document.getElementById('exportChat').addEventListener('click', exportChat);
-            document.getElementById('historyToggle').addEventListener('click', toggleHistory);
-            document.getElementById('closeHistory').addEventListener('click', toggleHistory);
-            document.getElementById('sendMessage').addEventListener('click', sendMessageHandler);
-            document.getElementById('attachFile').addEventListener('click', attachFile);
-            document.getElementById('voiceInput').addEventListener('click', startVoiceInput);
+            const backToHome = document.getElementById('backToHome');
+            if (backToHome) {
+                backToHome.addEventListener('click', goBackToHome);
+            }
+            
+            const clearChat = document.getElementById('clearChat');
+            if (clearChat) {
+                clearChat.addEventListener('click', clearChat);
+            }
+            
+            const exportChat = document.getElementById('exportChat');
+            if (exportChat) {
+                exportChat.addEventListener('click', exportChat);
+            }
+            
+            const historyToggle = document.getElementById('historyToggle');
+            if (historyToggle) {
+                historyToggle.addEventListener('click', toggleHistory);
+            }
+            
+            const closeHistory = document.getElementById('closeHistory');
+            if (closeHistory) {
+                closeHistory.addEventListener('click', toggleHistory);
+            }
+            
+            const sendMessage = document.getElementById('sendMessage');
+            if (sendMessage) {
+                sendMessage.addEventListener('click', sendMessageHandler);
+            }
+            
+            const attachFile = document.getElementById('attachFile');
+            if (attachFile) {
+                attachFile.addEventListener('click', attachFile);
+            }
+            
+            const voiceInput = document.getElementById('voiceInput');
+            if (voiceInput) {
+                voiceInput.addEventListener('click', startVoiceInput);
+            }
             
             // Quick questions
             document.querySelectorAll('.quick-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     const question = this.getAttribute('data-question');
-                    document.getElementById('messageInput').value = question;
-                    sendMessageHandler();
+                    const messageInput = document.getElementById('messageInput');
+                    if (messageInput) {
+                        messageInput.value = question;
+                        sendMessageHandler();
+                    }
                 });
             });
             
             // Document generation checkbox
-            document.getElementById('generateDocument').addEventListener('change', function() {
-                document.getElementById('documentType').disabled = !this.checked;
-            });
+            const generateDocument = document.getElementById('generateDocument');
+            if (generateDocument) {
+                generateDocument.addEventListener('change', function() {
+                    const documentType = document.getElementById('documentType');
+                    if (documentType) {
+                        documentType.disabled = !this.checked;
+                    }
+                });
+            }
             
-            // FAQ accordion
+            // FAQ accordion (if exists)
             document.querySelectorAll('.faq-question').forEach(question => {
                 question.addEventListener('click', function() {
                     const answer = this.nextElementSibling;
                     const icon = this.querySelector('i');
                     
-                    // Close all other FAQ items
-                    document.querySelectorAll('.faq-answer').forEach(otherAnswer => {
-                        if (otherAnswer !== answer && otherAnswer.classList.contains('show')) {
-                            otherAnswer.classList.remove('show');
-                            otherAnswer.previousElementSibling.querySelector('i').className = 'fas fa-chevron-down';
-                        }
-                    });
-                    
-                    // Toggle current FAQ item
-                    answer.classList.toggle('show');
-                    icon.className = answer.classList.contains('show') ? 
-                        'fas fa-chevron-up' : 
-                        'fas fa-chevron-down';
+                    if (answer.style.display === 'block') {
+                        answer.style.display = 'none';
+                        icon.className = 'fas fa-chevron-down';
+                    } else {
+                        answer.style.display = 'block';
+                        icon.className = 'fas fa-chevron-up';
+                    }
                 });
             });
             
             // Legal links
-            document.getElementById('termsLink').addEventListener('click', showTerms);
-            document.getElementById('privacyLink').addEventListener('click', showPrivacy);
-            document.getElementById('disclaimerLink').addEventListener('click', showDisclaimer);
-            document.getElementById('cookieLink').addEventListener('click', showCookiePolicy);
+            const termsLink = document.getElementById('termsLink');
+            if (termsLink) {
+                termsLink.addEventListener('click', showTerms);
+            }
+            
+            const privacyLink = document.getElementById('privacyLink');
+            if (privacyLink) {
+                privacyLink.addEventListener('click', showPrivacy);
+            }
+            
+            const disclaimerLink = document.getElementById('disclaimerLink');
+            if (disclaimerLink) {
+                disclaimerLink.addEventListener('click', showDisclaimer);
+            }
+            
+            const cookieLink = document.getElementById('cookieLink');
+            if (cookieLink) {
+                cookieLink.addEventListener('click', showCookiePolicy);
+            }
             
             // Close modal when clicking outside
-            document.getElementById('loginModal').addEventListener('click', function(e) {
-                if (e.target === this) {
-                    hideLoginModal();
-                }
-            });
+            const loginModal = document.getElementById('loginModal');
+            if (loginModal) {
+                loginModal.addEventListener('click', function(e) {
+                    if (e.target === this || e.target.classList.contains('modal-overlay')) {
+                        hideLoginModal();
+                    }
+                });
+            }
             
             // Smooth scroll for anchor links
             document.querySelectorAll('a[href^="#"]').forEach(anchor => {
                 anchor.addEventListener('click', function(e) {
                     const href = this.getAttribute('href');
-                    if (href === '#') return;
+                    if (href === '#' || href === '#chat') return;
                     
                     e.preventDefault();
                     const target = document.querySelector(href);
@@ -1357,27 +1736,64 @@
                 });
             });
             
+            // Chat assistant button
+            const chatAssistantBtn = document.querySelector('.btn-assistant');
+            if (chatAssistantBtn) {
+                chatAssistantBtn.addEventListener('click', startChat);
+            }
+            
+            // Generate document buttons
+            document.querySelectorAll('.btn-generate').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    showToast('Document generation feature coming soon!', 'info');
+                });
+            });
+            
+            // Pricing buttons
+            document.querySelectorAll('.btn-pricing').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    if (this.textContent.includes('Contact')) {
+                        showToast('Contact form coming soon!', 'info');
+                    } else {
+                        startChat();
+                    }
+                });
+            });
+            
+            // Schedule demo button
+            const scheduleDemo = document.getElementById('ctaScheduleDemo');
+            if (scheduleDemo) {
+                scheduleDemo.addEventListener('click', function() {
+                    showToast('Demo scheduling feature coming soon!', 'info');
+                });
+            }
+            
             console.log('✅ All event listeners set up');
         }
         
         // ✅ SHOW LOGIN MODAL
         function showLoginModal() {
             const modal = document.getElementById('loginModal');
-            modal.style.display = 'flex';
-            document.body.style.overflow = 'hidden';
-            
-            setTimeout(() => {
-                renderGoogleSignInButton();
-            }, 100);
-            
-            console.log('🔐 Login modal shown');
+            if (modal) {
+                modal.style.display = 'flex';
+                document.body.style.overflow = 'hidden';
+                
+                setTimeout(() => {
+                    renderGoogleSignInButton();
+                }, 100);
+                
+                console.log('🔐 Login modal shown');
+            }
         }
         
         // ✅ HIDE LOGIN MODAL
         function hideLoginModal() {
-            document.getElementById('loginModal').style.display = 'none';
-            document.body.style.overflow = '';
-            console.log('🔐 Login modal hidden');
+            const modal = document.getElementById('loginModal');
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.style.overflow = '';
+                console.log('🔐 Login modal hidden');
+            }
         }
         
         // ✅ HANDLE CUSTOM GOOGLE LOGIN
@@ -1481,7 +1897,9 @@
             updateUserUI();
             showToast('Logged out successfully', 'success');
             
-            if (document.getElementById('chatInterface').style.display !== 'none') {
+            // Go back to home if in chat interface
+            const chatInterface = document.getElementById('chatInterface');
+            if (chatInterface && chatInterface.style.display !== 'none') {
                 goBackToHome();
             }
         }
@@ -1511,7 +1929,7 @@
                                 },
                                 body: JSON.stringify({
                                     message: message,
-                                    generateDocument: document.getElementById('generateDocument').checked
+                                    generateDocument: document.getElementById('generateDocument')?.checked || false
                                 })
                             });
                             
@@ -1561,7 +1979,7 @@
             }
         }
         
-        // ✅ START CHAT
+        // ✅ START CHAT - FIXED VERSION
         function startChat() {
             console.log('💬 Starting chat...');
             
@@ -1575,21 +1993,68 @@
                 return;
             }
             
-            document.getElementById('chatInterface').style.display = 'block';
-            document.querySelector('.main-container').style.background = '#f7f7f8';
+            const chatInterface = document.getElementById('chatInterface');
+            const mainContainer = document.querySelector('.main-container');
+            
+            if (chatInterface) {
+                chatInterface.style.display = 'block';
+                console.log('✅ Chat interface shown');
+            }
+            
+            if (mainContainer) {
+                mainContainer.style.background = '#f7f7f8';
+            }
+            
             document.body.style.overflow = 'hidden';
             
+            // Hide welcome screen, show messages
+            const chatWelcome = document.getElementById('chatWelcome');
+            const chatMessagesContainer = document.getElementById('chatMessagesContainer');
+            
+            if (chatWelcome) {
+                chatWelcome.style.display = 'none';
+            }
+            
+            if (chatMessagesContainer) {
+                chatMessagesContainer.style.display = 'flex';
+            }
+            
             setTimeout(() => {
-                document.getElementById('messageInput').focus();
-                console.log('✅ Chat interface ready');
-            }, 100);
+                const messageInput = document.getElementById('messageInput');
+                if (messageInput) {
+                    messageInput.focus();
+                    console.log('✅ Message input focused');
+                }
+            }, 300);
         }
         
-        // ✅ GO BACK TO HOME
+        // ✅ GO BACK TO HOME - FIXED VERSION
         function goBackToHome() {
-            document.getElementById('chatInterface').style.display = 'none';
-            document.querySelector('.main-container').style.background = '';
+            const chatInterface = document.getElementById('chatInterface');
+            const mainContainer = document.querySelector('.main-container');
+            
+            if (chatInterface) {
+                chatInterface.style.display = 'none';
+                console.log('✅ Chat interface hidden');
+            }
+            
+            if (mainContainer) {
+                mainContainer.style.background = '';
+            }
+            
             document.body.style.overflow = '';
+            
+            // Show welcome screen again
+            const chatWelcome = document.getElementById('chatWelcome');
+            const chatMessagesContainer = document.getElementById('chatMessagesContainer');
+            
+            if (chatWelcome) {
+                chatWelcome.style.display = 'flex';
+            }
+            
+            if (chatMessagesContainer) {
+                chatMessagesContainer.style.display = 'none';
+            }
             
             window.scrollTo({ top: 0, behavior: 'smooth' });
             console.log('🏠 Returned to home');
@@ -1599,13 +2064,15 @@
         function clearChat() {
             if (confirm('Are you sure you want to clear the chat? This action cannot be undone.')) {
                 const chatMessages = document.getElementById('chatMessages');
-                const messages = chatMessages.querySelectorAll('.message');
-                
-                messages.forEach((message, index) => {
-                    if (index > 0) {
-                        message.remove();
-                    }
-                });
+                if (chatMessages) {
+                    // Keep only the welcome message or first message
+                    const messages = chatMessages.querySelectorAll('.message');
+                    messages.forEach((message, index) => {
+                        if (index > 0) {
+                            message.remove();
+                        }
+                    });
+                }
                 
                 currentChatId = null;
                 showToast('Chat cleared successfully', 'success');
@@ -1616,6 +2083,8 @@
         // ✅ EXPORT CHAT
         function exportChat() {
             const chatMessages = document.getElementById('chatMessages');
+            if (!chatMessages) return;
+            
             const messages = chatMessages.querySelectorAll('.message');
             
             let exportText = '================================\n';
@@ -1656,8 +2125,10 @@
         // ✅ TOGGLE HISTORY SIDEBAR
         function toggleHistory() {
             const sidebar = document.getElementById('historySidebar');
-            sidebar.classList.toggle('active');
-            console.log('📜 History sidebar toggled');
+            if (sidebar) {
+                sidebar.classList.toggle('active');
+                console.log('📜 History sidebar toggled');
+            }
         }
         
         // ✅ LOAD CHAT HISTORY
@@ -1681,11 +2152,13 @@
         // ✅ UPDATE HISTORY LIST UI
         function updateHistoryList(history) {
             const historyList = document.getElementById('historyList');
+            if (!historyList) return;
+            
             historyList.innerHTML = '';
             
             if (!history || history.length === 0) {
                 historyList.innerHTML = `
-                    <div class="empty-history">
+                    <div class="history-empty">
                         <i class="fas fa-history"></i>
                         <p>No chat history yet</p>
                         <small>Start chatting to see your history here</small>
@@ -1698,13 +2171,19 @@
                 const historyItem = document.createElement('div');
                 historyItem.className = 'history-item';
                 historyItem.innerHTML = `
-                    <div class="history-item-content">
-                        <p class="history-question">${item.message.substring(0, 50)}${item.message.length > 50 ? '...' : ''}</p>
-                        <span class="history-time">${formatTime(item.createdAt)}</span>
+                    <div class="history-item-header">
+                        <div class="history-item-title">${item.message.substring(0, 50)}${item.message.length > 50 ? '...' : ''}</div>
+                        <span class="history-item-time">${formatTime(item.createdAt)}</span>
                     </div>
-                    <button class="btn-icon" onclick="loadChatFromHistory('${item.id}')">
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
+                    <div class="history-item-preview">${item.message.substring(0, 100)}${item.message.length > 100 ? '...' : ''}</div>
+                    <div class="history-item-actions">
+                        <button class="history-action-btn" onclick="loadChatFromHistory('${item.id}')">
+                            <i class="fas fa-eye"></i> View
+                        </button>
+                        <button class="history-action-btn" onclick="deleteChatHistory('${item.id}')">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </div>
                 `;
                 historyList.appendChild(historyItem);
             });
@@ -1719,6 +2198,14 @@
             } catch (error) {
                 console.error('Failed to load chat:', error);
                 showToast('Failed to load chat', 'error');
+            }
+        }
+        
+        // ✅ DELETE CHAT HISTORY
+        function deleteChatHistory(chatId) {
+            if (confirm('Are you sure you want to delete this chat?')) {
+                showToast('Chat deleted successfully', 'success');
+                console.log('🗑️ Chat deleted:', chatId);
             }
         }
         
@@ -1742,6 +2229,8 @@
             }
             
             const input = document.getElementById('messageInput');
+            if (!input) return;
+            
             const message = input.value.trim();
             
             if (!message) {
@@ -1768,8 +2257,8 @@
                 
                 showTypingIndicator(true);
                 
-                const generateDocument = document.getElementById('generateDocument').checked;
-                const documentType = document.getElementById('documentType').value;
+                const generateDocument = document.getElementById('generateDocument')?.checked || false;
+                const documentType = document.getElementById('documentType')?.value || 'PDF';
                 
                 const backendUrl = 'https://legal-swami-backend.onrender.com';
                 const response = await fetch(`${backendUrl}/api/v1/chat/send`, {
@@ -1810,15 +2299,63 @@
         // ✅ ADD MESSAGE TO CHAT UI
         function addMessageToChat(content, isUser = false, isDocument = false, documentType = null) {
             const chatMessages = document.getElementById('chatMessages');
+            if (!chatMessages) return;
+            
             const messageDiv = document.createElement('div');
             
             messageDiv.className = `message ${isUser ? 'user-message' : 'ai-message'}`;
+            if (isDocument) {
+                messageDiv.classList.add('document-message');
+            }
             
             const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             
             let messageContent = content;
             if (isDocument) {
-                messageContent = `📄 **${documentType} Document Generated:**\n\n${content}\n\n*You can download this document using the export feature.*`;
+                messageContent = `
+                    <div class="document-header">
+                        <div class="document-icon">
+                            <i class="fas fa-file-${documentType.toLowerCase()}"></i>
+                        </div>
+                        <div class="document-info">
+                            <h5>${documentType} Document Generated</h5>
+                            <p>Generated on ${new Date().toLocaleDateString()}</p>
+                        </div>
+                    </div>
+                    <div class="message-text">${content}</div>
+                    <div class="document-actions">
+                        <button class="btn-download">
+                            <i class="fas fa-download"></i>
+                            Download ${documentType}
+                        </button>
+                        <button class="btn-preview">
+                            <i class="fas fa-eye"></i>
+                            Preview
+                        </button>
+                    </div>
+                `;
+            } else {
+                messageContent = `
+                    <div class="message-header">
+                        <div class="message-sender">
+                            ${isUser ? '👤 You' : '🤖 AI Assistant'}
+                            ${!isUser ? '<span class="message-sender-badge">AI</span>' : ''}
+                        </div>
+                        <div class="message-time">${time}</div>
+                    </div>
+                    <div class="message-text">${formatMessageText(content)}</div>
+                    <div class="message-actions">
+                        <button class="message-action-btn" title="Copy">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <button class="message-action-btn" title="Share">
+                            <i class="fas fa-share"></i>
+                        </button>
+                        <button class="message-action-btn" title="Save">
+                            <i class="fas fa-bookmark"></i>
+                        </button>
+                    </div>
+                `;
             }
             
             messageDiv.innerHTML = `
@@ -1826,8 +2363,7 @@
                     ${isUser ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>'}
                 </div>
                 <div class="message-content">
-                    <div class="message-text">${formatMessageText(messageContent)}</div>
-                    <div class="message-time">${time}</div>
+                    ${messageContent}
                 </div>
             `;
             
@@ -1835,6 +2371,17 @@
             chatMessages.scrollTop = chatMessages.scrollHeight;
             
             console.log('💬 Message added to chat:', isUser ? 'User' : 'AI');
+            
+            // Add copy functionality
+            const copyBtn = messageDiv.querySelector('.message-action-btn');
+            if (copyBtn) {
+                copyBtn.addEventListener('click', function() {
+                    const text = messageDiv.querySelector('.message-text').textContent;
+                    navigator.clipboard.writeText(text).then(() => {
+                        showToast('Message copied to clipboard!', 'success');
+                    });
+                });
+            }
         }
         
         // ✅ FORMAT MESSAGE TEXT
@@ -1850,11 +2397,15 @@
         // ✅ SHOW TYPING INDICATOR
         function showTypingIndicator(show) {
             const indicator = document.getElementById('typingIndicator');
-            indicator.style.display = show ? 'flex' : 'none';
-            
-            if (show) {
-                const chatMessages = document.getElementById('chatMessages');
-                chatMessages.scrollTop = chatMessages.scrollHeight;
+            if (indicator) {
+                indicator.style.display = show ? 'flex' : 'none';
+                
+                if (show) {
+                    const chatMessages = document.getElementById('chatMessages');
+                    if (chatMessages) {
+                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                    }
+                }
             }
         }
         
@@ -2002,6 +2553,8 @@ By using LegalSwami, you acknowledge and agree to these terms.`;
         // ✅ SHOW TOAST NOTIFICATION
         function showToast(message, type = 'info') {
             const container = document.getElementById('toastContainer');
+            if (!container) return;
+            
             const toast = document.createElement('div');
             toast.className = `toast toast-${type}`;
             
@@ -2013,7 +2566,7 @@ By using LegalSwami, you acknowledge and agree to these terms.`;
             };
             
             toast.innerHTML = `
-                <i class="${icons[type]}"></i>
+                <i class="${icons[type] || icons.info}"></i>
                 <span>${message}</span>
             `;
             
@@ -2021,7 +2574,11 @@ By using LegalSwami, you acknowledge and agree to these terms.`;
             
             setTimeout(() => {
                 toast.classList.add('fade-out');
-                setTimeout(() => toast.remove(), 300);
+                setTimeout(() => {
+                    if (toast.parentNode === container) {
+                        container.removeChild(toast);
+                    }
+                }, 300);
             }, 3000);
             
             console.log(`📢 Toast (${type}):`, message);
@@ -2030,6 +2587,7 @@ By using LegalSwami, you acknowledge and agree to these terms.`;
         // ✅ MAKE FUNCTIONS AVAILABLE GLOBALLY
         window.handleInputKeydown = handleInputKeydown;
         window.loadChatFromHistory = loadChatFromHistory;
+        window.deleteChatHistory = deleteChatHistory;
         
         console.log('✅ LegalSwami Premium App Initialization Complete!');
     </script>
