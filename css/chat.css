@@ -571,3 +571,237 @@ textarea#messageInput::placeholder {
 
 .google-signin-btn i {
     font-size: 18px;
+    color: #ea4335;
+}
+
+.demo-login-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    padding: 14px;
+    background: linear-gradient(135deg, #10a37f, #19c37d);
+    border: none;
+    border-radius: 12px;
+    color: white;
+    font-weight: 500;
+    font-size: 15px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    margin: 12px 0;
+}
+
+.demo-login-btn:hover {
+    opacity: 0.95;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(16, 163, 127, 0.3);
+}
+
+.login-info {
+    margin-top: 32px;
+    padding-top: 24px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.login-info p {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 12px 0;
+    color: #6b7280;
+    font-size: 0.875rem;
+}
+
+.login-info i {
+    color: #10a37f;
+    width: 20px;
+}
+
+/* Toast Notifications */
+.toast-container {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 3000;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.toast {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: #ffffff;
+    padding: 16px 20px;
+    border-radius: 12px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.15);
+    border: 1px solid #e5e7eb;
+    animation: toastSlideIn 0.3s ease;
+    max-width: 360px;
+}
+
+.toast-success {
+    border-left: 4px solid #10a37f;
+}
+
+.toast-error {
+    border-left: 4px solid #ef4444;
+}
+
+.toast-warning {
+    border-left: 4px solid #f59e0b;
+}
+
+.toast-info {
+    border-left: 4px solid #3b82f6;
+}
+
+.toast.fade-out {
+    animation: toastSlideOut 0.3s ease;
+    opacity: 0;
+}
+
+@keyframes toastSlideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes toastSlideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
+
+/* Responsive Chat */
+@media (max-width: 768px) {
+    .chat-header {
+        padding: 12px 16px;
+    }
+    
+    .chat-title h3 {
+        font-size: 1rem;
+    }
+    
+    .chat-messages {
+        padding: 16px;
+    }
+    
+    .message {
+        margin-bottom: 24px;
+    }
+    
+    .message-avatar {
+        width: 32px;
+        height: 32px;
+        font-size: 1rem;
+    }
+    
+    .message-text {
+        padding: 12px;
+        font-size: 0.9rem;
+    }
+    
+    .chat-input-area {
+        padding: 16px;
+    }
+    
+    .input-container {
+        gap: 8px;
+    }
+    
+    textarea#messageInput {
+        font-size: 0.9rem;
+        padding: 12px;
+    }
+    
+    .btn-send {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .quick-buttons {
+        overflow-x: auto;
+        flex-wrap: nowrap;
+        padding-bottom: 4px;
+    }
+    
+    .quick-btn {
+        font-size: 0.75rem;
+        padding: 6px 12px;
+        flex-shrink: 0;
+    }
+    
+    .history-sidebar {
+        width: 100%;
+    }
+}
+
+/* Dark Mode Support */
+@media (prefers-color-scheme: dark) {
+    .chat-interface,
+    .chat-container,
+    .chat-messages {
+        background: #1f2937;
+    }
+    
+    .chat-header {
+        background: #1f2937;
+        border-bottom-color: #374151;
+    }
+    
+    .ai-message .message-text {
+        background: #374151;
+        color: #f3f4f6;
+        border-color: #4b5563;
+    }
+    
+    textarea#messageInput {
+        background: #374151;
+        color: #f3f4f6;
+        border-color: #4b5563;
+    }
+    
+    .history-sidebar {
+        background: #1f2937;
+        border-right-color: #374151;
+    }
+    
+    .history-item {
+        background: #374151;
+        border-color: #4b5563;
+    }
+    
+    .modal-content {
+        background: #1f2937;
+        border-color: #374151;
+    }
+    
+    .modal-header {
+        border-bottom-color: #374151;
+    }
+    
+    .google-signin-btn {
+        background: #374151;
+        color: #f3f4f6;
+        border-color: #4b5563;
+    }
+    
+    .toast {
+        background: #374151;
+        border-color: #4b5563;
+        color: #f3f4f6;
+    }
+}
