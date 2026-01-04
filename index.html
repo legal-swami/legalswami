@@ -89,6 +89,95 @@
             100% { transform: rotate(360deg); }
         }
         
+        /* ✅ MODAL STYLES */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 10000;
+            padding: 20px;
+        }
+        
+        .modal-content {
+            background: white;
+            border-radius: 20px;
+            width: 100%;
+            max-width: 450px;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            animation: modalSlideIn 0.3s ease;
+        }
+        
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        
+        .modal-header {
+            padding: 24px;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .modal-header h3 {
+            margin: 0;
+            font-size: 24px;
+        }
+        
+        .btn-icon {
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 8px;
+            transition: all 0.3s;
+        }
+        
+        .btn-icon:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .modal-body {
+            padding: 32px;
+            text-align: center;
+        }
+        
+        .login-illustration {
+            font-size: 60px;
+            color: #2563eb;
+            margin-bottom: 20px;
+        }
+        
+        .modal-body h4 {
+            font-size: 20px;
+            margin-bottom: 8px;
+            color: #1e293b;
+        }
+        
+        .modal-body p {
+            color: #64748b;
+            margin-bottom: 24px;
+            font-size: 15px;
+        }
+        
         /* Google Sign-In Button Styles */
         .google-signin-btn {
             display: flex;
@@ -143,6 +232,168 @@
             opacity: 0.9;
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
+        .login-info {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+            text-align: left;
+        }
+        
+        .login-info p {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 8px 0;
+            color: #64748b;
+            font-size: 14px;
+        }
+        
+        .login-info i {
+            color: #10b981;
+        }
+        
+        /* Header Login Button */
+        .btn-login {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: white;
+            border: 2px solid #2563eb;
+            border-radius: 8px;
+            color: #2563eb;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-login:hover {
+            background: #2563eb;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
+        
+        /* User Profile Styles */
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 8px 16px;
+            background: rgba(255,255,255,0.9);
+            border-radius: 12px;
+            border: 2px solid #e2e8f0;
+        }
+        
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #2563eb, #7c3aed);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+        
+        .user-info {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .user-name {
+            font-weight: 600;
+            color: #1e293b;
+            font-size: 14px;
+        }
+        
+        .user-email {
+            font-size: 12px;
+            color: #64748b;
+        }
+        
+        .btn-logout {
+            background: transparent;
+            border: none;
+            color: #64748b;
+            font-size: 16px;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            transition: all 0.3s;
+        }
+        
+        .btn-logout:hover {
+            background: #f8fafc;
+            color: #ef4444;
+        }
+        
+        /* Toast Styles */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 10001;
+        }
+        
+        .toast {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            margin-bottom: 10px;
+            border-left: 4px solid;
+            animation: toastSlideIn 0.3s ease;
+        }
+        
+        .toast-success {
+            border-left-color: #10b981;
+        }
+        
+        .toast-error {
+            border-left-color: #ef4444;
+        }
+        
+        .toast-warning {
+            border-left-color: #f59e0b;
+        }
+        
+        .toast-info {
+            border-left-color: #3b82f6;
+        }
+        
+        .toast.fade-out {
+            animation: toastSlideOut 0.3s ease;
+            opacity: 0;
+        }
+        
+        @keyframes toastSlideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+        
+        @keyframes toastSlideOut {
+            from {
+                transform: translateX(0);
+                opacity: 1;
+            }
+            to {
+                transform: translateX(100%);
+                opacity: 0;
+            }
         }
     </style>
 </head>
@@ -496,7 +747,7 @@
             </div>
         </div>
 
-        <!-- Login Modal -->
+        <!-- ✅ LOGIN MODAL (UPDATED WITH PROPER STYLING) -->
         <div id="loginModal" class="modal" style="display: none;">
             <div class="modal-content">
                 <div class="modal-header">
@@ -512,10 +763,15 @@
                     </div>
                     
                     <h4>Login to Continue</h4>
-                    <p>Secure login with Google to access all features</p>
+                    <p>Secure login to access all features</p>
                     
-                    <!-- ✅ GOOGLE SIGN-IN BUTTON -->
-                    <button id="googleSignInButton" class="google-signin-btn">
+                    <!-- ✅ GOOGLE SIGN-IN BUTTON (FIXED WIDTH) -->
+                    <div id="googleSignInContainer" style="width: 100%; margin: 24px 0;">
+                        <!-- Google button will be rendered here -->
+                    </div>
+                    
+                    <!-- ✅ CUSTOM GOOGLE BUTTON (FALLBACK) -->
+                    <button id="customGoogleBtn" class="google-signin-btn">
                         <i class="fab fa-google"></i>
                         Sign in with Google
                     </button>
@@ -696,7 +952,7 @@
     <!-- Toast Notifications -->
     <div id="toastContainer" class="toast-container"></div>
     
-    <!-- ✅ GOOGLE IDENTITY SERVICES WITH FEDCM DISABLED -->
+    <!-- ✅ GOOGLE IDENTITY SERVICES -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     
     <!-- JavaScript Files -->
@@ -727,14 +983,14 @@
             // Setup event listeners
             setupEventListeners();
             
-            // Initialize Google Identity Services (without One Tap)
+            // Initialize Google Authentication
             setTimeout(initializeSimpleGoogleAuth, 1500);
             
             // Check for existing user
             checkExistingUser();
         });
         
-        // ✅ SIMPLE GOOGLE AUTH WITHOUT ONE TAP/FEDCM
+        // ✅ SIMPLE GOOGLE AUTH
         function initializeSimpleGoogleAuth() {
             console.log('🔐 Initializing Google Authentication...');
             
@@ -746,64 +1002,60 @@
             }
             
             try {
-                // Initialize Google Identity Services WITHOUT One Tap
+                // Initialize Google Identity Services
                 google.accounts.id.initialize({
                     client_id: '166511615962-bohur5q8d4i5hud6icr4185kcte9enk8.apps.googleusercontent.com',
                     callback: handleGoogleCredentialResponse,
                     auto_select: false,
                     cancel_on_tap_outside: true,
                     context: 'signin',
-                    // Disable One Tap to avoid FedCM issues
                     itp_support: false
                 });
                 
                 googleGISInitialized = true;
-                console.log('✅ Google Authentication initialized (One Tap disabled)');
-                
-                // Render Google Sign-In button
-                renderGoogleSignInButton();
+                console.log('✅ Google Authentication initialized');
                 
             } catch (error) {
                 console.error('❌ Google Authentication initialization failed:', error);
-                showToast('Google Sign-In may not be available. Use demo login instead.', 'warning');
             }
         }
         
-        // ✅ RENDER GOOGLE SIGN-IN BUTTON
+        // ✅ RENDER GOOGLE SIGN-IN BUTTON (ON MODAL SHOW)
         function renderGoogleSignInButton() {
             try {
-                // Only render if element exists and Google is initialized
-                const buttonContainer = document.getElementById('googleSignInButton');
-                if (!buttonContainer || !googleGISInitialized) return;
+                const container = document.getElementById('googleSignInContainer');
+                if (!container || !googleGISInitialized) {
+                    // Show custom button if Google button can't be rendered
+                    document.getElementById('customGoogleBtn').style.display = 'flex';
+                    return;
+                }
                 
-                // Clear existing content
-                buttonContainer.innerHTML = '';
+                // Clear container
+                container.innerHTML = '';
                 
                 // Render Google button
                 google.accounts.id.renderButton(
-                    buttonContainer,
+                    container,
                     {
                         theme: 'outline',
                         size: 'large',
                         text: 'signin_with',
                         shape: 'rectangular',
                         logo_alignment: 'left',
-                        width: '100%',
+                        width: 400, // Fixed width in pixels
                         locale: 'en_US'
                     }
                 );
                 
                 console.log('✅ Google Sign-In button rendered');
                 
+                // Hide custom button
+                document.getElementById('customGoogleBtn').style.display = 'none';
+                
             } catch (error) {
                 console.error('❌ Failed to render Google Sign-In button:', error);
-                
-                // Fallback to custom button
-                const button = document.getElementById('googleSignInButton');
-                if (button) {
-                    button.innerHTML = '<i class="fab fa-google"></i> Sign in with Google';
-                    button.onclick = handleGoogleLogin;
-                }
+                // Show custom button as fallback
+                document.getElementById('customGoogleBtn').style.display = 'flex';
             }
         }
         
@@ -812,7 +1064,7 @@
             console.log('🔐 Google credential received');
             
             try {
-                // Decode the JWT token to get user info
+                // Decode the JWT token
                 const payload = JSON.parse(atob(response.credential.split('.')[1]));
                 
                 const userData = {
@@ -845,25 +1097,6 @@
             } catch (error) {
                 console.error('❌ Failed to process Google credential:', error);
                 showToast('Login failed. Please try again.', 'error');
-            }
-        }
-        
-        // ✅ HANDLE GOOGLE LOGIN (MANUAL)
-        function handleGoogleLogin() {
-            console.log('🔐 Manual Google login triggered');
-            
-            if (!googleGISInitialized) {
-                showToast('Google Sign-In is not available. Please use demo login.', 'warning');
-                return;
-            }
-            
-            // Trigger Google Sign-In prompt
-            try {
-                google.accounts.id.prompt();
-            } catch (error) {
-                console.error('❌ Google login failed:', error);
-                showToast('Google Sign-In failed. Using demo login instead.', 'warning');
-                handleDemoLogin();
             }
         }
         
@@ -947,7 +1180,7 @@
             }
         }
         
-        // SETUP ALL EVENT LISTENERS
+        // ✅ SETUP ALL EVENT LISTENERS
         function setupEventListeners() {
             console.log('🔧 Setting up event listeners');
             
@@ -960,6 +1193,7 @@
             // Login modal buttons
             document.getElementById('demoLoginBtn').addEventListener('click', handleDemoLogin);
             document.getElementById('closeLoginModal').addEventListener('click', hideLoginModal);
+            document.getElementById('customGoogleBtn').addEventListener('click', handleCustomGoogleLogin);
             
             // Chat interface
             document.getElementById('backToHome').addEventListener('click', goBackToHome);
@@ -1006,7 +1240,52 @@
             document.getElementById('privacyLink').addEventListener('click', showPrivacy);
             document.getElementById('disclaimerLink').addEventListener('click', showDisclaimer);
             
+            // Close modal when clicking outside
+            document.getElementById('loginModal').addEventListener('click', function(e) {
+                if (e.target === this) {
+                    hideLoginModal();
+                }
+            });
+            
             console.log('✅ All event listeners set up');
+        }
+        
+        // ✅ SHOW LOGIN MODAL
+        function showLoginModal() {
+            const modal = document.getElementById('loginModal');
+            modal.style.display = 'flex';
+            
+            // Render Google button when modal is shown
+            setTimeout(() => {
+                renderGoogleSignInButton();
+            }, 100);
+            
+            console.log('🔐 Login modal shown');
+        }
+        
+        // ✅ HIDE LOGIN MODAL
+        function hideLoginModal() {
+            document.getElementById('loginModal').style.display = 'none';
+            console.log('🔐 Login modal hidden');
+        }
+        
+        // ✅ HANDLE CUSTOM GOOGLE LOGIN
+        function handleCustomGoogleLogin() {
+            console.log('🔐 Custom Google login triggered');
+            
+            if (!googleGISInitialized) {
+                showToast('Google Sign-In is not available. Please use demo login.', 'warning');
+                return;
+            }
+            
+            // Trigger Google Sign-In prompt
+            try {
+                google.accounts.id.prompt();
+            } catch (error) {
+                console.error('❌ Google login failed:', error);
+                showToast('Google Sign-In failed. Using demo login instead.', 'warning');
+                handleDemoLogin();
+            }
         }
         
         // ✅ HANDLE DEMO LOGIN
@@ -1075,7 +1354,6 @@
                     const user = JSON.parse(userStr);
                     if (user.provider === 'google') {
                         try {
-                            // Revoke Google access
                             google.accounts.id.revoke(user.email, (done) => {
                                 console.log('✅ Google access revoked');
                             });
@@ -1108,15 +1386,14 @@
             }
         }
         
-        // INITIALIZE APP WITH BACKEND
+        // ✅ INITIALIZE APP WITH BACKEND
         async function initializeAppWithBackend() {
             console.log('🔌 Initializing app with backend...');
             
             try {
-                // Test backend connection
                 const backendUrl = 'https://legal-swami-backend.onrender.com';
                 
-                // Create simple API object if not exists
+                // Create API object if not exists
                 if (!window.legalSwamiAPI) {
                     window.legalSwamiAPI = {
                         token: localStorage.getItem('legal_swami_token'),
@@ -1177,7 +1454,6 @@
                     console.warn('⚠️ Backend health check failed:', healthResponse.status);
                 }
                 
-                // Update user UI
                 updateUserUI();
                 
             } catch (error) {
@@ -1186,23 +1462,10 @@
             }
         }
         
-        // SHOW LOGIN MODAL
-        function showLoginModal() {
-            document.getElementById('loginModal').style.display = 'flex';
-            console.log('🔐 Login modal shown');
-        }
-        
-        // HIDE LOGIN MODAL
-        function hideLoginModal() {
-            document.getElementById('loginModal').style.display = 'none';
-            console.log('🔐 Login modal hidden');
-        }
-        
-        // START CHAT
+        // ✅ START CHAT
         function startChat() {
             console.log('💬 Starting chat...');
             
-            // Check if user is logged in or has guest ID
             const user = window.legalSwamiAPI ? window.legalSwamiAPI.user : null;
             const token = localStorage.getItem('legal_swami_token');
             const guestId = localStorage.getItem('legalSwamiGuestId');
@@ -1213,36 +1476,32 @@
                 return;
             }
             
-            // Show chat interface
             document.getElementById('chatInterface').style.display = 'block';
             document.querySelector('.main-container').style.background = '#f8fafc';
             
-            // Scroll to chat input
             setTimeout(() => {
                 document.getElementById('messageInput').focus();
                 console.log('✅ Chat interface ready');
             }, 100);
         }
         
-        // GO BACK TO HOME
+        // ✅ GO BACK TO HOME
         function goBackToHome() {
             document.getElementById('chatInterface').style.display = 'none';
             document.querySelector('.main-container').style.background = '';
             
-            // Scroll to top
             window.scrollTo({ top: 0, behavior: 'smooth' });
             console.log('🏠 Returned to home');
         }
         
-        // CLEAR CHAT
+        // ✅ CLEAR CHAT
         function clearChat() {
             if (confirm('Are you sure you want to clear the chat?')) {
                 const chatMessages = document.getElementById('chatMessages');
                 const messages = chatMessages.querySelectorAll('.message');
                 
-                // Keep only the welcome message
                 messages.forEach((message, index) => {
-                    if (index > 0) { // Skip welcome message (index 0)
+                    if (index > 0) {
                         message.remove();
                     }
                 });
@@ -1253,7 +1512,7 @@
             }
         }
         
-        // EXPORT CHAT
+        // ✅ EXPORT CHAT
         function exportChat() {
             const chatMessages = document.getElementById('chatMessages');
             const messages = chatMessages.querySelectorAll('.message');
@@ -1269,7 +1528,6 @@
                 exportText += `${isAI ? 'AI' : 'You'} (${time}):\n${text}\n\n`;
             });
             
-            // Create and download file
             const blob = new Blob([exportText], { type: 'text/plain' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -1284,7 +1542,7 @@
             console.log('📥 Chat exported');
         }
         
-        // TOGGLE HISTORY SIDEBAR
+        // ✅ TOGGLE HISTORY SIDEBAR
         function toggleHistory() {
             const sidebar = document.getElementById('historySidebar');
             if (sidebar.style.display === 'flex') {
@@ -1297,7 +1555,7 @@
             }
         }
         
-        // LOAD CHAT HISTORY
+        // ✅ LOAD CHAT HISTORY
         async function loadChatHistory() {
             try {
                 if (!window.legalSwamiAPI) {
@@ -1315,7 +1573,7 @@
             }
         }
         
-        // UPDATE HISTORY LIST UI
+        // ✅ UPDATE HISTORY LIST UI
         function updateHistoryList(history) {
             const historyList = document.getElementById('historyList');
             historyList.innerHTML = '';
@@ -1346,7 +1604,7 @@
             });
         }
         
-        // LOAD CHAT FROM HISTORY
+        // ✅ LOAD CHAT FROM HISTORY
         async function loadChatFromHistory(chatId) {
             try {
                 showToast('Loading chat from history...', 'info');
@@ -1358,20 +1616,19 @@
             }
         }
         
-        // HANDLE INPUT KEYDOWN
+        // ✅ HANDLE INPUT KEYDOWN
         function handleInputKeydown(event) {
             if (event.key === 'Enter' && !event.shiftKey) {
                 event.preventDefault();
                 sendMessageHandler();
             }
             
-            // Auto-resize textarea
             const textarea = event.target;
             textarea.style.height = 'auto';
             textarea.style.height = (textarea.scrollHeight) + 'px';
         }
         
-        // SEND MESSAGE HANDLER
+        // ✅ SEND MESSAGE HANDLER
         async function sendMessageHandler() {
             if (isProcessing) {
                 console.warn('⚠️ Message already being processed');
@@ -1386,7 +1643,6 @@
                 return;
             }
             
-            // Get or create user ID
             let userId = 'guest';
             if (window.legalSwamiAPI && window.legalSwamiAPI.user) {
                 userId = window.legalSwamiAPI.user.id;
@@ -1400,19 +1656,15 @@
             try {
                 console.log('💬 Sending message:', message.substring(0, 100));
                 
-                // Add user message to chat
                 addMessageToChat(message, true);
                 input.value = '';
                 input.style.height = 'auto';
                 
-                // Show typing indicator
                 showTypingIndicator(true);
                 
-                // Get document generation option
                 const generateDocument = document.getElementById('generateDocument').checked;
                 const documentType = document.getElementById('documentType').value;
                 
-                // Send to backend
                 const backendUrl = 'https://legal-swami-backend.onrender.com';
                 const response = await fetch(`${backendUrl}/api/v1/chat/send`, {
                     method: 'POST',
@@ -1435,10 +1687,8 @@
                 const data = await response.json();
                 console.log('✅ Received response:', data.id);
                 
-                // Add AI response to chat
                 addMessageToChat(data.response || 'No response received', false, generateDocument, documentType);
                 
-                // Update chat history
                 await loadChatHistory();
                 
             } catch (error) {
@@ -1451,7 +1701,7 @@
             }
         }
         
-        // ADD MESSAGE TO CHAT UI
+        // ✅ ADD MESSAGE TO CHAT UI
         function addMessageToChat(content, isUser = false, isDocument = false, documentType = null) {
             const chatMessages = document.getElementById('chatMessages');
             const messageDiv = document.createElement('div');
@@ -1477,79 +1727,69 @@
             
             chatMessages.appendChild(messageDiv);
             
-            // Scroll to bottom
             chatMessages.scrollTop = chatMessages.scrollHeight;
             
             console.log('💬 Message added to chat:', isUser ? 'User' : 'AI');
         }
         
-        // FORMAT MESSAGE TEXT
+        // ✅ FORMAT MESSAGE TEXT
         function formatMessageText(text) {
-            // Convert line breaks
             text = text.replace(/\n/g, '<br>');
-            
-            // Convert **bold**
             text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            
-            // Convert *italic*
             text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
-            
-            // Convert bullet points
             text = text.replace(/^\s*[-•*]\s+(.*)$/gm, '<li>$1</li>');
             text = text.replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>');
-            
             return text;
         }
         
-        // SHOW TYPING INDICATOR
+        // ✅ SHOW TYPING INDICATOR
         function showTypingIndicator(show) {
             const indicator = document.getElementById('typingIndicator');
             indicator.style.display = show ? 'flex' : 'none';
             
             if (show) {
-                // Scroll to bottom
                 const chatMessages = document.getElementById('chatMessages');
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             }
         }
         
-        // ATTACH FILE
+        // ✅ ATTACH FILE
         function attachFile() {
             showToast('File attachment feature coming soon!', 'info');
             console.log('📎 File attachment clicked');
         }
         
-        // START VOICE INPUT
+        // ✅ START VOICE INPUT
         function startVoiceInput() {
             showToast('Voice input feature coming soon!', 'info');
             console.log('🎤 Voice input clicked');
         }
         
-        // SHOW DEMO
+        // ✅ SHOW DEMO
         function showDemo() {
             showToast('Demo feature coming soon!', 'info');
             console.log('🎬 Demo clicked');
         }
         
-        // SHOW TERMS
+        // ✅ SHOW TERMS
         function showTerms(e) {
             e.preventDefault();
             alert('Terms of Service\n\nBy using LegalSwami, you agree to our terms...');
         }
         
-        // SHOW PRIVACY POLICY
+        // ✅ SHOW PRIVACY POLICY
         function showPrivacy(e) {
             e.preventDefault();
             alert('Privacy Policy\n\nWe value your privacy...');
         }
         
-        // SHOW DISCLAIMER
+        // ✅ SHOW DISCLAIMER
         function showDisclaimer(e) {
             e.preventDefault();
             alert('Legal Disclaimer\n\nLegalSwami is an AI assistant, not a licensed attorney...');
         }
         
-        // FORMAT TIME
+        // ✅ FORMAT TIME
         function formatTime(dateString) {
             const date = new Date(dateString);
             const now = new Date();
@@ -1561,7 +1801,7 @@
             return date.toLocaleDateString();
         }
         
-        // SHOW TOAST NOTIFICATION
+        // ✅ SHOW TOAST NOTIFICATION
         function showToast(message, type = 'info') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
@@ -1581,7 +1821,6 @@
             
             container.appendChild(toast);
             
-            // Auto remove after 3 seconds
             setTimeout(() => {
                 toast.classList.add('fade-out');
                 setTimeout(() => toast.remove(), 300);
@@ -1590,7 +1829,7 @@
             console.log(`📢 Toast (${type}):`, message);
         }
         
-        // MAKE FUNCTIONS AVAILABLE GLOBALLY
+        // ✅ MAKE FUNCTIONS AVAILABLE GLOBALLY
         window.handleInputKeydown = handleInputKeydown;
         window.loadChatFromHistory = loadChatFromHistory;
         
