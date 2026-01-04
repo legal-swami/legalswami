@@ -32,6 +32,154 @@
     <meta property="og:image" content="https://legalswami.com/og-image.jpg">
     <meta property="og:url" content="https://legalswami.com">
 
+    <style>
+        /* Additional styles to fix login issues */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(4px);
+        }
+        
+        .modal-content {
+            position: relative;
+            background: white;
+            border-radius: 16px;
+            max-width: 420px;
+            width: 100%;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            z-index: 2001;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            font-size: 1.25rem;
+            cursor: pointer;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2002;
+        }
+        
+        .modal-close:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        #googleSignInContainer {
+            width: 100%;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        
+        #googleSignInContainer iframe {
+            margin: 0 !important;
+            width: 100% !important;
+        }
+        
+        .google-signin-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            padding: 14px 24px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 12px;
+            color: #333;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-bottom: 16px;
+        }
+        
+        .google-signin-btn:hover {
+            background: #f8f9fa;
+            border-color: #ccc;
+        }
+        
+        .google-signin-btn i {
+            color: #ea4335;
+            font-size: 18px;
+        }
+        
+        .demo-login-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            padding: 14px 24px;
+            background: linear-gradient(135deg, #1a237e, #303f9f);
+            border: none;
+            border-radius: 12px;
+            color: white;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .demo-login-btn:hover {
+            background: linear-gradient(135deg, #151c6d, #283593);
+        }
+        
+        .login-info {
+            margin-top: 24px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+        
+        .login-info p {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 8px;
+            justify-content: center;
+        }
+        
+        .login-info i {
+            color: #4CAF50;
+            font-size: 14px;
+        }
+        
+        /* Fix for the modal when body overflow is hidden */
+        body.modal-open {
+            overflow: hidden;
+            padding-right: 15px; /* Prevent layout shift when scrollbar disappears */
+        }
+    </style>
 </head>
 <body>
     <!-- Premium Loading Screen -->
@@ -93,7 +241,7 @@
                         <span>Login</span>
                     </button>
                     
-                    <div id="userProfile" class="user-profile">
+                    <div id="userProfile" class="user-profile" style="display: none;">
                         <div class="profile-avatar">
                             <div id="userAvatar"></div>
                         </div>
@@ -1019,6 +1167,7 @@
         let googleGISInitialized = false;
         let isMobileMenuOpen = false;
         let isChatOpen = false;
+        let isLoginModalOpen = false;
         
         // DOM Content Loaded
         document.addEventListener('DOMContentLoaded', function() {
@@ -1056,6 +1205,8 @@
             
             // Initialize chat interface
             initializeChat();
+            
+            console.log('✅ All initialization complete');
         });
         
         // SETUP SCROLL EFFECTS
@@ -1258,13 +1409,16 @@
             try {
                 const container = document.getElementById('googleSignInContainer');
                 if (!container || !googleGISInitialized) {
+                    console.log('⚠️ Google Sign-In container not found or GIS not initialized');
                     const customBtn = document.getElementById('customGoogleBtn');
                     if (customBtn) customBtn.style.display = 'flex';
                     return;
                 }
                 
+                // Clear the container first
                 container.innerHTML = '';
                 
+                // Render Google Sign-In button
                 google.accounts.id.renderButton(
                     container,
                     {
@@ -1390,11 +1544,23 @@
                 if (userEmail) userEmail.textContent = user.email || '';
                 
                 if (userAvatar) {
+                    userAvatar.innerHTML = '';
                     if (user.picture) {
-                        userAvatar.innerHTML = '<img src="' + user.picture + '" alt="' + user.name + '">';
+                        const img = document.createElement('img');
+                        img.src = user.picture;
+                        img.alt = user.name;
+                        img.style.width = '100%';
+                        img.style.height = '100%';
+                        img.style.borderRadius = '8px';
+                        img.style.objectFit = 'cover';
+                        userAvatar.appendChild(img);
                     } else {
                         const initials = user.name ? user.name.charAt(0).toUpperCase() : 'U';
-                        userAvatar.innerHTML = '<span>' + initials + '</span>';
+                        const span = document.createElement('span');
+                        span.textContent = initials;
+                        span.style.fontSize = '14px';
+                        span.style.fontWeight = '600';
+                        userAvatar.appendChild(span);
                     }
                 }
                 
@@ -1414,17 +1580,22 @@
         function setupEventListeners() {
             console.log('🔧 Setting up event listeners');
             
-            // Header buttons
+            // Header login button - FIXED
             const headerLoginBtn = document.getElementById('headerLoginBtn');
             if (headerLoginBtn) {
+                console.log('✅ Found header login button');
                 headerLoginBtn.addEventListener('click', showLoginModal);
+            } else {
+                console.error('❌ Header login button not found!');
             }
             
+            // Logout button
             const logoutBtn = document.getElementById('logoutBtn');
             if (logoutBtn) {
                 logoutBtn.addEventListener('click', handleLogout);
             }
             
+            // Start chat buttons
             const startChatBtn = document.getElementById('startChatBtn');
             if (startChatBtn) {
                 startChatBtn.addEventListener('click', startChat);
@@ -1435,14 +1606,15 @@
                 heroAssistantBtn.addEventListener('click', startChat);
             }
             
-            const watchDemo = document.getElementById('watchDemo');
-            if (watchDemo) {
-                watchDemo.addEventListener('click', showDemo);
-            }
-            
             const ctaStartChat = document.getElementById('ctaStartChat');
             if (ctaStartChat) {
                 ctaStartChat.addEventListener('click', startChat);
+            }
+            
+            // Watch demo button
+            const watchDemo = document.getElementById('watchDemo');
+            if (watchDemo) {
+                watchDemo.addEventListener('click', showDemo);
             }
             
             // Pricing buttons
@@ -1463,20 +1635,30 @@
                 });
             }
             
-            // Login modal buttons
-            const demoLoginBtn = document.getElementById('demoLoginBtn');
-            if (demoLoginBtn) {
-                demoLoginBtn.addEventListener('click', handleDemoLogin);
-            }
-            
+            // Login modal buttons - FIXED
             const closeLoginModal = document.getElementById('closeLoginModal');
             if (closeLoginModal) {
                 closeLoginModal.addEventListener('click', hideLoginModal);
             }
             
+            const demoLoginBtn = document.getElementById('demoLoginBtn');
+            if (demoLoginBtn) {
+                demoLoginBtn.addEventListener('click', handleDemoLogin);
+            }
+            
             const customGoogleBtn = document.getElementById('customGoogleBtn');
             if (customGoogleBtn) {
                 customGoogleBtn.addEventListener('click', handleCustomGoogleLogin);
+            }
+            
+            // Modal overlay click to close
+            const loginModal = document.getElementById('loginModal');
+            if (loginModal) {
+                loginModal.addEventListener('click', function(e) {
+                    if (e.target === this || e.target.classList.contains('modal-overlay')) {
+                        hideLoginModal();
+                    }
+                });
             }
             
             // Chat interface
@@ -1586,16 +1768,6 @@
                 });
             });
             
-            // Close modal when clicking outside
-            const loginModal = document.getElementById('loginModal');
-            if (loginModal) {
-                loginModal.addEventListener('click', function(e) {
-                    if (e.target === this || e.target.classList.contains('modal-overlay')) {
-                        hideLoginModal();
-                    }
-                });
-            }
-            
             console.log('✅ All event listeners set up');
         }
         
@@ -1629,29 +1801,43 @@
             }
         }
         
-        // SHOW LOGIN MODAL
+        // SHOW LOGIN MODAL - FIXED
         function showLoginModal() {
+            console.log('🔐 Showing login modal...');
+            
             const modal = document.getElementById('loginModal');
-            if (modal) {
-                modal.style.display = 'flex';
-                document.body.style.overflow = 'hidden';
-                
-                setTimeout(function() {
-                    renderGoogleSignInButton();
-                }, 100);
-                
-                console.log('🔐 Login modal shown');
+            if (!modal) {
+                console.error('❌ Login modal not found!');
+                return;
             }
+            
+            isLoginModalOpen = true;
+            modal.style.display = 'flex';
+            document.body.classList.add('modal-open');
+            
+            // Render Google Sign-In button
+            setTimeout(function() {
+                renderGoogleSignInButton();
+            }, 100);
+            
+            console.log('✅ Login modal shown');
         }
         
-        // HIDE LOGIN MODAL
+        // HIDE LOGIN MODAL - FIXED
         function hideLoginModal() {
+            console.log('🔐 Hiding login modal...');
+            
             const modal = document.getElementById('loginModal');
-            if (modal) {
-                modal.style.display = 'none';
-                document.body.style.overflow = '';
-                console.log('🔐 Login modal hidden');
+            if (!modal) {
+                console.error('❌ Login modal not found!');
+                return;
             }
+            
+            isLoginModalOpen = false;
+            modal.style.display = 'none';
+            document.body.classList.remove('modal-open');
+            
+            console.log('✅ Login modal hidden');
         }
         
         // HANDLE CUSTOM GOOGLE LOGIN
@@ -1824,13 +2010,17 @@
                 }
                 
                 // Test backend health
-                const healthResponse = await fetch(backendUrl + '/api/v1/public/health');
-                if (healthResponse.ok) {
-                    const healthData = await healthResponse.json();
-                    console.log('✅ Backend health check passed:', healthData);
-                    showToast('Backend connected successfully!', 'success');
-                } else {
-                    console.warn('⚠️ Backend health check failed:', healthResponse.status);
+                try {
+                    const healthResponse = await fetch(backendUrl + '/api/v1/public/health');
+                    if (healthResponse.ok) {
+                        const healthData = await healthResponse.json();
+                        console.log('✅ Backend health check passed:', healthData);
+                        showToast('Backend connected successfully!', 'success');
+                    } else {
+                        console.warn('⚠️ Backend health check failed:', healthResponse.status);
+                    }
+                } catch (error) {
+                    console.warn('⚠️ Backend health check failed:', error.message);
                 }
                 
                 updateUserUI();
