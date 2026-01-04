@@ -1,8 +1,8 @@
 /**
  * LegalSwami Chat Management
- * Version: 3.0.0
+ * Version: 4.0.0
  * Date: 2024-01-15
- * Works with or without backend connection
+ * Updated to work with new API
  */
 
 class LegalSwamiChat {
@@ -35,17 +35,17 @@ class LegalSwamiChat {
         }
     }
 
-    // Create mock API for offline mode
+    // Create mock API for offline mode (COMPATIBLE WITH NEW API)
     createMockAPI() {
-        return {
+        const mockAPI = {
             user: { 
                 id: 'guest_' + Date.now(),
                 name: 'Guest User',
                 email: 'guest@example.com'
             },
             
-            // Mock send message
-            sendMessage: async (message, attachments = [], chatId = null) => {
+            // ✅ FIXED: Updated method name to match api.js
+            sendChatMessage: async (message, attachments = [], chatId = null, options = {}) => {
                 console.log('Mock API: Sending message:', message.substring(0, 50));
                 
                 // Simulate API delay
@@ -71,12 +71,12 @@ class LegalSwamiChat {
                     content: randomResponse,
                     isDocument: false,
                     createdAt: new Date().toISOString(),
-                    userId: this.user.id
+                    userId: mockAPI.user.id
                 };
             },
             
-            // Mock get chat history
-            getChatHistory: async (page = 0, size = 10) => {
+            // ✅ FIXED: Method name matches api.js
+            getChatHistory: async (userId = null, page = 0, size = 10) => {
                 console.log('Mock API: Loading chat history');
                 await new Promise(resolve => setTimeout(resolve, 500));
                 
@@ -85,12 +85,12 @@ class LegalSwamiChat {
                 return history.slice(page * size, (page + 1) * size);
             },
             
-            // Mock verify token
+            // ✅ FIXED: Method name matches api.js
             verifyToken: async () => {
                 return { valid: true };
             },
             
-            // Mock login
+            // ✅ FIXED: Method name matches api.js
             loginWithGoogle: async (token) => {
                 return {
                     token: 'mock_jwt_token_' + Date.now(),
@@ -102,11 +102,29 @@ class LegalSwamiChat {
                 };
             },
             
-            // Clear auth
+            // ✅ FIXED: Method name matches api.js
             clearAuth: () => {
                 console.log('Mock API: Auth cleared');
+            },
+            
+            // ✅ FIXED: Method name matches api.js
+            generateMockResponse: (message, options = {}) => {
+                const mockResponses = [
+                    `I understand you're asking about "${message.substring(0, 50)}...". In offline mode, I can provide general legal guidance.`,
+                    `Regarding your question, proper legal advice requires current context. Please reconnect for detailed AI assistance.`,
+                    `I'd be happy to help with legal guidance! For accurate responses, please connect to the internet.`
+                ];
+                
+                return {
+                    id: 'mock_' + Date.now(),
+                    response: mockResponses[Math.floor(Math.random() * mockResponses.length)],
+                    timestamp: new Date().toISOString(),
+                    isMock: true
+                };
             }
         };
+        
+        return mockAPI;
     }
 
     // Load history from localStorage
@@ -345,7 +363,7 @@ class LegalSwamiChat {
             '<i class="fas fa-paper-plane"></i>';
     }
 
-    // Send message
+    // ✅ FIXED: Send message with correct API method
     async sendMessage() {
         const { messageInput, generateDocument, documentType, typingIndicator } = this.elements;
         if (!messageInput) return;
@@ -376,8 +394,28 @@ class LegalSwamiChat {
             const shouldGenerateDoc = generateDocument ? generateDocument.checked : false;
             const docType = documentType ? documentType.value : 'PDF';
 
-            // Send to API
-            const response = await this.api.sendMessage(message, [], this.currentChatId);
+            console.log('📤 Sending message via API...');
+            
+            let response;
+            
+            // ✅ FIXED: Use correct API method name
+            if (this.api.sendChatMessage) {
+                // Use the new API method
+                response = await this.api.sendChatMessage(
+                    message, 
+                    [], // attachments
+                    this.currentChatId,
+                    {
+                        generateDocument: shouldGenerateDoc,
+                        documentType: docType
+                    }
+                );
+            } else if (this.api.sendMessage) {
+                // Fallback to old API method
+                response = await this.api.sendMessage(message, [], this.currentChatId);
+            } else {
+                throw new Error('API method not available');
+            }
             
             // Hide typing indicator
             if (typingIndicator) {
@@ -385,7 +423,7 @@ class LegalSwamiChat {
             }
             
             // Add AI response to UI
-            const isDocument = response.isDocument || shouldGenerateDoc;
+            const isDocument = response.isDocument || shouldGenerateDoc || response.document;
             const responseText = response.response || response.content || 'No response received';
             this.addMessageToUI(responseText, false, isDocument, docType);
             
@@ -412,9 +450,9 @@ class LegalSwamiChat {
             // Save to history
             this.saveChatToHistory(message, responseText);
 
-            // If document was requested, show mock download
-            if (shouldGenerateDoc) {
-                this.showMockDocumentDownload(docType);
+            // If document was requested, show download option
+            if (shouldGenerateDoc || response.document) {
+                this.showDocumentDownload(response.document || { format: docType });
             }
 
             // Show success toast
@@ -431,12 +469,19 @@ class LegalSwamiChat {
                 typingIndicator.style.display = 'none';
             }
             
-            // Add error message to UI
-            const errorMessage = this.isBackendConnected 
-                ? 'Sorry, I encountered an error. Please check your connection and try again.'
-                : 'Demo mode: Error simulating response. Please try again.';
+            // Try to use mock response if available
+            let errorMessage;
+            if (this.api.generateMockResponse) {
+                const mockResponse = this.api.generateMockResponse(message);
+                errorMessage = mockResponse.response;
+                this.addMessageToUI(errorMessage, false);
+            } else {
+                errorMessage = this.isBackendConnected 
+                    ? 'Sorry, I encountered an error. Please check your connection and try again.'
+                    : 'Demo mode: Error simulating response. Please try again.';
+                this.addMessageToUI(errorMessage, false);
+            }
             
-            this.addMessageToUI(errorMessage, false);
             this.showToast(errorMessage, 'error');
             
         } finally {
@@ -750,7 +795,7 @@ class LegalSwamiChat {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // Load chat history
+    // ✅ FIXED: Load chat history with correct API method
     async loadChatHistory() {
         const { historyList } = this.elements;
         if (!historyList) return;
@@ -759,7 +804,14 @@ class LegalSwamiChat {
             // Show loading
             historyList.innerHTML = '<div class="loading-history">Loading history...</div>';
             
-            const history = await this.api.getChatHistory(0, 10);
+            // ✅ Use correct API method
+            let history;
+            if (this.api.getChatHistory) {
+                history = await this.api.getChatHistory(null, 0, 10);
+            } else {
+                // Fallback
+                history = [];
+            }
             
             if (!history || history.length === 0) {
                 historyList.innerHTML = `
@@ -926,31 +978,53 @@ class LegalSwamiChat {
         recognition.start();
     }
 
-    // Show mock document download
-    showMockDocumentDownload(type) {
+    // Show document download
+    showDocumentDownload(documentData) {
         const { chatMessages } = this.elements;
         if (!chatMessages) return;
 
+        const isOffline = documentData.isOffline || !this.isBackendConnected;
+        const format = documentData.format || 'PDF';
+        const filename = documentData.filename || `document-${Date.now()}.${format.toLowerCase()}`;
+        
         const downloadDiv = document.createElement('div');
-        downloadDiv.className = 'document-download mock-download';
+        downloadDiv.className = `document-download ${isOffline ? 'offline' : 'online'}`;
         downloadDiv.innerHTML = `
             <div class="download-content">
                 <i class="fas fa-file-download"></i>
                 <div>
-                    <p><strong>${type} Document Generated (Demo)</strong></p>
-                    <p>In real mode, this would download your document. Connect backend for actual document generation.</p>
+                    <p><strong>${format} Document ${isOffline ? 'Ready (Offline)' : 'Generated'}</strong></p>
+                    <p>${isOffline ? 'This document was created in offline mode.' : 'Your legal document is ready for download.'}</p>
+                    <small>${filename}</small>
                 </div>
-                <button class="btn-download mock-download-btn">
-                    Preview (Demo)
+                <button class="btn-download download-btn" data-filename="${filename}">
+                    <i class="fas fa-download"></i> ${isOffline ? 'Preview' : 'Download'}
                 </button>
             </div>
         `;
 
-        const downloadBtn = downloadDiv.querySelector('.mock-download-btn');
+        const downloadBtn = downloadDiv.querySelector('.download-btn');
         downloadBtn.addEventListener('click', () => {
-            this.showToast('Document preview shown (demo mode)', 'info');
-            // Show preview modal or alert
-            alert(`This would show a ${type} document preview. Connect backend for actual document generation.`);
+            if (isOffline) {
+                this.showToast('Document preview (offline mode)', 'info');
+                // Show content in alert or modal
+                alert(`Document Preview (${format}):\n\n${documentData.content || 'Sample document content'}`);
+            } else {
+                // In real implementation, this would download the actual file
+                this.showToast('Download started (simulated)', 'success');
+                
+                // Create and download a mock file
+                const content = documentData.content || 'Legal Document Content';
+                const blob = new Blob([content], { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }
         });
 
         chatMessages.appendChild(downloadDiv);
@@ -1047,6 +1121,12 @@ class LegalSwamiChat {
         // Use window.LegalSwamiUtils if available
         if (window.LegalSwamiUtils && window.LegalSwamiUtils.showToast) {
             window.LegalSwamiUtils.showToast(message, type);
+            return;
+        }
+        
+        // Use API's showToast if available
+        if (this.api && this.api.showToast) {
+            this.api.showToast(message, type);
             return;
         }
         
