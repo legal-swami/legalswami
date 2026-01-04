@@ -1024,11 +1024,11 @@
             console.log('🚀 LegalSwami Premium Frontend Initialized');
             
             // Hide loading screen
-            setTimeout(() => {
+            setTimeout(function() {
                 const loadingScreen = document.getElementById('loadingScreen');
                 if (loadingScreen) {
                     loadingScreen.style.opacity = '0';
-                    setTimeout(() => {
+                    setTimeout(function() {
                         loadingScreen.style.display = 'none';
                         console.log('✅ Loading screen hidden');
                     }, 300);
@@ -1057,7 +1057,7 @@
             initializeChat();
         });
         
-        // ✅ SETUP SCROLL EFFECTS
+        // SETUP SCROLL EFFECTS
         function setupScrollEffects() {
             const header = document.querySelector('.premium-navbar');
             const navLinks = document.querySelectorAll('.nav-link');
@@ -1085,7 +1085,7 @@
                     const sections = document.querySelectorAll('section[id]');
                     let currentSection = '';
                     
-                    sections.forEach(section => {
+                    sections.forEach(function(section) {
                         const sectionTop = section.offsetTop - 100;
                         const sectionHeight = section.clientHeight;
                         if (scrollY >= sectionTop && scrollY < sectionTop + sectionHeight) {
@@ -1093,18 +1093,18 @@
                         }
                     });
                     
-                    navLinks.forEach(link => {
+                    navLinks.forEach(function(link) {
                         link.classList.remove('active');
-                        if (link.getAttribute('href') === `#${currentSection}`) {
+                        if (link.getAttribute('href') === '#' + currentSection) {
                             link.classList.add('active');
                         }
                     });
                     
                     // Update mobile links
                     const mobileLinks = document.querySelectorAll('.mobile-link');
-                    mobileLinks.forEach(link => {
+                    mobileLinks.forEach(function(link) {
                         link.classList.remove('active');
-                        if (link.getAttribute('href') === `#${currentSection}`) {
+                        if (link.getAttribute('href') === '#' + currentSection) {
                             link.classList.add('active');
                         }
                     });
@@ -1119,7 +1119,7 @@
             }
         }
         
-        // ✅ SETUP MOBILE MENU
+        // SETUP MOBILE MENU
         function setupMobileMenu() {
             const mobileToggle = document.getElementById('mobileToggle');
             const mobileMenu = document.getElementById('mobileMenu');
@@ -1133,12 +1133,12 @@
                     if (mobileMenu) {
                         if (isMobileMenuOpen) {
                             mobileMenu.style.display = 'block';
-                            setTimeout(() => {
+                            setTimeout(function() {
                                 mobileMenu.style.opacity = '1';
                             }, 10);
                         } else {
                             mobileMenu.style.opacity = '0';
-                            setTimeout(() => {
+                            setTimeout(function() {
                                 mobileMenu.style.display = 'none';
                             }, 300);
                         }
@@ -1154,7 +1154,7 @@
                     isMobileMenuOpen = false;
                     if (mobileMenu) {
                         mobileMenu.style.opacity = '0';
-                        setTimeout(() => {
+                        setTimeout(function() {
                             mobileMenu.style.display = 'none';
                         }, 300);
                         if (mobileToggle) {
@@ -1165,7 +1165,7 @@
             }
             
             // Close menu when clicking a link
-            mobileLinks.forEach(link => {
+            mobileLinks.forEach(function(link) {
                 link.addEventListener('click', function(e) {
                     if (this.getAttribute('href') !== '#chat') {
                         e.preventDefault();
@@ -1179,7 +1179,7 @@
                     isMobileMenuOpen = false;
                     if (mobileMenu) {
                         mobileMenu.style.opacity = '0';
-                        setTimeout(() => {
+                        setTimeout(function() {
                             mobileMenu.style.display = 'none';
                         }, 300);
                         if (mobileToggle) {
@@ -1196,7 +1196,7 @@
                     startChat();
                     if (mobileMenu) {
                         mobileMenu.style.opacity = '0';
-                        setTimeout(() => {
+                        setTimeout(function() {
                             mobileMenu.style.display = 'none';
                         }, 300);
                         isMobileMenuOpen = false;
@@ -1213,7 +1213,7 @@
                     if (e.target === this) {
                         isMobileMenuOpen = false;
                         this.style.opacity = '0';
-                        setTimeout(() => {
+                        setTimeout(function() {
                             this.style.display = 'none';
                         }, 300);
                         if (mobileToggle) {
@@ -1224,7 +1224,7 @@
             }
         }
         
-        // ✅ SIMPLE GOOGLE AUTH
+        // SIMPLE GOOGLE AUTH
         function initializeSimpleGoogleAuth() {
             console.log('🔐 Initializing Google Authentication...');
             
@@ -1252,7 +1252,7 @@
             }
         }
         
-        // ✅ RENDER GOOGLE SIGN-IN BUTTON
+        // RENDER GOOGLE SIGN-IN BUTTON
         function renderGoogleSignInButton() {
             try {
                 const container = document.getElementById('googleSignInContainer');
@@ -1288,7 +1288,7 @@
             }
         }
         
-        // ✅ HANDLE GOOGLE CREDENTIAL RESPONSE
+        // HANDLE GOOGLE CREDENTIAL RESPONSE
         function handleGoogleCredentialResponse(response) {
             console.log('🔐 Google credential received');
             
@@ -1325,7 +1325,7 @@
             }
         }
         
-        // ✅ CHECK FOR EXISTING USER
+        // CHECK FOR EXISTING USER
         function checkExistingUser() {
             console.log('👤 Checking for existing user...');
             
@@ -1352,7 +1352,7 @@
             updateUserUI();
         }
         
-        // ✅ UPDATE USER UI
+        // UPDATE USER UI
         function updateUserUI() {
             console.log('👤 Updating user UI...');
             
@@ -1390,10 +1390,10 @@
                 
                 if (userAvatar) {
                     if (user.picture) {
-                        userAvatar.innerHTML = `<img src="${user.picture}" alt="${user.name}" style="width: 100%; height: 100%; border-radius: 8px; object-fit: cover;">`;
+                        userAvatar.innerHTML = '<img src="' + user.picture + '" alt="' + user.name + '" style="width: 100%; height: 100%; border-radius: 8px; object-fit: cover;">';
                     } else {
                         const initials = user.name ? user.name.charAt(0).toUpperCase() : 'U';
-                        userAvatar.innerHTML = `<span style="font-size: 14px; font-weight: 600;">${initials}</span>`;
+                        userAvatar.innerHTML = '<span style="font-size: 14px; font-weight: 600;">' + initials + '</span>';
                     }
                 }
                 
@@ -1409,7 +1409,7 @@
             }
         }
         
-        // ✅ SETUP ALL EVENT LISTENERS
+        // SETUP ALL EVENT LISTENERS
         function setupEventListeners() {
             console.log('🔧 Setting up event listeners');
             
@@ -1527,7 +1527,7 @@
             }
             
             // Quick questions
-            document.querySelectorAll('.quick-btn').forEach(btn => {
+            document.querySelectorAll('.quick-btn').forEach(function(btn) {
                 btn.addEventListener('click', function() {
                     const question = this.getAttribute('data-question');
                     const messageInput = document.getElementById('messageInput');
@@ -1579,11 +1579,11 @@
             }
             
             // Generate document buttons
-            document.querySelectorAll('.btn-generate').forEach(btn => {
+            document.querySelectorAll('.btn-generate').forEach(function(btn) {
                 btn.addEventListener('click', function() {
                     showToast('Document generation feature coming soon!', 'info');
                 });
-            }
+            });
             
             // Close modal when clicking outside
             const loginModal = document.getElementById('loginModal');
@@ -1598,7 +1598,7 @@
             console.log('✅ All event listeners set up');
         }
         
-        // ✅ INITIALIZE CHAT
+        // INITIALIZE CHAT
         function initializeChat() {
             // Hide typing indicator initially
             const typingIndicator = document.getElementById('typingIndicator');
@@ -1613,14 +1613,14 @@
             }
         }
         
-        // ✅ AUTO RESIZE TEXTAREA
+        // AUTO RESIZE TEXTAREA
         function autoResizeTextarea() {
             const textarea = this;
             textarea.style.height = 'auto';
             textarea.style.height = (textarea.scrollHeight) + 'px';
         }
         
-        // ✅ HANDLE INPUT KEYDOWN
+        // HANDLE INPUT KEYDOWN
         function handleInputKeydown(event) {
             if (event.key === 'Enter' && !event.shiftKey) {
                 event.preventDefault();
@@ -1628,14 +1628,14 @@
             }
         }
         
-        // ✅ SHOW LOGIN MODAL
+        // SHOW LOGIN MODAL
         function showLoginModal() {
             const modal = document.getElementById('loginModal');
             if (modal) {
                 modal.style.display = 'flex';
                 document.body.style.overflow = 'hidden';
                 
-                setTimeout(() => {
+                setTimeout(function() {
                     renderGoogleSignInButton();
                 }, 100);
                 
@@ -1643,7 +1643,7 @@
             }
         }
         
-        // ✅ HIDE LOGIN MODAL
+        // HIDE LOGIN MODAL
         function hideLoginModal() {
             const modal = document.getElementById('loginModal');
             if (modal) {
@@ -1653,7 +1653,7 @@
             }
         }
         
-        // ✅ HANDLE CUSTOM GOOGLE LOGIN
+        // HANDLE CUSTOM GOOGLE LOGIN
         function handleCustomGoogleLogin() {
             console.log('🔐 Custom Google login triggered');
             
@@ -1671,7 +1671,7 @@
             }
         }
         
-        // ✅ HANDLE DEMO LOGIN
+        // HANDLE DEMO LOGIN
         function handleDemoLogin() {
             console.log('👤 Demo login triggered');
             
@@ -1702,8 +1702,11 @@
             const randomUser = demoUsers[Math.floor(Math.random() * demoUsers.length)];
             
             const userData = {
-                ...randomUser,
-                picture: `https://ui-avatars.com/api/?name=${encodeURIComponent(randomUser.name)}&background=1a56db&color=fff&size=128`,
+                id: randomUser.id,
+                name: randomUser.name,
+                email: randomUser.email,
+                role: randomUser.role,
+                picture: 'https://ui-avatars.com/api/?name=' + encodeURIComponent(randomUser.name) + '&background=1a56db&color=fff&size=128',
                 provider: 'demo',
                 isDemo: true
             };
@@ -1718,10 +1721,10 @@
             
             updateUserUI();
             hideLoginModal();
-            showToast(`Welcome ${userData.name}! (Demo Mode)`, 'success');
+            showToast('Welcome ' + userData.name + '! (Demo Mode)', 'success');
         }
         
-        // ✅ HANDLE LOGOUT
+        // HANDLE LOGOUT
         function handleLogout() {
             console.log('🚪 Logging out...');
             
@@ -1731,7 +1734,7 @@
                     const user = JSON.parse(userStr);
                     if (user.provider === 'google') {
                         try {
-                            google.accounts.id.revoke(user.email, (done) => {
+                            google.accounts.id.revoke(user.email, function(done) {
                                 console.log('✅ Google access revoked');
                             });
                         } catch (e) {
@@ -1760,7 +1763,7 @@
             }
         }
         
-        // ✅ INITIALIZE APP WITH BACKEND
+        // INITIALIZE APP WITH BACKEND
         async function initializeAppWithBackend() {
             console.log('🔌 Initializing app with backend...');
             
@@ -1776,7 +1779,7 @@
                             
                             const userId = this.user ? this.user.id : 'guest_' + Date.now();
                             
-                            const response = await fetch(`${backendUrl}/api/v1/chat/send`, {
+                            const response = await fetch(backendUrl + '/api/v1/chat/send', {
                                 method: 'POST',
                                 headers: {
                                     'Content-Type': 'application/json',
@@ -1785,21 +1788,23 @@
                                 },
                                 body: JSON.stringify({
                                     message: message,
-                                    generateDocument: document.getElementById('generateDocument')?.checked || false
+                                    generateDocument: document.getElementById('generateDocument') ? document.getElementById('generateDocument').checked : false
                                 })
                             });
                             
                             if (!response.ok) {
-                                throw new Error(`HTTP ${response.status}: ${await response.text()}`);
+                                throw new Error('HTTP ' + response.status + ': ' + await response.text());
                             }
                             
                             return await response.json();
                         },
-                        getChatHistory: async function(page = 0, size = 10) {
+                        getChatHistory: async function(page, size) {
+                            page = page || 0;
+                            size = size || 10;
                             const userId = this.user ? this.user.id : 'guest';
                             
                             const response = await fetch(
-                                `${backendUrl}/api/v1/chat/history?userId=${userId}&page=${page}&size=${size}`,
+                                backendUrl + '/api/v1/chat/history?userId=' + userId + '&page=' + page + '&size=' + size,
                                 {
                                     headers: {
                                         'x-user-id': userId,
@@ -1809,7 +1814,7 @@
                             );
                             
                             if (!response.ok) {
-                                throw new Error(`HTTP ${response.status}`);
+                                throw new Error('HTTP ' + response.status);
                             }
                             
                             return await response.json();
@@ -1818,7 +1823,7 @@
                 }
                 
                 // Test backend health
-                const healthResponse = await fetch(`${backendUrl}/api/v1/public/health`);
+                const healthResponse = await fetch(backendUrl + '/api/v1/public/health');
                 if (healthResponse.ok) {
                     const healthData = await healthResponse.json();
                     console.log('✅ Backend health check passed:', healthData);
@@ -1835,7 +1840,7 @@
             }
         }
         
-        // ✅ START CHAT
+        // START CHAT
         function startChat() {
             console.log('💬 Starting chat...');
             
@@ -1876,7 +1881,7 @@
                 chatMessagesContainer.style.display = 'flex';
             }
             
-            setTimeout(() => {
+            setTimeout(function() {
                 const messageInput = document.getElementById('messageInput');
                 if (messageInput) {
                     messageInput.focus();
@@ -1885,7 +1890,7 @@
             }, 300);
         }
         
-        // ✅ GO BACK TO HOME
+        // GO BACK TO HOME
         function goBackToHome() {
             const chatInterface = document.getElementById('chatInterface');
             const mainContainer = document.querySelector('.main-container');
@@ -1931,7 +1936,7 @@
             console.log('🏠 Returned to home');
         }
         
-        // ✅ CLEAR CHAT HANDLER
+        // CLEAR CHAT HANDLER
         function clearChatHandler() {
             if (confirm('Are you sure you want to clear the chat? This action cannot be undone.')) {
                 const chatMessages = document.getElementById('chatMessages');
@@ -1945,7 +1950,7 @@
             }
         }
         
-        // ✅ EXPORT CHAT HANDLER
+        // EXPORT CHAT HANDLER
         function exportChatHandler() {
             const chatMessages = document.getElementById('chatMessages');
             if (!chatMessages) return;
@@ -1957,12 +1962,12 @@
             exportText += 'Generated on: ' + new Date().toLocaleString() + '\n';
             exportText += '================================\n\n';
             
-            messages.forEach(message => {
+            messages.forEach(function(message) {
                 const isAI = message.classList.contains('ai-message');
-                const text = message.querySelector('.message-text')?.textContent || '';
-                const time = message.querySelector('.message-time')?.textContent || '';
+                const text = message.querySelector('.message-text') ? message.querySelector('.message-text').textContent : '';
+                const time = message.querySelector('.message-time') ? message.querySelector('.message-time').textContent : '';
                 
-                exportText += `${isAI ? '🤖 AI Assistant' : '👤 You'} (${time}):\n`;
+                exportText += (isAI ? '🤖 AI Assistant' : '👤 You') + ' (' + time + '):\n';
                 exportText += text + '\n\n';
                 exportText += '─'.repeat(50) + '\n\n';
             });
@@ -1977,7 +1982,7 @@
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = `LegalSwami_Chat_${new Date().toISOString().split('T')[0]}.txt`;
+            a.download = 'LegalSwami_Chat_' + new Date().toISOString().split('T')[0] + '.txt';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -1987,7 +1992,7 @@
             console.log('📥 Chat exported');
         }
         
-        // ✅ TOGGLE HISTORY SIDEBAR
+        // TOGGLE HISTORY SIDEBAR
         function toggleHistory() {
             const sidebar = document.getElementById('historySidebar');
             if (sidebar) {
@@ -1996,7 +2001,7 @@
             }
         }
         
-        // ✅ LOAD CHAT HISTORY
+        // LOAD CHAT HISTORY
         async function loadChatHistory() {
             try {
                 if (!window.legalSwamiAPI) {
@@ -2014,7 +2019,7 @@
             }
         }
         
-        // ✅ UPDATE HISTORY LIST UI
+        // UPDATE HISTORY LIST UI
         function updateHistoryList(history) {
             const historyList = document.getElementById('historyList');
             if (!historyList) return;
@@ -2022,39 +2027,26 @@
             historyList.innerHTML = '';
             
             if (!history || history.length === 0) {
-                historyList.innerHTML = `
-                    <div class="history-empty">
-                        <i class="fas fa-history"></i>
-                        <p>No chat history yet</p>
-                        <small>Start chatting to see your history here</small>
-                    </div>
-                `;
+                historyList.innerHTML = '<div class="history-empty"><i class="fas fa-history"></i><p>No chat history yet</p><small>Start chatting to see your history here</small></div>';
                 return;
             }
             
-            history.forEach(item => {
+            history.forEach(function(item) {
                 const historyItem = document.createElement('div');
                 historyItem.className = 'history-item';
-                historyItem.innerHTML = `
-                    <div class="history-item-header">
-                        <div class="history-item-title">${item.message.substring(0, 50)}${item.message.length > 50 ? '...' : ''}</div>
-                        <span class="history-item-time">${formatTime(item.createdAt)}</span>
-                    </div>
-                    <div class="history-item-preview">${item.message.substring(0, 100)}${item.message.length > 100 ? '...' : ''}</div>
-                    <div class="history-item-actions">
-                        <button class="history-action-btn" onclick="loadChatFromHistory('${item.id}')">
-                            <i class="fas fa-eye"></i> View
-                        </button>
-                        <button class="history-action-btn" onclick="deleteChatHistory('${item.id}')">
-                            <i class="fas fa-trash"></i> Delete
-                        </button>
-                    </div>
-                `;
+                historyItem.innerHTML = '<div class="history-item-header"><div class="history-item-title">' + 
+                    item.message.substring(0, 50) + (item.message.length > 50 ? '...' : '') + 
+                    '</div><span class="history-item-time">' + formatTime(item.createdAt) + 
+                    '</span></div><div class="history-item-preview">' + 
+                    item.message.substring(0, 100) + (item.message.length > 100 ? '...' : '') + 
+                    '</div><div class="history-item-actions"><button class="history-action-btn" onclick="loadChatFromHistory(\'' + 
+                    item.id + '\')"><i class="fas fa-eye"></i> View</button><button class="history-action-btn" onclick="deleteChatHistory(\'' + 
+                    item.id + '\')"><i class="fas fa-trash"></i> Delete</button></div>';
                 historyList.appendChild(historyItem);
             });
         }
         
-        // ✅ LOAD CHAT FROM HISTORY
+        // LOAD CHAT FROM HISTORY
         async function loadChatFromHistory(chatId) {
             try {
                 showToast('Loading chat from history...', 'info');
@@ -2066,7 +2058,7 @@
             }
         }
         
-        // ✅ DELETE CHAT HISTORY
+        // DELETE CHAT HISTORY
         function deleteChatHistory(chatId) {
             if (confirm('Are you sure you want to delete this chat?')) {
                 showToast('Chat deleted successfully', 'success');
@@ -2074,7 +2066,7 @@
             }
         }
         
-        // ✅ SEND MESSAGE HANDLER
+        // SEND MESSAGE HANDLER
         async function sendMessageHandler() {
             if (isProcessing) {
                 console.warn('⚠️ Message already being processed');
@@ -2110,11 +2102,11 @@
                 
                 showTypingIndicator(true);
                 
-                const generateDocument = document.getElementById('generateDocument')?.checked || false;
-                const documentType = document.getElementById('documentType')?.value || 'PDF';
+                const generateDocument = document.getElementById('generateDocument') ? document.getElementById('generateDocument').checked : false;
+                const documentType = document.getElementById('documentType') ? document.getElementById('documentType').value : 'PDF';
                 
                 const backendUrl = 'https://legal-swami-backend.onrender.com';
-                const response = await fetch(`${backendUrl}/api/v1/chat/send`, {
+                const response = await fetch(backendUrl + '/api/v1/chat/send', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -2129,7 +2121,7 @@
                 
                 if (!response.ok) {
                     const errorText = await response.text();
-                    throw new Error(`HTTP ${response.status}: ${errorText}`);
+                    throw new Error('HTTP ' + response.status + ': ' + errorText);
                 }
                 
                 const data = await response.json();
@@ -2149,14 +2141,18 @@
             }
         }
         
-        // ✅ ADD MESSAGE TO CHAT UI
-        function addMessageToChat(content, isUser = false, isDocument = false, documentType = null) {
+        // ADD MESSAGE TO CHAT UI
+        function addMessageToChat(content, isUser, isDocument, documentType) {
+            isUser = isUser || false;
+            isDocument = isDocument || false;
+            documentType = documentType || 'PDF';
+            
             const chatMessages = document.getElementById('chatMessages');
             if (!chatMessages) return;
             
             const messageDiv = document.createElement('div');
             
-            messageDiv.className = `message ${isUser ? 'user-message' : 'ai-message'}`;
+            messageDiv.className = 'message ' + (isUser ? 'user-message' : 'ai-message');
             if (isDocument) {
                 messageDiv.classList.add('document-message');
             }
@@ -2165,60 +2161,24 @@
             
             let messageContent = content;
             if (isDocument) {
-                messageContent = `
-                    <div class="document-header">
-                        <div class="document-icon">
-                            <i class="fas fa-file-${documentType.toLowerCase()}"></i>
-                        </div>
-                        <div class="document-info">
-                            <h5>${documentType} Document Generated</h5>
-                            <p>Generated on ${new Date().toLocaleDateString()}</p>
-                        </div>
-                    </div>
-                    <div class="message-text">${content}</div>
-                    <div class="document-actions">
-                        <button class="btn-download">
-                            <i class="fas fa-download"></i>
-                            Download ${documentType}
-                        </button>
-                        <button class="btn-preview">
-                            <i class="fas fa-eye"></i>
-                            Preview
-                        </button>
-                    </div>
-                `;
+                messageContent = '<div class="document-header"><div class="document-icon"><i class="fas fa-file-' + 
+                    documentType.toLowerCase() + '"></i></div><div class="document-info"><h5>' + 
+                    documentType + ' Document Generated</h5><p>Generated on ' + new Date().toLocaleDateString() + 
+                    '</p></div></div><div class="message-text">' + content + 
+                    '</div><div class="document-actions"><button class="btn-download"><i class="fas fa-download"></i>Download ' + 
+                    documentType + '</button><button class="btn-preview"><i class="fas fa-eye"></i>Preview</button></div>';
             } else {
-                messageContent = `
-                    <div class="message-header">
-                        <div class="message-sender">
-                            ${isUser ? '👤 You' : '🤖 AI Assistant'}
-                            ${!isUser ? '<span class="message-sender-badge">AI</span>' : ''}
-                        </div>
-                        <div class="message-time">${time}</div>
-                    </div>
-                    <div class="message-text">${formatMessageText(content)}</div>
-                    <div class="message-actions">
-                        <button class="message-action-btn" title="Copy">
-                            <i class="fas fa-copy"></i>
-                        </button>
-                        <button class="message-action-btn" title="Share">
-                            <i class="fas fa-share"></i>
-                        </button>
-                        <button class="message-action-btn" title="Save">
-                            <i class="fas fa-bookmark"></i>
-                        </button>
-                    </div>
-                `;
+                messageContent = '<div class="message-header"><div class="message-sender">' + 
+                    (isUser ? '👤 You' : '🤖 AI Assistant') + 
+                    (!isUser ? '<span class="message-sender-badge">AI</span>' : '') + 
+                    '</div><div class="message-time">' + time + 
+                    '</div></div><div class="message-text">' + formatMessageText(content) + 
+                    '</div><div class="message-actions"><button class="message-action-btn" title="Copy"><i class="fas fa-copy"></i></button><button class="message-action-btn" title="Share"><i class="fas fa-share"></i></button><button class="message-action-btn" title="Save"><i class="fas fa-bookmark"></i></button></div>';
             }
             
-            messageDiv.innerHTML = `
-                <div class="message-avatar">
-                    ${isUser ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>'}
-                </div>
-                <div class="message-content">
-                    ${messageContent}
-                </div>
-            `;
+            messageDiv.innerHTML = '<div class="message-avatar">' + 
+                (isUser ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>') + 
+                '</div><div class="message-content">' + messageContent + '</div>';
             
             chatMessages.appendChild(messageDiv);
             chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -2230,14 +2190,14 @@
             if (copyBtn) {
                 copyBtn.addEventListener('click', function() {
                     const text = messageDiv.querySelector('.message-text').textContent;
-                    navigator.clipboard.writeText(text).then(() => {
+                    navigator.clipboard.writeText(text).then(function() {
                         showToast('Message copied to clipboard!', 'success');
                     });
                 });
             }
         }
         
-        // ✅ FORMAT MESSAGE TEXT
+        // FORMAT MESSAGE TEXT
         function formatMessageText(text) {
             text = text.replace(/\n/g, '<br>');
             text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
@@ -2247,7 +2207,7 @@
             return text;
         }
         
-        // ✅ SHOW TYPING INDICATOR
+        // SHOW TYPING INDICATOR
         function showTypingIndicator(show) {
             const indicator = document.getElementById('typingIndicator');
             if (indicator) {
@@ -2262,136 +2222,59 @@
             }
         }
         
-        // ✅ ATTACH FILE HANDLER
+        // ATTACH FILE HANDLER
         function attachFileHandler() {
             showToast('File attachment feature coming soon in version 2.1!', 'info');
             console.log('📎 File attachment clicked');
         }
         
-        // ✅ START VOICE INPUT
+        // START VOICE INPUT
         function startVoiceInput() {
             showToast('Voice input feature coming soon in version 2.2!', 'info');
             console.log('🎤 Voice input clicked');
         }
         
-        // ✅ SHOW DEMO
+        // SHOW DEMO
         function showDemo() {
             window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank');
             console.log('🎬 Demo opened');
         }
         
-        // ✅ SHOW TERMS
+        // SHOW TERMS
         function showTerms(e) {
             e.preventDefault();
-            const terms = `LEGALSWAMI TERMS OF SERVICE
-
-1. ACCEPTANCE OF TERMS
-By accessing and using LegalSwami, you agree to be bound by these Terms of Service.
-
-2. SERVICE DESCRIPTION
-LegalSwami is an AI-powered legal assistant providing informational guidance only.
-
-3. NOT LEGAL ADVICE
-The service does not constitute legal advice. Consult a qualified attorney for legal matters.
-
-4. USER RESPONSIBILITIES
-You are responsible for the accuracy of information provided to the service.
-
-5. PRIVACY
-Your data is protected as outlined in our Privacy Policy.
-
-6. LIMITATION OF LIABILITY
-LegalSwami is not liable for any damages arising from use of the service.
-
-7. MODIFICATIONS
-We reserve the right to modify these terms at any time.
-
-Last Updated: ${new Date().toLocaleDateString()}`;
+            const terms = 'LEGALSWAMI TERMS OF SERVICE\n\n1. ACCEPTANCE OF TERMS\nBy accessing and using LegalSwami, you agree to be bound by these Terms of Service.\n\n2. SERVICE DESCRIPTION\nLegalSwami is an AI-powered legal assistant providing informational guidance only.\n\n3. NOT LEGAL ADVICE\nThe service does not constitute legal advice. Consult a qualified attorney for legal matters.\n\n4. USER RESPONSIBILITIES\nYou are responsible for the accuracy of information provided to the service.\n\n5. PRIVACY\nYour data is protected as outlined in our Privacy Policy.\n\n6. LIMITATION OF LIABILITY\nLegalSwami is not liable for any damages arising from use of the service.\n\n7. MODIFICATIONS\nWe reserve the right to modify these terms at any time.\n\nLast Updated: ' + new Date().toLocaleDateString();
             
             alert(terms);
             console.log('📄 Terms of Service shown');
         }
         
-        // ✅ SHOW PRIVACY POLICY
+        // SHOW PRIVACY POLICY
         function showPrivacy(e) {
             e.preventDefault();
-            const privacy = `LEGALSWAMI PRIVACY POLICY
-
-1. INFORMATION COLLECTION
-We collect minimal information necessary to provide our services.
-
-2. DATA USAGE
-Your data is used solely to improve service quality and user experience.
-
-3. DATA PROTECTION
-We implement industry-standard security measures to protect your information.
-
-4. THIRD-PARTY SHARING
-We do not sell or share your personal data with third parties.
-
-5. COOKIES
-We use cookies to enhance user experience and analyze service usage.
-
-6. USER RIGHTS
-You have the right to access, modify, or delete your personal data.
-
-7. CHILDREN'S PRIVACY
-Our service is not intended for users under 18 years of age.
-
-8. CHANGES TO POLICY
-We may update this policy periodically.
-
-For questions: privacy@legalswami.com`;
+            const privacy = 'LEGALSWAMI PRIVACY POLICY\n\n1. INFORMATION COLLECTION\nWe collect minimal information necessary to provide our services.\n\n2. DATA USAGE\nYour data is used solely to improve service quality and user experience.\n\n3. DATA PROTECTION\nWe implement industry-standard security measures to protect your information.\n\n4. THIRD-PARTY SHARING\nWe do not sell or share your personal data with third parties.\n\n5. COOKIES\nWe use cookies to enhance user experience and analyze service usage.\n\n6. USER RIGHTS\nYou have the right to access, modify, or delete your personal data.\n\n7. CHILDREN\'S PRIVACY\nOur service is not intended for users under 18 years of age.\n\n8. CHANGES TO POLICY\nWe may update this policy periodically.\n\nFor questions: privacy@legalswami.com';
             
             alert(privacy);
             console.log('🔒 Privacy Policy shown');
         }
         
-        // ✅ SHOW DISCLAIMER
+        // SHOW DISCLAIMER
         function showDisclaimer(e) {
             e.preventDefault();
-            const disclaimer = `⚖️ IMPORTANT LEGAL DISCLAIMER ⚖️
-
-LEGALSWAMI AI ASSISTANT - DISCLAIMER
-
-1. NATURE OF SERVICE
-LegalSwami is an artificial intelligence assistant designed to provide general legal information and guidance. It is NOT a licensed attorney.
-
-2. NOT LEGAL ADVICE
-The information provided by LegalSwami does not constitute legal advice and should not be relied upon as such.
-
-3. NO ATTORNEY-CLIENT RELATIONSHIP
-Using LegalSwami does not create an attorney-client relationship.
-
-4. CONSULT A LAWYER
-For legal advice specific to your situation, please consult a qualified licensed attorney.
-
-5. ACCURACY OF INFORMATION
-While we strive for accuracy, we cannot guarantee the completeness or currentness of information provided.
-
-6. USE AT YOUR OWN RISK
-You assume all risk for any actions taken based on information from LegalSwami.
-
-7. OFFICIAL DOCUMENTS
-For official legal documents, court filings, or binding agreements, always consult a licensed attorney.
-
-8. EMERGENCY SITUATIONS
-For urgent legal matters, contact a lawyer immediately.
-
-By using LegalSwami, you acknowledge and agree to these terms.`;
+            const disclaimer = '⚖️ IMPORTANT LEGAL DISCLAIMER ⚖️\n\nLEGALSWAMI AI ASSISTANT - DISCLAIMER\n\n1. NATURE OF SERVICE\nLegalSwami is an artificial intelligence assistant designed to provide general legal information and guidance. It is NOT a licensed attorney.\n\n2. NOT LEGAL ADVICE\nThe information provided by LegalSwami does not constitute legal advice and should not be relied upon as such.\n\n3. NO ATTORNEY-CLIENT RELATIONSHIP\nUsing LegalSwami does not create an attorney-client relationship.\n\n4. CONSULT A LAWYER\nFor legal advice specific to your situation, please consult a qualified licensed attorney.\n\n5. ACCURACY OF INFORMATION\nWhile we strive for accuracy, we cannot guarantee the completeness or currentness of information provided.\n\n6. USE AT YOUR OWN RISK\nYou assume all risk for any actions taken based on information from LegalSwami.\n\n7. OFFICIAL DOCUMENTS\nFor official legal documents, court filings, or binding agreements, always consult a licensed attorney.\n\n8. EMERGENCY SITUATIONS\nFor urgent legal matters, contact a lawyer immediately.\n\nBy using LegalSwami, you acknowledge and agree to these terms.';
             
             alert(disclaimer);
             console.log('⚠️ Legal Disclaimer shown');
         }
         
-        // ✅ SHOW COOKIE POLICY
+        // SHOW COOKIE POLICY
         function showCookiePolicy(e) {
             e.preventDefault();
             alert('COOKIE POLICY\n\nWe use essential cookies for functionality and analytics cookies to improve our service. By continuing to use LegalSwami, you consent to our use of cookies.');
             console.log('🍪 Cookie Policy shown');
         }
         
-        // ✅ FORMAT TIME
+        // FORMAT TIME
         function formatTime(dateString) {
             const date = new Date(dateString);
             const now = new Date();
@@ -2403,13 +2286,14 @@ By using LegalSwami, you acknowledge and agree to these terms.`;
             return date.toLocaleDateString();
         }
         
-        // ✅ SHOW TOAST NOTIFICATION
-        function showToast(message, type = 'info') {
+        // SHOW TOAST NOTIFICATION
+        function showToast(message, type) {
+            type = type || 'info';
             const container = document.getElementById('toastContainer');
             if (!container) return;
             
             const toast = document.createElement('div');
-            toast.className = `toast toast-${type}`;
+            toast.className = 'toast toast-' + type;
             
             const icons = {
                 success: 'fas fa-check-circle',
@@ -2418,27 +2302,23 @@ By using LegalSwami, you acknowledge and agree to these terms.`;
                 info: 'fas fa-info-circle'
             };
             
-            toast.innerHTML = `
-                <i class="${icons[type] || icons.info}"></i>
-                <span>${message}</span>
-            `;
+            toast.innerHTML = '<i class="' + (icons[type] || icons.info) + '"></i><span>' + message + '</span>';
             
             container.appendChild(toast);
             
-            setTimeout(() => {
+            setTimeout(function() {
                 toast.classList.add('fade-out');
-                setTimeout(() => {
+                setTimeout(function() {
                     if (toast.parentNode === container) {
                         container.removeChild(toast);
                     }
                 }, 300);
             }, 3000);
             
-            console.log(`📢 Toast (${type}):`, message);
+            console.log('📢 Toast (' + type + '):', message);
         }
         
-        // ✅ MAKE FUNCTIONS AVAILABLE GLOBALLY
-        window.handleInputKeydown = handleInputKeydown;
+        // MAKE FUNCTIONS AVAILABLE GLOBALLY
         window.loadChatFromHistory = loadChatFromHistory;
         window.deleteChatHistory = deleteChatHistory;
         
