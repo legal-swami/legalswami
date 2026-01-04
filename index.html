@@ -144,14 +144,6 @@
             transform: translateY(-2px);
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
         }
-        
-        /* Google One Tap Positioning */
-        #google-one-tap {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 9998;
-        }
     </style>
 </head>
 <body>
@@ -704,7 +696,7 @@
     <!-- Toast Notifications -->
     <div id="toastContainer" class="toast-container"></div>
     
-    <!-- ✅ NEW GOOGLE IDENTITY SERVICES (GIS) -->
+    <!-- ✅ GOOGLE IDENTITY SERVICES WITH FEDCM DISABLED -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     
     <!-- JavaScript Files -->
@@ -717,7 +709,7 @@
         // Global variables
         let currentChatId = null;
         let isProcessing = false;
-        let googleTokenClient = null;
+        let googleGISInitialized = false;
         
         // DOM Content Loaded
         document.addEventListener('DOMContentLoaded', function() {
@@ -735,64 +727,87 @@
             // Setup event listeners
             setupEventListeners();
             
-            // Initialize Google Identity Services
-            initializeGoogleIdentityServices();
+            // Initialize Google Identity Services (without One Tap)
+            setTimeout(initializeSimpleGoogleAuth, 1500);
             
             // Check for existing user
             checkExistingUser();
         });
         
-        // ✅ FIXED: Initialize Google Identity Services (New GIS)
-        function initializeGoogleIdentityServices() {
-            console.log('🔐 Initializing Google Identity Services...');
+        // ✅ SIMPLE GOOGLE AUTH WITHOUT ONE TAP/FEDCM
+        function initializeSimpleGoogleAuth() {
+            console.log('🔐 Initializing Google Authentication...');
             
             // Wait for Google Identity Services to load
             if (typeof google === 'undefined') {
                 console.warn('⚠️ Google Identity Services not loaded yet, will retry...');
-                setTimeout(initializeGoogleIdentityServices, 1000);
+                setTimeout(initializeSimpleGoogleAuth, 1000);
                 return;
             }
             
-            // Initialize token client
             try {
+                // Initialize Google Identity Services WITHOUT One Tap
                 google.accounts.id.initialize({
                     client_id: '166511615962-bohur5q8d4i5hud6icr4185kcte9enk8.apps.googleusercontent.com',
                     callback: handleGoogleCredentialResponse,
                     auto_select: false,
-                    cancel_on_tap_outside: false,
-                    context: 'signin'
+                    cancel_on_tap_outside: true,
+                    context: 'signin',
+                    // Disable One Tap to avoid FedCM issues
+                    itp_support: false
                 });
                 
-                console.log('✅ Google Identity Services initialized');
+                googleGISInitialized = true;
+                console.log('✅ Google Authentication initialized (One Tap disabled)');
                 
-                // Display One Tap UI if user is not logged in
-                if (!localStorage.getItem('legal_swami_user')) {
-                    setTimeout(() => {
-                        showGoogleOneTap();
-                    }, 2000);
-                }
+                // Render Google Sign-In button
+                renderGoogleSignInButton();
                 
             } catch (error) {
-                console.error('❌ Google Identity Services initialization failed:', error);
+                console.error('❌ Google Authentication initialization failed:', error);
+                showToast('Google Sign-In may not be available. Use demo login instead.', 'warning');
             }
         }
         
-        // ✅ FIXED: Show Google One Tap UI
-        function showGoogleOneTap() {
+        // ✅ RENDER GOOGLE SIGN-IN BUTTON
+        function renderGoogleSignInButton() {
             try {
-                google.accounts.id.prompt((notification) => {
-                    if (notification.isNotDisplayed() || notification.isSkippedMoment()) {
-                        // One Tap was not displayed, that's okay
-                        console.log('ℹ️ Google One Tap not shown:', notification.getNotDisplayedReason());
+                // Only render if element exists and Google is initialized
+                const buttonContainer = document.getElementById('googleSignInButton');
+                if (!buttonContainer || !googleGISInitialized) return;
+                
+                // Clear existing content
+                buttonContainer.innerHTML = '';
+                
+                // Render Google button
+                google.accounts.id.renderButton(
+                    buttonContainer,
+                    {
+                        theme: 'outline',
+                        size: 'large',
+                        text: 'signin_with',
+                        shape: 'rectangular',
+                        logo_alignment: 'left',
+                        width: '100%',
+                        locale: 'en_US'
                     }
-                });
-                console.log('✅ Google One Tap UI displayed');
+                );
+                
+                console.log('✅ Google Sign-In button rendered');
+                
             } catch (error) {
-                console.error('❌ Failed to show Google One Tap:', error);
+                console.error('❌ Failed to render Google Sign-In button:', error);
+                
+                // Fallback to custom button
+                const button = document.getElementById('googleSignInButton');
+                if (button) {
+                    button.innerHTML = '<i class="fab fa-google"></i> Sign in with Google';
+                    button.onclick = handleGoogleLogin;
+                }
             }
         }
         
-        // ✅ FIXED: Handle Google credential response
+        // ✅ HANDLE GOOGLE CREDENTIAL RESPONSE
         function handleGoogleCredentialResponse(response) {
             console.log('🔐 Google credential received');
             
@@ -825,11 +840,6 @@
                 updateUserUI();
                 hideLoginModal();
                 
-                // Hide One Tap after successful login
-                try {
-                    google.accounts.id.disableAutoSelect();
-                } catch (e) {}
-                
                 showToast('Successfully logged in with Google!', 'success');
                 
             } catch (error) {
@@ -838,7 +848,26 @@
             }
         }
         
-        // ✅ FIXED: Check for existing user
+        // ✅ HANDLE GOOGLE LOGIN (MANUAL)
+        function handleGoogleLogin() {
+            console.log('🔐 Manual Google login triggered');
+            
+            if (!googleGISInitialized) {
+                showToast('Google Sign-In is not available. Please use demo login.', 'warning');
+                return;
+            }
+            
+            // Trigger Google Sign-In prompt
+            try {
+                google.accounts.id.prompt();
+            } catch (error) {
+                console.error('❌ Google login failed:', error);
+                showToast('Google Sign-In failed. Using demo login instead.', 'warning');
+                handleDemoLogin();
+            }
+        }
+        
+        // ✅ CHECK FOR EXISTING USER
         function checkExistingUser() {
             console.log('👤 Checking for existing user...');
             
@@ -867,7 +896,7 @@
             updateUserUI();
         }
         
-        // ✅ FIXED: Update user UI
+        // ✅ UPDATE USER UI
         function updateUserUI() {
             console.log('👤 Updating user UI...');
             
@@ -918,7 +947,7 @@
             }
         }
         
-        // Setup all event listeners
+        // SETUP ALL EVENT LISTENERS
         function setupEventListeners() {
             console.log('🔧 Setting up event listeners');
             
@@ -928,9 +957,9 @@
             document.getElementById('startChatBtn').addEventListener('click', startChat);
             document.getElementById('learnMoreBtn').addEventListener('click', showDemo);
             
-            // ✅ FIXED: Google login button
-            document.getElementById('googleSignInButton').addEventListener('click', handleGoogleLogin);
+            // Login modal buttons
             document.getElementById('demoLoginBtn').addEventListener('click', handleDemoLogin);
+            document.getElementById('closeLoginModal').addEventListener('click', hideLoginModal);
             
             // Chat interface
             document.getElementById('backToHome').addEventListener('click', goBackToHome);
@@ -950,9 +979,6 @@
                     sendMessageHandler();
                 });
             });
-            
-            // Login modal
-            document.getElementById('closeLoginModal').addEventListener('click', hideLoginModal);
             
             // Document generation checkbox
             document.getElementById('generateDocument').addEventListener('change', function() {
@@ -983,47 +1009,7 @@
             console.log('✅ All event listeners set up');
         }
         
-        // ✅ FIXED: Handle Google Login with new GIS
-        function handleGoogleLogin() {
-            console.log('🔐 Manual Google login triggered');
-            
-            try {
-                // Use Google Identity Services to trigger login
-                google.accounts.id.prompt((notification) => {
-                    if (notification.isNotDisplayed()) {
-                        // If One Tap not shown, render button
-                        renderGoogleSignInButton();
-                    }
-                });
-                
-            } catch (error) {
-                console.error('❌ Google login failed:', error);
-                showToast('Google login not available. Using demo login instead.', 'warning');
-                handleDemoLogin();
-            }
-        }
-        
-        // Render Google Sign-In button (fallback)
-        function renderGoogleSignInButton() {
-            try {
-                google.accounts.id.renderButton(
-                    document.getElementById('googleSignInButton'),
-                    {
-                        theme: 'outline',
-                        size: 'large',
-                        text: 'signin_with',
-                        shape: 'rectangular',
-                        logo_alignment: 'left',
-                        width: '100%'
-                    }
-                );
-                console.log('✅ Google Sign-In button rendered');
-            } catch (error) {
-                console.error('❌ Failed to render Google button:', error);
-            }
-        }
-        
-        // ✅ FIXED: Handle Demo Login
+        // ✅ HANDLE DEMO LOGIN
         function handleDemoLogin() {
             console.log('👤 Demo login triggered');
             
@@ -1078,7 +1064,7 @@
             showToast(`Welcome ${userData.name}! (Demo Mode)`, 'success');
         }
         
-        // ✅ FIXED: Handle Logout
+        // ✅ HANDLE LOGOUT
         function handleLogout() {
             console.log('🚪 Logging out...');
             
@@ -1116,18 +1102,13 @@
             updateUserUI();
             showToast('Logged out successfully', 'success');
             
-            // Show One Tap again
-            setTimeout(() => {
-                showGoogleOneTap();
-            }, 1000);
-            
             // Go back to home if in chat interface
             if (document.getElementById('chatInterface').style.display !== 'none') {
                 goBackToHome();
             }
         }
         
-        // Initialize app with backend
+        // INITIALIZE APP WITH BACKEND
         async function initializeAppWithBackend() {
             console.log('🔌 Initializing app with backend...');
             
@@ -1205,19 +1186,19 @@
             }
         }
         
-        // Show login modal
+        // SHOW LOGIN MODAL
         function showLoginModal() {
             document.getElementById('loginModal').style.display = 'flex';
             console.log('🔐 Login modal shown');
         }
         
-        // Hide login modal
+        // HIDE LOGIN MODAL
         function hideLoginModal() {
             document.getElementById('loginModal').style.display = 'none';
             console.log('🔐 Login modal hidden');
         }
         
-        // Start chat
+        // START CHAT
         function startChat() {
             console.log('💬 Starting chat...');
             
@@ -1243,7 +1224,7 @@
             }, 100);
         }
         
-        // Go back to home
+        // GO BACK TO HOME
         function goBackToHome() {
             document.getElementById('chatInterface').style.display = 'none';
             document.querySelector('.main-container').style.background = '';
@@ -1253,7 +1234,7 @@
             console.log('🏠 Returned to home');
         }
         
-        // Clear chat
+        // CLEAR CHAT
         function clearChat() {
             if (confirm('Are you sure you want to clear the chat?')) {
                 const chatMessages = document.getElementById('chatMessages');
@@ -1272,7 +1253,7 @@
             }
         }
         
-        // Export chat
+        // EXPORT CHAT
         function exportChat() {
             const chatMessages = document.getElementById('chatMessages');
             const messages = chatMessages.querySelectorAll('.message');
@@ -1303,7 +1284,7 @@
             console.log('📥 Chat exported');
         }
         
-        // Toggle history sidebar
+        // TOGGLE HISTORY SIDEBAR
         function toggleHistory() {
             const sidebar = document.getElementById('historySidebar');
             if (sidebar.style.display === 'flex') {
@@ -1316,7 +1297,7 @@
             }
         }
         
-        // Load chat history
+        // LOAD CHAT HISTORY
         async function loadChatHistory() {
             try {
                 if (!window.legalSwamiAPI) {
@@ -1334,7 +1315,7 @@
             }
         }
         
-        // Update history list UI
+        // UPDATE HISTORY LIST UI
         function updateHistoryList(history) {
             const historyList = document.getElementById('historyList');
             historyList.innerHTML = '';
@@ -1365,7 +1346,7 @@
             });
         }
         
-        // Load chat from history
+        // LOAD CHAT FROM HISTORY
         async function loadChatFromHistory(chatId) {
             try {
                 showToast('Loading chat from history...', 'info');
@@ -1377,7 +1358,7 @@
             }
         }
         
-        // Handle input keydown
+        // HANDLE INPUT KEYDOWN
         function handleInputKeydown(event) {
             if (event.key === 'Enter' && !event.shiftKey) {
                 event.preventDefault();
@@ -1390,7 +1371,7 @@
             textarea.style.height = (textarea.scrollHeight) + 'px';
         }
         
-        // Send message handler
+        // SEND MESSAGE HANDLER
         async function sendMessageHandler() {
             if (isProcessing) {
                 console.warn('⚠️ Message already being processed');
@@ -1470,7 +1451,7 @@
             }
         }
         
-        // Add message to chat UI
+        // ADD MESSAGE TO CHAT UI
         function addMessageToChat(content, isUser = false, isDocument = false, documentType = null) {
             const chatMessages = document.getElementById('chatMessages');
             const messageDiv = document.createElement('div');
@@ -1502,7 +1483,7 @@
             console.log('💬 Message added to chat:', isUser ? 'User' : 'AI');
         }
         
-        // Format message text (basic markdown)
+        // FORMAT MESSAGE TEXT
         function formatMessageText(text) {
             // Convert line breaks
             text = text.replace(/\n/g, '<br>');
@@ -1520,7 +1501,7 @@
             return text;
         }
         
-        // Show typing indicator
+        // SHOW TYPING INDICATOR
         function showTypingIndicator(show) {
             const indicator = document.getElementById('typingIndicator');
             indicator.style.display = show ? 'flex' : 'none';
@@ -1532,43 +1513,43 @@
             }
         }
         
-        // Attach file
+        // ATTACH FILE
         function attachFile() {
             showToast('File attachment feature coming soon!', 'info');
             console.log('📎 File attachment clicked');
         }
         
-        // Start voice input
+        // START VOICE INPUT
         function startVoiceInput() {
             showToast('Voice input feature coming soon!', 'info');
             console.log('🎤 Voice input clicked');
         }
         
-        // Show demo
+        // SHOW DEMO
         function showDemo() {
             showToast('Demo feature coming soon!', 'info');
             console.log('🎬 Demo clicked');
         }
         
-        // Show terms
+        // SHOW TERMS
         function showTerms(e) {
             e.preventDefault();
             alert('Terms of Service\n\nBy using LegalSwami, you agree to our terms...');
         }
         
-        // Show privacy policy
+        // SHOW PRIVACY POLICY
         function showPrivacy(e) {
             e.preventDefault();
             alert('Privacy Policy\n\nWe value your privacy...');
         }
         
-        // Show disclaimer
+        // SHOW DISCLAIMER
         function showDisclaimer(e) {
             e.preventDefault();
             alert('Legal Disclaimer\n\nLegalSwami is an AI assistant, not a licensed attorney...');
         }
         
-        // Format time
+        // FORMAT TIME
         function formatTime(dateString) {
             const date = new Date(dateString);
             const now = new Date();
@@ -1580,7 +1561,7 @@
             return date.toLocaleDateString();
         }
         
-        // Show toast notification
+        // SHOW TOAST NOTIFICATION
         function showToast(message, type = 'info') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
@@ -1609,7 +1590,7 @@
             console.log(`📢 Toast (${type}):`, message);
         }
         
-        // Make functions available globally
+        // MAKE FUNCTIONS AVAILABLE GLOBALLY
         window.handleInputKeydown = handleInputKeydown;
         window.loadChatFromHistory = loadChatFromHistory;
         
