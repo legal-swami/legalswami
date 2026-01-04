@@ -1,8 +1,8 @@
 /**
  * LegalSwami API Service
- * Version: 4.0.0
+ * Version: 4.1.0
  * Date: 2024-01-15
- * Handles all backend communication
+ * Fixed Content-Type issue
  */
 
 // LegalSwami API Service for Backend Communication
@@ -112,7 +112,7 @@ class LegalSwamiAPI {
     async request(endpoint, options = {}) {
         const url = `${this.BACKEND_URL}${endpoint}`;
         
-        console.log(`📤 API Request: ${endpoint}`);
+        console.log(`📤 API Request: ${endpoint}`, options.method || 'GET');
         
         // Default headers
         const headers = {
@@ -139,14 +139,24 @@ class LegalSwamiAPI {
             const controller = new AbortController();
             const timeoutId = setTimeout(() => controller.abort(), 30000); // 30 second timeout
             
-            // Remove Content-Type header for FormData requests
-            if (options.body instanceof FormData) {
-                delete headers['Content-Type'];
+            // ✅ FIXED: Always send JSON for chat messages
+            let body = options.body;
+            
+            // Convert FormData to JSON if needed
+            if (body instanceof FormData && endpoint.includes('/chat/')) {
+                // Convert FormData to plain object
+                const data = {};
+                for (let [key, value] of body.entries()) {
+                    data[key] = value;
+                }
+                body = JSON.stringify(data);
+                headers['Content-Type'] = 'application/json';
             }
             
             const fetchOptions = {
                 ...options,
                 headers,
+                body,
                 signal: controller.signal,
                 mode: 'cors',
                 credentials: 'same-origin'
@@ -328,7 +338,7 @@ class LegalSwamiAPI {
         }
     }
 
-    // ✅ FIXED: Send chat message with offline fallback
+    // ✅ FIXED: Send chat message with JSON instead of FormData
     async sendChatMessage(message, attachments = [], chatId = null, options = {}) {
         // If offline, return mock response
         if (!this.isConnected) {
@@ -337,30 +347,21 @@ class LegalSwamiAPI {
         }
         
         try {
-            const formData = new FormData();
-            formData.append('message', message);
+            // ✅ FIXED: Create JSON payload instead of FormData
+            const payload = {
+                message: message,
+                userId: this.user?.id || 'guest',
+                generateDocument: options.generateDocument || false,
+                documentType: options.documentType || 'PDF',
+                chatId: chatId || null,
+                timestamp: new Date().toISOString()
+            };
             
-            if (chatId) {
-                formData.append('chatId', chatId);
-            }
-            
-            if (options.generateDocument) {
-                formData.append('generateDocument', 'true');
-                formData.append('documentType', options.documentType || 'PDF');
-            }
-            
-            // Add attachments
-            attachments.forEach((file, index) => {
-                formData.append(`attachments`, file, file.name);
-            });
+            console.log('📤 Sending chat message:', payload);
 
             return await this.request('/chat/send', {
                 method: 'POST',
-                headers: {
-                    'Authorization': this.token ? `Bearer ${this.token}` : '',
-                    'X-User-Id': this.user?.id || 'guest'
-                },
-                body: formData
+                body: JSON.stringify(payload)
             });
             
         } catch (error) {
@@ -656,7 +657,7 @@ class LegalSwamiAPI {
         }
     }
 
-    // Upload file to backend
+    // Upload file to backend (still uses FormData)
     async uploadFile(file) {
         // If offline, simulate upload
         if (!this.isConnected) {
@@ -985,4 +986,4 @@ if (typeof module !== 'undefined' && module.exports) {
     module.exports = { LegalSwamiAPI };
 }
 
-console.log('✅ LegalSwami API v4.0.0 loaded successfully');
+console.log('✅ LegalSwami API v4.1.0 loaded successfully');
