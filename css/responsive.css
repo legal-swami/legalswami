@@ -5,38 +5,22 @@
 
 /* ===== GLOBAL RESPONSIVE SETTINGS ===== */
 @media (max-width: 1400px) {
-    .container,
-    .nav-container,
-    .hero-container {
+    .container {
         max-width: 1200px;
     }
-    
-    .hero-title {
-        font-size: 3.2rem;
-    }
 }
 
-/* ===== DESKTOP (1025px - 1399px) ===== */
-@media (max-width: 1399px) {
-    .container {
-        max-width: 1140px;
-        padding: 0 30px;
-    }
-    
-    .hero-title {
-        font-size: 3rem;
-    }
-    
-    .features-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-/* ===== TABLET LANDSCAPE (992px - 1024px) ===== */
-@media (max-width: 1024px) {
+@media (max-width: 1200px) {
     .container {
         max-width: 960px;
-        padding: 0 25px;
+    }
+}
+
+/* ===== TABLET (768px - 1024px) ===== */
+@media (max-width: 1024px) {
+    .container {
+        max-width: 720px;
+        padding: 0 20px;
     }
     
     /* Navigation */
@@ -61,204 +45,27 @@
     
     .hero-illustration {
         order: 2;
-        max-width: 500px;
-        margin: 0 auto;
-    }
-    
-    .hero-title {
-        font-size: 2.8rem;
-    }
-    
-    .hero-subtitle {
-        max-width: 90%;
-        margin-left: auto;
-        margin-right: auto;
-    }
-    
-    .hero-stats {
-        max-width: 600px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-    
-    /* Features */
-    .features-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 25px;
-    }
-    
-    /* Documents */
-    .documents-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 25px;
-    }
-    
-    /* Pricing */
-    .pricing-cards {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 25px;
-    }
-    
-    .pricing-card.premium-plan {
-        transform: none;
-    }
-    
-    /* Chat Interface */
-    .chat-container {
-        max-width: 95%;
-    }
-    
-    .chat-history-sidebar {
-        width: 350px;
-    }
-    
-    /* Footer */
-    .footer-content {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 40px;
-    }
-}
-
-/* ===== TABLET PORTRAIT (768px - 991px) ===== */
-@media (max-width: 991px) {
-    html {
-        font-size: 15px;
-    }
-    
-    .container {
-        max-width: 720px;
-        padding: 0 20px;
-    }
-    
-    /* Hero Section */
-    .hero-section {
-        padding: 100px 0 60px;
-    }
-    
-    .hero-title {
-        font-size: 2.5rem;
-        line-height: 1.2;
-    }
-    
-    .hero-subtitle {
-        font-size: 1.1rem;
-        max-width: 100%;
-    }
-    
-    .hero-actions {
-        flex-direction: column;
-        align-items: center;
-        gap: 15px;
-    }
-    
-    .btn-hero-primary,
-    .btn-hero-secondary {
-        width: 100%;
-        max-width: 300px;
-        justify-content: center;
-    }
-    
-    .hero-stats {
-        grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
-    }
-    
-    .stat-item {
-        padding: 15px;
-    }
-    
-    /* Sections */
-    section {
-        padding: 80px 0;
-    }
-    
-    .section-header {
-        margin-bottom: 50px;
-    }
-    
-    .section-title {
-        font-size: 2.2rem;
-    }
-    
-    /* Features */
-    .features-grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
-    
-    .feature-card {
-        padding: 30px;
-    }
-    
-    /* Documents */
-    .documents-grid {
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
-    
-    .document-category {
-        padding: 30px;
-    }
-    
-    /* Testimonials */
-    .testimonials-carousel {
-        grid-template-columns: 1fr;
-        gap: 20px;
-    }
-    
-    .testimonial-card {
-        padding: 30px;
-    }
-    
-    /* Pricing */
-    .pricing-cards {
-        grid-template-columns: 1fr;
-        gap: 20px;
         max-width: 400px;
         margin: 0 auto;
     }
     
-    /* CTA */
-    .cta-section {
-        padding: 80px 0;
+    .hero-title {
+        font-size: 2.5rem;
     }
     
-    .cta-title {
-        font-size: 2.2rem;
-    }
-    
-    .cta-actions {
-        flex-direction: column;
-        align-items: center;
-        gap: 15px;
-    }
-    
-    .btn-cta-primary,
-    .btn-cta-secondary {
-        width: 100%;
-        max-width: 300px;
+    /* Features Grid */
+    .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 20px;
     }
     
     /* Chat Interface */
-    .chat-header {
-        padding: 15px 20px;
-    }
-    
-    .chat-messages {
-        padding: 20px;
-    }
-    
-    .chat-input-area {
-        padding: 15px 20px;
-    }
-    
-    .message {
-        max-width: 90%;
-    }
-    
-    /* Mobile Menu */
-    .mobile-menu-container {
+    .chat-history-sidebar {
         width: 300px;
+    }
+    
+    .suggestion-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
@@ -269,40 +76,24 @@
     }
     
     .container {
+        max-width: 540px;
         padding: 0 15px;
     }
     
     /* Navigation */
     .premium-navbar {
-        padding: 10px 0;
+        padding: 8px 0;
     }
     
     .nav-container {
-        height: 60px;
+        height: 56px;
     }
     
     .logo-title {
-        font-size: 1.3rem;
+        font-size: 1.2rem;
     }
     
     .logo-subtitle {
-        display: none;
-    }
-    
-    .nav-actions {
-        gap: 10px;
-    }
-    
-    .btn-login {
-        padding: 8px 15px;
-        font-size: 0.9rem;
-    }
-    
-    .user-profile {
-        padding: 5px 10px 5px 5px;
-    }
-    
-    .profile-info {
         display: none;
     }
     
@@ -313,212 +104,76 @@
     
     .hero-title {
         font-size: 2rem;
+        line-height: 1.2;
     }
     
-    .hero-badge {
-        margin-bottom: 20px;
-    }
-    
-    .badge-text {
-        font-size: 0.8rem;
-        padding: 6px 15px;
-    }
-    
-    .hero-stats {
-        grid-template-columns: 1fr;
-        gap: 15px;
-        max-width: 300px;
-    }
-    
-    .stat-item {
-        padding: 15px;
-    }
-    
-    .stat-number {
-        font-size: 1.8rem;
-    }
-    
-    .ai-assistant-card {
-        padding: 25px;
-    }
-    
-    .assistant-avatar.legal-seal {
-        width: 80px !important;
-        height: 80px !important;
-    }
-    
-    /* Sections */
-    section {
-        padding: 60px 0;
-    }
-    
-    .section-header {
-        margin-bottom: 40px;
-    }
-    
-    .section-title {
-        font-size: 1.8rem;
-    }
-    
-    .section-subtitle {
+    .hero-subtitle {
         font-size: 1rem;
     }
     
-    /* Features */
-    .feature-card {
-        padding: 25px;
-    }
-    
-    .feature-icon.legal-seal {
-        width: 60px;
-        height: 60px;
-        font-size: 1.5rem;
-        margin-bottom: 20px;
-    }
-    
-    .feature-title {
-        font-size: 1.3rem;
-    }
-    
-    /* Documents */
-    .document-category {
-        padding: 25px;
-    }
-    
-    .category-icon {
-        width: 60px;
-        height: 60px;
-        font-size: 1.5rem;
-        margin-bottom: 20px;
-    }
-    
-    .category-title {
-        font-size: 1.3rem;
-    }
-    
-    .document-list li {
-        font-size: 0.9rem;
-        padding: 8px 0;
-    }
-    
-    /* Testimonials */
-    .testimonial-card {
-        padding: 25px;
-    }
-    
-    .testimonial-text {
-        font-size: 0.9rem;
-    }
-    
-    .author-avatar {
-        width: 50px;
-        height: 50px;
-    }
-    
-    .author-name {
-        font-size: 1rem;
-    }
-    
-    /* Pricing */
-    .pricing-card {
-        padding: 25px;
-    }
-    
-    .pricing-title {
-        font-size: 1.3rem;
-    }
-    
-    .amount {
-        font-size: 2.5rem;
-    }
-    
-    .pricing-features li {
-        font-size: 0.9rem;
-        padding: 8px 0;
-    }
-    
-    /* CTA */
-    .cta-section {
-        padding: 60px 0;
-    }
-    
-    .cta-title {
-        font-size: 1.8rem;
-    }
-    
-    .cta-description {
-        font-size: 1rem;
-    }
-    
-    .cta-guarantee {
+    .hero-actions {
         flex-direction: column;
-        gap: 15px;
+        gap: 12px;
     }
     
-    /* Footer */
-    .footer-content {
-        grid-template-columns: 1fr;
-        gap: 30px;
-        text-align: center;
-    }
-    
-    .footer-section {
-        align-items: center;
-    }
-    
-    .social-links {
+    .btn-hero-primary,
+    .btn-hero-secondary {
+        width: 100%;
         justify-content: center;
     }
     
-    .footer-links,
-    .footer-contact {
-        align-items: center;
+    .ai-assistant-card {
+        padding: 20px;
+    }
+    
+    /* Features Grid */
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .feature-card {
+        padding: 20px;
     }
     
     /* Chat Interface */
-    .chat-history-sidebar {
-        width: 100%;
-    }
-    
     .chat-header {
-        padding: 10px 15px;
+        padding: 8px 12px;
     }
     
     .chat-title-text h3 {
-        font-size: 1rem;
+        font-size: 14px;
     }
     
-    .chat-title-text p {
+    .chat-subtitle {
         display: none;
     }
     
-    .chat-action-btn,
-    .chat-back-btn {
-        width: 40px;
-        height: 40px;
+    .chat-back-btn,
+    .chat-action-btn {
+        width: 32px;
+        height: 32px;
     }
     
     .chat-messages {
-        padding: 15px;
+        padding: 12px;
     }
     
     .message {
-        max-width: 95%;
-        gap: 10px;
+        gap: 12px;
     }
     
     .message-avatar {
-        width: 35px;
-        height: 35px;
-        font-size: 1rem;
+        width: 32px;
+        height: 32px;
     }
     
     .message-text {
-        padding: 12px 15px;
-        font-size: 0.9rem;
+        padding: 12px;
+        font-size: 14px;
     }
     
-    .welcome-content h3 {
+    .welcome-content h1 {
         font-size: 1.8rem;
     }
     
@@ -526,88 +181,34 @@
         font-size: 1rem;
     }
     
-    .welcome-features {
-        display: none;
+    .suggestion-grid {
+        grid-template-columns: 1fr;
     }
     
-    .quick-buttons {
-        flex-wrap: nowrap;
-        overflow-x: auto;
-        padding-bottom: 10px;
-        -webkit-overflow-scrolling: touch;
-        scrollbar-width: none;
-    }
-    
-    .quick-buttons::-webkit-scrollbar {
-        display: none;
-    }
-    
-    .quick-btn {
-        flex-shrink: 0;
-        white-space: nowrap;
-        font-size: 0.8rem;
-        padding: 10px 15px;
+    .suggestion-card {
+        padding: 16px;
     }
     
     .chat-input-area {
-        padding: 10px 15px;
+        padding: 12px;
     }
     
     .input-container {
-        padding: 10px;
+        padding: 8px;
     }
     
     .input-action-btn {
-        width: 40px;
-        height: 40px;
+        width: 28px;
+        height: 28px;
     }
     
     .btn-send {
-        width: 45px;
-        height: 45px;
+        width: 32px;
+        height: 32px;
     }
     
     textarea#messageInput {
         font-size: 16px !important;
-        min-height: 40px;
-    }
-    
-    .document-options {
-        flex-direction: column;
-        align-items: stretch;
-        gap: 15px;
-    }
-    
-    select#documentType {
-        width: 100%;
-    }
-    
-    /* Modal */
-    .modal {
-        padding: 10px;
-    }
-    
-    .modal-content {
-        margin: 10px;
-        max-width: calc(100% - 20px);
-    }
-    
-    .modal-header {
-        padding: 30px 20px 20px;
-    }
-    
-    .modal-body {
-        padding: 20px;
-    }
-    
-    /* Mobile Menu */
-    .mobile-menu-container {
-        width: 280px;
-    }
-    
-    .mobile-link {
-        padding: 12px 15px;
-        font-size: 0.9rem;
     }
 }
 
@@ -618,122 +219,102 @@
     }
     
     .hero-subtitle {
-        font-size: 0.95rem;
-    }
-    
-    .btn-hero-primary,
-    .btn-hero-secondary {
-        padding: 12px 20px;
         font-size: 0.9rem;
     }
     
     .ai-assistant-card {
-        padding: 20px;
+        padding: 16px;
     }
     
     .assistant-avatar.legal-seal {
-        width: 70px !important;
-        height: 70px !important;
+        width: 60px !important;
+        height: 60px !important;
     }
     
     .assistant-title {
         font-size: 1.2rem;
     }
     
-    .assistant-features {
-        font-size: 0.9rem;
-    }
-    
-    .section-title {
-        font-size: 1.6rem;
-    }
-    
-    .section-subtitle {
-        font-size: 0.95rem;
-    }
-    
-    .feature-card,
-    .document-category,
-    .testimonial-card,
-    .pricing-card {
-        padding: 20px;
+    .feature-card {
+        padding: 16px;
     }
     
     .feature-icon.legal-seal {
         width: 50px;
         height: 50px;
-        font-size: 1.3rem;
-    }
-    
-    .feature-title {
-        font-size: 1.2rem;
-    }
-    
-    .feature-description {
-        font-size: 0.9rem;
-    }
-    
-    .document-list li {
-        font-size: 0.85rem;
-        padding: 6px 0;
-    }
-    
-    .testimonial-author {
-        flex-direction: column;
-        text-align: center;
-        gap: 10px;
-    }
-    
-    .author-avatar {
-        margin: 0 auto;
-    }
-    
-    .pricing-badge {
-        font-size: 0.7rem;
-        padding: 4px 12px;
-    }
-    
-    .pricing-price {
-        flex-direction: column;
-        align-items: center;
-        gap: 5px;
-    }
-    
-    .currency,
-    .period {
-        font-size: 1.2rem;
-    }
-    
-    .amount {
-        font-size: 2.2rem;
-    }
-    
-    .cta-title {
-        font-size: 1.6rem;
-    }
-    
-    .cta-description {
-        font-size: 0.95rem;
+        font-size: 1.5rem;
     }
     
     .chat-messages {
-        padding: 10px;
+        padding: 8px;
     }
     
     .message {
-        max-width: 100%;
         gap: 8px;
     }
     
     .message-avatar {
-        width: 32px;
-        height: 32px;
-        font-size: 0.9rem;
+        width: 28px;
+        height: 28px;
+        font-size: 12px;
     }
     
     .message-text {
         padding: 10px;
-        font-size: 0.85rem;
+        font-size: 13px;
+    }
+    
+    .ai-avatar {
+        width: 48px;
+        height: 48px;
+        font-size: 20px;
+    }
+    
+    .welcome-content h1 {
+        font-size: 1.5rem;
+    }
+    
+    .welcome-content p {
+        font-size: 0.9rem;
+    }
+}
+
+/* ===== SMALL MOBILE (320px - 479px) ===== */
+@media (max-width: 479px) {
+    .hero-title {
+        font-size: 1.6rem;
+    }
+    
+    .hero-badge {
+        margin-bottom: 16px;
+    }
+    
+    .badge-text {
+        font-size: 0.7rem;
+        padding: 4px 12px;
+    }
+    
+    .btn-hero-primary,
+    .btn-hero-secondary {
+        padding: 12px 16px;
+        font-size: 0.9rem;
+    }
+    
+    .nav-container {
+        padding: 0 10px;
+    }
+    
+    .logo-icon.legal-seal {
+        width: 32px;
+        height: 32px;
+    }
+    
+    .chat-history-sidebar {
+        width: 100%;
+    }
+    
+    .chat-header {
+        padding: 8px;
     }
     
     .message-header {
@@ -742,330 +323,14 @@
         gap: 2px;
     }
     
-    .message-sender {
-        font-size: 0.8rem;
-    }
-    
     .message-time {
-        font-size: 0.7rem;
-    }
-    
-    .document-header {
-        flex-direction: column;
-        text-align: center;
-        gap: 10px;
-        padding: 15px;
-    }
-    
-    .document-icon {
-        width: 45px;
-        height: 45px;
-        font-size: 1.3rem;
-    }
-    
-    .document-info h5 {
-        font-size: 1rem;
-    }
-    
-    .document-actions {
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    .btn-download,
-    .btn-preview {
-        width: 100%;
-        justify-content: center;
-        font-size: 0.9rem;
-        padding: 10px;
-    }
-}
-
-/* ===== SMALL MOBILE (360px - 479px) ===== */
-@media (max-width: 479px) {
-    .hero-title {
-        font-size: 1.6rem;
-    }
-    
-    .hero-subtitle {
-        font-size: 0.9rem;
-    }
-    
-    .btn-hero-primary,
-    .btn-hero-secondary {
-        padding: 10px 15px;
-        font-size: 0.85rem;
-    }
-    
-    .hero-stats {
-        padding: 15px;
-    }
-    
-    .stat-number {
-        font-size: 1.5rem;
-    }
-    
-    .stat-label {
-        font-size: 0.8rem;
-    }
-    
-    .nav-container {
-        padding: 0 10px;
-    }
-    
-    .logo-title {
-        font-size: 1.2rem;
-    }
-    
-    .logo-icon.legal-seal {
-        width: 35px;
-        height: 35px;
-    }
-    
-    .chat-header {
-        padding: 8px;
-    }
-    
-    .chat-action-btn,
-    .chat-back-btn {
-        width: 36px;
-        height: 36px;
-    }
-    
-    .quick-btn {
-        font-size: 0.75rem;
-        padding: 8px 12px;
-    }
-    
-    .mobile-menu-container {
-        width: 260px;
+        font-size: 11px;
     }
     
     .toast {
         min-width: 280px;
-        padding: 12px 16px;
-    }
-}
-
-/* ===== VERY SMALL MOBILE (< 360px) ===== */
-@media (max-width: 359px) {
-    .hero-title {
-        font-size: 1.4rem;
-    }
-    
-    .hero-subtitle {
-        font-size: 0.85rem;
-    }
-    
-    .section-title {
-        font-size: 1.4rem;
-    }
-    
-    .btn-hero-primary,
-    .btn-hero-secondary {
-        padding: 8px 12px;
-        font-size: 0.8rem;
-    }
-    
-    .feature-card,
-    .document-category {
-        padding: 15px;
-    }
-    
-    .chat-title-text h3 {
-        font-size: 0.9rem;
-    }
-    
-    .message-text {
-        font-size: 0.8rem;
-        padding: 8px;
-    }
-    
-    .mobile-menu-container {
-        width: 240px;
-    }
-}
-
-/* ===== TABLET ORIENTATION SPECIFIC ===== */
-@media (min-width: 768px) and (max-height: 1024px) and (orientation: portrait) {
-    .hero-section {
-        min-height: auto;
-        padding: 80px 0;
-    }
-    
-    .hero-title {
-        font-size: 2.2rem;
-    }
-    
-    .features-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-@media (min-width: 1024px) and (max-height: 768px) and (orientation: landscape) {
-    .hero-section {
-        min-height: auto;
-        padding: 60px 0;
-    }
-    
-    .hero-title {
-        font-size: 2.5rem;
-    }
-    
-    .hero-content {
-        max-width: 60%;
-    }
-}
-
-/* ===== FOLDABLE DEVICES ===== */
-@media (max-width: 350px) and (max-height: 650px) {
-    .hero-title {
-        font-size: 1.4rem;
-    }
-    
-    .hero-subtitle {
-        font-size: 0.8rem;
-    }
-    
-    .hero-actions {
-        flex-direction: column;
-        gap: 10px;
-    }
-    
-    .btn-hero-primary,
-    .btn-hero-secondary {
-        font-size: 0.8rem;
-        padding: 8px 12px;
-    }
-    
-    .feature-card,
-    .document-category {
         padding: 12px;
-    }
-    
-    .feature-icon.legal-seal {
-        width: 40px;
-        height: 40px;
-        font-size: 1rem;
-    }
-    
-    .feature-title {
-        font-size: 1rem;
-    }
-    
-    .feature-description {
-        font-size: 0.8rem;
-    }
-    
-    /* Chat Interface for foldables */
-    .chat-header {
-        padding: 6px;
-    }
-    
-    .chat-title-icon {
-        width: 30px;
-        height: 30px;
-        font-size: 0.9rem;
-    }
-    
-    .chat-title-text h3 {
-        font-size: 0.85rem;
-    }
-    
-    .chat-messages {
-        padding: 8px;
-    }
-    
-    .message {
-        max-width: 100%;
-    }
-    
-    .message-avatar {
-        width: 30px;
-        height: 30px;
-        font-size: 0.8rem;
-    }
-    
-    .message-text {
-        font-size: 0.8rem;
-        padding: 8px;
-    }
-    
-    .quick-btn {
-        font-size: 0.7rem;
-        padding: 6px 10px;
-    }
-}
-
-/* ===== LANDSCAPE ORIENTATION ===== */
-@media (max-height: 600px) and (orientation: landscape) {
-    .premium-navbar {
-        padding: 5px 0;
-    }
-    
-    .nav-container {
-        height: 50px;
-    }
-    
-    .hero-section {
-        padding: 60px 0 20px;
-        min-height: auto;
-    }
-    
-    .hero-title {
-        font-size: 1.8rem;
-    }
-    
-    .hero-subtitle {
-        font-size: 0.9rem;
-        margin-bottom: 20px;
-    }
-    
-    .hero-stats {
-        display: none;
-    }
-    
-    .hero-illustration {
-        display: none;
-    }
-    
-    /* Chat Interface in landscape */
-    .chat-interface {
-        height: 100vh;
-    }
-    
-    .chat-header {
-        padding: 8px;
-        height: 50px;
-    }
-    
-    .chat-main {
-        height: calc(100vh - 100px);
-    }
-    
-    .chat-messages {
-        max-height: 50vh;
-    }
-    
-    .chat-input-area {
-        padding: 8px;
-        height: 50px;
-    }
-    
-    .welcome-features {
-        display: none;
-    }
-    
-    .quick-questions {
-        display: none;
-    }
-    
-    .welcome-content h3 {
-        font-size: 1.3rem;
-    }
-    
-    .welcome-content p {
-        font-size: 0.9rem;
+        margin: 0 8px;
     }
 }
 
@@ -1074,64 +339,39 @@
     /* Minimum touch target size */
     button, 
     .nav-link, 
-    .quick-btn, 
-    .btn-generate,
     .chat-action-btn,
     .input-action-btn,
     .message-action-btn,
-    .history-action-btn {
+    .suggestion-card {
         min-height: 44px;
         min-width: 44px;
-    }
-    
-    .nav-link {
-        padding: 12px 16px;
-    }
-    
-    /* Prevent text size adjustment on mobile */
-    input,
-    select,
-    textarea {
-        font-size: 16px !important;
-    }
-    
-    #messageInput {
-        font-size: 16px !important;
     }
     
     /* Better touch scrolling */
     .chat-messages,
     .history-list {
         -webkit-overflow-scrolling: touch;
-        scroll-behavior: smooth;
     }
     
     /* Disable hover effects for touch */
     .btn-premium:hover,
     .premium-card:hover,
-    .feature-card:hover,
-    .document-category:hover,
-    .testimonial-card:hover,
-    .pricing-card:hover {
+    .feature-card:hover {
         transform: none !important;
     }
     
     /* Active states for touch */
     .nav-link:active,
     .btn-hero-primary:active,
-    .btn-hero-secondary:active,
-    .quick-btn:active,
-    .chat-action-btn:active {
+    .chat-action-btn:active,
+    .suggestion-card:active {
         transform: scale(0.98);
+        transition: transform 0.1s ease;
     }
 }
 
 /* ===== SAFARI SPECIFIC FIXES ===== */
 @supports (-webkit-touch-callout: none) {
-    .modal {
-        -webkit-overflow-scrolling: touch;
-    }
-    
     .chat-messages,
     .history-list {
         -webkit-overflow-scrolling: touch;
@@ -1140,66 +380,35 @@
     /* Fix for Safari input zoom */
     @media screen and (max-width: 767px) {
         input[type="text"],
-        input[type="email"],
-        input[type="password"],
         textarea {
             font-size: 16px !important;
         }
     }
-    
-    /* Fix for Safari backdrop-filter */
-    .premium-navbar,
-    .chat-header {
-        -webkit-backdrop-filter: blur(20px);
-    }
-    
-    /* Fix for Safari flexbox gap */
-    @supports not (gap: 1px) {
-        .hero-actions {
-            margin-bottom: -15px;
-        }
-        
-        .hero-actions > * {
-            margin-bottom: 15px;
+}
+
+/* ===== DARK MODE ===== */
+@media (prefers-color-scheme: dark) {
+    @media (max-width: 767px) {
+        .feature-card,
+        .document-category {
+            background: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.1);
         }
     }
 }
 
 /* ===== HIGH CONTRAST MODE ===== */
 @media (prefers-contrast: high) {
-    .btn-hero-primary,
-    .btn-login,
-    .demo-login-btn,
-    .btn-send,
-    .btn-assistant,
-    .btn-generate,
-    .btn-pricing,
-    .btn-cta-primary,
-    .btn-download {
-        border: 2px solid #000000;
-    }
-    
-    .feature-card,
-    .document-category,
-    .testimonial-card,
-    .pricing-card {
-        border: 2px solid #000000;
-    }
-    
-    .modal-content {
-        border: 2px solid #000000;
-    }
-    
-    .input-container {
-        border: 2px solid #000000;
-    }
-    
-    .nav-link.active {
-        border: 2px solid var(--primary);
+    .chat-interface {
+        border: 2px solid white;
     }
     
     .message-text {
-        border: 2px solid #000000;
+        border: 2px solid currentColor;
+    }
+    
+    .input-container {
+        border: 2px solid currentColor;
     }
 }
 
@@ -1211,183 +420,11 @@
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
-        scroll-behavior: auto !important;
     }
     
-    .loading-spinner,
-    .gavel-animation,
-    .floating,
-    .pulse-glow,
-    .text-reveal,
-    .shimmer-text,
-    .scroll-indicator,
-    .messageAppear,
-    .float,
-    .sealPulse,
-    .pulseGlow,
-    .typing,
-    .slideInRight,
-    .slideUp,
-    .bounce,
-    .scroll,
-    .textReveal,
-    .spin,
-    .pulse,
-    .sparkle,
-    .legal-seal::after,
-    .btn-premium::before,
-    .quick-btn::before,
-    .btn-send::before {
+    .message,
+    .toast,
+    .chat-interface {
         animation: none !important;
-    }
-    
-    .btn-premium:hover::before,
-    .quick-btn:hover::before,
-    .btn-send:hover::before {
-        display: none !important;
-    }
-    
-    .btn-premium:hover,
-    .premium-card:hover,
-    .feature-card:hover,
-    .document-category:hover,
-    .testimonial-card:hover,
-    .pricing-card:hover,
-    .message-action-btn:hover,
-    .input-action-btn:hover,
-    .chat-action-btn:hover,
-    .chat-back-btn:hover,
-    .btn-send:hover,
-    .history-action-btn:hover,
-    .mobile-close:hover,
-    .history-close:hover,
-    .btn-refresh:hover,
-    .nav-link:hover,
-    .trust-badge:hover,
-    .welcome-feature:hover,
-    .quick-btn:hover,
-    .history-item:hover,
-    .btn-hero-secondary:hover,
-    .btn-assistant:hover,
-    .btn-generate:hover,
-    .btn-pricing:hover,
-    .btn-cta-primary:hover,
-    .btn-cta-secondary:hover,
-    .social-link:hover,
-    .back-to-top:hover,
-    .btn-login:hover,
-    .mobile-link:hover,
-    .btn-download:hover,
-    .btn-preview:hover,
-    .google-signin-btn:hover,
-    .demo-login-btn:hover,
-    .btn-logout:hover {
-        transform: none !important;
-    }
-}
-
-/* ===== PRINT STYLES ===== */
-@media print {
-    .premium-navbar,
-    .hero-section,
-    .chat-interface,
-    .mobile-menu-overlay,
-    .back-to-top,
-    .toast-container,
-    .scroll-indicator,
-    .chat-input-area,
-    .quick-questions,
-    .hero-actions,
-    .hero-stats,
-    .hero-trust,
-    .hero-illustration {
-        display: none !important;
-    }
-    
-    body {
-        background: white !important;
-        color: black !important;
-        font-size: 12pt;
-    }
-    
-    .container {
-        max-width: 100% !important;
-        padding: 0 !important;
-    }
-    
-    section {
-        padding: 20pt 0 !important;
-        break-inside: avoid;
-    }
-    
-    .feature-card,
-    .document-category,
-    .testimonial-card,
-    .pricing-card {
-        box-shadow: none !important;
-        border: 1px solid #ddd !important;
-        break-inside: avoid;
-        margin-bottom: 20pt !important;
-    }
-    
-    a {
-        color: black !important;
-        text-decoration: underline;
-    }
-    
-    .section-title {
-        color: black !important;
-        font-size: 16pt !important;
-    }
-    
-    .footer-content {
-        grid-template-columns: 1fr !important;
-    }
-}
-
-/* ===== DARK MODE ===== */
-@media (prefers-color-scheme: dark) {
-    :root {
-        --white: #0f172a;
-        --gray-50: #1e293b;
-        --gray-100: #334155;
-        --gray-200: #475569;
-        --gray-300: #64748b;
-        --gray-400: #94a3b8;
-        --gray-500: #cbd5e1;
-        --gray-600: #e2e8f0;
-        --gray-700: #f1f5f9;
-        --gray-800: #f8fafc;
-        --gray-900: #ffffff;
-        --text-primary: #f8fafc;
-        --text-secondary: #cbd5e1;
-    }
-    
-    /* Responsive dark mode fixes */
-    @media (max-width: 768px) {
-        .feature-card,
-        .document-category,
-        .testimonial-card,
-        .pricing-card {
-            background: var(--gray-50);
-            border-color: var(--gray-100);
-        }
-        
-        .hero-stats .stat-item {
-            background: var(--gray-50);
-            border-color: var(--gray-100);
-        }
-        
-        .chat-interface {
-            background: var(--gray-50);
-        }
-        
-        .chat-container {
-            background: var(--gray-50);
-        }
-        
-        .chat-messages {
-            background: linear-gradient(135deg, #0f172a, #1e293b);
-        }
     }
 }
