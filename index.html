@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>LegalSwami | AI-Powered Legal Assistant & Document Generator</title>
     
     <!-- Font Awesome -->
@@ -26,6 +26,10 @@
     <!-- Theme Color -->
     <meta name="theme-color" content="#1a237e">
     
+    <!-- Apple Mobile Web App Capable -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
     <!-- Open Graph / Social Media -->
     <meta property="og:title" content="LegalSwami - AI Legal Assistant">
     <meta property="og:description" content="Get instant legal advice, generate documents, and understand laws with AI">
@@ -33,7 +37,161 @@
     <meta property="og:url" content="https://legalswami.com">
 
     <style>
-        /* Additional styles to fix login issues */
+        /* Additional Mobile & Tablet Optimizations */
+        @media (max-width: 768px) {
+            /* Base font size adjustment for mobile */
+            html {
+                font-size: 14px;
+            }
+            
+            /* Better touch targets */
+            button, 
+            .nav-link, 
+            .quick-btn, 
+            .btn-generate,
+            .chat-action-btn,
+            .input-action-btn {
+                min-height: 44px;
+                min-width: 44px;
+            }
+            
+            /* Prevent zoom on input focus */
+            input, 
+            select, 
+            textarea {
+                font-size: 16px !important;
+            }
+            
+            /* Mobile chat interface optimization */
+            .chat-messages {
+                padding: 10px;
+            }
+            
+            .message {
+                max-width: 95%;
+            }
+            
+            /* Better mobile navigation */
+            .nav-container {
+                padding: 0 15px;
+            }
+            
+            /* Mobile hero section optimization */
+            .hero-title {
+                font-size: 2.2rem;
+                line-height: 1.2;
+            }
+            
+            .hero-subtitle {
+                font-size: 1rem;
+                line-height: 1.5;
+            }
+            
+            /* Mobile button stacking */
+            .hero-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .btn-hero-primary,
+            .btn-hero-secondary {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            
+            /* Mobile grid adjustments */
+            .features-grid,
+            .documents-grid,
+            .pricing-cards {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            /* Fix modal on mobile */
+            .modal-content {
+                width: 95%;
+                max-width: 95%;
+                margin: 10px;
+            }
+            
+            /* Mobile footer adjustments */
+            .footer-content {
+                grid-template-columns: 1fr;
+                text-align: center;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            /* Extra small devices */
+            .hero-title {
+                font-size: 1.8rem;
+            }
+            
+            .section-title {
+                font-size: 1.5rem;
+            }
+            
+            .feature-card,
+            .document-category,
+            .pricing-card {
+                padding: 20px 15px;
+            }
+            
+            /* Chat interface for very small screens */
+            .chat-header {
+                padding: 10px;
+            }
+            
+            .chat-title-text h3 {
+                font-size: 1rem;
+            }
+            
+            .message-text {
+                font-size: 0.875rem;
+                padding: 10px;
+            }
+            
+            /* Input area optimization */
+            .input-container {
+                flex-wrap: wrap;
+            }
+            
+            textarea#messageInput {
+                min-height: 50px;
+            }
+        }
+        
+        /* Tablet specific optimizations */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .container {
+                padding: 0 30px;
+            }
+            
+            .hero-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            
+            .hero-illustration {
+                max-width: 500px;
+                margin: 0 auto;
+            }
+            
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .pricing-cards {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+            
+            .chat-container {
+                max-width: 95%;
+            }
+        }
+        
+        /* Additional modal fixes */
         .modal {
             display: none;
             position: fixed;
@@ -45,16 +203,8 @@
             align-items: center;
             justify-content: center;
             padding: 20px;
-        }
-        
-        .modal-overlay {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(4px);
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
         
         .modal-content {
@@ -66,118 +216,42 @@
             overflow: hidden;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             z-index: 2001;
+            max-height: 90vh;
+            overflow-y: auto;
         }
         
-        .modal-close {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            background: rgba(255, 255, 255, 0.2);
-            border: none;
-            color: white;
-            font-size: 1.25rem;
-            cursor: pointer;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2002;
+        /* Fix for iOS input zoom */
+        @media screen and (max-width: 767px) {
+            input[type="text"],
+            input[type="email"],
+            input[type="password"],
+            textarea {
+                font-size: 16px !important;
+            }
         }
         
-        .modal-close:hover {
-            background: rgba(255, 255, 255, 0.3);
+        /* Safe area insets for modern devices */
+        @supports (padding: max(0px)) {
+            .hero-section,
+            .chat-interface {
+                padding-left: max(15px, env(safe-area-inset-left));
+                padding-right: max(15px, env(safe-area-inset-right));
+            }
+            
+            .chat-input-area {
+                padding-bottom: max(15px, env(safe-area-inset-bottom));
+            }
         }
         
-        #googleSignInContainer {
-            width: 100%;
-            min-height: 60px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 20px 0;
+        /* Prevent pull-to-refresh on mobile */
+        body {
+            overscroll-behavior-y: contain;
         }
         
-        #googleSignInContainer iframe {
-            margin: 0 !important;
-            width: 100% !important;
-        }
-        
-        .google-signin-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            width: 100%;
-            padding: 14px 24px;
-            background: white;
-            border: 1px solid #ddd;
-            border-radius: 12px;
-            color: #333;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            margin-bottom: 16px;
-        }
-        
-        .google-signin-btn:hover {
-            background: #f8f9fa;
-            border-color: #ccc;
-        }
-        
-        .google-signin-btn i {
-            color: #ea4335;
-            font-size: 18px;
-        }
-        
-        .demo-login-btn {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            width: 100%;
-            padding: 14px 24px;
-            background: linear-gradient(135deg, #1a237e, #303f9f);
-            border: none;
-            border-radius: 12px;
-            color: white;
-            font-size: 15px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        
-        .demo-login-btn:hover {
-            background: linear-gradient(135deg, #151c6d, #283593);
-        }
-        
-        .login-info {
-            margin-top: 24px;
-            padding-top: 20px;
-            border-top: 1px solid #eee;
-        }
-        
-        .login-info p {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            color: #666;
-            font-size: 13px;
-            margin-bottom: 8px;
-            justify-content: center;
-        }
-        
-        .login-info i {
-            color: #4CAF50;
-            font-size: 14px;
-        }
-        
-        /* Fix for the modal when body overflow is hidden */
-        body.modal-open {
-            overflow: hidden;
-            padding-right: 15px; /* Prevent layout shift when scrollbar disappears */
+        /* Better scrolling on mobile */
+        .chat-messages,
+        .history-list {
+            -webkit-overflow-scrolling: touch;
         }
     </style>
 </head>
@@ -1169,9 +1243,19 @@
         let isChatOpen = false;
         let isLoginModalOpen = false;
         
+        // Check if device is mobile
+        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+        const isTablet = window.innerWidth <= 1024 && window.innerWidth > 480;
+        
         // DOM Content Loaded
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 LegalSwami Premium Frontend Initialized');
+            console.log('📱 Device Type:', isMobile ? 'Mobile' : isTablet ? 'Tablet' : 'Desktop');
+            
+            // Apply mobile-specific optimizations
+            if (isMobile) {
+                applyMobileOptimizations();
+            }
             
             // Hide loading screen
             setTimeout(function() {
@@ -1206,8 +1290,92 @@
             // Initialize chat interface
             initializeChat();
             
+            // Setup device-specific optimizations
+            setupDeviceSpecificOptimizations();
+            
             console.log('✅ All initialization complete');
         });
+        
+        // Apply mobile optimizations
+        function applyMobileOptimizations() {
+            console.log('📱 Applying mobile optimizations...');
+            
+            // Larger touch targets
+            const touchElements = document.querySelectorAll('button, .nav-link, .quick-btn, .chat-action-btn');
+            touchElements.forEach(el => {
+                el.style.minHeight = '44px';
+                el.style.minWidth = '44px';
+            });
+            
+            // Prevent zoom on input focus
+            const inputs = document.querySelectorAll('input, select, textarea');
+            inputs.forEach(input => {
+                input.addEventListener('focus', function() {
+                    if (isMobile) {
+                        setTimeout(() => {
+                            this.style.fontSize = '16px';
+                        }, 100);
+                    }
+                });
+            });
+            
+            // Better mobile scrolling
+            document.body.style.overflowX = 'hidden';
+            document.body.style.touchAction = 'manipulation';
+            
+            console.log('✅ Mobile optimizations applied');
+        }
+        
+        // Setup device specific optimizations
+        function setupDeviceSpecificOptimizations() {
+            // Tablet specific optimizations
+            if (isTablet) {
+                console.log('📱 Tablet optimizations enabled');
+                
+                // Adjust font sizes for tablet
+                document.documentElement.style.fontSize = '15px';
+                
+                // Adjust grid layouts
+                const grids = document.querySelectorAll('.features-grid, .documents-grid');
+                grids.forEach(grid => {
+                    if (window.innerWidth <= 1024) {
+                        grid.style.gridTemplateColumns = 'repeat(2, 1fr)';
+                    }
+                });
+            }
+            
+            // Mobile specific optimizations
+            if (isMobile) {
+                // Add swipe support for mobile menu
+                let startX, startY;
+                
+                document.addEventListener('touchstart', function(e) {
+                    startX = e.touches[0].clientX;
+                    startY = e.touches[0].clientY;
+                });
+                
+                document.addEventListener('touchend', function(e) {
+                    if (!startX || !startY) return;
+                    
+                    const endX = e.changedTouches[0].clientX;
+                    const endY = e.changedTouches[0].clientY;
+                    
+                    const diffX = startX - endX;
+                    const diffY = startY - endY;
+                    
+                    // Horizontal swipe (for chat interface)
+                    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+                        if (diffX > 0 && isChatOpen) {
+                            // Swipe left - go back to home
+                            const backBtn = document.getElementById('backToHome');
+                            if (backBtn) {
+                                backBtn.click();
+                            }
+                        }
+                    }
+                });
+            }
+        }
         
         // SETUP SCROLL EFFECTS
         function setupScrollEffects() {
@@ -1288,11 +1456,15 @@
                             setTimeout(function() {
                                 mobileMenu.style.opacity = '1';
                             }, 10);
+                            // Prevent background scrolling
+                            document.body.style.overflow = 'hidden';
                         } else {
                             mobileMenu.style.opacity = '0';
                             setTimeout(function() {
                                 mobileMenu.style.display = 'none';
                             }, 300);
+                            // Restore scrolling
+                            document.body.style.overflow = '';
                         }
                         this.innerHTML = isMobileMenuOpen ? 
                             '<i class="fas fa-times"></i>' : 
@@ -1309,6 +1481,8 @@
                         setTimeout(function() {
                             mobileMenu.style.display = 'none';
                         }, 300);
+                        // Restore scrolling
+                        document.body.style.overflow = '';
                         if (mobileToggle) {
                             mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
                         }
@@ -1334,6 +1508,8 @@
                         setTimeout(function() {
                             mobileMenu.style.display = 'none';
                         }, 300);
+                        // Restore scrolling
+                        document.body.style.overflow = '';
                         if (mobileToggle) {
                             mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
                         }
@@ -1352,6 +1528,8 @@
                             mobileMenu.style.display = 'none';
                         }, 300);
                         isMobileMenuOpen = false;
+                        // Restore scrolling
+                        document.body.style.overflow = '';
                         if (mobileToggle) {
                             mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
                         }
@@ -1368,6 +1546,8 @@
                         setTimeout(function() {
                             this.style.display = 'none';
                         }, 300);
+                        // Restore scrolling
+                        document.body.style.overflow = '';
                         if (mobileToggle) {
                             mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
                         }
@@ -1393,7 +1573,8 @@
                     auto_select: false,
                     cancel_on_tap_outside: true,
                     context: 'signin',
-                    itp_support: false
+                    itp_support: false,
+                    ux_mode: isMobile ? 'popup' : 'popup'
                 });
                 
                 googleGISInitialized = true;
@@ -1418,16 +1599,19 @@
                 // Clear the container first
                 container.innerHTML = '';
                 
-                // Render Google Sign-In button
+                // Render Google Sign-In button with mobile optimization
+                const buttonSize = isMobile ? 'large' : 'large';
+                const buttonWidth = isMobile ? '100%' : '400';
+                
                 google.accounts.id.renderButton(
                     container,
                     {
                         theme: 'outline',
-                        size: 'large',
+                        size: buttonSize,
                         text: 'signin_with',
                         shape: 'rectangular',
                         logo_alignment: 'left',
-                        width: 400,
+                        width: buttonWidth,
                         locale: 'en_US'
                     }
                 );
@@ -1611,6 +1795,15 @@
                 ctaStartChat.addEventListener('click', startChat);
             }
             
+            // Mobile start chat button
+            const mobileStartChat = document.getElementById('mobileStartChat');
+            if (mobileStartChat) {
+                mobileStartChat.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    startChat();
+                });
+            }
+            
             // Watch demo button
             const watchDemo = document.getElementById('watchDemo');
             if (watchDemo) {
@@ -1707,6 +1900,15 @@
             if (messageInput) {
                 messageInput.addEventListener('keydown', handleInputKeydown);
                 messageInput.addEventListener('input', autoResizeTextarea);
+                
+                // Prevent zoom on focus for mobile
+                if (isMobile) {
+                    messageInput.addEventListener('focus', function() {
+                        setTimeout(() => {
+                            this.style.fontSize = '16px';
+                        }, 100);
+                    });
+                }
             }
             
             // Quick questions
@@ -1768,6 +1970,25 @@
                 });
             });
             
+            // Mobile specific events
+            if (isMobile) {
+                // Double tap to go back (for chat)
+                let lastTap = 0;
+                document.addEventListener('touchend', function(e) {
+                    const currentTime = new Date().getTime();
+                    const tapLength = currentTime - lastTap;
+                    
+                    if (tapLength < 500 && tapLength > 0 && isChatOpen) {
+                        // Double tap detected in chat
+                        const backBtn = document.getElementById('backToHome');
+                        if (backBtn) {
+                            backBtn.click();
+                        }
+                    }
+                    lastTap = currentTime;
+                });
+            }
+            
             console.log('✅ All event listeners set up');
         }
         
@@ -1784,6 +2005,22 @@
             if (chatMessagesContainer) {
                 chatMessagesContainer.style.display = 'none';
             }
+            
+            // Mobile chat optimizations
+            if (isMobile) {
+                // Larger input for mobile
+                const messageInput = document.getElementById('messageInput');
+                if (messageInput) {
+                    messageInput.style.minHeight = '44px';
+                    messageInput.style.fontSize = '16px';
+                }
+                
+                // Better mobile chat layout
+                const chatMessages = document.getElementById('chatMessages');
+                if (chatMessages) {
+                    chatMessages.style.padding = '10px';
+                }
+            }
         }
         
         // AUTO RESIZE TEXTAREA
@@ -1791,6 +2028,12 @@
             const textarea = this;
             textarea.style.height = 'auto';
             textarea.style.height = (textarea.scrollHeight) + 'px';
+            
+            // Limit height on mobile
+            if (isMobile && textarea.scrollHeight > 200) {
+                textarea.style.height = '200px';
+                textarea.style.overflowY = 'auto';
+            }
         }
         
         // HANDLE INPUT KEYDOWN
@@ -1798,6 +2041,11 @@
             if (event.key === 'Enter' && !event.shiftKey) {
                 event.preventDefault();
                 sendMessageHandler();
+            }
+            
+            // Mobile specific: hide keyboard on escape
+            if (event.key === 'Escape' && isMobile) {
+                this.blur();
             }
         }
         
@@ -1814,6 +2062,11 @@
             isLoginModalOpen = true;
             modal.style.display = 'flex';
             document.body.classList.add('modal-open');
+            
+            // Prevent background scrolling on mobile
+            if (isMobile) {
+                document.body.style.overflow = 'hidden';
+            }
             
             // Render Google Sign-In button
             setTimeout(function() {
@@ -1836,6 +2089,11 @@
             isLoginModalOpen = false;
             modal.style.display = 'none';
             document.body.classList.remove('modal-open');
+            
+            // Restore scrolling on mobile
+            if (isMobile) {
+                document.body.style.overflow = '';
+            }
             
             console.log('✅ Login modal hidden');
         }
@@ -2051,14 +2309,36 @@
             if (chatInterface) {
                 chatInterface.style.display = 'flex';
                 isChatOpen = true;
+                
+                // Mobile specific chat optimizations
+                if (isMobile) {
+                    chatInterface.style.position = 'fixed';
+                    chatInterface.style.top = '0';
+                    chatInterface.style.left = '0';
+                    chatInterface.style.right = '0';
+                    chatInterface.style.bottom = '0';
+                    chatInterface.style.zIndex = '2000';
+                    document.body.style.overflow = 'hidden';
+                    
+                    // Focus input after a delay
+                    setTimeout(function() {
+                        const messageInput = document.getElementById('messageInput');
+                        if (messageInput) {
+                            messageInput.focus();
+                        }
+                    }, 500);
+                }
+                
                 console.log('✅ Chat interface shown');
             }
             
-            if (mainContainer) {
+            if (mainContainer && !isMobile) {
                 mainContainer.style.background = '#f7f7f8';
             }
             
-            document.body.style.overflow = 'hidden';
+            if (!isMobile) {
+                document.body.style.overflow = 'hidden';
+            }
             
             // Hide welcome screen, show messages
             const chatWelcome = document.getElementById('chatWelcome');
@@ -2096,6 +2376,7 @@
                 mainContainer.style.background = '';
             }
             
+            // Restore scrolling
             document.body.style.overflow = '';
             
             // Show welcome screen again
@@ -2329,6 +2610,16 @@
             } finally {
                 isProcessing = false;
                 showTypingIndicator(false);
+                
+                // Scroll to bottom on mobile
+                if (isMobile) {
+                    const chatMessages = document.getElementById('chatMessages');
+                    if (chatMessages) {
+                        setTimeout(() => {
+                            chatMessages.scrollTop = chatMessages.scrollHeight;
+                        }, 100);
+                    }
+                }
             }
         }
         
@@ -2372,7 +2663,11 @@
                 '</div><div class="message-content">' + messageContent + '</div>';
             
             chatMessages.appendChild(messageDiv);
-            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // Scroll to bottom
+            setTimeout(() => {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 100);
             
             console.log('💬 Message added to chat:', isUser ? 'User' : 'AI');
             
@@ -2407,7 +2702,9 @@
                 if (show) {
                     const chatMessages = document.getElementById('chatMessages');
                     if (chatMessages) {
-                        chatMessages.scrollTop = chatMessages.scrollHeight;
+                        setTimeout(() => {
+                            chatMessages.scrollTop = chatMessages.scrollHeight;
+                        }, 100);
                     }
                 }
             }
@@ -2496,6 +2793,12 @@
             toast.innerHTML = '<i class="' + (icons[type] || icons.info) + '"></i><span>' + message + '</span>';
             
             container.appendChild(toast);
+            
+            // Position toast based on device
+            if (isMobile) {
+                toast.style.bottom = '70px'; // Above mobile keyboard/buttons
+                toast.style.maxWidth = '90%';
+            }
             
             setTimeout(function() {
                 toast.classList.add('fade-out');
