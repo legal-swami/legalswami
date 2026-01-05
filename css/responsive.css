@@ -1,54 +1,57 @@
 /* 
  * LegalSwami - Responsive Design
- * Fixed & Working CSS
+ * Mobile & Tablet Fully Optimized
  */
 
-/* ===== EXTRA LARGE SCREENS ===== */
-@media (min-width: 1400px) {
+/* ===== GLOBAL RESPONSIVE SETTINGS ===== */
+@media (max-width: 1400px) {
     .container,
     .nav-container,
-    .hero-container,
-    .chat-container {
-        max-width: 1320px;
+    .hero-container {
+        max-width: 1200px;
     }
     
     .hero-title {
-        font-size: 4rem;
-    }
-    
-    .features-grid,
-    .documents-grid,
-    .testimonials-carousel,
-    .pricing-cards {
-        grid-template-columns: repeat(3, 1fr);
+        font-size: 3.2rem;
     }
 }
 
-/* ===== LARGE SCREENS (1200px - 1399px) ===== */
+/* ===== DESKTOP (1025px - 1399px) ===== */
 @media (max-width: 1399px) {
-    .container,
-    .nav-container,
-    .hero-container {
+    .container {
         max-width: 1140px;
+        padding: 0 30px;
     }
     
     .hero-title {
-        font-size: 3.5rem;
+        font-size: 3rem;
+    }
+    
+    .features-grid {
+        grid-template-columns: repeat(2, 1fr);
     }
 }
 
-/* ===== DESKTOP (992px - 1199px) ===== */
-@media (max-width: 1199px) {
-    .container,
-    .nav-container,
-    .hero-container {
+/* ===== TABLET LANDSCAPE (992px - 1024px) ===== */
+@media (max-width: 1024px) {
+    .container {
         max-width: 960px;
-        padding: 0 var(--space-6);
+        padding: 0 25px;
     }
     
+    /* Navigation */
+    .nav-menu {
+        display: none;
+    }
+    
+    .mobile-toggle {
+        display: flex;
+    }
+    
+    /* Hero Section */
     .hero-container {
         grid-template-columns: 1fr;
-        gap: var(--space-16);
+        gap: 40px;
         text-align: center;
     }
     
@@ -58,69 +61,94 @@
     
     .hero-illustration {
         order: 2;
+        max-width: 500px;
+        margin: 0 auto;
+    }
+    
+    .hero-title {
+        font-size: 2.8rem;
     }
     
     .hero-subtitle {
+        max-width: 90%;
         margin-left: auto;
         margin-right: auto;
     }
     
-    .hero-actions {
-        justify-content: center;
-    }
-    
     .hero-stats {
-        justify-content: center;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
     }
     
-    .ai-assistant-card {
-        width: 100%;
-        max-width: 400px;
-        margin: 0 auto;
+    /* Features */
+    .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 25px;
     }
     
-    .features-grid,
+    /* Documents */
     .documents-grid {
         grid-template-columns: repeat(2, 1fr);
+        gap: 25px;
+    }
+    
+    /* Pricing */
+    .pricing-cards {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 25px;
+    }
+    
+    .pricing-card.premium-plan {
+        transform: none;
+    }
+    
+    /* Chat Interface */
+    .chat-container {
+        max-width: 95%;
+    }
+    
+    .chat-history-sidebar {
+        width: 350px;
+    }
+    
+    /* Footer */
+    .footer-content {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 40px;
     }
 }
 
-/* ===== TABLET (768px - 991px) ===== */
+/* ===== TABLET PORTRAIT (768px - 991px) ===== */
 @media (max-width: 991px) {
-    .container,
-    .nav-container,
-    .hero-container {
+    html {
+        font-size: 15px;
+    }
+    
+    .container {
         max-width: 720px;
-        padding: 0 var(--space-4);
+        padding: 0 20px;
     }
     
-    .nav-menu {
-        gap: var(--space-1);
-    }
-    
-    .nav-link {
-        padding: var(--space-2) var(--space-3);
-        font-size: 0.8125rem;
-    }
-    
+    /* Hero Section */
     .hero-section {
-        padding: var(--space-16) 0 var(--space-12);
+        padding: 100px 0 60px;
     }
     
     .hero-title {
-        font-size: 3rem;
-        line-height: 1.1;
+        font-size: 2.5rem;
+        line-height: 1.2;
     }
     
     .hero-subtitle {
-        font-size: 1.125rem;
-        max-width: 90%;
+        font-size: 1.1rem;
+        max-width: 100%;
     }
     
     .hero-actions {
         flex-direction: column;
         align-items: center;
-        gap: var(--space-3);
+        gap: 15px;
     }
     
     .btn-hero-primary,
@@ -131,237 +159,255 @@
     }
     
     .hero-stats {
-        grid-template-columns: 1fr;
-        gap: var(--space-4);
-        max-width: 400px;
-        margin-left: auto;
-        margin-right: auto;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
     }
     
     .stat-item {
-        padding: var(--space-4);
-        background: var(--white);
-        border-radius: var(--radius-lg);
-        box-shadow: var(--shadow-md);
+        padding: 15px;
     }
     
+    /* Sections */
     section {
-        padding: var(--space-16) 0;
+        padding: 80px 0;
     }
     
     .section-header {
-        margin-bottom: var(--space-8);
+        margin-bottom: 50px;
     }
     
     .section-title {
-        font-size: 2.25rem;
+        font-size: 2.2rem;
     }
     
-    .section-subtitle {
-        font-size: 1.125rem;
+    /* Features */
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
     }
     
-    .features-grid,
-    .documents-grid,
+    .feature-card {
+        padding: 30px;
+    }
+    
+    /* Documents */
+    .documents-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .document-category {
+        padding: 30px;
+    }
+    
+    /* Testimonials */
     .testimonials-carousel {
         grid-template-columns: 1fr;
-        gap: var(--space-6);
+        gap: 20px;
     }
     
-    .feature-card,
-    .document-category,
-    .testimonial-card,
-    .pricing-card {
-        padding: var(--space-6);
+    .testimonial-card {
+        padding: 30px;
     }
     
+    /* Pricing */
     .pricing-cards {
         grid-template-columns: 1fr;
-        gap: var(--space-6);
+        gap: 20px;
         max-width: 400px;
         margin: 0 auto;
     }
     
-    .pricing-card.premium-plan {
-        transform: none;
-    }
-    
+    /* CTA */
     .cta-section {
-        padding: var(--space-16) var(--space-4);
+        padding: 80px 0;
     }
     
     .cta-title {
-        font-size: 2.5rem;
+        font-size: 2.2rem;
     }
     
     .cta-actions {
         flex-direction: column;
         align-items: center;
-        gap: var(--space-4);
+        gap: 15px;
     }
     
     .btn-cta-primary,
     .btn-cta-secondary {
         width: 100%;
         max-width: 300px;
-        justify-content: center;
-    }
-    
-    .cta-guarantee {
-        gap: var(--space-4);
-        justify-content: center;
-    }
-    
-    .footer-content {
-        grid-template-columns: repeat(2, 1fr);
-        gap: var(--space-8);
     }
     
     /* Chat Interface */
-    .chat-history-sidebar {
-        width: 300px;
-    }
-    
     .chat-header {
-        padding: var(--space-3) var(--space-4);
+        padding: 15px 20px;
     }
     
     .chat-messages {
-        padding: var(--space-6) var(--space-4);
+        padding: 20px;
     }
     
     .chat-input-area {
-        padding: var(--space-3) var(--space-4);
+        padding: 15px 20px;
     }
     
-    .welcome-features {
-        grid-template-columns: 1fr;
-        gap: var(--space-4);
+    .message {
+        max-width: 90%;
     }
     
-    .welcome-feature {
-        padding: var(--space-4);
+    /* Mobile Menu */
+    .mobile-menu-container {
+        width: 300px;
     }
 }
 
 /* ===== MOBILE LANDSCAPE (576px - 767px) ===== */
 @media (max-width: 767px) {
+    html {
+        font-size: 14px;
+    }
+    
+    .container {
+        padding: 0 15px;
+    }
+    
+    /* Navigation */
     .premium-navbar {
-        padding: var(--space-2) 0;
+        padding: 10px 0;
     }
     
     .nav-container {
         height: 60px;
-        padding: 0 var(--space-4);
     }
     
     .logo-title {
-        font-size: 1.25rem;
+        font-size: 1.3rem;
     }
     
     .logo-subtitle {
         display: none;
     }
     
-    .nav-menu {
-        display: none;
-    }
-    
     .nav-actions {
-        gap: var(--space-2);
+        gap: 10px;
     }
     
     .btn-login {
-        padding: var(--space-2) var(--space-3);
-        font-size: 0.8125rem;
+        padding: 8px 15px;
+        font-size: 0.9rem;
     }
     
     .user-profile {
-        padding: var(--space-1) var(--space-2) var(--space-1) var(--space-1);
+        padding: 5px 10px 5px 5px;
     }
     
     .profile-info {
         display: none;
     }
     
-    .mobile-toggle {
-        display: flex;
+    /* Hero Section */
+    .hero-section {
+        padding: 80px 0 40px;
     }
     
     .hero-title {
-        font-size: 2.5rem;
-    }
-    
-    .hero-subtitle {
-        font-size: 1rem;
-        max-width: 100%;
+        font-size: 2rem;
     }
     
     .hero-badge {
-        margin-bottom: var(--space-4);
+        margin-bottom: 20px;
     }
     
     .badge-text {
-        font-size: 0.75rem;
-        padding: var(--space-1) var(--space-3);
+        font-size: 0.8rem;
+        padding: 6px 15px;
+    }
+    
+    .hero-stats {
+        grid-template-columns: 1fr;
+        gap: 15px;
+        max-width: 300px;
+    }
+    
+    .stat-item {
+        padding: 15px;
+    }
+    
+    .stat-number {
+        font-size: 1.8rem;
     }
     
     .ai-assistant-card {
-        padding: var(--space-6);
+        padding: 25px;
     }
     
     .assistant-avatar.legal-seal {
-        width: 100px !important;
-        height: 100px !important;
+        width: 80px !important;
+        height: 80px !important;
     }
     
-    .assistant-title {
-        font-size: 1.25rem;
+    /* Sections */
+    section {
+        padding: 60px 0;
     }
     
     .section-header {
-        margin-bottom: var(--space-6);
+        margin-bottom: 40px;
     }
     
     .section-title {
-        font-size: 2rem;
+        font-size: 1.8rem;
     }
     
     .section-subtitle {
         font-size: 1rem;
     }
     
+    /* Features */
+    .feature-card {
+        padding: 25px;
+    }
+    
     .feature-icon.legal-seal {
         width: 60px;
         height: 60px;
         font-size: 1.5rem;
-        margin-bottom: var(--space-4);
+        margin-bottom: 20px;
     }
     
     .feature-title {
-        font-size: 1.25rem;
+        font-size: 1.3rem;
+    }
+    
+    /* Documents */
+    .document-category {
+        padding: 25px;
     }
     
     .category-icon {
         width: 60px;
         height: 60px;
         font-size: 1.5rem;
+        margin-bottom: 20px;
     }
     
     .category-title {
-        font-size: 1.25rem;
+        font-size: 1.3rem;
     }
     
     .document-list li {
-        font-size: 0.875rem;
+        font-size: 0.9rem;
+        padding: 8px 0;
     }
     
+    /* Testimonials */
     .testimonial-card {
-        padding: var(--space-4);
+        padding: 25px;
     }
     
     .testimonial-text {
-        font-size: 0.875rem;
+        font-size: 0.9rem;
     }
     
     .author-avatar {
@@ -373,39 +419,50 @@
         font-size: 1rem;
     }
     
+    /* Pricing */
     .pricing-card {
-        padding: var(--space-4);
+        padding: 25px;
     }
     
     .pricing-title {
-        font-size: 1.25rem;
+        font-size: 1.3rem;
     }
     
     .amount {
-        font-size: 3rem;
+        font-size: 2.5rem;
     }
     
     .pricing-features li {
-        font-size: 0.875rem;
+        font-size: 0.9rem;
+        padding: 8px 0;
+    }
+    
+    /* CTA */
+    .cta-section {
+        padding: 60px 0;
     }
     
     .cta-title {
-        font-size: 2rem;
+        font-size: 1.8rem;
     }
     
     .cta-description {
         font-size: 1rem;
     }
     
+    .cta-guarantee {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    /* Footer */
     .footer-content {
         grid-template-columns: 1fr;
-        gap: var(--space-6);
+        gap: 30px;
         text-align: center;
     }
     
     .footer-section {
-        display: flex;
-        flex-direction: column;
         align-items: center;
     }
     
@@ -421,11 +478,10 @@
     /* Chat Interface */
     .chat-history-sidebar {
         width: 100%;
-        max-width: 100%;
     }
     
     .chat-header {
-        padding: var(--space-2) var(--space-3);
+        padding: 10px 15px;
     }
     
     .chat-title-text h3 {
@@ -436,6 +492,40 @@
         display: none;
     }
     
+    .chat-action-btn,
+    .chat-back-btn {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .chat-messages {
+        padding: 15px;
+    }
+    
+    .message {
+        max-width: 95%;
+        gap: 10px;
+    }
+    
+    .message-avatar {
+        width: 35px;
+        height: 35px;
+        font-size: 1rem;
+    }
+    
+    .message-text {
+        padding: 12px 15px;
+        font-size: 0.9rem;
+    }
+    
+    .welcome-content h3 {
+        font-size: 1.8rem;
+    }
+    
+    .welcome-content p {
+        font-size: 1rem;
+    }
+    
     .welcome-features {
         display: none;
     }
@@ -443,19 +533,49 @@
     .quick-buttons {
         flex-wrap: nowrap;
         overflow-x: auto;
-        padding-bottom: var(--space-2);
+        padding-bottom: 10px;
         -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+    }
+    
+    .quick-buttons::-webkit-scrollbar {
+        display: none;
     }
     
     .quick-btn {
         flex-shrink: 0;
         white-space: nowrap;
+        font-size: 0.8rem;
+        padding: 10px 15px;
+    }
+    
+    .chat-input-area {
+        padding: 10px 15px;
+    }
+    
+    .input-container {
+        padding: 10px;
+    }
+    
+    .input-action-btn {
+        width: 40px;
+        height: 40px;
+    }
+    
+    .btn-send {
+        width: 45px;
+        height: 45px;
+    }
+    
+    textarea#messageInput {
+        font-size: 16px !important;
+        min-height: 40px;
     }
     
     .document-options {
         flex-direction: column;
         align-items: stretch;
-        gap: var(--space-3);
+        gap: 15px;
     }
     
     select#documentType {
@@ -464,94 +584,104 @@
     
     /* Modal */
     .modal {
-        padding: var(--space-2);
+        padding: 10px;
     }
     
     .modal-content {
-        margin: var(--space-2);
-        max-width: calc(100% - var(--space-4));
+        margin: 10px;
+        max-width: calc(100% - 20px);
     }
     
     .modal-header {
-        padding: var(--space-6) var(--space-4) var(--space-4);
+        padding: 30px 20px 20px;
     }
     
     .modal-body {
-        padding: var(--space-4);
+        padding: 20px;
+    }
+    
+    /* Mobile Menu */
+    .mobile-menu-container {
+        width: 280px;
+    }
+    
+    .mobile-link {
+        padding: 12px 15px;
+        font-size: 0.9rem;
     }
 }
 
-/* ===== MOBILE PORTRAIT (320px - 575px) ===== */
+/* ===== MOBILE PORTRAIT (480px - 575px) ===== */
 @media (max-width: 575px) {
     .hero-title {
-        font-size: 2rem;
+        font-size: 1.8rem;
     }
     
     .hero-subtitle {
-        font-size: 0.9375rem;
+        font-size: 0.95rem;
     }
     
     .btn-hero-primary,
     .btn-hero-secondary {
-        padding: var(--space-3) var(--space-6);
-        font-size: 0.875rem;
+        padding: 12px 20px;
+        font-size: 0.9rem;
     }
     
     .ai-assistant-card {
-        padding: var(--space-4);
+        padding: 20px;
     }
     
     .assistant-avatar.legal-seal {
-        width: 80px !important;
-        height: 80px !important;
+        width: 70px !important;
+        height: 70px !important;
     }
     
     .assistant-title {
-        font-size: 1.125rem;
+        font-size: 1.2rem;
     }
     
     .assistant-features {
-        font-size: 0.875rem;
+        font-size: 0.9rem;
     }
     
     .section-title {
-        font-size: 1.75rem;
+        font-size: 1.6rem;
     }
     
     .section-subtitle {
-        font-size: 0.9375rem;
+        font-size: 0.95rem;
     }
     
     .feature-card,
     .document-category,
     .testimonial-card,
     .pricing-card {
-        padding: var(--space-4);
+        padding: 20px;
     }
     
     .feature-icon.legal-seal {
         width: 50px;
         height: 50px;
-        font-size: 1.25rem;
+        font-size: 1.3rem;
     }
     
     .feature-title {
-        font-size: 1.125rem;
+        font-size: 1.2rem;
     }
     
     .feature-description {
-        font-size: 0.875rem;
+        font-size: 0.9rem;
     }
     
     .document-list li {
-        padding: var(--space-2) 0;
-        font-size: 0.8125rem;
+        font-size: 0.85rem;
+        padding: 6px 0;
     }
     
     .testimonial-author {
         flex-direction: column;
         text-align: center;
-        gap: var(--space-2);
+        gap: 10px;
     }
     
     .author-avatar {
@@ -559,84 +689,78 @@
     }
     
     .pricing-badge {
-        font-size: 0.625rem;
-        padding: var(--space-1) var(--space-3);
+        font-size: 0.7rem;
+        padding: 4px 12px;
     }
     
     .pricing-price {
         flex-direction: column;
         align-items: center;
-        gap: var(--space-1);
+        gap: 5px;
     }
     
     .currency,
-    .amount,
     .period {
-        font-size: 1.5rem;
+        font-size: 1.2rem;
     }
     
     .amount {
-        font-size: 2.5rem;
+        font-size: 2.2rem;
     }
     
     .cta-title {
-        font-size: 1.75rem;
+        font-size: 1.6rem;
     }
     
     .cta-description {
-        font-size: 0.9375rem;
-    }
-    
-    .guarantee-item {
-        flex-direction: column;
-        text-align: center;
-        gap: var(--space-1);
+        font-size: 0.95rem;
     }
     
     .chat-messages {
-        padding: var(--space-4) var(--space-3);
+        padding: 10px;
     }
     
     .message {
-        max-width: 95%;
-        gap: var(--space-2);
+        max-width: 100%;
+        gap: 8px;
     }
     
     .message-avatar {
         width: 32px;
         height: 32px;
-        font-size: 0.875rem;
+        font-size: 0.9rem;
     }
     
     .message-text {
-        padding: var(--space-3);
-        font-size: 0.875rem;
+        padding: 10px;
+        font-size: 0.85rem;
     }
     
     .message-header {
         flex-direction: column;
         align-items: flex-start;
-        gap: var(--space-1);
+        gap: 2px;
     }
     
     .message-sender {
-        font-size: 0.8125rem;
+        font-size: 0.8rem;
     }
     
     .message-time {
-        font-size: 0.6875rem;
+        font-size: 0.7rem;
     }
     
     .document-header {
         flex-direction: column;
         text-align: center;
-        gap: var(--space-2);
+        gap: 10px;
+        padding: 15px;
     }
     
     .document-icon {
-        width: 48px;
-        height: 48px;
-        font-size: 1.5rem;
+        width: 45px;
+        height: 45px;
+        font-size: 1.3rem;
     }
     
     .document-info h5 {
@@ -645,59 +769,36 @@
     
     .document-actions {
         flex-direction: column;
-        gap: var(--space-2);
+        gap: 10px;
     }
     
     .btn-download,
     .btn-preview {
         width: 100%;
         justify-content: center;
-    }
-    
-    .input-container {
-        flex-wrap: wrap;
-        gap: var(--space-2);
-    }
-    
-    .input-actions-left,
-    .input-actions-right {
-        width: 100%;
-        justify-content: space-between;
-    }
-    
-    textarea#messageInput {
-        order: 1;
-        width: 100%;
-    }
-    
-    .typing-indicator {
-        font-size: 0.8125rem;
-    }
-    
-    /* Mobile Menu */
-    .mobile-menu-container {
-        width: 280px;
+        font-size: 0.9rem;
+        padding: 10px;
     }
 }
 
-/* ===== VERY SMALL MOBILE (< 320px) ===== */
-@media (max-width: 319px) {
+/* ===== SMALL MOBILE (360px - 479px) ===== */
+@media (max-width: 479px) {
     .hero-title {
-        font-size: 1.75rem;
+        font-size: 1.6rem;
     }
     
     .hero-subtitle {
-        font-size: 0.875rem;
+        font-size: 0.9rem;
     }
     
     .btn-hero-primary,
     .btn-hero-secondary {
-        padding: var(--space-2) var(--space-4);
-        font-size: 0.8125rem;
+        padding: 10px 15px;
+        font-size: 0.85rem;
     }
     
     .hero-stats {
-        padding: var(--space-3);
+        padding: 15px;
     }
     
     .stat-number {
@@ -705,19 +806,24 @@
     }
     
     .stat-label {
-        font-size: 0.75rem;
+        font-size: 0.8rem;
     }
     
     .nav-container {
-        padding: 0 var(--space-2);
+        padding: 0 10px;
     }
     
     .logo-title {
-        font-size: 1.125rem;
+        font-size: 1.2rem;
+    }
+    
+    .logo-icon.legal-seal {
+        width: 35px;
+        height: 35px;
     }
     
     .chat-header {
-        padding: var(--space-2);
+        padding: 8px;
     }
     
     .chat-action-btn,
@@ -728,485 +834,372 @@
     
     .quick-btn {
         font-size: 0.75rem;
-        padding: var(--space-2) var(--space-3);
+        padding: 8px 12px;
     }
     
     .mobile-menu-container {
         width: 260px;
     }
+    
+    .toast {
+        min-width: 280px;
+        padding: 12px 16px;
+    }
 }
 
-/* ===== PRINT STYLES ===== */
-@media print {
-    .premium-navbar,
-    .hero-section,
-    .chat-interface,
-    .mobile-menu-overlay,
-    .back-to-top,
-    .toast-container,
-    .scroll-indicator,
-    .chat-input-area,
-    .quick-questions,
-    .hero-actions,
-    .hero-stats,
-    .hero-trust,
-    .hero-illustration {
-        display: none !important;
+/* ===== VERY SMALL MOBILE (< 360px) ===== */
+@media (max-width: 359px) {
+    .hero-title {
+        font-size: 1.4rem;
     }
     
-    body {
-        background: white !important;
-        color: black !important;
-        font-size: 12pt;
-    }
-    
-    .container {
-        max-width: 100% !important;
-        padding: 0 !important;
-    }
-    
-    section {
-        padding: 20pt 0 !important;
-        break-inside: avoid;
-    }
-    
-    .feature-card,
-    .document-category,
-    .testimonial-card,
-    .pricing-card {
-        box-shadow: none !important;
-        border: 1px solid #ddd !important;
-        break-inside: avoid;
-        margin-bottom: 20pt !important;
-    }
-    
-    a {
-        color: black !important;
-        text-decoration: underline;
+    .hero-subtitle {
+        font-size: 0.85rem;
     }
     
     .section-title {
-        color: black !important;
-        font-size: 16pt !important;
+        font-size: 1.4rem;
     }
     
-    .footer-content {
-        grid-template-columns: 1fr !important;
+    .btn-hero-primary,
+    .btn-hero-secondary {
+        padding: 8px 12px;
+        font-size: 0.8rem;
+    }
+    
+    .feature-card,
+    .document-category {
+        padding: 15px;
+    }
+    
+    .chat-title-text h3 {
+        font-size: 0.9rem;
+    }
+    
+    .message-text {
+        font-size: 0.8rem;
+        padding: 8px;
+    }
+    
+    .mobile-menu-container {
+        width: 240px;
     }
 }
 
-/* ===== DARK MODE ===== */
-@media (prefers-color-scheme: dark) {
-    :root {
-        --white: #0f172a;
-        --gray-50: #1e293b;
-        --gray-100: #334155;
-        --gray-200: #475569;
-        --gray-300: #64748b;
-        --gray-400: #94a3b8;
-        --gray-500: #cbd5e1;
-        --gray-600: #e2e8f0;
-        --gray-700: #f1f5f9;
-        --gray-800: #f8fafc;
-        --gray-900: #ffffff;
-        --legal-dark: #cbd5e1;
-        --text-primary: #f8fafc;
-        --text-secondary: #cbd5e1;
+/* ===== TABLET ORIENTATION SPECIFIC ===== */
+@media (min-width: 768px) and (max-height: 1024px) and (orientation: portrait) {
+    .hero-section {
+        min-height: auto;
+        padding: 80px 0;
     }
     
-    body {
-        background: #0f172a;
-        color: var(--gray-300);
+    .hero-title {
+        font-size: 2.2rem;
     }
     
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (min-width: 1024px) and (max-height: 768px) and (orientation: landscape) {
+    .hero-section {
+        min-height: auto;
+        padding: 60px 0;
+    }
+    
+    .hero-title {
+        font-size: 2.5rem;
+    }
+    
+    .hero-content {
+        max-width: 60%;
+    }
+}
+
+/* ===== FOLDABLE DEVICES ===== */
+@media (max-width: 350px) and (max-height: 650px) {
+    .hero-title {
+        font-size: 1.4rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 0.8rem;
+    }
+    
+    .hero-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+    
+    .btn-hero-primary,
+    .btn-hero-secondary {
+        font-size: 0.8rem;
+        padding: 8px 12px;
+    }
+    
+    .feature-card,
+    .document-category {
+        padding: 12px;
+    }
+    
+    .feature-icon.legal-seal {
+        width: 40px;
+        height: 40px;
+        font-size: 1rem;
+    }
+    
+    .feature-title {
+        font-size: 1rem;
+    }
+    
+    .feature-description {
+        font-size: 0.8rem;
+    }
+    
+    /* Chat Interface for foldables */
+    .chat-header {
+        padding: 6px;
+    }
+    
+    .chat-title-icon {
+        width: 30px;
+        height: 30px;
+        font-size: 0.9rem;
+    }
+    
+    .chat-title-text h3 {
+        font-size: 0.85rem;
+    }
+    
+    .chat-messages {
+        padding: 8px;
+    }
+    
+    .message {
+        max-width: 100%;
+    }
+    
+    .message-avatar {
+        width: 30px;
+        height: 30px;
+        font-size: 0.8rem;
+    }
+    
+    .message-text {
+        font-size: 0.8rem;
+        padding: 8px;
+    }
+    
+    .quick-btn {
+        font-size: 0.7rem;
+        padding: 6px 10px;
+    }
+}
+
+/* ===== LANDSCAPE ORIENTATION ===== */
+@media (max-height: 600px) and (orientation: landscape) {
     .premium-navbar {
-        background: rgba(15, 23, 42, 0.95);
-        border-bottom: 1px solid var(--gray-100);
+        padding: 5px 0;
     }
     
-    .premium-navbar.scrolled {
-        background: rgba(15, 23, 42, 0.98);
+    .nav-container {
+        height: 50px;
     }
     
-    .hero-section,
-    .features-section,
-    .testimonials-section {
-        background: linear-gradient(135deg, #0f172a, #1e293b);
+    .hero-section {
+        padding: 60px 0 20px;
+        min-height: auto;
+    }
+    
+    .hero-title {
+        font-size: 1.8rem;
+    }
+    
+    .hero-subtitle {
+        font-size: 0.9rem;
+        margin-bottom: 20px;
+    }
+    
+    .hero-stats {
+        display: none;
+    }
+    
+    .hero-illustration {
+        display: none;
+    }
+    
+    /* Chat Interface in landscape */
+    .chat-interface {
+        height: 100vh;
+    }
+    
+    .chat-header {
+        padding: 8px;
+        height: 50px;
+    }
+    
+    .chat-main {
+        height: calc(100vh - 100px);
+    }
+    
+    .chat-messages {
+        max-height: 50vh;
+    }
+    
+    .chat-input-area {
+        padding: 8px;
+        height: 50px;
+    }
+    
+    .welcome-features {
+        display: none;
+    }
+    
+    .quick-questions {
+        display: none;
+    }
+    
+    .welcome-content h3 {
+        font-size: 1.3rem;
+    }
+    
+    .welcome-content p {
+        font-size: 0.9rem;
+    }
+}
+
+/* ===== TOUCH DEVICE OPTIMIZATIONS ===== */
+@media (hover: none) and (pointer: coarse) {
+    /* Minimum touch target size */
+    button, 
+    .nav-link, 
+    .quick-btn, 
+    .btn-generate,
+    .chat-action-btn,
+    .input-action-btn,
+    .message-action-btn,
+    .history-action-btn {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    .nav-link {
+        padding: 12px 16px;
+    }
+    
+    /* Prevent text size adjustment on mobile */
+    input,
+    select,
+    textarea {
+        font-size: 16px !important;
+    }
+    
+    #messageInput {
+        font-size: 16px !important;
+    }
+    
+    /* Better touch scrolling */
+    .chat-messages,
+    .history-list {
+        -webkit-overflow-scrolling: touch;
+        scroll-behavior: smooth;
+    }
+    
+    /* Disable hover effects for touch */
+    .btn-premium:hover,
+    .premium-card:hover,
+    .feature-card:hover,
+    .document-category:hover,
+    .testimonial-card:hover,
+    .pricing-card:hover {
+        transform: none !important;
+    }
+    
+    /* Active states for touch */
+    .nav-link:active,
+    .btn-hero-primary:active,
+    .btn-hero-secondary:active,
+    .quick-btn:active,
+    .chat-action-btn:active {
+        transform: scale(0.98);
+    }
+}
+
+/* ===== SAFARI SPECIFIC FIXES ===== */
+@supports (-webkit-touch-callout: none) {
+    .modal {
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    .chat-messages,
+    .history-list {
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Fix for Safari input zoom */
+    @media screen and (max-width: 767px) {
+        input[type="text"],
+        input[type="email"],
+        input[type="password"],
+        textarea {
+            font-size: 16px !important;
+        }
+    }
+    
+    /* Fix for Safari backdrop-filter */
+    .premium-navbar,
+    .chat-header {
+        -webkit-backdrop-filter: blur(20px);
+    }
+    
+    /* Fix for Safari flexbox gap */
+    @supports not (gap: 1px) {
+        .hero-actions {
+            margin-bottom: -15px;
+        }
+        
+        .hero-actions > * {
+            margin-bottom: 15px;
+        }
+    }
+}
+
+/* ===== HIGH CONTRAST MODE ===== */
+@media (prefers-contrast: high) {
+    .btn-hero-primary,
+    .btn-login,
+    .demo-login-btn,
+    .btn-send,
+    .btn-assistant,
+    .btn-generate,
+    .btn-pricing,
+    .btn-cta-primary,
+    .btn-download {
+        border: 2px solid #000000;
     }
     
     .feature-card,
     .document-category,
     .testimonial-card,
     .pricing-card {
-        background: var(--gray-50);
-        border-color: var(--gray-100);
-        color: var(--gray-300);
-    }
-    
-    .feature-title,
-    .category-title,
-    .pricing-title,
-    .testimonial-text,
-    .feature-description,
-    .document-list li,
-    .pricing-features li,
-    .author-name {
-        color: var(--gray-300);
-    }
-    
-    .hero-title,
-    .section-title,
-    .logo-title {
-        color: var(--accent);
-    }
-    
-    .hero-subtitle,
-    .section-subtitle {
-        color: var(--gray-400);
-    }
-    
-    .stat-item {
-        background: var(--gray-50);
-        color: var(--gray-300);
-    }
-    
-    .stat-number {
-        color: var(--accent);
-    }
-    
-    .stat-label {
-        color: var(--gray-400);
-    }
-    
-    .btn-hero-secondary {
-        background: var(--gray-50);
-        border-color: var(--gray-400);
-        color: var(--gray-300);
-    }
-    
-    .btn-hero-secondary:hover {
-        background: var(--gray-100);
-        border-color: var(--accent);
-        color: var(--accent);
-    }
-    
-    .trust-badge {
-        background: var(--gray-50);
-        border-color: var(--gray-400);
-        color: var(--gray-300);
-    }
-    
-    .trust-badge:hover {
-        border-color: var(--accent);
-        color: var(--accent);
+        border: 2px solid #000000;
     }
     
     .modal-content {
-        background: var(--gray-50);
-        border-color: var(--gray-100);
-    }
-    
-    .modal-header {
-        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-    }
-    
-    .google-signin-btn {
-        background: var(--gray-50);
-        border-color: var(--gray-200);
-        color: var(--gray-300);
-    }
-    
-    .google-signin-btn:hover {
-        background: var(--gray-100);
-        border-color: var(--gray-300);
-    }
-    
-    .cta-section {
-        background: linear-gradient(135deg, var(--primary-dark), var(--primary));
-    }
-    
-    .btn-cta-secondary {
-        background: rgba(255, 255, 255, 0.1);
-        border-color: rgba(255, 255, 255, 0.3);
-        color: var(--white);
-    }
-    
-    .btn-cta-secondary:hover {
-        background: rgba(255, 255, 255, 0.2);
-        border-color: var(--white);
-    }
-    
-    .premium-footer {
-        background: var(--gray-900);
-        color: var(--gray-300);
-    }
-    
-    .footer-logo .logo-title {
-        color: var(--white);
-    }
-    
-    .footer-links li a,
-    .footer-contact a,
-    .footer-description,
-    .copyright {
-        color: var(--gray-400);
-    }
-    
-    .footer-links li a:hover,
-    .footer-contact a:hover {
-        color: var(--accent);
-    }
-    
-    .disclaimer {
-        background: rgba(255, 255, 255, 0.05);
-        color: var(--gray-400);
-    }
-    
-    /* Chat Interface Dark Mode */
-    .chat-interface {
-        background: var(--gray-50);
-    }
-    
-    .chat-container {
-        background: var(--gray-50);
-    }
-    
-    .chat-header {
-        background: var(--gray-50);
-        border-color: var(--gray-100);
-    }
-    
-    .chat-back-btn,
-    .chat-action-btn {
-        border-color: var(--gray-200);
-        color: var(--gray-400);
-        background: var(--gray-50);
-    }
-    
-    .chat-back-btn:hover,
-    .chat-action-btn:hover {
-        background: var(--gray-100);
-        border-color: var(--gray-300);
-        color: var(--gray-300);
-    }
-    
-    .chat-title-text h3 {
-        color: var(--accent);
-    }
-    
-    .chat-title-text p {
-        color: var(--gray-500);
-    }
-    
-    .chat-messages {
-        background: linear-gradient(135deg, #0f172a, #1e293b);
-    }
-    
-    .welcome-feature {
-        background: var(--gray-50);
-        border-color: var(--gray-100);
-        color: var(--gray-300);
-    }
-    
-    .welcome-feature i {
-        color: var(--accent);
-    }
-    
-    .welcome-feature h5 {
-        color: var(--accent);
-    }
-    
-    .welcome-feature p {
-        color: var(--gray-400);
-    }
-    
-    .message-text {
-        background: var(--gray-50);
-        border-color: var(--gray-100);
-        color: var(--gray-300);
-    }
-    
-    .message.user-message .message-text {
-        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-        border-color: var(--primary);
-        color: var(--white);
-    }
-    
-    .message-actions {
-        opacity: 0.7;
-    }
-    
-    .message-action-btn {
-        background: var(--gray-50);
-        border-color: var(--gray-200);
-        color: var(--gray-400);
-    }
-    
-    .message-action-btn:hover {
-        background: var(--gray-100);
-        border-color: var(--gray-300);
-        color: var(--gray-300);
-    }
-    
-    .document-header {
-        background: linear-gradient(135deg, var(--gray-50), var(--gray-100));
-        border-color: var(--gray-100);
-    }
-    
-    .document-info h5 {
-        color: var(--accent);
-    }
-    
-    .btn-preview {
-        background: var(--gray-50);
-        border-color: var(--gray-200);
-        color: var(--gray-300);
-    }
-    
-    .btn-preview:hover {
-        background: var(--gray-100);
-        border-color: var(--gray-300);
-        color: var(--accent);
-    }
-    
-    .quick-questions {
-        background: var(--gray-50);
-        border-color: var(--gray-100);
-    }
-    
-    .quick-btn {
-        background: var(--gray-50);
-        border-color: var(--gray-200);
-        color: var(--gray-300);
-    }
-    
-    .quick-btn:hover {
-        background: var(--gray-100);
-        border-color: var(--accent);
-        color: var(--accent);
-    }
-    
-    .chat-input-area {
-        background: var(--gray-50);
-        border-color: var(--gray-100);
+        border: 2px solid #000000;
     }
     
     .input-container {
-        background: var(--gray-50);
-        border-color: var(--gray-200);
+        border: 2px solid #000000;
     }
     
-    textarea#messageInput {
-        color: var(--gray-300);
-        background: transparent;
+    .nav-link.active {
+        border: 2px solid var(--primary);
     }
     
-    textarea#messageInput::placeholder {
-        color: var(--gray-500);
-    }
-    
-    .input-action-btn {
-        background: var(--gray-50);
-        border-color: var(--gray-200);
-        color: var(--gray-400);
-    }
-    
-    .input-action-btn:hover {
-        background: var(--gray-100);
-        border-color: var(--gray-300);
-        color: var(--gray-300);
-    }
-    
-    .checkbox-label {
-        color: var(--gray-300);
-    }
-    
-    select#documentType {
-        background: var(--gray-50);
-        border-color: var(--gray-200);
-        color: var(--gray-300);
-    }
-    
-    select#documentType:disabled {
-        background: var(--gray-100);
-        color: var(--gray-500);
-    }
-    
-    .chat-history-sidebar {
-        background: var(--gray-50);
-        border-color: var(--gray-100);
-    }
-    
-    .history-search input {
-        background: var(--gray-50) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%2394a3b8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Ccircle cx='11' cy='11' r='8'%3E%3C/circle%3E%3Cline x1='21' y1='21' x2='16.65' y2='16.65'%3E%3C/line%3E%3C/svg%3E") no-repeat left 16px center;
-        border-color: var(--gray-200);
-        color: var(--gray-300);
-    }
-    
-    .history-item {
-        background: var(--gray-50);
-        border-color: var(--gray-200);
-    }
-    
-    .history-item:hover {
-        background: var(--gray-100);
-        border-color: var(--primary);
-    }
-    
-    .history-item-title {
-        color: var(--accent);
-    }
-    
-    .history-action-btn {
-        background: var(--gray-50);
-        border-color: var(--gray-200);
-        color: var(--gray-400);
-    }
-    
-    .history-action-btn:hover {
-        background: var(--gray-100);
-        border-color: var(--gray-300);
-        color: var(--accent);
-    }
-    
-    .toast {
-        background: var(--gray-50);
-        border-color: var(--gray-100);
-        color: var(--gray-300);
-    }
-    
-    .toast span {
-        color: var(--gray-300);
-    }
-    
-    .mobile-menu-container {
-        background: var(--gray-50);
-    }
-    
-    .mobile-menu-links {
-        background: linear-gradient(135deg, #0f172a, #1e293b);
-    }
-    
-    .mobile-link {
-        background: var(--gray-50);
-        border-color: var(--gray-100);
-        color: var(--gray-300);
-    }
-    
-    .mobile-link:hover,
-    .mobile-link.active {
-        background: linear-gradient(135deg, var(--primary), var(--primary-dark));
-        border-color: var(--primary);
-        color: var(--white);
-    }
-    
-    .back-to-top {
-        background: var(--primary);
-        color: var(--white);
-    }
-    
-    .back-to-top:hover {
-        background: var(--primary-dark);
+    .message-text {
+        border: 2px solid #000000;
     }
 }
 
@@ -1293,375 +1286,108 @@
     }
 }
 
-/* ===== TOUCH DEVICES ===== */
-@media (hover: none) and (pointer: coarse) {
-    .btn-hero-primary,
-    .btn-hero-secondary,
-    .nav-link,
-    .feature-card,
-    .testimonial-card,
-    .pricing-card,
-    .btn-generate,
-    .btn-pricing,
-    .btn-cta-primary,
-    .btn-cta-secondary,
-    .btn-assistant,
-    .btn-download,
-    .btn-preview,
-    .quick-btn,
-    .btn-send,
-    .input-action-btn,
-    .chat-action-btn,
-    .chat-back-btn,
-    .history-action-btn,
-    .mobile-close,
-    .history-close,
-    .btn-refresh,
-    .btn-login,
-    .btn-logout {
-        min-height: 44px;
-        min-width: 44px;
+/* ===== PRINT STYLES ===== */
+@media print {
+    .premium-navbar,
+    .hero-section,
+    .chat-interface,
+    .mobile-menu-overlay,
+    .back-to-top,
+    .toast-container,
+    .scroll-indicator,
+    .chat-input-area,
+    .quick-questions,
+    .hero-actions,
+    .hero-stats,
+    .hero-trust,
+    .hero-illustration {
+        display: none !important;
     }
     
-    .nav-link {
-        padding: var(--space-3) var(--space-4);
+    body {
+        background: white !important;
+        color: black !important;
+        font-size: 12pt;
     }
     
-    input,
-    select,
-    textarea {
-        font-size: 16px !important;
+    .container {
+        max-width: 100% !important;
+        padding: 0 !important;
     }
     
-    #messageInput {
-        font-size: 16px !important;
-    }
-    
-    /* Better touch targets */
-    .chat-messages {
-        padding: var(--space-4);
-    }
-    
-    .message {
-        margin-bottom: var(--space-3);
-    }
-    
-    .message-actions {
-        opacity: 1 !important;
-    }
-    
-    .message-action-btn {
-        width: 44px;
-        height: 44px;
-    }
-    
-    /* Disable hover effects for touch */
-    .btn-premium:hover,
-    .premium-card:hover,
-    .feature-card:hover,
-    .document-category:hover,
-    .testimonial-card:hover,
-    .pricing-card:hover {
-        transform: none !important;
-    }
-    
-    /* Improve scrolling on touch devices */
-    .chat-messages,
-    .history-list {
-        -webkit-overflow-scrolling: touch;
-        scroll-behavior: smooth;
-    }
-}
-
-/* ===== HIGH CONTRAST MODE ===== */
-@media (prefers-contrast: high) {
-    :root {
-        --primary: #0000ff;
-        --primary-dark: #00008b;
-        --accent: #ffff00;
-        --accent-dark: #ffd700;
-    }
-    
-    .btn-hero-primary,
-    .btn-login,
-    .demo-login-btn,
-    .btn-send,
-    .btn-assistant,
-    .btn-generate,
-    .btn-pricing,
-    .btn-cta-primary,
-    .btn-download {
-        border: 2px solid #000000;
+    section {
+        padding: 20pt 0 !important;
+        break-inside: avoid;
     }
     
     .feature-card,
     .document-category,
     .testimonial-card,
     .pricing-card {
-        border: 2px solid #000000;
+        box-shadow: none !important;
+        border: 1px solid #ddd !important;
+        break-inside: avoid;
+        margin-bottom: 20pt !important;
     }
     
-    .modal-content {
-        border: 2px solid #000000;
+    a {
+        color: black !important;
+        text-decoration: underline;
     }
     
-    .input-container {
-        border: 2px solid #000000;
+    .section-title {
+        color: black !important;
+        font-size: 16pt !important;
     }
     
-    .nav-link.active {
-        border: 2px solid var(--primary);
-    }
-    
-    .message-text {
-        border: 2px solid #000000;
+    .footer-content {
+        grid-template-columns: 1fr !important;
     }
 }
 
-/* ===== ULTRA-WIDE SCREENS ===== */
-@media (min-width: 1920px) {
-    .container,
-    .nav-container,
-    .hero-container {
-        max-width: 1600px;
+/* ===== DARK MODE ===== */
+@media (prefers-color-scheme: dark) {
+    :root {
+        --white: #0f172a;
+        --gray-50: #1e293b;
+        --gray-100: #334155;
+        --gray-200: #475569;
+        --gray-300: #64748b;
+        --gray-400: #94a3b8;
+        --gray-500: #cbd5e1;
+        --gray-600: #e2e8f0;
+        --gray-700: #f1f5f9;
+        --gray-800: #f8fafc;
+        --gray-900: #ffffff;
+        --text-primary: #f8fafc;
+        --text-secondary: #cbd5e1;
     }
     
-    .hero-title {
-        font-size: 4.5rem;
-    }
-    
-    .hero-subtitle {
-        font-size: 1.25rem;
-        max-width: 800px;
-    }
-    
-    .features-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: var(--space-8);
-    }
-    
-    .documents-grid {
-        grid-template-columns: repeat(3, 1fr);
-        gap: var(--space-8);
-    }
-    
-    .testimonials-carousel {
-        grid-template-columns: repeat(3, 1fr);
-        gap: var(--space-8);
-    }
-    
-    .pricing-cards {
-        grid-template-columns: repeat(3, 1fr);
-        gap: var(--space-8);
-    }
-    
-    /* Chat Interface */
-    .chat-container {
-        max-width: 1600px;
-    }
-    
-    .chat-messages {
-        padding: var(--space-8);
-    }
-    
-    .message {
-        max-width: 70%;
-    }
-}
-
-/* ===== FOLDABLE DEVICES ===== */
-@media (max-width: 350px) and (max-height: 650px) {
-    .hero-title {
-        font-size: 1.5rem;
-    }
-    
-    .hero-subtitle {
-        font-size: 0.75rem;
-    }
-    
-    .hero-actions {
-        flex-direction: column;
-        gap: var(--space-2);
-    }
-    
-    .btn-hero-primary,
-    .btn-hero-secondary {
-        font-size: 0.75rem;
-        padding: var(--space-2) var(--space-3);
-    }
-    
-    .feature-card,
-    .document-category {
-        padding: var(--space-3);
-    }
-    
-    .feature-icon.legal-seal {
-        width: 40px;
-        height: 40px;
-        font-size: 1rem;
-    }
-    
-    .feature-title {
-        font-size: 1rem;
-    }
-    
-    .feature-description {
-        font-size: 0.75rem;
-    }
-    
-    /* Chat Interface for foldables */
-    .chat-header {
-        padding: var(--space-2);
-    }
-    
-    .chat-title-icon {
-        width: 28px;
-        height: 28px;
-        font-size: 0.875rem;
-    }
-    
-    .chat-title-text h3 {
-        font-size: 0.875rem;
-    }
-    
-    .chat-title-text p {
-        display: none;
-    }
-    
-    .chat-messages {
-        padding: var(--space-2);
-    }
-    
-    .message {
-        max-width: 100%;
-    }
-    
-    .message-avatar {
-        width: 28px;
-        height: 28px;
-        font-size: 0.75rem;
-    }
-    
-    .message-text {
-        font-size: 0.75rem;
-        padding: var(--space-2);
-    }
-    
-    .quick-btn {
-        font-size: 0.6875rem;
-        padding: var(--space-2);
-    }
-}
-
-/* ===== LANDSCAPE ORIENTATION ===== */
-@media (max-height: 600px) and (orientation: landscape) {
-    .premium-navbar {
-        padding: var(--space-1) 0;
-    }
-    
-    .nav-container {
-        height: 50px;
-    }
-    
-    .hero-section {
-        padding: 4rem 0 2rem;
-        min-height: auto;
-    }
-    
-    .hero-title {
-        font-size: 2rem;
-    }
-    
-    .hero-subtitle {
-        font-size: 0.875rem;
-        margin-bottom: var(--space-4);
-    }
-    
-    .hero-stats {
-        display: none;
-    }
-    
-    .hero-illustration {
-        display: none;
-    }
-    
-    /* Chat Interface in landscape */
-    .chat-interface {
-        height: 100vh;
-    }
-    
-    .chat-header {
-        padding: var(--space-2);
-        height: 60px;
-    }
-    
-    .chat-main {
-        height: calc(100vh - 120px);
-    }
-    
-    .chat-messages {
-        max-height: 60vh;
-    }
-    
-    .chat-input-area {
-        padding: var(--space-2);
-        height: 60px;
-    }
-    
-    .welcome-features {
-        display: none;
-    }
-    
-    .quick-questions {
-        display: none;
-    }
-    
-    .welcome-content h3 {
-        font-size: 1.5rem;
-    }
-    
-    .welcome-content p {
-        font-size: 0.875rem;
-    }
-}
-
-/* ===== SAFARI SPECIFIC FIXES ===== */
-@supports (-webkit-touch-callout: none) {
-    .modal {
-        -webkit-overflow-scrolling: touch;
-    }
-    
-    .chat-messages,
-    .history-list {
-        -webkit-overflow-scrolling: touch;
-    }
-    
-    /* Fix for Safari input zoom */
-    @media screen and (max-width: 767px) {
-        input,
-        select,
-        textarea {
-            font-size: 16px !important;
+    /* Responsive dark mode fixes */
+    @media (max-width: 768px) {
+        .feature-card,
+        .document-category,
+        .testimonial-card,
+        .pricing-card {
+            background: var(--gray-50);
+            border-color: var(--gray-100);
         }
-    }
-    
-    /* Fix for Safari backdrop-filter */
-    .premium-navbar,
-    .chat-header {
-        -webkit-backdrop-filter: blur(20px);
-    }
-}
-
-/* ===== FIREFOX SCROLLBAR ===== */
-@-moz-document url-prefix() {
-    .chat-messages,
-    .history-list {
-        scrollbar-width: thin;
-        scrollbar-color: var(--gray-400) var(--gray-100);
-    }
-    
-    /* Firefox specific fixes */
-    .modal-content {
-        scrollbar-width: none;
+        
+        .hero-stats .stat-item {
+            background: var(--gray-50);
+            border-color: var(--gray-100);
+        }
+        
+        .chat-interface {
+            background: var(--gray-50);
+        }
+        
+        .chat-container {
+            background: var(--gray-50);
+        }
+        
+        .chat-messages {
+            background: linear-gradient(135deg, #0f172a, #1e293b);
+        }
     }
 }
