@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>LegalSwami | AI-Powered Legal Assistant & Document Generator</title>
+    <title>LegalSwami | AI-Powered Legal Assistant</title>
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -26,240 +26,71 @@
     <!-- Theme Color -->
     <meta name="theme-color" content="#1a237e">
     
-    <!-- Apple Mobile Web App Capable -->
+    <!-- Apple Mobile Web App -->
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     
-    <!-- Open Graph / Social Media -->
+    <!-- Open Graph -->
     <meta property="og:title" content="LegalSwami - AI Legal Assistant">
     <meta property="og:description" content="Get instant legal advice, generate documents, and understand laws with AI">
     <meta property="og:image" content="https://legalswami.com/og-image.jpg">
     <meta property="og:url" content="https://legalswami.com">
 
     <style>
-        /* Additional Mobile & Tablet Optimizations */
-        @media (max-width: 768px) {
-            /* Base font size adjustment for mobile */
-            html {
-                font-size: 14px;
-            }
-            
-            /* Better touch targets */
-            button, 
-            .nav-link, 
-            .quick-btn, 
-            .btn-generate,
-            .chat-action-btn,
-            .input-action-btn {
-                min-height: 44px;
-                min-width: 44px;
-            }
-            
-            /* Prevent zoom on input focus */
-            input, 
-            select, 
-            textarea {
-                font-size: 16px !important;
-            }
-            
-            /* Mobile chat interface optimization */
-            .chat-messages {
-                padding: 10px;
-            }
-            
-            .message {
-                max-width: 95%;
-            }
-            
-            /* Better mobile navigation */
-            .nav-container {
-                padding: 0 15px;
-            }
-            
-            /* Mobile hero section optimization */
-            .hero-title {
-                font-size: 2.2rem;
-                line-height: 1.2;
-            }
-            
-            .hero-subtitle {
-                font-size: 1rem;
-                line-height: 1.5;
-            }
-            
-            /* Mobile button stacking */
-            .hero-actions {
-                flex-direction: column;
-                width: 100%;
-            }
-            
-            .btn-hero-primary,
-            .btn-hero-secondary {
-                width: 100%;
-                margin-bottom: 10px;
-            }
-            
-            /* Mobile grid adjustments */
-            .features-grid,
-            .documents-grid,
-            .pricing-cards {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-            
-            /* Fix modal on mobile */
-            .modal-content {
-                width: 95%;
-                max-width: 95%;
-                margin: 10px;
-            }
-            
-            /* Mobile footer adjustments */
-            .footer-content {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
+        /* Loading Animation */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
         }
         
-        @media (max-width: 480px) {
-            /* Extra small devices */
-            .hero-title {
-                font-size: 1.8rem;
-            }
-            
-            .section-title {
-                font-size: 1.5rem;
-            }
-            
-            .feature-card,
-            .document-category,
-            .pricing-card {
-                padding: 20px 15px;
-            }
-            
-            /* Chat interface for very small screens */
-            .chat-header {
-                padding: 10px;
-            }
-            
-            .chat-title-text h3 {
-                font-size: 1rem;
-            }
-            
-            .message-text {
-                font-size: 0.875rem;
-                padding: 10px;
-            }
-            
-            /* Input area optimization */
-            .input-container {
-                flex-wrap: wrap;
-            }
-            
-            textarea#messageInput {
-                min-height: 50px;
-            }
-        }
-        
-        /* Tablet specific optimizations */
-        @media (min-width: 769px) and (max-width: 1024px) {
-            .container {
-                padding: 0 30px;
-            }
-            
-            .hero-container {
-                grid-template-columns: 1fr;
-                gap: 40px;
-            }
-            
-            .hero-illustration {
-                max-width: 500px;
-                margin: 0 auto;
-            }
-            
-            .features-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .pricing-cards {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 20px;
-            }
-            
-            .chat-container {
-                max-width: 95%;
-            }
-        }
-        
-        /* Additional modal fixes */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 2000;
+        /* ChatGPT-style animations */
+        .chat-typing {
+            display: inline-flex;
             align-items: center;
-            justify-content: center;
-            padding: 20px;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
         }
         
-        .modal-content {
-            position: relative;
-            background: white;
-            border-radius: 16px;
-            max-width: 420px;
-            width: 100%;
-            overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            z-index: 2001;
-            max-height: 90vh;
-            overflow-y: auto;
+        .chat-typing span {
+            height: 8px;
+            width: 8px;
+            margin: 0 1px;
+            background-color: #6b7280;
+            border-radius: 50%;
+            display: inline-block;
+            animation: typing 1.4s infinite ease-in-out both;
         }
         
-        /* Fix for iOS input zoom */
-        @media screen and (max-width: 767px) {
-            input[type="text"],
-            input[type="email"],
-            input[type="password"],
-            textarea {
-                font-size: 16px !important;
-            }
+        .chat-typing span:nth-child(1) { animation-delay: -0.32s; }
+        .chat-typing span:nth-child(2) { animation-delay: -0.16s; }
+        
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0); opacity: 0.3; }
+            40% { transform: scale(1); opacity: 1; }
         }
         
-        /* Safe area insets for modern devices */
-        @supports (padding: max(0px)) {
-            .hero-section,
-            .chat-interface {
-                padding-left: max(15px, env(safe-area-inset-left));
-                padding-right: max(15px, env(safe-area-inset-right));
+        /* Smooth transitions */
+        .message {
+            transition: all 0.3s ease;
+        }
+        
+        /* Mobile optimizations */
+        @media (max-width: 768px) {
+            .chat-input-area {
+                padding-bottom: env(safe-area-inset-bottom, 20px);
             }
             
-            .chat-input-area {
-                padding-bottom: max(15px, env(safe-area-inset-bottom));
+            #messageInput {
+                font-size: 16px !important;
             }
-        }
-        
-        /* Prevent pull-to-refresh on mobile */
-        body {
-            overscroll-behavior-y: contain;
-        }
-        
-        /* Better scrolling on mobile */
-        .chat-messages,
-        .history-list {
-            -webkit-overflow-scrolling: touch;
         }
     </style>
 </head>
 <body>
-    <!-- Premium Loading Screen -->
+    <!-- Loading Screen -->
     <div id="loadingScreen" class="loading-screen">
         <div class="loading-content">
-            <div class="loading-spinner legal-seal"></div>
+            <div class="loading-spinner legal-seal">
+                <i class="fas fa-gavel"></i>
+            </div>
             <h2 class="shimmer-text mt-4">LegalSwami</h2>
             <p class="text-light">Initializing AI Legal Assistant...</p>
             <div class="progress-bar mt-4">
@@ -270,10 +101,10 @@
 
     <!-- Main Container -->
     <div class="main-container">
-        <!-- Premium Navigation Bar -->
+        <!-- Navigation Bar -->
         <nav class="premium-navbar">
             <div class="nav-container">
-                <!-- Logo with Animation -->
+                <!-- Logo -->
                 <div class="nav-logo">
                     <div class="logo-icon legal-seal">
                         <i class="fas fa-gavel gavel-animation"></i>
@@ -379,19 +210,6 @@
         <!-- Hero Section -->
         <section id="home" class="hero-section">
             <div class="hero-container container">
-                <!-- Animated Background Elements -->
-                <div class="hero-bg-elements">
-                    <div class="floating-element floating-icon-1">
-                        <i class="fas fa-balance-scale floating"></i>
-                    </div>
-                    <div class="floating-element floating-icon-2">
-                        <i class="fas fa-gavel floating"></i>
-                    </div>
-                    <div class="floating-element floating-icon-3">
-                        <i class="fas fa-scale-balanced floating"></i>
-                    </div>
-                </div>
-                
                 <div class="hero-content">
                     <div class="hero-badge">
                         <span class="badge-text">
@@ -411,21 +229,6 @@
                         in simple, understandable language.
                     </p>
                     
-                    <div class="hero-stats">
-                        <div class="stat-item">
-                            <div class="stat-number shimmer-text">10,000+</div>
-                            <div class="stat-label">Legal Documents Generated</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-number shimmer-text">50,000+</div>
-                            <div class="stat-label">Legal Questions Answered</div>
-                        </div>
-                        <div class="stat-item">
-                            <div class="stat-number shimmer-text">99.8%</div>
-                            <div class="stat-label">User Satisfaction Rate</div>
-                        </div>
-                    </div>
-                    
                     <div class="hero-actions">
                         <button id="startChatBtn" class="btn-hero-primary btn-premium">
                             <i class="fas fa-comments"></i>
@@ -439,28 +242,6 @@
                             <i class="fas fa-play-circle"></i>
                             <span>Watch Demo Video</span>
                         </button>
-                    </div>
-                    
-                    <div class="hero-trust">
-                        <div class="trust-label">Trusted by</div>
-                        <div class="trust-badges">
-                            <div class="trust-badge">
-                                <i class="fas fa-university"></i>
-                                <span>Law Firms</span>
-                            </div>
-                            <div class="trust-badge">
-                                <i class="fas fa-graduation-cap"></i>
-                                <span>Law Students</span>
-                            </div>
-                            <div class="trust-badge">
-                                <i class="fas fa-briefcase"></i>
-                                <span>Businesses</span>
-                            </div>
-                            <div class="trust-badge">
-                                <i class="fas fa-users"></i>
-                                <span>Individuals</span>
-                            </div>
-                        </div>
                     </div>
                 </div>
                 
@@ -494,16 +275,6 @@
                     </div>
                 </div>
             </div>
-            
-            <!-- Scroll Indicator -->
-            <div class="scroll-indicator">
-                <div class="mouse">
-                    <div class="wheel"></div>
-                </div>
-                <div class="arrow">
-                    <i class="fas fa-chevron-down"></i>
-                </div>
-            </div>
         </section>
 
         <!-- Features Section -->
@@ -519,100 +290,12 @@
                 </div>
                 
                 <div class="features-grid">
-                    <!-- Feature 1 -->
-                    <div class="feature-card premium-card">
-                        <div class="feature-icon legal-seal">
-                            <i class="fas fa-comments"></i>
-                        </div>
-                        <h3 class="feature-title">AI Chat Assistant</h3>
-                        <p class="feature-description">
-                            Ask legal questions in natural language and get instant, accurate responses powered by advanced AI.
-                        </p>
-                        <div class="feature-tags">
-                            <span class="tag">24/7 Available</span>
-                            <span class="tag">Multi-Language</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Feature 2 -->
-                    <div class="feature-card premium-card">
-                        <div class="feature-icon legal-seal">
-                            <i class="fas fa-file-contract"></i>
-                        </div>
-                        <h3 class="feature-title">Smart Document Generation</h3>
-                        <p class="feature-description">
-                            Generate legal documents instantly in PDF, DOC, and TXT formats with customizable templates.
-                        </p>
-                        <div class="feature-tags">
-                            <span class="tag">100+ Templates</span>
-                            <span class="tag">Customizable</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Feature 3 -->
-                    <div class="feature-card premium-card">
-                        <div class="feature-icon legal-seal">
-                            <i class="fas fa-shield-alt"></i>
-                        </div>
-                        <h3 class="feature-title">Bank-Level Security</h3>
-                        <p class="feature-description">
-                            End-to-end encryption and secure authentication to protect your sensitive legal data.
-                        </p>
-                        <div class="feature-tags">
-                            <span class="tag">AES-256</span>
-                            <span class="tag">GDPR Compliant</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Feature 4 -->
-                    <div class="feature-card premium-card">
-                        <div class="feature-icon legal-seal">
-                            <i class="fas fa-history"></i>
-                        </div>
-                        <h3 class="feature-title">Complete Chat History</h3>
-                        <p class="feature-description">
-                            Access your complete chat history anytime. Export conversations as documents for record keeping.
-                        </p>
-                        <div class="feature-tags">
-                            <span class="tag">Unlimited History</span>
-                            <span class="tag">Export Options</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Feature 5 -->
-                    <div class="feature-card premium-card">
-                        <div class="feature-icon legal-seal">
-                            <i class="fas fa-mobile-alt"></i>
-                        </div>
-                        <h3 class="feature-title">Mobile Responsive</h3>
-                        <p class="feature-description">
-                            Access LegalSwami from any device - desktop, tablet, or mobile phone with native-like experience.
-                        </p>
-                        <div class="feature-tags">
-                            <span class="tag">PWA Support</span>
-                            <span class="tag">Offline Mode</span>
-                        </div>
-                    </div>
-                    
-                    <!-- Feature 6 -->
-                    <div class="feature-card premium-card">
-                        <div class="feature-icon legal-seal">
-                            <i class="fas fa-language"></i>
-                        </div>
-                        <h3 class="feature-title">Multi-Language Support</h3>
-                        <p class="feature-description">
-                            Get legal advice in multiple languages including Hindi, English, Marathi, Gujarati, and more.
-                        </p>
-                        <div class="feature-tags">
-                            <span class="tag">10+ Languages</span>
-                            <span class="tag">Real-time Translation</span>
-                        </div>
-                    </div>
+                    <!-- Feature cards will be here -->
                 </div>
             </div>
         </section>
 
-        <!-- Document Types Section -->
+        <!-- Documents Section -->
         <section id="documents" class="documents-section">
             <div class="container">
                 <div class="section-header">
@@ -625,147 +308,7 @@
                 </div>
                 
                 <div class="documents-grid">
-                    <!-- Document Category 1 -->
-                    <div class="document-category premium-card">
-                        <div class="category-icon">
-                            <i class="fas fa-handshake"></i>
-                        </div>
-                        <h3 class="category-title">Agreements & Contracts</h3>
-                        <ul class="document-list">
-                            <li><i class="fas fa-check-circle"></i> Rental Agreement</li>
-                            <li><i class="fas fa-check-circle"></i> Non-Disclosure Agreement</li>
-                            <li><i class="fas fa-check-circle"></i> Employment Contract</li>
-                            <li><i class="fas fa-check-circle"></i> Service Agreement</li>
-                            <li><i class="fas fa-check-circle"></i> Partnership Agreement</li>
-                        </ul>
-                        <button class="btn-generate">
-                            <i class="fas fa-magic"></i>
-                            Generate Now
-                        </button>
-                    </div>
-                    
-                    <!-- Document Category 2 -->
-                    <div class="document-category premium-card">
-                        <div class="category-icon">
-                            <i class="fas fa-balance-scale"></i>
-                        </div>
-                        <h3 class="category-title">Legal Notices & Letters</h3>
-                        <ul class="document-list">
-                            <li><i class="fas fa-check-circle"></i> Legal Notice</li>
-                            <li><i class="fas fa-check-circle"></i> Cease & Desist Notice</li>
-                            <li><i class="fas fa-check-circle"></i> Demand Letter</li>
-                            <li><i class="fas fa-check-circle"></i> Notice to Quit</li>
-                            <li><i class="fas fa-check-circle"></i> Consumer Complaint</li>
-                        </ul>
-                        <button class="btn-generate">
-                            <i class="fas fa-magic"></i>
-                            Generate Now
-                        </button>
-                    </div>
-                    
-                    <!-- Document Category 3 -->
-                    <div class="document-category premium-card">
-                        <div class="category-icon">
-                            <i class="fas fa-user-tie"></i>
-                        </div>
-                        <h3 class="category-title">Personal & Family</h3>
-                        <ul class="document-list">
-                            <li><i class="fas fa-check-circle"></i> Will & Testament</li>
-                            <li><i class="fas fa-check-circle"></i> Power of Attorney</li>
-                            <li><i class="fas fa-check-circle"></i> Affidavit</li>
-                            <li><i class="fas fa-check-circle"></i> Gift Deed</li>
-                            <li><i class="fas fa-check-circle"></i> Divorce Papers</li>
-                        </ul>
-                        <button class="btn-generate">
-                            <i class="fas fa-magic"></i>
-                            Generate Now
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Testimonials Section -->
-        <section id="testimonials" class="testimonials-section">
-            <div class="container">
-                <div class="section-header">
-                    <h2 class="section-title">
-                        Trusted by <span class="shimmer-text">Thousands</span> of Users
-                    </h2>
-                    <p class="section-subtitle">
-                        See what our users have to say about LegalSwami
-                    </p>
-                </div>
-                
-                <div class="testimonials-carousel">
-                    <!-- Testimonial 1 -->
-                    <div class="testimonial-card premium-card">
-                        <div class="testimonial-rating">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                        </div>
-                        <p class="testimonial-text">
-                            "LegalSwami helped me draft a professional rental agreement in minutes. The AI understood exactly what I needed and generated a perfect document. Saved me ₹5000 in lawyer fees!"
-                        </p>
-                        <div class="testimonial-author">
-                            <div class="author-avatar">
-                                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Rahul Sharma">
-                            </div>
-                            <div class="author-info">
-                                <h4 class="author-name">Rahul Sharma</h4>
-                                <p class="author-title">Small Business Owner</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Testimonial 2 -->
-                    <div class="testimonial-card premium-card">
-                        <div class="testimonial-rating">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star-half-alt"></i>
-                        </div>
-                        <p class="testimonial-text">
-                            "As a law student, LegalSwami is a game-changer! It helps me understand complex legal concepts and provides excellent research assistance. Like having a personal tutor 24/7."
-                        </p>
-                        <div class="testimonial-author">
-                            <div class="author-avatar">
-                                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Priya Patel">
-                            </div>
-                            <div class="author-info">
-                                <h4 class="author-name">Priya Patel</h4>
-                                <p class="author-title">Law Student, NLU Delhi</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Testimonial 3 -->
-                    <div class="testimonial-card premium-card">
-                        <div class="testimonial-rating">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                        </div>
-                        <p class="testimonial-text">
-                            "The document generation feature saved our startup thousands! We needed multiple NDAs and service agreements. LegalSwami generated perfect documents in minutes. Incredible tool!"
-                        </p>
-                        <div class="testimonial-author">
-                            <div class="author-avatar">
-                                <img src="https://randomuser.me/api/portraits/men/67.jpg" alt="Ankit Verma">
-                            </div>
-                            <div class="author-info">
-                                <h4 class="author-name">Ankit Verma</h4>
-                                <p class="author-title">Tech Entrepreneur</p>
-                            </div>
-                        </div>
-                    </div>
+                    <!-- Document categories will be here -->
                 </div>
             </div>
         </section>
@@ -783,78 +326,7 @@
                 </div>
                 
                 <div class="pricing-cards">
-                    <!-- Free Plan -->
-                    <div class="pricing-card premium-card">
-                        <div class="pricing-badge">FREE</div>
-                        <h3 class="pricing-title">Basic</h3>
-                        <div class="pricing-price">
-                            <span class="currency">₹</span>
-                            <span class="amount">0</span>
-                            <span class="period">/month</span>
-                        </div>
-                        <p class="pricing-description">Perfect for trying out LegalSwami</p>
-                        
-                        <ul class="pricing-features">
-                            <li><i class="fas fa-check-circle"></i> 10 AI Chat Messages/Day</li>
-                            <li><i class="fas fa-check-circle"></i> 3 Document Generations/Month</li>
-                            <li><i class="fas fa-check-circle"></i> Basic Legal Questions</li>
-                            <li><i class="fas fa-times-circle"></i> No Priority Support</li>
-                            <li><i class="fas fa-times-circle"></i> No Document History</li>
-                        </ul>
-                        
-                        <button class="btn-pricing" id="freePlanBtn">
-                            Get Started Free
-                        </button>
-                    </div>
-                    
-                    <!-- Pro Plan -->
-                    <div class="pricing-card premium-card premium-plan">
-                        <div class="pricing-badge popular">POPULAR</div>
-                        <h3 class="pricing-title">Professional</h3>
-                        <div class="pricing-price">
-                            <span class="currency">₹</span>
-                            <span class="amount">499</span>
-                            <span class="period">/month</span>
-                        </div>
-                        <p class="pricing-description">Perfect for professionals & businesses</p>
-                        
-                        <ul class="pricing-features">
-                            <li><i class="fas fa-check-circle"></i> Unlimited AI Chat Messages</li>
-                            <li><i class="fas fa-check-circle"></i> 50 Document Generations/Month</li>
-                            <li><i class="fas fa-check-circle"></i> All Document Templates</li>
-                            <li><i class="fas fa-check-circle"></i> Priority Support</li>
-                            <li><i class="fas fa-check-circle"></i> Complete Chat History</li>
-                        </ul>
-                        
-                        <button class="btn-pricing btn-premium" id="proPlanBtn">
-                            <i class="fas fa-crown"></i>
-                            Get Professional
-                        </button>
-                    </div>
-                    
-                    <!-- Business Plan -->
-                    <div class="pricing-card premium-card">
-                        <div class="pricing-badge">BUSINESS</div>
-                        <h3 class="pricing-title">Enterprise</h3>
-                        <div class="pricing-price">
-                            <span class="currency">₹</span>
-                            <span class="amount">1,499</span>
-                            <span class="period">/month</span>
-                        </div>
-                        <p class="pricing-description">For law firms & large organizations</p>
-                        
-                        <ul class="pricing-features">
-                            <li><i class="fas fa-check-circle"></i> Everything in Professional</li>
-                            <li><i class="fas fa-check-circle"></i> Unlimited Document Generation</li>
-                            <li><i class="fas fa-check-circle"></i> Team Collaboration</li>
-                            <li><i class="fas fa-check-circle"></i> Custom Templates</li>
-                            <li><i class="fas fa-check-circle"></i> Dedicated Account Manager</li>
-                        </ul>
-                        
-                        <button class="btn-pricing" id="businessPlanBtn">
-                            Contact Sales
-                        </button>
-                    </div>
+                    <!-- Pricing cards will be here -->
                 </div>
             </div>
         </section>
@@ -877,32 +349,12 @@
                             <i class="fas fa-rocket"></i>
                             Start Free Chat Now
                         </button>
-                        
-                        <button id="ctaScheduleDemo" class="btn-cta-secondary">
-                            <i class="fas fa-calendar"></i>
-                            Schedule Demo
-                        </button>
-                    </div>
-                    
-                    <div class="cta-guarantee">
-                        <div class="guarantee-item">
-                            <i class="fas fa-shield-alt"></i>
-                            <span>100% Secure & Private</span>
-                        </div>
-                        <div class="guarantee-item">
-                            <i class="fas fa-clock"></i>
-                            <span>Available 24/7</span>
-                        </div>
-                        <div class="guarantee-item">
-                            <i class="fas fa-headset"></i>
-                            <span>Priority Support</span>
-                        </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <!-- Chat Interface -->
+        <!-- ChatGPT-Style Chat Interface -->
         <div id="chatInterface" class="chat-interface">
             <div class="chat-container">
                 <!-- Chat Header -->
@@ -916,22 +368,23 @@
                                 <i class="fas fa-robot"></i>
                             </div>
                             <div class="chat-title-text">
-                                <h3>LegalSwami Assistant</h3>
-                                <p>AI Legal Assistant</p>
+                                <h3>LegalSwami AI</h3>
+                                <p class="chat-subtitle">Your AI Legal Assistant</p>
                             </div>
                         </div>
                     </div>
                     <div class="chat-header-right">
+                        <button id="newChatBtn" class="chat-action-btn" title="New Chat">
+                            <i class="fas fa-plus"></i>
+                        </button>
                         <button id="clearChat" class="chat-action-btn" title="Clear Chat">
                             <i class="fas fa-trash-alt"></i>
-                            <div class="badge"></div>
                         </button>
                         <button id="exportChat" class="chat-action-btn" title="Export Chat">
                             <i class="fas fa-download"></i>
                         </button>
                         <button id="historyToggle" class="chat-action-btn" title="Chat History">
                             <i class="fas fa-history"></i>
-                            <div class="badge">3</div>
                         </button>
                     </div>
                 </div>
@@ -949,14 +402,10 @@
                         <div class="history-content">
                             <div class="history-search">
                                 <i class="fas fa-search"></i>
-                                <input type="text" placeholder="Search chat history...">
+                                <input type="text" placeholder="Search chat history..." id="historySearch">
                             </div>
                             <div class="history-list" id="historyList">
-                                <div class="history-empty">
-                                    <i class="fas fa-history"></i>
-                                    <p>No chat history yet</p>
-                                    <small>Start chatting to see your history here</small>
-                                </div>
+                                <!-- History items will be added here -->
                             </div>
                         </div>
                     </div>
@@ -966,27 +415,52 @@
                         <!-- Welcome Screen -->
                         <div class="chat-welcome" id="chatWelcome">
                             <div class="welcome-illustration">
-                                <i class="fas fa-balance-scale"></i>
+                                <div class="ai-avatar">
+                                    <i class="fas fa-robot"></i>
+                                </div>
                             </div>
                             <div class="welcome-content">
-                                <h3>Welcome to LegalSwami! ⚖️</h3>
-                                <p>I'm your AI legal assistant. I can help you with legal advice, document generation, legal research, and understanding complex legal concepts in simple language.</p>
+                                <h1>How can I help you today?</h1>
+                                <p>I'm LegalSwami, your AI legal assistant. I can help you with legal advice, document generation, and understanding complex legal concepts.</p>
                                 
-                                <div class="welcome-features">
-                                    <div class="welcome-feature">
-                                        <i class="fas fa-comments"></i>
-                                        <h5>Legal Advice</h5>
-                                        <p>Get instant answers to your legal questions</p>
-                                    </div>
-                                    <div class="welcome-feature">
-                                        <i class="fas fa-file-contract"></i>
-                                        <h5>Document Generation</h5>
-                                        <p>Generate legal documents instantly</p>
-                                    </div>
-                                    <div class="welcome-feature">
-                                        <i class="fas fa-search"></i>
-                                        <h5>Legal Research</h5>
-                                        <p>Research laws and regulations</p>
+                                <div class="quick-suggestions">
+                                    <div class="suggestion-grid">
+                                        <button class="suggestion-card" data-question="What are the essential elements of a valid contract?">
+                                            <div class="suggestion-icon">
+                                                <i class="fas fa-file-contract"></i>
+                                            </div>
+                                            <div class="suggestion-content">
+                                                <h4>Contract Requirements</h4>
+                                                <p>Learn about valid contract elements</p>
+                                            </div>
+                                        </button>
+                                        <button class="suggestion-card" data-question="How to draft a rental agreement?">
+                                            <div class="suggestion-icon">
+                                                <i class="fas fa-home"></i>
+                                            </div>
+                                            <div class="suggestion-content">
+                                                <h4>Rental Agreement</h4>
+                                                <p>Create a professional rental contract</p>
+                                            </div>
+                                        </button>
+                                        <button class="suggestion-card" data-question="Explain consumer protection laws in India">
+                                            <div class="suggestion-icon">
+                                                <i class="fas fa-shield-alt"></i>
+                                            </div>
+                                            <div class="suggestion-content">
+                                                <h4>Consumer Rights</h4>
+                                                <p>Understand your consumer protection rights</p>
+                                            </div>
+                                        </button>
+                                        <button class="suggestion-card" data-question="How to file a legal notice for recovery of money?">
+                                            <div class="suggestion-icon">
+                                                <i class="fas fa-gavel"></i>
+                                            </div>
+                                            <div class="suggestion-content">
+                                                <h4>Legal Notice</h4>
+                                                <p>Send a formal legal notice</p>
+                                            </div>
+                                        </button>
                                     </div>
                                 </div>
                             </div>
@@ -998,30 +472,6 @@
                                 <!-- Messages will be loaded here -->
                             </div>
                         </div>
-
-                        <!-- Quick Questions -->
-                        <div class="quick-questions">
-                            <div class="quick-questions-header">
-                                <h5><i class="fas fa-bolt"></i> Try asking:</h5>
-                                <button class="btn-refresh" title="Refresh suggestions">
-                                    <i class="fas fa-redo"></i>
-                                </button>
-                            </div>
-                            <div class="quick-buttons">
-                                <button class="quick-btn" data-question="What are the requirements for a valid contract?">
-                                    Contract Requirements
-                                </button>
-                                <button class="quick-btn" data-question="How to draft a rental agreement?">
-                                    Rental Agreement
-                                </button>
-                                <button class="quick-btn" data-question="What is consumer protection law?">
-                                    Consumer Rights
-                                </button>
-                                <button class="quick-btn" data-question="How to file a legal notice?">
-                                    Legal Notice
-                                </button>
-                            </div>
-                        </div>
                     </div>
                 </div>
 
@@ -1031,64 +481,54 @@
                         <div class="input-actions-left">
                             <button id="attachFile" class="input-action-btn" title="Attach File">
                                 <i class="fas fa-paperclip"></i>
-                                <div class="tooltip">Attach File</div>
                             </button>
                             <button id="voiceInput" class="input-action-btn" title="Voice Input">
                                 <i class="fas fa-microphone"></i>
-                                <div class="tooltip">Voice Input</div>
                             </button>
                         </div>
                         
-                        <textarea 
-                            id="messageInput" 
-                            placeholder="Type your legal question here... (Press Shift+Enter for new line, Enter to send)"
-                            rows="1"
-                        ></textarea>
-                        
-                        <div class="input-actions-right">
-                            <button id="sendMessage" class="btn-send" title="Send Message">
-                                <i class="fas fa-paper-plane send-icon"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="input-options">
-                        <div class="attachments-container" id="fileAttachments">
-                            <!-- Attached files will appear here -->
-                        </div>
-                        
-                        <div class="document-options">
-                            <div class="checkbox-group">
-                                <label class="checkbox-label">
-                                    <input type="checkbox" id="generateDocument">
-                                    <span>Generate as Document</span>
-                                </label>
-                            </div>
-                            
-                            <div class="select-group">
-                                <label class="select-label">Format:</label>
-                                <select id="documentType" disabled>
-                                    <option value="PDF">PDF Document</option>
-                                    <option value="DOC">Word Document</option>
-                                    <option value="TXT">Text File</option>
-                                </select>
+                        <div class="input-wrapper">
+                            <textarea 
+                                id="messageInput" 
+                                placeholder="Message LegalSwami..."
+                                rows="1"
+                                maxlength="5000"
+                            ></textarea>
+                            <div class="input-bottom">
+                                <span class="char-counter" id="charCounter">0/5000</span>
+                                <button id="sendMessage" class="btn-send" title="Send Message">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
                             </div>
                         </div>
                     </div>
                     
-                    <div class="typing-indicator" id="typingIndicator">
-                        <div class="typing-dots">
-                            <div class="dot"></div>
-                            <div class="dot"></div>
-                            <div class="dot"></div>
+                    <div class="input-footer">
+                        <div class="disclaimer">
+                            <i class="fas fa-exclamation-triangle"></i>
+                            <span>LegalSwami can make mistakes. Consider checking important information.</span>
                         </div>
-                        <span>LegalSwami is thinking...</span>
+                    </div>
+                </div>
+
+                <!-- Typing Indicator -->
+                <div class="typing-indicator" id="typingIndicator">
+                    <div class="typing-avatar">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="typing-content">
+                        <div class="chat-typing">
+                            <span></span>
+                            <span></span>
+                            <span></span>
+                        </div>
+                        <span class="typing-text">LegalSwami is thinking...</span>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Modern Login Modal -->
+        <!-- Login Modal -->
         <div id="loginModal" class="modal">
             <div class="modal-overlay"></div>
             <div class="modal-content">
@@ -1105,20 +545,6 @@
                 </div>
                 
                 <div class="modal-body">
-                    <!-- Google Sign-In Container -->
-                    <div id="googleSignInContainer"></div>
-                    
-                    <!-- Custom Google Button -->
-                    <button id="customGoogleBtn" class="google-signin-btn">
-                        <i class="fab fa-google"></i>
-                        Continue with Google
-                    </button>
-                    
-                    <div class="divider">
-                        <span>or</span>
-                    </div>
-                    
-                    <!-- Demo Login Button -->
                     <button id="demoLoginBtn" class="demo-login-btn">
                         <i class="fas fa-user"></i> Try Demo Version
                     </button>
@@ -1136,7 +562,6 @@
         <footer class="premium-footer">
             <div class="container">
                 <div class="footer-content">
-                    <!-- Company Info -->
                     <div class="footer-section">
                         <div class="footer-logo">
                             <div class="logo-icon legal-seal">
@@ -1150,62 +575,6 @@
                         <p class="footer-description">
                             Making legal assistance accessible to everyone with AI-powered technology.
                         </p>
-                        <div class="social-links">
-                            <a href="#" class="social-link">
-                                <i class="fab fa-twitter"></i>
-                            </a>
-                            <a href="#" class="social-link">
-                                <i class="fab fa-linkedin"></i>
-                            </a>
-                            <a href="#" class="social-link">
-                                <i class="fab fa-github"></i>
-                            </a>
-                            <a href="#" class="social-link">
-                                <i class="fab fa-youtube"></i>
-                            </a>
-                        </div>
-                    </div>
-                    
-                    <!-- Quick Links -->
-                    <div class="footer-section">
-                        <h4 class="footer-heading">Quick Links</h4>
-                        <ul class="footer-links">
-                            <li><a href="#home">Home</a></li>
-                            <li><a href="#features">Features</a></li>
-                            <li><a href="#documents">Documents</a></li>
-                            <li><a href="#testimonials">Testimonials</a></li>
-                            <li><a href="#pricing">Pricing</a></li>
-                        </ul>
-                    </div>
-                    
-                    <!-- Legal -->
-                    <div class="footer-section">
-                        <h4 class="footer-heading">Legal</h4>
-                        <ul class="footer-links">
-                            <li><a href="#" id="termsLink">Terms of Service</a></li>
-                            <li><a href="#" id="privacyLink">Privacy Policy</a></li>
-                            <li><a href="#" id="disclaimerLink">Legal Disclaimer</a></li>
-                            <li><a href="#" id="cookieLink">Cookie Policy</a></li>
-                        </ul>
-                    </div>
-                    
-                    <!-- Contact -->
-                    <div class="footer-section">
-                        <h4 class="footer-heading">Contact Us</h4>
-                        <ul class="footer-contact">
-                            <li>
-                                <i class="fas fa-envelope"></i>
-                                <a href="mailto:support@legalswami.com">support@legalswami.com</a>
-                            </li>
-                            <li>
-                                <i class="fas fa-phone"></i>
-                                <a href="tel:+919876543210">+91 9876543210</a>
-                            </li>
-                            <li>
-                                <i class="fas fa-map-marker-alt"></i>
-                                <span>Mumbai, India</span>
-                            </li>
-                        </ul>
                     </div>
                 </div>
                 
@@ -1238,24 +607,14 @@
         // Global variables
         let currentChatId = null;
         let isProcessing = false;
-        let googleGISInitialized = false;
         let isMobileMenuOpen = false;
         let isChatOpen = false;
         let isLoginModalOpen = false;
-        
-        // Check if device is mobile
-        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-        const isTablet = window.innerWidth <= 1024 && window.innerWidth > 480;
+        let chatHistory = [];
         
         // DOM Content Loaded
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 LegalSwami Premium Frontend Initialized');
-            console.log('📱 Device Type:', isMobile ? 'Mobile' : isTablet ? 'Tablet' : 'Desktop');
-            
-            // Apply mobile-specific optimizations
-            if (isMobile) {
-                applyMobileOptimizations();
-            }
             
             // Hide loading screen
             setTimeout(function() {
@@ -1267,404 +626,833 @@
                         console.log('✅ Loading screen hidden');
                     }, 300);
                 }
-            }, 1500);
+            }, 1000);
             
-            // Initialize backend connection
-            initializeAppWithBackend();
+            // Initialize app
+            initializeApp();
             
             // Setup event listeners
             setupEventListeners();
             
-            // Initialize Google Authentication
-            setTimeout(initializeSimpleGoogleAuth, 2000);
-            
             // Check for existing user
             checkExistingUser();
             
-            // Setup scroll effects
-            setupScrollEffects();
-            
-            // Setup mobile menu
-            setupMobileMenu();
-            
-            // Initialize chat interface
+            // Initialize chat
             initializeChat();
-            
-            // Setup device-specific optimizations
-            setupDeviceSpecificOptimizations();
             
             console.log('✅ All initialization complete');
         });
         
-        // Apply mobile optimizations
-        function applyMobileOptimizations() {
-            console.log('📱 Applying mobile optimizations...');
-            
-            // Larger touch targets
-            const touchElements = document.querySelectorAll('button, .nav-link, .quick-btn, .chat-action-btn');
-            touchElements.forEach(el => {
-                el.style.minHeight = '44px';
-                el.style.minWidth = '44px';
-            });
-            
-            // Prevent zoom on input focus
-            const inputs = document.querySelectorAll('input, select, textarea');
-            inputs.forEach(input => {
-                input.addEventListener('focus', function() {
-                    if (isMobile) {
-                        setTimeout(() => {
-                            this.style.fontSize = '16px';
-                        }, 100);
-                    }
-                });
-            });
-            
-            // Better mobile scrolling
-            document.body.style.overflowX = 'hidden';
-            document.body.style.touchAction = 'manipulation';
-            
-            console.log('✅ Mobile optimizations applied');
-        }
-        
-        // Setup device specific optimizations
-        function setupDeviceSpecificOptimizations() {
-            // Tablet specific optimizations
-            if (isTablet) {
-                console.log('📱 Tablet optimizations enabled');
-                
-                // Adjust font sizes for tablet
-                document.documentElement.style.fontSize = '15px';
-                
-                // Adjust grid layouts
-                const grids = document.querySelectorAll('.features-grid, .documents-grid');
-                grids.forEach(grid => {
-                    if (window.innerWidth <= 1024) {
-                        grid.style.gridTemplateColumns = 'repeat(2, 1fr)';
-                    }
-                });
-            }
-            
-            // Mobile specific optimizations
-            if (isMobile) {
-                // Add swipe support for mobile menu
-                let startX, startY;
-                
-                document.addEventListener('touchstart', function(e) {
-                    startX = e.touches[0].clientX;
-                    startY = e.touches[0].clientY;
-                });
-                
-                document.addEventListener('touchend', function(e) {
-                    if (!startX || !startY) return;
-                    
-                    const endX = e.changedTouches[0].clientX;
-                    const endY = e.changedTouches[0].clientY;
-                    
-                    const diffX = startX - endX;
-                    const diffY = startY - endY;
-                    
-                    // Horizontal swipe (for chat interface)
-                    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
-                        if (diffX > 0 && isChatOpen) {
-                            // Swipe left - go back to home
-                            const backBtn = document.getElementById('backToHome');
-                            if (backBtn) {
-                                backBtn.click();
-                            }
-                        }
-                    }
-                });
-            }
-        }
-        
-        // SETUP SCROLL EFFECTS
-        function setupScrollEffects() {
-            const header = document.querySelector('.premium-navbar');
-            const navLinks = document.querySelectorAll('.nav-link');
-            const backToTopBtn = document.getElementById('backToTop');
-            
-            window.addEventListener('scroll', function() {
-                // Header shadow on scroll
-                if (header && window.scrollY > 50) {
-                    header.classList.add('scrolled');
-                } else if (header) {
-                    header.classList.remove('scrolled');
+        // Initialize App
+        function initializeApp() {
+            // Load chat history from localStorage
+            const savedHistory = localStorage.getItem('legalSwamiChatHistory');
+            if (savedHistory) {
+                try {
+                    chatHistory = JSON.parse(savedHistory);
+                    updateHistoryList();
+                } catch (e) {
+                    console.error('Error loading chat history:', e);
                 }
-                
-                // Back to top button
-                if (backToTopBtn) {
-                    if (window.scrollY > 300) {
-                        backToTopBtn.classList.add('visible');
-                    } else {
-                        backToTopBtn.classList.remove('visible');
-                    }
-                }
-                
-                // Update active nav link based on scroll position
-                if (!isChatOpen) {
-                    const sections = document.querySelectorAll('section[id]');
-                    let currentSection = '';
-                    
-                    sections.forEach(function(section) {
-                        const sectionTop = section.offsetTop - 100;
-                        const sectionHeight = section.clientHeight;
-                        if (scrollY >= sectionTop && scrollY < sectionTop + sectionHeight) {
-                            currentSection = section.getAttribute('id') || 'home';
-                        }
-                    });
-                    
-                    navLinks.forEach(function(link) {
-                        link.classList.remove('active');
-                        if (link.getAttribute('href') === '#' + currentSection) {
-                            link.classList.add('active');
-                        }
-                    });
-                    
-                    // Update mobile links
-                    const mobileLinks = document.querySelectorAll('.mobile-link');
-                    mobileLinks.forEach(function(link) {
-                        link.classList.remove('active');
-                        if (link.getAttribute('href') === '#' + currentSection) {
-                            link.classList.add('active');
-                        }
-                    });
-                }
-            });
+            }
             
-            // Back to top functionality
-            if (backToTopBtn) {
-                backToTopBtn.addEventListener('click', function() {
-                    window.scrollTo({ top: 0, behavior: 'smooth' });
-                });
+            // Generate unique chat ID
+            currentChatId = 'chat_' + Date.now();
+            
+            // Initialize backend connection
+            initializeBackendConnection();
+        }
+        
+        // Initialize Backend Connection
+        async function initializeBackendConnection() {
+            try {
+                const backendUrl = 'https://legal-swami-backend.onrender.com';
+                
+                // Test backend health
+                const healthResponse = await fetch(backendUrl + '/api/v1/public/health');
+                if (healthResponse.ok) {
+                    const healthData = await healthResponse.json();
+                    console.log('✅ Backend health check passed:', healthData);
+                    showToast('Backend connected successfully!', 'success');
+                } else {
+                    console.warn('⚠️ Backend health check failed:', healthResponse.status);
+                }
+            } catch (error) {
+                console.warn('⚠️ Backend health check failed:', error.message);
             }
         }
         
-        // SETUP MOBILE MENU
-        function setupMobileMenu() {
-            const mobileToggle = document.getElementById('mobileToggle');
-            const mobileMenu = document.getElementById('mobileMenu');
-            const mobileClose = document.getElementById('mobileClose');
-            const mobileLinks = document.querySelectorAll('.mobile-link');
-            const mobileStartChat = document.getElementById('mobileStartChat');
+        // Setup Event Listeners
+        function setupEventListeners() {
+            console.log('🔧 Setting up event listeners');
             
-            if (mobileToggle) {
-                mobileToggle.addEventListener('click', function() {
-                    isMobileMenuOpen = !isMobileMenuOpen;
-                    if (mobileMenu) {
-                        if (isMobileMenuOpen) {
-                            mobileMenu.style.display = 'block';
-                            setTimeout(function() {
-                                mobileMenu.style.opacity = '1';
-                            }, 10);
-                            // Prevent background scrolling
-                            document.body.style.overflow = 'hidden';
-                        } else {
-                            mobileMenu.style.opacity = '0';
-                            setTimeout(function() {
-                                mobileMenu.style.display = 'none';
-                            }, 300);
-                            // Restore scrolling
-                            document.body.style.overflow = '';
-                        }
-                        this.innerHTML = isMobileMenuOpen ? 
-                            '<i class="fas fa-times"></i>' : 
-                            '<i class="fas fa-bars"></i>';
+            // Start chat buttons
+            document.querySelectorAll('#startChatBtn, #heroAssistantBtn, #ctaStartChat, #mobileStartChat').forEach(btn => {
+                btn.addEventListener('click', startChat);
+            });
+            
+            // Login button
+            const headerLoginBtn = document.getElementById('headerLoginBtn');
+            if (headerLoginBtn) {
+                headerLoginBtn.addEventListener('click', showLoginModal);
+            }
+            
+            // Logout button
+            const logoutBtn = document.getElementById('logoutBtn');
+            if (logoutBtn) {
+                logoutBtn.addEventListener('click', handleLogout);
+            }
+            
+            // Demo login button
+            const demoLoginBtn = document.getElementById('demoLoginBtn');
+            if (demoLoginBtn) {
+                demoLoginBtn.addEventListener('click', handleDemoLogin);
+            }
+            
+            // Close login modal
+            const closeLoginModal = document.getElementById('closeLoginModal');
+            if (closeLoginModal) {
+                closeLoginModal.addEventListener('click', hideLoginModal);
+            }
+            
+            // Modal overlay
+            const loginModal = document.getElementById('loginModal');
+            if (loginModal) {
+                loginModal.addEventListener('click', function(e) {
+                    if (e.target === this || e.target.classList.contains('modal-overlay')) {
+                        hideLoginModal();
                     }
                 });
             }
             
-            if (mobileClose) {
-                mobileClose.addEventListener('click', function() {
-                    isMobileMenuOpen = false;
-                    if (mobileMenu) {
-                        mobileMenu.style.opacity = '0';
-                        setTimeout(function() {
-                            mobileMenu.style.display = 'none';
-                        }, 300);
-                        // Restore scrolling
-                        document.body.style.overflow = '';
-                        if (mobileToggle) {
-                            mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
-                        }
-                    }
-                });
+            // Chat interface buttons
+            document.getElementById('backToHome').addEventListener('click', goBackToHome);
+            document.getElementById('newChatBtn').addEventListener('click', startNewChat);
+            document.getElementById('clearChat').addEventListener('click', clearChatHandler);
+            document.getElementById('exportChat').addEventListener('click', exportChatHandler);
+            document.getElementById('historyToggle').addEventListener('click', toggleHistory);
+            document.getElementById('closeHistory').addEventListener('click', toggleHistory);
+            document.getElementById('sendMessage').addEventListener('click', sendMessageHandler);
+            
+            // Message input
+            const messageInput = document.getElementById('messageInput');
+            if (messageInput) {
+                messageInput.addEventListener('keydown', handleInputKeydown);
+                messageInput.addEventListener('input', handleInputChange);
+                messageInput.addEventListener('input', autoResizeTextarea);
             }
             
-            // Close menu when clicking a link
-            mobileLinks.forEach(function(link) {
-                link.addEventListener('click', function(e) {
-                    if (this.getAttribute('href') !== '#chat') {
-                        e.preventDefault();
-                        const targetId = this.getAttribute('href').substring(1);
-                        const targetSection = document.getElementById(targetId);
-                        if (targetSection) {
-                            targetSection.scrollIntoView({ behavior: 'smooth' });
-                        }
-                    }
-                    
-                    isMobileMenuOpen = false;
-                    if (mobileMenu) {
-                        mobileMenu.style.opacity = '0';
-                        setTimeout(function() {
-                            mobileMenu.style.display = 'none';
-                        }, 300);
-                        // Restore scrolling
-                        document.body.style.overflow = '';
-                        if (mobileToggle) {
-                            mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
-                        }
-                    }
+            // Quick suggestions
+            document.querySelectorAll('.suggestion-card').forEach(card => {
+                card.addEventListener('click', function() {
+                    const question = this.getAttribute('data-question');
+                    document.getElementById('messageInput').value = question;
+                    sendMessageHandler();
                 });
             });
             
-            // Mobile start chat button
-            if (mobileStartChat) {
-                mobileStartChat.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    startChat();
-                    if (mobileMenu) {
-                        mobileMenu.style.opacity = '0';
-                        setTimeout(function() {
-                            mobileMenu.style.display = 'none';
-                        }, 300);
-                        isMobileMenuOpen = false;
-                        // Restore scrolling
-                        document.body.style.overflow = '';
-                        if (mobileToggle) {
-                            mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
-                        }
-                    }
-                });
+            // Mobile menu
+            document.getElementById('mobileToggle').addEventListener('click', toggleMobileMenu);
+            document.getElementById('mobileClose').addEventListener('click', toggleMobileMenu);
+            
+            // Watch demo button
+            const watchDemo = document.getElementById('watchDemo');
+            if (watchDemo) {
+                watchDemo.addEventListener('click', showDemo);
             }
             
-            // Close menu when clicking outside
-            if (mobileMenu) {
-                mobileMenu.addEventListener('click', function(e) {
-                    if (e.target === this) {
-                        isMobileMenuOpen = false;
-                        this.style.opacity = '0';
-                        setTimeout(function() {
-                            this.style.display = 'none';
-                        }, 300);
-                        // Restore scrolling
-                        document.body.style.overflow = '';
-                        if (mobileToggle) {
-                            mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
-                        }
-                    }
-                });
+            console.log('✅ All event listeners set up');
+        }
+        
+        // Initialize Chat
+        function initializeChat() {
+            // Hide typing indicator
+            const typingIndicator = document.getElementById('typingIndicator');
+            if (typingIndicator) {
+                typingIndicator.style.display = 'none';
+            }
+            
+            // Hide chat messages container
+            const chatMessagesContainer = document.getElementById('chatMessagesContainer');
+            if (chatMessagesContainer) {
+                chatMessagesContainer.style.display = 'none';
             }
         }
         
-        // SIMPLE GOOGLE AUTH
-        function initializeSimpleGoogleAuth() {
-            console.log('🔐 Initializing Google Authentication...');
+        // Start Chat
+        function startChat() {
+            console.log('💬 Starting chat...');
             
-            if (typeof google === 'undefined') {
-                console.warn('⚠️ Google Identity Services not loaded yet, will retry...');
-                setTimeout(initializeSimpleGoogleAuth, 1000);
+            // Check if user is logged in
+            const user = localStorage.getItem('legal_swami_user');
+            if (!user) {
+                showLoginModal();
+                showToast('Please login to start chatting', 'warning');
                 return;
             }
             
-            try {
-                google.accounts.id.initialize({
-                    client_id: '166511615962-bohur5q8d4i5hud6icr4185kcte9enk8.apps.googleusercontent.com',
-                    callback: handleGoogleCredentialResponse,
-                    auto_select: false,
-                    cancel_on_tap_outside: true,
-                    context: 'signin',
-                    itp_support: false,
-                    ux_mode: isMobile ? 'popup' : 'popup'
-                });
+            // Show chat interface
+            const chatInterface = document.getElementById('chatInterface');
+            if (chatInterface) {
+                chatInterface.style.display = 'flex';
+                isChatOpen = true;
                 
-                googleGISInitialized = true;
-                console.log('✅ Google Authentication initialized');
+                // Add animation
+                chatInterface.style.opacity = '0';
+                setTimeout(() => {
+                    chatInterface.style.opacity = '1';
+                    chatInterface.style.transition = 'opacity 0.3s ease';
+                }, 10);
                 
-            } catch (error) {
-                console.error('❌ Google Authentication initialization failed:', error);
+                console.log('✅ Chat interface shown');
             }
+            
+            // Hide welcome screen, show messages
+            const chatWelcome = document.getElementById('chatWelcome');
+            const chatMessagesContainer = document.getElementById('chatMessagesContainer');
+            
+            if (chatWelcome) {
+                chatWelcome.style.display = 'none';
+            }
+            
+            if (chatMessagesContainer) {
+                chatMessagesContainer.style.display = 'flex';
+            }
+            
+            // Focus input
+            setTimeout(() => {
+                const messageInput = document.getElementById('messageInput');
+                if (messageInput) {
+                    messageInput.focus();
+                    console.log('✅ Message input focused');
+                }
+            }, 300);
+            
+            // Disable body scroll
+            document.body.style.overflow = 'hidden';
         }
         
-        // RENDER GOOGLE SIGN-IN BUTTON
-        function renderGoogleSignInButton() {
-            try {
-                const container = document.getElementById('googleSignInContainer');
-                if (!container || !googleGISInitialized) {
-                    console.log('⚠️ Google Sign-In container not found or GIS not initialized');
-                    const customBtn = document.getElementById('customGoogleBtn');
-                    if (customBtn) customBtn.style.display = 'flex';
-                    return;
+        // Start New Chat
+        function startNewChat() {
+            if (confirm('Start a new chat? Your current chat will be saved.')) {
+                // Save current chat
+                saveCurrentChat();
+                
+                // Clear messages
+                const chatMessages = document.getElementById('chatMessages');
+                if (chatMessages) {
+                    chatMessages.innerHTML = '';
                 }
                 
-                // Clear the container first
-                container.innerHTML = '';
+                // Generate new chat ID
+                currentChatId = 'chat_' + Date.now();
                 
-                // Render Google Sign-In button with mobile optimization
-                const buttonSize = isMobile ? 'large' : 'large';
-                const buttonWidth = isMobile ? '100%' : '400';
+                // Show welcome screen
+                const chatWelcome = document.getElementById('chatWelcome');
+                const chatMessagesContainer = document.getElementById('chatMessagesContainer');
                 
-                google.accounts.id.renderButton(
-                    container,
-                    {
-                        theme: 'outline',
-                        size: buttonSize,
-                        text: 'signin_with',
-                        shape: 'rectangular',
-                        logo_alignment: 'left',
-                        width: buttonWidth,
-                        locale: 'en_US'
-                    }
-                );
+                if (chatWelcome) {
+                    chatWelcome.style.display = 'flex';
+                }
                 
-                console.log('✅ Google Sign-In button rendered');
-                const customBtn = document.getElementById('customGoogleBtn');
-                if (customBtn) customBtn.style.display = 'none';
+                if (chatMessagesContainer) {
+                    chatMessagesContainer.style.display = 'none';
+                }
                 
-            } catch (error) {
-                console.error('❌ Failed to render Google Sign-In button:', error);
-                const customBtn = document.getElementById('customGoogleBtn');
-                if (customBtn) customBtn.style.display = 'flex';
+                // Reset input
+                const messageInput = document.getElementById('messageInput');
+                if (messageInput) {
+                    messageInput.value = '';
+                    messageInput.style.height = 'auto';
+                    updateCharCounter();
+                }
+                
+                showToast('New chat started', 'success');
+                console.log('🆕 New chat started');
             }
         }
         
-        // HANDLE GOOGLE CREDENTIAL RESPONSE
-        function handleGoogleCredentialResponse(response) {
-            console.log('🔐 Google credential received');
+        // Go Back to Home
+        function goBackToHome() {
+            // Save current chat
+            saveCurrentChat();
             
-            try {
-                const payload = JSON.parse(atob(response.credential.split('.')[1]));
+            // Hide chat interface
+            const chatInterface = document.getElementById('chatInterface');
+            if (chatInterface) {
+                chatInterface.style.opacity = '1';
+                setTimeout(() => {
+                    chatInterface.style.opacity = '0';
+                    setTimeout(() => {
+                        chatInterface.style.display = 'none';
+                        isChatOpen = false;
+                    }, 300);
+                }, 10);
+                console.log('✅ Chat interface hidden');
+            }
+            
+            // Show welcome screen
+            const chatWelcome = document.getElementById('chatWelcome');
+            const chatMessagesContainer = document.getElementById('chatMessagesContainer');
+            
+            if (chatWelcome) {
+                chatWelcome.style.display = 'flex';
+            }
+            
+            if (chatMessagesContainer) {
+                chatMessagesContainer.style.display = 'none';
+            }
+            
+            // Clear messages
+            const chatMessages = document.getElementById('chatMessages');
+            if (chatMessages) {
+                chatMessages.innerHTML = '';
+            }
+            
+            // Reset input
+            const messageInput = document.getElementById('messageInput');
+            if (messageInput) {
+                messageInput.value = '';
+                messageInput.style.height = 'auto';
+                updateCharCounter();
+            }
+            
+            // Enable body scroll
+            document.body.style.overflow = '';
+            
+            console.log('🏠 Returned to home');
+        }
+        
+        // Save Current Chat
+        function saveCurrentChat() {
+            const chatMessages = document.getElementById('chatMessages');
+            if (!chatMessages) return;
+            
+            const messages = chatMessages.querySelectorAll('.message');
+            if (messages.length === 0) return;
+            
+            // Extract conversation
+            const conversation = [];
+            messages.forEach(message => {
+                const isUser = message.classList.contains('user-message');
+                const text = message.querySelector('.message-text')?.textContent || '';
+                const time = message.querySelector('.message-time')?.textContent || '';
                 
-                const userData = {
-                    id: 'google_' + payload.sub,
-                    name: payload.name,
-                    email: payload.email,
-                    picture: payload.picture,
-                    provider: 'google',
-                    token: response.credential
+                if (text.trim()) {
+                    conversation.push({
+                        role: isUser ? 'user' : 'assistant',
+                        content: text,
+                        timestamp: time
+                    });
+                }
+            });
+            
+            // Save to history if we have messages
+            if (conversation.length > 0) {
+                const chatTitle = conversation[0]?.content?.substring(0, 50) || 'Legal Chat';
+                
+                const chatItem = {
+                    id: currentChatId,
+                    title: chatTitle,
+                    timestamp: new Date().toISOString(),
+                    messages: conversation
                 };
                 
-                console.log('✅ Google user authenticated:', userData.email);
+                // Add to history
+                chatHistory.unshift(chatItem);
                 
-                localStorage.setItem('legal_swami_user', JSON.stringify(userData));
-                localStorage.setItem('legal_swami_token', response.credential);
-                
-                if (window.legalSwamiAPI) {
-                    window.legalSwamiAPI.user = userData;
-                    window.legalSwamiAPI.token = response.credential;
+                // Keep only last 50 chats
+                if (chatHistory.length > 50) {
+                    chatHistory = chatHistory.slice(0, 50);
                 }
                 
-                updateUserUI();
-                hideLoginModal();
+                // Save to localStorage
+                localStorage.setItem('legalSwamiChatHistory', JSON.stringify(chatHistory));
                 
-                showToast('Successfully logged in with Google!', 'success');
+                // Update history list
+                updateHistoryList();
                 
-            } catch (error) {
-                console.error('❌ Failed to process Google credential:', error);
-                showToast('Login failed. Please try again.', 'error');
+                console.log('💾 Chat saved to history:', chatItem.title);
             }
         }
         
-        // CHECK FOR EXISTING USER
+        // Clear Chat Handler
+        function clearChatHandler() {
+            if (confirm('Are you sure you want to clear the chat? This action cannot be undone.')) {
+                const chatMessages = document.getElementById('chatMessages');
+                if (chatMessages) {
+                    chatMessages.innerHTML = '';
+                }
+                
+                showToast('Chat cleared successfully', 'success');
+                console.log('🗑️ Chat cleared');
+            }
+        }
+        
+        // Export Chat Handler
+        function exportChatHandler() {
+            const chatMessages = document.getElementById('chatMessages');
+            if (!chatMessages) return;
+            
+            const messages = chatMessages.querySelectorAll('.message');
+            
+            let exportText = '================================\n';
+            exportText += 'LEGALSWAMI CHAT EXPORT\n';
+            exportText += 'Generated on: ' + new Date().toLocaleString() + '\n';
+            exportText += '================================\n\n';
+            
+            messages.forEach(function(message) {
+                const isAI = message.classList.contains('ai-message');
+                const text = message.querySelector('.message-text') ? message.querySelector('.message-text').textContent : '';
+                const time = message.querySelector('.message-time') ? message.querySelector('.message-time').textContent : '';
+                
+                exportText += (isAI ? '🤖 LegalSwami AI' : '👤 You') + ' (' + time + '):\n';
+                exportText += text + '\n\n';
+                exportText += '─'.repeat(50) + '\n\n';
+            });
+            
+            exportText += '\n================================\n';
+            exportText += 'END OF CHAT\n';
+            exportText += '================================\n\n';
+            exportText += 'Disclaimer: This chat is for informational purposes only.\n';
+            exportText += 'Please consult a qualified attorney for legal advice.\n';
+            
+            const blob = new Blob([exportText], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'LegalSwami_Chat_' + new Date().toISOString().split('T')[0] + '.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast('Chat exported successfully!', 'success');
+            console.log('📥 Chat exported');
+        }
+        
+        // Toggle History Sidebar
+        function toggleHistory() {
+            const sidebar = document.getElementById('historySidebar');
+            if (sidebar) {
+                sidebar.classList.toggle('active');
+                console.log('📜 History sidebar toggled');
+            }
+        }
+        
+        // Update History List
+        function updateHistoryList() {
+            const historyList = document.getElementById('historyList');
+            if (!historyList) return;
+            
+            historyList.innerHTML = '';
+            
+            if (chatHistory.length === 0) {
+                historyList.innerHTML = `
+                    <div class="history-empty">
+                        <i class="fas fa-history"></i>
+                        <p>No chat history yet</p>
+                        <small>Start chatting to see your history here</small>
+                    </div>
+                `;
+                return;
+            }
+            
+            chatHistory.forEach(item => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.innerHTML = `
+                    <div class="history-item-header">
+                        <div class="history-item-title">${item.title}</div>
+                        <span class="history-item-time">${formatTime(item.timestamp)}</span>
+                    </div>
+                    <div class="history-item-preview">${item.messages[0]?.content?.substring(0, 80) || 'No preview'}...</div>
+                `;
+                
+                historyItem.addEventListener('click', () => loadChatFromHistory(item.id));
+                historyList.appendChild(historyItem);
+            });
+        }
+        
+        // Load Chat from History
+        function loadChatFromHistory(chatId) {
+            const chat = chatHistory.find(item => item.id === chatId);
+            if (!chat) return;
+            
+            // Clear current messages
+            const chatMessages = document.getElementById('chatMessages');
+            if (chatMessages) {
+                chatMessages.innerHTML = '';
+            }
+            
+            // Load messages
+            chat.messages.forEach(msg => {
+                addMessageToChat(msg.content, msg.role === 'user', false, 'PDF');
+            });
+            
+            // Hide welcome screen
+            const chatWelcome = document.getElementById('chatWelcome');
+            const chatMessagesContainer = document.getElementById('chatMessagesContainer');
+            
+            if (chatWelcome) {
+                chatWelcome.style.display = 'none';
+            }
+            
+            if (chatMessagesContainer) {
+                chatMessagesContainer.style.display = 'flex';
+            }
+            
+            // Set current chat ID
+            currentChatId = chatId;
+            
+            // Close history sidebar
+            toggleHistory();
+            
+            showToast('Chat loaded from history', 'success');
+            console.log('📜 Chat loaded from history:', chat.title);
+        }
+        
+        // Send Message Handler
+        async function sendMessageHandler() {
+            if (isProcessing) {
+                console.warn('⚠️ Message already being processed');
+                return;
+            }
+            
+            const input = document.getElementById('messageInput');
+            if (!input) return;
+            
+            const message = input.value.trim();
+            
+            if (!message) {
+                showToast('Please enter a message', 'warning');
+                return;
+            }
+            
+            // Get user ID
+            let userId = 'guest';
+            const userStr = localStorage.getItem('legal_swami_user');
+            if (userStr) {
+                try {
+                    const user = JSON.parse(userStr);
+                    userId = user.id;
+                } catch (e) {
+                    console.error('Error parsing user data:', e);
+                }
+            }
+            
+            isProcessing = true;
+            
+            try {
+                console.log('💬 Sending message:', message.substring(0, 100));
+                
+                // Add user message to chat
+                addMessageToChat(message, true);
+                input.value = '';
+                input.style.height = 'auto';
+                updateCharCounter();
+                
+                // Show typing indicator
+                showTypingIndicator(true);
+                
+                // Send to backend
+                const backendUrl = 'https://legal-swami-backend.onrender.com';
+                const response = await fetch(backendUrl + '/api/v1/chat/send', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-user-id': userId,
+                        'x-request-id': 'req_' + Date.now()
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        chatId: currentChatId,
+                        generateDocument: false
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('HTTP ' + response.status + ': ' + await response.text());
+                }
+                
+                const data = await response.json();
+                console.log('✅ Received response:', data.id);
+                
+                // Add AI response to chat
+                addMessageToChat(data.response || 'I apologize, but I encountered an error processing your request. Please try again.', false);
+                
+            } catch (error) {
+                console.error('❌ Failed to send message:', error);
+                
+                // Add error message
+                addMessageToChat('Sorry, I encountered an error while processing your request. Please try again in a moment. If the problem persists, please check your internet connection.', false);
+                
+                showToast('Failed to send message: ' + error.message, 'error');
+            } finally {
+                isProcessing = false;
+                showTypingIndicator(false);
+            }
+        }
+        
+        // Add Message to Chat
+        function addMessageToChat(content, isUser, isDocument, documentType) {
+            isUser = isUser || false;
+            isDocument = isDocument || false;
+            documentType = documentType || 'PDF';
+            
+            const chatMessages = document.getElementById('chatMessages');
+            if (!chatMessages) return;
+            
+            // Create message element
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message ' + (isUser ? 'user-message' : 'ai-message');
+            
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            
+            // Format content with markdown-like syntax
+            const formattedContent = formatMessageText(content);
+            
+            // Create message HTML
+            messageDiv.innerHTML = `
+                <div class="message-avatar">
+                    ${isUser ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>'}
+                </div>
+                <div class="message-content">
+                    <div class="message-header">
+                        <div class="message-sender">
+                            ${isUser ? 'You' : 'LegalSwami AI'}
+                            ${!isUser ? '<span class="message-sender-badge">AI</span>' : ''}
+                        </div>
+                        <div class="message-time">${time}</div>
+                    </div>
+                    <div class="message-text">${formattedContent}</div>
+                    <div class="message-actions">
+                        <button class="message-action-btn" title="Copy">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                        <button class="message-action-btn" title="Like">
+                            <i class="far fa-thumbs-up"></i>
+                        </button>
+                        <button class="message-action-btn" title="Dislike">
+                            <i class="far fa-thumbs-down"></i>
+                        </button>
+                    </div>
+                </div>
+            `;
+            
+            // Add to chat
+            chatMessages.appendChild(messageDiv);
+            
+            // Scroll to bottom
+            setTimeout(() => {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 100);
+            
+            // Add copy functionality
+            const copyBtn = messageDiv.querySelector('.message-action-btn');
+            if (copyBtn) {
+                copyBtn.addEventListener('click', function() {
+                    const text = messageDiv.querySelector('.message-text').textContent;
+                    navigator.clipboard.writeText(text).then(function() {
+                        showToast('Message copied to clipboard!', 'success');
+                    });
+                });
+            }
+            
+            console.log('💬 Message added to chat:', isUser ? 'User' : 'AI');
+        }
+        
+        // Format Message Text
+        function formatMessageText(text) {
+            if (!text) return '';
+            
+            // Replace newlines with breaks
+            text = text.replace(/\n/g, '<br>');
+            
+            // Replace **bold** with <strong>
+            text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+            
+            // Replace *italic* with <em>
+            text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
+            
+            // Replace `code` with <code>
+            text = text.replace(/`(.*?)`/g, '<code>$1</code>');
+            
+            // Replace bullet points
+            text = text.replace(/^\s*[-•*]\s+(.*)$/gm, '<li>$1</li>');
+            
+            // Wrap lists in ul
+            const lines = text.split('<br>');
+            let inList = false;
+            let result = '';
+            
+            for (let line of lines) {
+                if (line.startsWith('<li>')) {
+                    if (!inList) {
+                        result += '<ul>';
+                        inList = true;
+                    }
+                } else {
+                    if (inList) {
+                        result += '</ul>';
+                        inList = false;
+                    }
+                }
+                result += line + '<br>';
+            }
+            
+            if (inList) {
+                result += '</ul>';
+            }
+            
+            return result;
+        }
+        
+        // Show Typing Indicator
+        function showTypingIndicator(show) {
+            const indicator = document.getElementById('typingIndicator');
+            if (indicator) {
+                indicator.style.display = show ? 'flex' : 'none';
+                
+                if (show) {
+                    const chatMessages = document.getElementById('chatMessages');
+                    if (chatMessages) {
+                        setTimeout(() => {
+                            chatMessages.scrollTop = chatMessages.scrollHeight;
+                        }, 100);
+                    }
+                }
+            }
+        }
+        
+        // Handle Input Keydown
+        function handleInputKeydown(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMessageHandler();
+            }
+        }
+        
+        // Handle Input Change
+        function handleInputChange() {
+            updateCharCounter();
+        }
+        
+        // Update Character Counter
+        function updateCharCounter() {
+            const input = document.getElementById('messageInput');
+            const counter = document.getElementById('charCounter');
+            if (!input || !counter) return;
+            
+            const length = input.value.length;
+            counter.textContent = `${length}/5000`;
+            
+            // Change color if near limit
+            if (length > 4500) {
+                counter.style.color = '#ef4444';
+            } else if (length > 4000) {
+                counter.style.color = '#f59e0b';
+            } else {
+                counter.style.color = '#6b7280';
+            }
+        }
+        
+        // Auto Resize Textarea
+        function autoResizeTextarea() {
+            const textarea = this;
+            textarea.style.height = 'auto';
+            textarea.style.height = (textarea.scrollHeight) + 'px';
+            
+            // Limit height
+            if (textarea.scrollHeight > 200) {
+                textarea.style.height = '200px';
+                textarea.style.overflowY = 'auto';
+            }
+        }
+        
+        // Show Login Modal
+        function showLoginModal() {
+            console.log('🔐 Showing login modal...');
+            
+            const modal = document.getElementById('loginModal');
+            if (!modal) {
+                console.error('❌ Login modal not found!');
+                return;
+            }
+            
+            isLoginModalOpen = true;
+            modal.style.display = 'flex';
+            document.body.classList.add('modal-open');
+            
+            // Prevent background scrolling on mobile
+            document.body.style.overflow = 'hidden';
+            
+            console.log('✅ Login modal shown');
+        }
+        
+        // Hide Login Modal
+        function hideLoginModal() {
+            console.log('🔐 Hiding login modal...');
+            
+            const modal = document.getElementById('loginModal');
+            if (!modal) {
+                console.error('❌ Login modal not found!');
+                return;
+            }
+            
+            isLoginModalOpen = false;
+            modal.style.display = 'none';
+            document.body.classList.remove('modal-open');
+            
+            // Restore scrolling
+            document.body.style.overflow = '';
+            
+            console.log('✅ Login modal hidden');
+        }
+        
+        // Handle Demo Login
+        function handleDemoLogin() {
+            console.log('👤 Demo login triggered');
+            
+            const demoUser = {
+                id: 'demo_user_' + Date.now(),
+                name: 'Demo User',
+                email: 'demo@legalswami.com',
+                role: 'client',
+                picture: 'https://ui-avatars.com/api/?name=Demo+User&background=1a56db&color=fff&size=128',
+                provider: 'demo',
+                isDemo: true
+            };
+            
+            localStorage.setItem('legal_swami_user', JSON.stringify(demoUser));
+            localStorage.setItem('legal_swami_token', 'demo_token_' + Date.now());
+            
+            updateUserUI();
+            hideLoginModal();
+            showToast('Welcome Demo User! You can now start chatting.', 'success');
+            
+            // Start chat automatically
+            setTimeout(() => startChat(), 500);
+        }
+        
+        // Handle Logout
+        function handleLogout() {
+            console.log('🚪 Logging out...');
+            
+            // Clear user data
+            localStorage.removeItem('legal_swami_token');
+            localStorage.removeItem('legal_swami_user');
+            
+            updateUserUI();
+            showToast('Logged out successfully', 'success');
+            
+            // Go back to home if in chat interface
+            if (isChatOpen) {
+                goBackToHome();
+            }
+        }
+        
+        // Check Existing User
         function checkExistingUser() {
             console.log('👤 Checking for existing user...');
             
@@ -1673,12 +1461,6 @@
                 try {
                     const user = JSON.parse(userStr);
                     console.log('✅ Found existing user:', user.name);
-                    
-                    if (window.legalSwamiAPI) {
-                        window.legalSwamiAPI.user = user;
-                        window.legalSwamiAPI.token = localStorage.getItem('legal_swami_token');
-                    }
-                    
                     updateUserUI();
                     return;
                 } catch (e) {
@@ -1691,7 +1473,7 @@
             updateUserUI();
         }
         
-        // UPDATE USER UI
+        // Update User UI
         function updateUserUI() {
             console.log('👤 Updating user UI...');
             
@@ -1753,1016 +1535,42 @@
                 
                 headerLoginBtn.style.display = 'flex';
                 userProfile.style.display = 'none';
-                
-                if (!localStorage.getItem('legalSwamiGuestId')) {
-                    localStorage.setItem('legalSwamiGuestId', 'guest_' + Date.now());
-                }
             }
         }
         
-        // SETUP ALL EVENT LISTENERS
-        function setupEventListeners() {
-            console.log('🔧 Setting up event listeners');
+        // Toggle Mobile Menu
+        function toggleMobileMenu() {
+            const mobileMenu = document.getElementById('mobileMenu');
+            const mobileToggle = document.getElementById('mobileToggle');
             
-            // Header login button - FIXED
-            const headerLoginBtn = document.getElementById('headerLoginBtn');
-            if (headerLoginBtn) {
-                console.log('✅ Found header login button');
-                headerLoginBtn.addEventListener('click', showLoginModal);
-            } else {
-                console.error('❌ Header login button not found!');
-            }
+            if (!mobileMenu || !mobileToggle) return;
             
-            // Logout button
-            const logoutBtn = document.getElementById('logoutBtn');
-            if (logoutBtn) {
-                logoutBtn.addEventListener('click', handleLogout);
-            }
+            isMobileMenuOpen = !isMobileMenuOpen;
             
-            // Start chat buttons
-            const startChatBtn = document.getElementById('startChatBtn');
-            if (startChatBtn) {
-                startChatBtn.addEventListener('click', startChat);
-            }
-            
-            const heroAssistantBtn = document.getElementById('heroAssistantBtn');
-            if (heroAssistantBtn) {
-                heroAssistantBtn.addEventListener('click', startChat);
-            }
-            
-            const ctaStartChat = document.getElementById('ctaStartChat');
-            if (ctaStartChat) {
-                ctaStartChat.addEventListener('click', startChat);
-            }
-            
-            // Mobile start chat button
-            const mobileStartChat = document.getElementById('mobileStartChat');
-            if (mobileStartChat) {
-                mobileStartChat.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    startChat();
-                });
-            }
-            
-            // Watch demo button
-            const watchDemo = document.getElementById('watchDemo');
-            if (watchDemo) {
-                watchDemo.addEventListener('click', showDemo);
-            }
-            
-            // Pricing buttons
-            const freePlanBtn = document.getElementById('freePlanBtn');
-            if (freePlanBtn) {
-                freePlanBtn.addEventListener('click', startChat);
-            }
-            
-            const proPlanBtn = document.getElementById('proPlanBtn');
-            if (proPlanBtn) {
-                proPlanBtn.addEventListener('click', showLoginModal);
-            }
-            
-            const businessPlanBtn = document.getElementById('businessPlanBtn');
-            if (businessPlanBtn) {
-                businessPlanBtn.addEventListener('click', function() {
-                    showToast('Contact sales feature coming soon!', 'info');
-                });
-            }
-            
-            // Login modal buttons - FIXED
-            const closeLoginModal = document.getElementById('closeLoginModal');
-            if (closeLoginModal) {
-                closeLoginModal.addEventListener('click', hideLoginModal);
-            }
-            
-            const demoLoginBtn = document.getElementById('demoLoginBtn');
-            if (demoLoginBtn) {
-                demoLoginBtn.addEventListener('click', handleDemoLogin);
-            }
-            
-            const customGoogleBtn = document.getElementById('customGoogleBtn');
-            if (customGoogleBtn) {
-                customGoogleBtn.addEventListener('click', handleCustomGoogleLogin);
-            }
-            
-            // Modal overlay click to close
-            const loginModal = document.getElementById('loginModal');
-            if (loginModal) {
-                loginModal.addEventListener('click', function(e) {
-                    if (e.target === this || e.target.classList.contains('modal-overlay')) {
-                        hideLoginModal();
-                    }
-                });
-            }
-            
-            // Chat interface
-            const backToHome = document.getElementById('backToHome');
-            if (backToHome) {
-                backToHome.addEventListener('click', goBackToHome);
-            }
-            
-            const clearChat = document.getElementById('clearChat');
-            if (clearChat) {
-                clearChat.addEventListener('click', clearChatHandler);
-            }
-            
-            const exportChat = document.getElementById('exportChat');
-            if (exportChat) {
-                exportChat.addEventListener('click', exportChatHandler);
-            }
-            
-            const historyToggle = document.getElementById('historyToggle');
-            if (historyToggle) {
-                historyToggle.addEventListener('click', toggleHistory);
-            }
-            
-            const closeHistory = document.getElementById('closeHistory');
-            if (closeHistory) {
-                closeHistory.addEventListener('click', toggleHistory);
-            }
-            
-            const sendMessage = document.getElementById('sendMessage');
-            if (sendMessage) {
-                sendMessage.addEventListener('click', sendMessageHandler);
-            }
-            
-            const attachFile = document.getElementById('attachFile');
-            if (attachFile) {
-                attachFile.addEventListener('click', attachFileHandler);
-            }
-            
-            const voiceInput = document.getElementById('voiceInput');
-            if (voiceInput) {
-                voiceInput.addEventListener('click', startVoiceInput);
-            }
-            
-            // Message input handling
-            const messageInput = document.getElementById('messageInput');
-            if (messageInput) {
-                messageInput.addEventListener('keydown', handleInputKeydown);
-                messageInput.addEventListener('input', autoResizeTextarea);
-                
-                // Prevent zoom on focus for mobile
-                if (isMobile) {
-                    messageInput.addEventListener('focus', function() {
-                        setTimeout(() => {
-                            this.style.fontSize = '16px';
-                        }, 100);
-                    });
-                }
-            }
-            
-            // Quick questions
-            document.querySelectorAll('.quick-btn').forEach(function(btn) {
-                btn.addEventListener('click', function() {
-                    const question = this.getAttribute('data-question');
-                    const messageInput = document.getElementById('messageInput');
-                    if (messageInput) {
-                        messageInput.value = question;
-                        sendMessageHandler();
-                    }
-                });
-            });
-            
-            // Document generation checkbox
-            const generateDocument = document.getElementById('generateDocument');
-            if (generateDocument) {
-                generateDocument.addEventListener('change', function() {
-                    const documentType = document.getElementById('documentType');
-                    if (documentType) {
-                        documentType.disabled = !this.checked;
-                    }
-                });
-            }
-            
-            // Legal links
-            const termsLink = document.getElementById('termsLink');
-            if (termsLink) {
-                termsLink.addEventListener('click', showTerms);
-            }
-            
-            const privacyLink = document.getElementById('privacyLink');
-            if (privacyLink) {
-                privacyLink.addEventListener('click', showPrivacy);
-            }
-            
-            const disclaimerLink = document.getElementById('disclaimerLink');
-            if (disclaimerLink) {
-                disclaimerLink.addEventListener('click', showDisclaimer);
-            }
-            
-            const cookieLink = document.getElementById('cookieLink');
-            if (cookieLink) {
-                cookieLink.addEventListener('click', showCookiePolicy);
-            }
-            
-            // Schedule demo button
-            const scheduleDemo = document.getElementById('ctaScheduleDemo');
-            if (scheduleDemo) {
-                scheduleDemo.addEventListener('click', function() {
-                    showToast('Demo scheduling feature coming soon!', 'info');
-                });
-            }
-            
-            // Generate document buttons
-            document.querySelectorAll('.btn-generate').forEach(function(btn) {
-                btn.addEventListener('click', function() {
-                    showToast('Document generation feature coming soon!', 'info');
-                });
-            });
-            
-            // Mobile specific events
-            if (isMobile) {
-                // Double tap to go back (for chat)
-                let lastTap = 0;
-                document.addEventListener('touchend', function(e) {
-                    const currentTime = new Date().getTime();
-                    const tapLength = currentTime - lastTap;
-                    
-                    if (tapLength < 500 && tapLength > 0 && isChatOpen) {
-                        // Double tap detected in chat
-                        const backBtn = document.getElementById('backToHome');
-                        if (backBtn) {
-                            backBtn.click();
-                        }
-                    }
-                    lastTap = currentTime;
-                });
-            }
-            
-            console.log('✅ All event listeners set up');
-        }
-        
-        // INITIALIZE CHAT
-        function initializeChat() {
-            // Hide typing indicator initially
-            const typingIndicator = document.getElementById('typingIndicator');
-            if (typingIndicator) {
-                typingIndicator.style.display = 'none';
-            }
-            
-            // Hide chat messages container initially
-            const chatMessagesContainer = document.getElementById('chatMessagesContainer');
-            if (chatMessagesContainer) {
-                chatMessagesContainer.style.display = 'none';
-            }
-            
-            // Mobile chat optimizations
-            if (isMobile) {
-                // Larger input for mobile
-                const messageInput = document.getElementById('messageInput');
-                if (messageInput) {
-                    messageInput.style.minHeight = '44px';
-                    messageInput.style.fontSize = '16px';
-                }
-                
-                // Better mobile chat layout
-                const chatMessages = document.getElementById('chatMessages');
-                if (chatMessages) {
-                    chatMessages.style.padding = '10px';
-                }
-            }
-        }
-        
-        // AUTO RESIZE TEXTAREA
-        function autoResizeTextarea() {
-            const textarea = this;
-            textarea.style.height = 'auto';
-            textarea.style.height = (textarea.scrollHeight) + 'px';
-            
-            // Limit height on mobile
-            if (isMobile && textarea.scrollHeight > 200) {
-                textarea.style.height = '200px';
-                textarea.style.overflowY = 'auto';
-            }
-        }
-        
-        // HANDLE INPUT KEYDOWN
-        function handleInputKeydown(event) {
-            if (event.key === 'Enter' && !event.shiftKey) {
-                event.preventDefault();
-                sendMessageHandler();
-            }
-            
-            // Mobile specific: hide keyboard on escape
-            if (event.key === 'Escape' && isMobile) {
-                this.blur();
-            }
-        }
-        
-        // SHOW LOGIN MODAL - FIXED
-        function showLoginModal() {
-            console.log('🔐 Showing login modal...');
-            
-            const modal = document.getElementById('loginModal');
-            if (!modal) {
-                console.error('❌ Login modal not found!');
-                return;
-            }
-            
-            isLoginModalOpen = true;
-            modal.style.display = 'flex';
-            document.body.classList.add('modal-open');
-            
-            // Prevent background scrolling on mobile
-            if (isMobile) {
+            if (isMobileMenuOpen) {
+                mobileMenu.style.display = 'block';
+                setTimeout(() => {
+                    mobileMenu.style.opacity = '1';
+                }, 10);
                 document.body.style.overflow = 'hidden';
-            }
-            
-            // Render Google Sign-In button
-            setTimeout(function() {
-                renderGoogleSignInButton();
-            }, 100);
-            
-            console.log('✅ Login modal shown');
-        }
-        
-        // HIDE LOGIN MODAL - FIXED
-        function hideLoginModal() {
-            console.log('🔐 Hiding login modal...');
-            
-            const modal = document.getElementById('loginModal');
-            if (!modal) {
-                console.error('❌ Login modal not found!');
-                return;
-            }
-            
-            isLoginModalOpen = false;
-            modal.style.display = 'none';
-            document.body.classList.remove('modal-open');
-            
-            // Restore scrolling on mobile
-            if (isMobile) {
+                mobileToggle.innerHTML = '<i class="fas fa-times"></i>';
+            } else {
+                mobileMenu.style.opacity = '0';
+                setTimeout(() => {
+                    mobileMenu.style.display = 'none';
+                }, 300);
                 document.body.style.overflow = '';
-            }
-            
-            console.log('✅ Login modal hidden');
-        }
-        
-        // HANDLE CUSTOM GOOGLE LOGIN
-        function handleCustomGoogleLogin() {
-            console.log('🔐 Custom Google login triggered');
-            
-            if (!googleGISInitialized) {
-                showToast('Google Sign-In is not available. Please use demo login.', 'warning');
-                return;
-            }
-            
-            try {
-                google.accounts.id.prompt();
-            } catch (error) {
-                console.error('❌ Google login failed:', error);
-                showToast('Google Sign-In failed. Using demo login instead.', 'warning');
-                handleDemoLogin();
+                mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
             }
         }
         
-        // HANDLE DEMO LOGIN
-        function handleDemoLogin() {
-            console.log('👤 Demo login triggered');
-            
-            const demoUsers = [
-                {
-                    id: 'demo_lawyer_1',
-                    name: 'Advocate Rajesh Kumar',
-                    email: 'demo.lawyer@example.com',
-                    role: 'lawyer',
-                    specialization: 'Corporate Law'
-                },
-                {
-                    id: 'demo_client_1',
-                    name: 'Priya Sharma',
-                    email: 'demo.client@example.com',
-                    role: 'client',
-                    caseType: 'Property Dispute'
-                },
-                {
-                    id: 'demo_student_1',
-                    name: 'Amit Patel',
-                    email: 'demo.student@example.com',
-                    role: 'student',
-                    institution: 'NLSIU Bangalore'
-                }
-            ];
-            
-            const randomUser = demoUsers[Math.floor(Math.random() * demoUsers.length)];
-            
-            const userData = {
-                id: randomUser.id,
-                name: randomUser.name,
-                email: randomUser.email,
-                role: randomUser.role,
-                picture: 'https://ui-avatars.com/api/?name=' + encodeURIComponent(randomUser.name) + '&background=1a56db&color=fff&size=128',
-                provider: 'demo',
-                isDemo: true
-            };
-            
-            localStorage.setItem('legal_swami_user', JSON.stringify(userData));
-            localStorage.setItem('legal_swami_token', 'demo_token_' + Date.now());
-            
-            if (window.legalSwamiAPI) {
-                window.legalSwamiAPI.user = userData;
-                window.legalSwamiAPI.token = 'demo_token';
-            }
-            
-            updateUserUI();
-            hideLoginModal();
-            showToast('Welcome ' + userData.name + '! (Demo Mode)', 'success');
-        }
-        
-        // HANDLE LOGOUT
-        function handleLogout() {
-            console.log('🚪 Logging out...');
-            
-            const userStr = localStorage.getItem('legal_swami_user');
-            if (userStr) {
-                try {
-                    const user = JSON.parse(userStr);
-                    if (user.provider === 'google') {
-                        try {
-                            google.accounts.id.revoke(user.email, function(done) {
-                                console.log('✅ Google access revoked');
-                            });
-                        } catch (e) {
-                            console.warn('Could not revoke Google access:', e);
-                        }
-                    }
-                } catch (e) {
-                    console.error('Error parsing user data:', e);
-                }
-            }
-            
-            localStorage.removeItem('legal_swami_token');
-            localStorage.removeItem('legal_swami_user');
-            
-            if (window.legalSwamiAPI) {
-                window.legalSwamiAPI.token = null;
-                window.legalSwamiAPI.user = null;
-            }
-            
-            updateUserUI();
-            showToast('Logged out successfully', 'success');
-            
-            // Go back to home if in chat interface
-            if (isChatOpen) {
-                goBackToHome();
-            }
-        }
-        
-        // INITIALIZE APP WITH BACKEND
-        async function initializeAppWithBackend() {
-            console.log('🔌 Initializing app with backend...');
-            
-            try {
-                const backendUrl = 'https://legal-swami-backend.onrender.com';
-                
-                if (!window.legalSwamiAPI) {
-                    window.legalSwamiAPI = {
-                        token: localStorage.getItem('legal_swami_token'),
-                        user: null,
-                        sendMessage: async function(message, attachments, chatId) {
-                            console.log('📤 Sending message to backend:', message.substring(0, 50));
-                            
-                            const userId = this.user ? this.user.id : 'guest_' + Date.now();
-                            
-                            const response = await fetch(backendUrl + '/api/v1/chat/send', {
-                                method: 'POST',
-                                headers: {
-                                    'Content-Type': 'application/json',
-                                    'x-user-id': userId,
-                                    'x-request-id': 'req_' + Date.now()
-                                },
-                                body: JSON.stringify({
-                                    message: message,
-                                    generateDocument: document.getElementById('generateDocument') ? document.getElementById('generateDocument').checked : false
-                                })
-                            });
-                            
-                            if (!response.ok) {
-                                throw new Error('HTTP ' + response.status + ': ' + await response.text());
-                            }
-                            
-                            return await response.json();
-                        },
-                        getChatHistory: async function(page, size) {
-                            page = page || 0;
-                            size = size || 10;
-                            const userId = this.user ? this.user.id : 'guest';
-                            
-                            const response = await fetch(
-                                backendUrl + '/api/v1/chat/history?userId=' + userId + '&page=' + page + '&size=' + size,
-                                {
-                                    headers: {
-                                        'x-user-id': userId,
-                                        'x-request-id': 'req_' + Date.now()
-                                    }
-                                }
-                            );
-                            
-                            if (!response.ok) {
-                                throw new Error('HTTP ' + response.status);
-                            }
-                            
-                            return await response.json();
-                        }
-                    };
-                }
-                
-                // Test backend health
-                try {
-                    const healthResponse = await fetch(backendUrl + '/api/v1/public/health');
-                    if (healthResponse.ok) {
-                        const healthData = await healthResponse.json();
-                        console.log('✅ Backend health check passed:', healthData);
-                        showToast('Backend connected successfully!', 'success');
-                    } else {
-                        console.warn('⚠️ Backend health check failed:', healthResponse.status);
-                    }
-                } catch (error) {
-                    console.warn('⚠️ Backend health check failed:', error.message);
-                }
-                
-                updateUserUI();
-                
-            } catch (error) {
-                console.error('❌ Initialization failed:', error);
-                showToast('Note: Some features may be limited', 'warning');
-            }
-        }
-        
-        // START CHAT
-        function startChat() {
-            console.log('💬 Starting chat...');
-            
-            const user = window.legalSwamiAPI ? window.legalSwamiAPI.user : null;
-            const token = localStorage.getItem('legal_swami_token');
-            const guestId = localStorage.getItem('legalSwamiGuestId');
-            
-            if (!user && !guestId && !token) {
-                showLoginModal();
-                showToast('Please login to start chatting', 'warning');
-                return;
-            }
-            
-            const chatInterface = document.getElementById('chatInterface');
-            const mainContainer = document.querySelector('.main-container');
-            
-            if (chatInterface) {
-                chatInterface.style.display = 'flex';
-                isChatOpen = true;
-                
-                // Mobile specific chat optimizations
-                if (isMobile) {
-                    chatInterface.style.position = 'fixed';
-                    chatInterface.style.top = '0';
-                    chatInterface.style.left = '0';
-                    chatInterface.style.right = '0';
-                    chatInterface.style.bottom = '0';
-                    chatInterface.style.zIndex = '2000';
-                    document.body.style.overflow = 'hidden';
-                    
-                    // Focus input after a delay
-                    setTimeout(function() {
-                        const messageInput = document.getElementById('messageInput');
-                        if (messageInput) {
-                            messageInput.focus();
-                        }
-                    }, 500);
-                }
-                
-                console.log('✅ Chat interface shown');
-            }
-            
-            if (mainContainer && !isMobile) {
-                mainContainer.style.background = '#f7f7f8';
-            }
-            
-            if (!isMobile) {
-                document.body.style.overflow = 'hidden';
-            }
-            
-            // Hide welcome screen, show messages
-            const chatWelcome = document.getElementById('chatWelcome');
-            const chatMessagesContainer = document.getElementById('chatMessagesContainer');
-            
-            if (chatWelcome) {
-                chatWelcome.style.display = 'none';
-            }
-            
-            if (chatMessagesContainer) {
-                chatMessagesContainer.style.display = 'flex';
-            }
-            
-            setTimeout(function() {
-                const messageInput = document.getElementById('messageInput');
-                if (messageInput) {
-                    messageInput.focus();
-                    console.log('✅ Message input focused');
-                }
-            }, 300);
-        }
-        
-        // GO BACK TO HOME
-        function goBackToHome() {
-            const chatInterface = document.getElementById('chatInterface');
-            const mainContainer = document.querySelector('.main-container');
-            
-            if (chatInterface) {
-                chatInterface.style.display = 'none';
-                isChatOpen = false;
-                console.log('✅ Chat interface hidden');
-            }
-            
-            if (mainContainer) {
-                mainContainer.style.background = '';
-            }
-            
-            // Restore scrolling
-            document.body.style.overflow = '';
-            
-            // Show welcome screen again
-            const chatWelcome = document.getElementById('chatWelcome');
-            const chatMessagesContainer = document.getElementById('chatMessagesContainer');
-            
-            if (chatWelcome) {
-                chatWelcome.style.display = 'flex';
-            }
-            
-            if (chatMessagesContainer) {
-                chatMessagesContainer.style.display = 'none';
-            }
-            
-            // Clear messages
-            const chatMessages = document.getElementById('chatMessages');
-            if (chatMessages) {
-                chatMessages.innerHTML = '';
-            }
-            
-            // Reset message input
-            const messageInput = document.getElementById('messageInput');
-            if (messageInput) {
-                messageInput.value = '';
-                messageInput.style.height = 'auto';
-            }
-            
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            console.log('🏠 Returned to home');
-        }
-        
-        // CLEAR CHAT HANDLER
-        function clearChatHandler() {
-            if (confirm('Are you sure you want to clear the chat? This action cannot be undone.')) {
-                const chatMessages = document.getElementById('chatMessages');
-                if (chatMessages) {
-                    chatMessages.innerHTML = '';
-                }
-                
-                currentChatId = null;
-                showToast('Chat cleared successfully', 'success');
-                console.log('🗑️ Chat cleared');
-            }
-        }
-        
-        // EXPORT CHAT HANDLER
-        function exportChatHandler() {
-            const chatMessages = document.getElementById('chatMessages');
-            if (!chatMessages) return;
-            
-            const messages = chatMessages.querySelectorAll('.message');
-            
-            let exportText = '================================\n';
-            exportText += 'LEGALSWAMI CHAT EXPORT\n';
-            exportText += 'Generated on: ' + new Date().toLocaleString() + '\n';
-            exportText += '================================\n\n';
-            
-            messages.forEach(function(message) {
-                const isAI = message.classList.contains('ai-message');
-                const text = message.querySelector('.message-text') ? message.querySelector('.message-text').textContent : '';
-                const time = message.querySelector('.message-time') ? message.querySelector('.message-time').textContent : '';
-                
-                exportText += (isAI ? '🤖 AI Assistant' : '👤 You') + ' (' + time + '):\n';
-                exportText += text + '\n\n';
-                exportText += '─'.repeat(50) + '\n\n';
-            });
-            
-            exportText += '\n================================\n';
-            exportText += 'END OF CHAT\n';
-            exportText += '================================\n\n';
-            exportText += 'Disclaimer: This chat is for informational purposes only.\n';
-            exportText += 'Please consult a qualified attorney for legal advice.\n';
-            
-            const blob = new Blob([exportText], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = 'LegalSwami_Chat_' + new Date().toISOString().split('T')[0] + '.txt';
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            
-            showToast('Chat exported successfully!', 'success');
-            console.log('📥 Chat exported');
-        }
-        
-        // TOGGLE HISTORY SIDEBAR
-        function toggleHistory() {
-            const sidebar = document.getElementById('historySidebar');
-            if (sidebar) {
-                sidebar.classList.toggle('active');
-                console.log('📜 History sidebar toggled');
-            }
-        }
-        
-        // LOAD CHAT HISTORY
-        async function loadChatHistory() {
-            try {
-                if (!window.legalSwamiAPI) {
-                    console.warn('API not initialized');
-                    return;
-                }
-                
-                console.log('📜 Loading chat history...');
-                const history = await window.legalSwamiAPI.getChatHistory(0, 10);
-                updateHistoryList(history);
-                console.log('✅ Chat history loaded:', history.length, 'items');
-            } catch (error) {
-                console.error('Failed to load history:', error);
-                showToast('Failed to load chat history', 'error');
-            }
-        }
-        
-        // UPDATE HISTORY LIST UI
-        function updateHistoryList(history) {
-            const historyList = document.getElementById('historyList');
-            if (!historyList) return;
-            
-            historyList.innerHTML = '';
-            
-            if (!history || history.length === 0) {
-                historyList.innerHTML = '<div class="history-empty"><i class="fas fa-history"></i><p>No chat history yet</p><small>Start chatting to see your history here</small></div>';
-                return;
-            }
-            
-            history.forEach(function(item) {
-                const historyItem = document.createElement('div');
-                historyItem.className = 'history-item';
-                historyItem.innerHTML = '<div class="history-item-header"><div class="history-item-title">' + 
-                    item.message.substring(0, 50) + (item.message.length > 50 ? '...' : '') + 
-                    '</div><span class="history-item-time">' + formatTime(item.createdAt) + 
-                    '</span></div><div class="history-item-preview">' + 
-                    item.message.substring(0, 100) + (item.message.length > 100 ? '...' : '') + 
-                    '</div><div class="history-item-actions"><button class="history-action-btn" onclick="loadChatFromHistory(\'' + 
-                    item.id + '\')"><i class="fas fa-eye"></i> View</button><button class="history-action-btn" onclick="deleteChatHistory(\'' + 
-                    item.id + '\')"><i class="fas fa-trash"></i> Delete</button></div>';
-                historyList.appendChild(historyItem);
-            });
-        }
-        
-        // LOAD CHAT FROM HISTORY
-        async function loadChatFromHistory(chatId) {
-            try {
-                showToast('Loading chat from history...', 'info');
-                toggleHistory();
-                console.log('📜 Loading chat:', chatId);
-            } catch (error) {
-                console.error('Failed to load chat:', error);
-                showToast('Failed to load chat', 'error');
-            }
-        }
-        
-        // DELETE CHAT HISTORY
-        function deleteChatHistory(chatId) {
-            if (confirm('Are you sure you want to delete this chat?')) {
-                showToast('Chat deleted successfully', 'success');
-                console.log('🗑️ Chat deleted:', chatId);
-            }
-        }
-        
-        // SEND MESSAGE HANDLER
-        async function sendMessageHandler() {
-            if (isProcessing) {
-                console.warn('⚠️ Message already being processed');
-                return;
-            }
-            
-            const input = document.getElementById('messageInput');
-            if (!input) return;
-            
-            const message = input.value.trim();
-            
-            if (!message) {
-                showToast('Please enter a message', 'warning');
-                return;
-            }
-            
-            let userId = 'guest';
-            if (window.legalSwamiAPI && window.legalSwamiAPI.user) {
-                userId = window.legalSwamiAPI.user.id;
-            } else {
-                userId = localStorage.getItem('legalSwamiGuestId') || 'guest_' + Date.now();
-                localStorage.setItem('legalSwamiGuestId', userId);
-            }
-            
-            isProcessing = true;
-            
-            try {
-                console.log('💬 Sending message:', message.substring(0, 100));
-                
-                addMessageToChat(message, true);
-                input.value = '';
-                input.style.height = 'auto';
-                
-                showTypingIndicator(true);
-                
-                const generateDocument = document.getElementById('generateDocument') ? document.getElementById('generateDocument').checked : false;
-                const documentType = document.getElementById('documentType') ? document.getElementById('documentType').value : 'PDF';
-                
-                const backendUrl = 'https://legal-swami-backend.onrender.com';
-                const response = await fetch(backendUrl + '/api/v1/chat/send', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'x-user-id': userId,
-                        'x-request-id': 'req_' + Date.now()
-                    },
-                    body: JSON.stringify({
-                        message: message,
-                        generateDocument: generateDocument
-                    })
-                });
-                
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    throw new Error('HTTP ' + response.status + ': ' + errorText);
-                }
-                
-                const data = await response.json();
-                console.log('✅ Received response:', data.id);
-                
-                addMessageToChat(data.response || 'No response received', false, generateDocument, documentType);
-                
-                await loadChatHistory();
-                
-            } catch (error) {
-                console.error('❌ Failed to send message:', error);
-                addMessageToChat('Sorry, I encountered an error while processing your request. Please try again in a moment. If the problem persists, please check your internet connection.', false);
-                showToast('Failed to send message: ' + error.message, 'error');
-            } finally {
-                isProcessing = false;
-                showTypingIndicator(false);
-                
-                // Scroll to bottom on mobile
-                if (isMobile) {
-                    const chatMessages = document.getElementById('chatMessages');
-                    if (chatMessages) {
-                        setTimeout(() => {
-                            chatMessages.scrollTop = chatMessages.scrollHeight;
-                        }, 100);
-                    }
-                }
-            }
-        }
-        
-        // ADD MESSAGE TO CHAT UI
-        function addMessageToChat(content, isUser, isDocument, documentType) {
-            isUser = isUser || false;
-            isDocument = isDocument || false;
-            documentType = documentType || 'PDF';
-            
-            const chatMessages = document.getElementById('chatMessages');
-            if (!chatMessages) return;
-            
-            const messageDiv = document.createElement('div');
-            
-            messageDiv.className = 'message ' + (isUser ? 'user-message' : 'ai-message');
-            if (isDocument) {
-                messageDiv.classList.add('document-message');
-            }
-            
-            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-            
-            let messageContent = content;
-            if (isDocument) {
-                messageContent = '<div class="document-header"><div class="document-icon"><i class="fas fa-file-' + 
-                    documentType.toLowerCase() + '"></i></div><div class="document-info"><h5>' + 
-                    documentType + ' Document Generated</h5><p>Generated on ' + new Date().toLocaleDateString() + 
-                    '</p></div></div><div class="message-text">' + content + 
-                    '</div><div class="document-actions"><button class="btn-download"><i class="fas fa-download"></i>Download ' + 
-                    documentType + '</button><button class="btn-preview"><i class="fas fa-eye"></i>Preview</button></div>';
-            } else {
-                messageContent = '<div class="message-header"><div class="message-sender">' + 
-                    (isUser ? '👤 You' : '🤖 AI Assistant') + 
-                    (!isUser ? '<span class="message-sender-badge">AI</span>' : '') + 
-                    '</div><div class="message-time">' + time + 
-                    '</div></div><div class="message-text">' + formatMessageText(content) + 
-                    '</div><div class="message-actions"><button class="message-action-btn" title="Copy"><i class="fas fa-copy"></i></button><button class="message-action-btn" title="Share"><i class="fas fa-share"></i></button><button class="message-action-btn" title="Save"><i class="fas fa-bookmark"></i></button></div>';
-            }
-            
-            messageDiv.innerHTML = '<div class="message-avatar">' + 
-                (isUser ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>') + 
-                '</div><div class="message-content">' + messageContent + '</div>';
-            
-            chatMessages.appendChild(messageDiv);
-            
-            // Scroll to bottom
-            setTimeout(() => {
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }, 100);
-            
-            console.log('💬 Message added to chat:', isUser ? 'User' : 'AI');
-            
-            // Add copy functionality
-            const copyBtn = messageDiv.querySelector('.message-action-btn');
-            if (copyBtn) {
-                copyBtn.addEventListener('click', function() {
-                    const text = messageDiv.querySelector('.message-text').textContent;
-                    navigator.clipboard.writeText(text).then(function() {
-                        showToast('Message copied to clipboard!', 'success');
-                    });
-                });
-            }
-        }
-        
-        // FORMAT MESSAGE TEXT
-        function formatMessageText(text) {
-            text = text.replace(/\n/g, '<br>');
-            text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
-            text = text.replace(/^\s*[-•*]\s+(.*)$/gm, '<li>$1</li>');
-            text = text.replace(/(<li>.*<\/li>)/gs, '<ul>$1</ul>');
-            return text;
-        }
-        
-        // SHOW TYPING INDICATOR
-        function showTypingIndicator(show) {
-            const indicator = document.getElementById('typingIndicator');
-            if (indicator) {
-                indicator.style.display = show ? 'flex' : 'none';
-                
-                if (show) {
-                    const chatMessages = document.getElementById('chatMessages');
-                    if (chatMessages) {
-                        setTimeout(() => {
-                            chatMessages.scrollTop = chatMessages.scrollHeight;
-                        }, 100);
-                    }
-                }
-            }
-        }
-        
-        // ATTACH FILE HANDLER
-        function attachFileHandler() {
-            showToast('File attachment feature coming soon in version 2.1!', 'info');
-            console.log('📎 File attachment clicked');
-        }
-        
-        // START VOICE INPUT
-        function startVoiceInput() {
-            showToast('Voice input feature coming soon in version 2.2!', 'info');
-            console.log('🎤 Voice input clicked');
-        }
-        
-        // SHOW DEMO
+        // Show Demo
         function showDemo() {
-            window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank');
+            showToast('Demo video feature coming soon!', 'info');
             console.log('🎬 Demo opened');
         }
         
-        // SHOW TERMS
-        function showTerms(e) {
-            e.preventDefault();
-            const terms = 'LEGALSWAMI TERMS OF SERVICE\n\n1. ACCEPTANCE OF TERMS\nBy accessing and using LegalSwami, you agree to be bound by these Terms of Service.\n\n2. SERVICE DESCRIPTION\nLegalSwami is an AI-powered legal assistant providing informational guidance only.\n\n3. NOT LEGAL ADVICE\nThe service does not constitute legal advice. Consult a qualified attorney for legal matters.\n\n4. USER RESPONSIBILITIES\nYou are responsible for the accuracy of information provided to the service.\n\n5. PRIVACY\nYour data is protected as outlined in our Privacy Policy.\n\n6. LIMITATION OF LIABILITY\nLegalSwami is not liable for any damages arising from use of the service.\n\n7. MODIFICATIONS\nWe reserve the right to modify these terms at any time.\n\nLast Updated: ' + new Date().toLocaleDateString();
-            
-            alert(terms);
-            console.log('📄 Terms of Service shown');
-        }
-        
-        // SHOW PRIVACY POLICY
-        function showPrivacy(e) {
-            e.preventDefault();
-            const privacy = 'LEGALSWAMI PRIVACY POLICY\n\n1. INFORMATION COLLECTION\nWe collect minimal information necessary to provide our services.\n\n2. DATA USAGE\nYour data is used solely to improve service quality and user experience.\n\n3. DATA PROTECTION\nWe implement industry-standard security measures to protect your information.\n\n4. THIRD-PARTY SHARING\nWe do not sell or share your personal data with third parties.\n\n5. COOKIES\nWe use cookies to enhance user experience and analyze service usage.\n\n6. USER RIGHTS\nYou have the right to access, modify, or delete your personal data.\n\n7. CHILDREN\'S PRIVACY\nOur service is not intended for users under 18 years of age.\n\n8. CHANGES TO POLICY\nWe may update this policy periodically.\n\nFor questions: privacy@legalswami.com';
-            
-            alert(privacy);
-            console.log('🔒 Privacy Policy shown');
-        }
-        
-        // SHOW DISCLAIMER
-        function showDisclaimer(e) {
-            e.preventDefault();
-            const disclaimer = '⚖️ IMPORTANT LEGAL DISCLAIMER ⚖️\n\nLEGALSWAMI AI ASSISTANT - DISCLAIMER\n\n1. NATURE OF SERVICE\nLegalSwami is an artificial intelligence assistant designed to provide general legal information and guidance. It is NOT a licensed attorney.\n\n2. NOT LEGAL ADVICE\nThe information provided by LegalSwami does not constitute legal advice and should not be relied upon as such.\n\n3. NO ATTORNEY-CLIENT RELATIONSHIP\nUsing LegalSwami does not create an attorney-client relationship.\n\n4. CONSULT A LAWYER\nFor legal advice specific to your situation, please consult a qualified licensed attorney.\n\n5. ACCURACY OF INFORMATION\nWhile we strive for accuracy, we cannot guarantee the completeness or currentness of information provided.\n\n6. USE AT YOUR OWN RISK\nYou assume all risk for any actions taken based on information from LegalSwami.\n\n7. OFFICIAL DOCUMENTS\nFor official legal documents, court filings, or binding agreements, always consult a licensed attorney.\n\n8. EMERGENCY SITUATIONS\nFor urgent legal matters, contact a lawyer immediately.\n\nBy using LegalSwami, you acknowledge and agree to these terms.';
-            
-            alert(disclaimer);
-            console.log('⚠️ Legal Disclaimer shown');
-        }
-        
-        // SHOW COOKIE POLICY
-        function showCookiePolicy(e) {
-            e.preventDefault();
-            alert('COOKIE POLICY\n\nWe use essential cookies for functionality and analytics cookies to improve our service. By continuing to use LegalSwami, you consent to our use of cookies.');
-            console.log('🍪 Cookie Policy shown');
-        }
-        
-        // FORMAT TIME
+        // Format Time
         function formatTime(dateString) {
             const date = new Date(dateString);
             const now = new Date();
@@ -2771,10 +1579,11 @@
             if (diff < 60000) return 'Just now';
             if (diff < 3600000) return Math.floor(diff / 60000) + 'm ago';
             if (diff < 86400000) return Math.floor(diff / 3600000) + 'h ago';
+            if (diff < 604800000) return Math.floor(diff / 86400000) + 'd ago';
             return date.toLocaleDateString();
         }
         
-        // SHOW TOAST NOTIFICATION
+        // Show Toast Notification
         function showToast(message, type) {
             type = type || 'info';
             const container = document.getElementById('toastContainer');
@@ -2790,19 +1599,14 @@
                 info: 'fas fa-info-circle'
             };
             
-            toast.innerHTML = '<i class="' + (icons[type] || icons.info) + '"></i><span>' + message + '</span>';
+            toast.innerHTML = `<i class="${icons[type] || icons.info}"></i><span>${message}</span>`;
             
             container.appendChild(toast);
             
-            // Position toast based on device
-            if (isMobile) {
-                toast.style.bottom = '70px'; // Above mobile keyboard/buttons
-                toast.style.maxWidth = '90%';
-            }
-            
-            setTimeout(function() {
+            // Remove after 3 seconds
+            setTimeout(() => {
                 toast.classList.add('fade-out');
-                setTimeout(function() {
+                setTimeout(() => {
                     if (toast.parentNode === container) {
                         container.removeChild(toast);
                     }
@@ -2811,10 +1615,6 @@
             
             console.log('📢 Toast (' + type + '):', message);
         }
-        
-        // MAKE FUNCTIONS AVAILABLE GLOBALLY
-        window.loadChatFromHistory = loadChatFromHistory;
-        window.deleteChatHistory = deleteChatHistory;
         
         console.log('✅ LegalSwami Premium App Initialization Complete!');
     </script>
