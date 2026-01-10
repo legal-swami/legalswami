@@ -24,7 +24,7 @@
     <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚖️</text></svg>">
     
     <!-- Theme Color -->
-    <meta name="theme-color" content="#1a237e">
+    <meta name="theme-color" content="#0f172a">
     
     <!-- Apple Mobile Web App Capable -->
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -209,15 +209,16 @@
         
         .modal-content {
             position: relative;
-            background: white;
+            background: #1e293b;
             border-radius: 16px;
             max-width: 420px;
             width: 100%;
             overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
             z-index: 2001;
             max-height: 90vh;
             overflow-y: auto;
+            border: 1px solid #334155;
         }
         
         /* Fix for iOS input zoom */
@@ -253,13 +254,41 @@
         .history-list {
             -webkit-overflow-scrolling: touch;
         }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        
+        ::-webkit-scrollbar-track {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb {
+            background: #3b82f6;
+            border-radius: 4px;
+        }
+        
+        ::-webkit-scrollbar-thumb:hover {
+            background: #1d4ed8;
+        }
+        
+        /* Selection Color */
+        ::selection {
+            background: rgba(59, 130, 246, 0.3);
+            color: #fff;
+        }
     </style>
 </head>
 <body>
     <!-- Premium Loading Screen -->
     <div id="loadingScreen" class="loading-screen">
         <div class="loading-content">
-            <div class="loading-spinner legal-seal"></div>
+            <div class="loading-spinner legal-seal">
+                <i class="fas fa-gavel"></i>
+            </div>
             <h2 class="shimmer-text mt-4">LegalSwami</h2>
             <p class="text-light">Initializing AI Legal Assistant...</p>
             <div class="progress-bar mt-4">
@@ -298,9 +327,13 @@
                         <i class="fas fa-file-contract"></i>
                         <span>Documents</span>
                     </a>
-                    <a href="#testimonials" class="nav-link" data-scroll="testimonials">
-                        <i class="fas fa-comment-dots"></i>
-                        <span>Testimonials</span>
+                    <a href="#legalDatabase" class="nav-link" data-scroll="legalDatabase">
+                        <i class="fas fa-database"></i>
+                        <span>Legal Database</span>
+                    </a>
+                    <a href="#lawyerDirectory" class="nav-link" data-scroll="lawyerDirectory">
+                        <i class="fas fa-user-tie"></i>
+                        <span>Find Lawyers</span>
                     </a>
                     <a href="#pricing" class="nav-link" data-scroll="pricing">
                         <i class="fas fa-tag"></i>
@@ -360,9 +393,17 @@
                         <i class="fas fa-file-contract"></i>
                         <span>Documents</span>
                     </a>
-                    <a href="#testimonials" class="mobile-link">
-                        <i class="fas fa-comment-dots"></i>
-                        <span>Testimonials</span>
+                    <a href="#legalDatabase" class="mobile-link">
+                        <i class="fas fa-database"></i>
+                        <span>Legal Database</span>
+                    </a>
+                    <a href="#lawyerDirectory" class="mobile-link">
+                        <i class="fas fa-user-tie"></i>
+                        <span>Find Lawyers</span>
+                    </a>
+                    <a href="#legalGuides" class="mobile-link">
+                        <i class="fas fa-book"></i>
+                        <span>Legal Guides</span>
                     </a>
                     <a href="#pricing" class="mobile-link">
                         <i class="fas fa-tag"></i>
@@ -612,7 +653,7 @@
             </div>
         </section>
 
-        <!-- NEW SECTION: Legal Database -->
+        <!-- Legal Database Section -->
         <section id="legalDatabase" class="database-section">
             <div class="container">
                 <div class="section-header">
@@ -758,7 +799,7 @@
             </div>
         </section>
 
-        <!-- NEW SECTION: Lawyer Directory -->
+        <!-- Lawyer Directory Section -->
         <section id="lawyerDirectory" class="lawyer-section">
             <div class="container">
                 <div class="section-header">
@@ -796,7 +837,7 @@
             </div>
         </section>
 
-        <!-- NEW SECTION: Legal Procedure Guides -->
+        <!-- Legal Procedure Guides Section -->
         <section id="legalGuides" class="guides-section">
             <div class="container">
                 <div class="section-header">
@@ -1580,7 +1621,7 @@
             console.log('✅ All initialization complete');
         });
         
-        // NEW: Setup Language Buttons
+        // Setup Language Buttons
         function setupLanguageButtons() {
             document.querySelectorAll('.lang-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
@@ -1878,7 +1919,7 @@
             }
         }
         
-        // NEW: Load Lawyers
+        // Load Lawyers
         function loadLawyers(specialization = 'all') {
             const lawyersGrid = document.getElementById('lawyersGrid');
             if (!lawyersGrid) return;
@@ -1943,7 +1984,7 @@
             });
         }
         
-        // NEW: Contact Lawyer
+        // Contact Lawyer
         function contactLawyer(lawyerId) {
             const lawyer = lawyers.find(l => l.id === lawyerId);
             if (lawyer) {
@@ -1955,7 +1996,7 @@
             }
         }
         
-        // NEW: Search Lawyers
+        // Search Lawyers
         function searchLawyers() {
             const searchInput = document.getElementById('lawyerSearch');
             if (!searchInput) return;
@@ -2025,21 +2066,21 @@
             });
         }
         
-        // NEW: Legal Act Search
+        // Legal Act Search
         function searchActs() {
             showToast('Opening Legal Acts Search...', 'info');
             // In a real app, this would open a search interface
             alert('Legal Acts Search\n\nSearch through Indian legal acts and statutes:\n\n1. Indian Penal Code (IPC)\n2. Code of Criminal Procedure (CrPC)\n3. Code of Civil Procedure (CPC)\n4. Indian Evidence Act\n5. Consumer Protection Act\n6. Transfer of Property Act\n7. Contract Act\n8. Constitution of India\n\nThis feature would allow detailed search and browsing in the complete version.');
         }
         
-        // NEW: Case Law Search
+        // Case Law Search
         function searchCaseLaws() {
             showToast('Searching Case Laws...', 'info');
             // In a real app, this would search a case law database
             alert('Case Law Search\n\nSearch through:\n- Supreme Court Judgments\n- High Court Judgments\n- Landmark Cases\n- Recent Judgments\n\nThis feature would connect to a legal database in the complete version.');
         }
         
-        // NEW: Open Legal Calculator
+        // Open Legal Calculator
         function openLegalCalculator(type = 'court-fee') {
             const modal = document.getElementById('legalToolsModal');
             if (modal) {
@@ -2152,7 +2193,7 @@
             showCalculatorModal(title, calculatorHTML);
         }
         
-        // NEW: Show Calculator Modal
+        // Show Calculator Modal
         function showCalculatorModal(title, content) {
             const modal = document.createElement('div');
             modal.className = 'modal';
@@ -2180,7 +2221,7 @@
             document.body.classList.add('modal-open');
         }
         
-        // NEW: Close Modal
+        // Close Modal
         function closeModal(modalId) {
             const modal = document.getElementById(modalId);
             if (modal) {
@@ -2192,7 +2233,7 @@
             }
         }
         
-        // NEW: Calculate Court Fee
+        // Calculate Court Fee
         function calculateCourtFee() {
             const caseType = document.getElementById('caseType').value;
             const caseValue = parseInt(document.getElementById('caseValue').value) || 0;
@@ -2231,7 +2272,7 @@
             }
         }
         
-        // NEW: Calculate Stamp Duty
+        // Calculate Stamp Duty
         function calculateStampDuty() {
             const docType = document.getElementById('docType').value;
             const propertyValue = parseInt(document.getElementById('propertyValue').value) || 0;
@@ -2279,7 +2320,7 @@
             }
         }
         
-        // NEW: Calculate Compensation
+        // Calculate Compensation
         function calculateCompensation() {
             const claimType = document.getElementById('claimType').value;
             const monthlyIncome = parseInt(document.getElementById('monthlyIncome').value) || 0;
@@ -2349,7 +2390,7 @@
             }
         }
         
-        // NEW: Generate Document
+        // Generate Document
         function generateDocument(type) {
             showToast(`Generating ${type.replace('-', ' ')} document...`, 'info');
             
@@ -2407,7 +2448,7 @@
             }, 500);
         }
         
-        // NEW: Finalize Document Generation
+        // Finalize Document Generation
         function finalizeDocument(type) {
             const party1 = document.getElementById('party1')?.value || 'Party A';
             const party2 = document.getElementById('party2')?.value || 'Party B';
@@ -2434,7 +2475,7 @@
             }, 1500);
         }
         
-        // NEW: Open Legal Guide
+        // Open Legal Guide
         function openGuide(guideType) {
             const guides = {
                 'file-case': {
@@ -2525,7 +2566,7 @@
             document.body.classList.add('modal-open');
         }
         
-        // NEW: Download Guide
+        // Download Guide
         function downloadGuide(guideType) {
             const guideContent = {
                 'file-case': 'How to File a Case in India - Complete Guide.pdf',
@@ -2757,7 +2798,7 @@
         function setupEventListeners() {
             console.log('🔧 Setting up event listeners');
             
-            // Header login button - FIXED
+            // Header login button
             const headerLoginBtn = document.getElementById('headerLoginBtn');
             if (headerLoginBtn) {
                 console.log('✅ Found header login button');
@@ -2821,7 +2862,7 @@
                 });
             }
             
-            // Login modal buttons - FIXED
+            // Login modal buttons
             const closeLoginModal = document.getElementById('closeLoginModal');
             if (closeLoginModal) {
                 closeLoginModal.addEventListener('click', hideLoginModal);
@@ -3049,7 +3090,7 @@
             }
         }
         
-        // SHOW LOGIN MODAL - FIXED
+        // SHOW LOGIN MODAL
         function showLoginModal() {
             console.log('🔐 Showing login modal...');
             
@@ -3076,7 +3117,7 @@
             console.log('✅ Login modal shown');
         }
         
-        // HIDE LOGIN MODAL - FIXED
+        // HIDE LOGIN MODAL
         function hideLoginModal() {
             console.log('🔐 Hiding login modal...');
             
@@ -3334,7 +3375,7 @@
             }
             
             if (mainContainer && !isMobile) {
-                mainContainer.style.background = '#f7f7f8';
+                mainContainer.style.background = '#0f172a';
             }
             
             if (!isMobile) {
