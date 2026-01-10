@@ -11,6 +11,9 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
+    <!-- jsPDF Library for PDF generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous"></script>
+    
     <!-- CSS Files -->
     <link rel="stylesheet" href="css/styles.css">
     <link rel="stylesheet" href="css/chat.css">
@@ -37,6 +40,1184 @@
     <meta property="og:url" content="https://legalswami.com">
 
     <style>
+        /* Chat Interface Specific Styles */
+        :root {
+            /* ChatGPT-like Colors */
+            --chat-primary: #10a37f;
+            --chat-primary-dark: #0d8c6d;
+            --chat-primary-light: #12b886;
+            --chat-secondary: #7e57c2;
+            --chat-accent: #ec4899;
+            
+            /* Dark Mode (ChatGPT-like) */
+            --chat-dark-bg: #343541;
+            --chat-dark-surface: #40414f;
+            --chat-dark-surface-light: #444654;
+            --chat-dark-border: #565869;
+            --chat-dark-text: #ececf1;
+            --chat-dark-text-secondary: #8e8ea0;
+            --chat-dark-text-tertiary: #6e6e80;
+            
+            /* Light Mode (ChatGPT-like) */
+            --chat-light-bg: #ffffff;
+            --chat-light-surface: #f7f7f8;
+            --chat-light-surface-light: #f0f0f0;
+            --chat-light-border: #e5e5e5;
+            --chat-light-text: #000000;
+            --chat-light-text-secondary: #6e6e80;
+            --chat-light-text-tertiary: #8e8ea0;
+        }
+        
+        /* ChatGPT-like Chat Container */
+        .chatgpt-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--chat-dark-bg);
+            z-index: 9998;
+            flex-direction: column;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        .chatgpt-container.active {
+            display: flex;
+        }
+        
+        /* ChatGPT Header */
+        .chatgpt-header {
+            background: var(--chat-dark-surface);
+            padding: 0.75rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--chat-dark-border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            min-height: 60px;
+        }
+        
+        .chatgpt-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .chatgpt-logo-icon {
+            font-size: 1.1rem;
+            background: linear-gradient(135deg, var(--chat-primary) 0%, var(--chat-primary-dark) 100%);
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .chatgpt-logo h1 {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--chat-dark-text);
+            white-space: nowrap;
+        }
+        
+        .chatgpt-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        
+        .chatgpt-btn {
+            background: var(--chat-dark-surface-light);
+            color: var(--chat-dark-text);
+            border: 1px solid var(--chat-dark-border);
+            border-radius: 6px;
+            padding: 0.5rem 0.75rem;
+            cursor: pointer;
+            font-size: 0.85rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-height: 36px;
+            font-weight: 500;
+        }
+        
+        .chatgpt-btn:hover {
+            background: var(--chat-dark-border);
+        }
+        
+        .chatgpt-close {
+            background: transparent;
+            border: none;
+            color: var(--chat-dark-text);
+            font-size: 1.375rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 6px;
+            transition: all 0.2s;
+            width: 36px;
+            height: 36px;
+        }
+        
+        .chatgpt-close:hover {
+            background: var(--chat-dark-surface-light);
+        }
+        
+        /* Main Chat Area */
+        .chatgpt-main {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+        
+        /* ChatGPT Sidebar */
+        .chatgpt-sidebar {
+            width: 260px;
+            background: var(--chat-dark-surface);
+            border-right: 1px solid var(--chat-dark-border);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s ease;
+            z-index: 50;
+        }
+        
+        .chatgpt-sidebar-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--chat-dark-border);
+            background: var(--chat-dark-surface);
+        }
+        
+        .chatgpt-sidebar-tab {
+            flex: 1;
+            padding: 0.875rem 0.5rem;
+            background: transparent;
+            border: none;
+            color: var(--chat-dark-text-secondary);
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        
+        .chatgpt-sidebar-tab:hover {
+            color: var(--chat-dark-text);
+            background: var(--chat-dark-surface-light);
+        }
+        
+        .chatgpt-sidebar-tab.active {
+            color: var(--chat-primary);
+            background: var(--chat-dark-surface-light);
+        }
+        
+        .chatgpt-tab-content {
+            flex: 1;
+            overflow-y: auto;
+            display: none;
+        }
+        
+        .chatgpt-tab-content.active {
+            display: block;
+        }
+        
+        .chatgpt-sidebar-header {
+            padding: 0.875rem 1rem;
+            border-bottom: 1px solid var(--chat-dark-border);
+        }
+        
+        .chatgpt-sidebar-header h2 {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--chat-dark-text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .chatgpt-topic-list {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 0.875rem 1rem;
+        }
+        
+        .chatgpt-topic-item {
+            padding: 0.75rem;
+            background: transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--chat-dark-text);
+            min-height: 40px;
+            text-align: left;
+            width: 100%;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .chatgpt-topic-item:hover {
+            background: var(--chat-dark-surface-light);
+        }
+        
+        .chatgpt-topic-item i {
+            width: 18px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        
+        .chatgpt-history-header {
+            padding: 0.875rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--chat-dark-border);
+        }
+        
+        .chatgpt-new-chat-btn {
+            background: var(--chat-dark-surface-light);
+            color: var(--chat-dark-text);
+            border: 1px solid var(--chat-dark-border);
+            border-radius: 6px;
+            padding: 0.5rem 0.75rem;
+            cursor: pointer;
+            font-size: 0.85rem;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+        
+        .chatgpt-new-chat-btn:hover {
+            background: var(--chat-dark-border);
+        }
+        
+        .chatgpt-history-list {
+            padding: 0.5rem;
+        }
+        
+        .chatgpt-history-item {
+            padding: 0.75rem;
+            background: transparent;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            color: var(--chat-dark-text);
+            margin-bottom: 4px;
+            position: relative;
+            text-align: left;
+            width: 100%;
+        }
+        
+        .chatgpt-history-item:hover {
+            background: var(--chat-dark-surface-light);
+        }
+        
+        .chatgpt-history-item.active {
+            background: rgba(16, 163, 127, 0.1);
+            border: 1px solid rgba(16, 163, 127, 0.3);
+        }
+        
+        .chatgpt-history-title {
+            font-size: 0.875rem;
+            font-weight: 500;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .chatgpt-history-preview {
+            font-size: 0.8rem;
+            color: var(--chat-dark-text-secondary);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .chatgpt-history-date {
+            font-size: 0.75rem;
+            color: var(--chat-dark-text-secondary);
+        }
+        
+        /* ChatGPT Chat Container */
+        .chatgpt-chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--chat-dark-bg);
+            width: 100%;
+            height: 100%;
+            min-height: 0;
+            overflow: hidden;
+        }
+        
+        .chatgpt-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.25rem 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            scroll-behavior: smooth;
+            min-height: 0;
+            width: 100%;
+        }
+        
+        .chatgpt-message {
+            display: flex;
+            gap: 0.75rem;
+            max-width: 100%;
+            padding: 0 0.75rem;
+            animation: fadeIn 0.2s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .chatgpt-user-message {
+            background: var(--chat-dark-surface);
+            border-radius: 8px;
+            padding: 1rem;
+            max-width: 100%;
+        }
+        
+        .chatgpt-ai-message {
+            background: transparent;
+        }
+        
+        .chatgpt-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+            margin-top: 4px;
+        }
+        
+        .chatgpt-user-message .chatgpt-avatar {
+            background: linear-gradient(135deg, var(--chat-primary) 0%, var(--chat-primary-dark) 100%);
+        }
+        
+        .chatgpt-ai-message .chatgpt-avatar {
+            background: linear-gradient(135deg, var(--chat-secondary) 0%, #5e35b1 100%);
+        }
+        
+        .chatgpt-message-content {
+            flex: 1;
+            position: relative;
+            width: 100%;
+            min-width: 0;
+        }
+        
+        .chatgpt-message-text {
+            padding: 0;
+            border-radius: 0;
+            font-size: 0.9375rem;
+            line-height: 1.6;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            overflow: hidden;
+            color: var(--chat-dark-text);
+        }
+        
+        .chatgpt-user-message .chatgpt-message-text {
+            color: white;
+        }
+        
+        /* ChatGPT Input Area */
+        .chatgpt-input-container {
+            padding: 0.875rem;
+            background: var(--chat-dark-bg);
+            border-top: 1px solid var(--chat-dark-border);
+            position: sticky;
+            bottom: 0;
+            z-index: 10;
+            width: 100%;
+            flex-shrink: 0;
+        }
+        
+        .chatgpt-input-area {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            width: 100%;
+        }
+        
+        .chatgpt-input-area textarea {
+            width: 100%;
+            padding: 0.875rem 6.5rem 0.875rem 1rem;
+            background: var(--chat-dark-surface);
+            border: 1px solid var(--chat-dark-border);
+            border-radius: 12px;
+            color: var(--chat-dark-text);
+            font-size: 0.9375rem;
+            resize: none;
+            min-height: 52px;
+            max-height: 150px;
+            transition: all 0.2s;
+            line-height: 1.5;
+            font-family: inherit;
+            outline: none;
+        }
+        
+        .chatgpt-input-area textarea:focus {
+            outline: none;
+            border-color: var(--chat-primary);
+            box-shadow: 0 0 0 2px rgba(16, 163, 127, 0.1);
+        }
+        
+        .chatgpt-input-buttons {
+            position: absolute;
+            right: 0.75rem;
+            bottom: 0.75rem;
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+        
+        .chatgpt-attachment-btn {
+            background: transparent;
+            border: none;
+            color: var(--chat-dark-text-secondary);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 8px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 32px;
+            height: 32px;
+        }
+        
+        .chatgpt-attachment-btn:hover {
+            background: var(--chat-dark-surface-light);
+            color: var(--chat-dark-text);
+        }
+        
+        .chatgpt-send-button {
+            background: linear-gradient(135deg, var(--chat-primary) 0%, var(--chat-primary-dark) 100%);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.5rem 0.875rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-height: 40px;
+            font-size: 0.875rem;
+        }
+        
+        .chatgpt-send-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 163, 127, 0.3);
+        }
+        
+        .chatgpt-send-button:disabled {
+            background: var(--chat-dark-border);
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+        
+        .chatgpt-typing-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 0.875rem 1rem;
+            background: var(--chat-dark-surface);
+            border: 1px solid var(--chat-dark-border);
+            border-radius: 12px;
+            max-width: fit-content;
+            margin-left: 2.5rem;
+            margin-top: 0.5rem;
+        }
+        
+        .chatgpt-typing-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--chat-primary);
+            border-radius: 50%;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+        
+        .chatgpt-typing-dot:nth-child(1) {
+            animation-delay: -0.32s;
+        }
+        
+        .chatgpt-typing-dot:nth-child(2) {
+            animation-delay: -0.16s;
+        }
+        
+        @keyframes typing {
+            0%, 80%, 100% {
+                transform: scale(0.8);
+                opacity: 0.5;
+            }
+            40% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+        
+        /* Document Template Styles */
+        .chatgpt-document-template {
+            background: var(--chat-dark-surface);
+            border: 1px solid var(--chat-dark-border);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin: 0.75rem 0;
+            overflow: hidden;
+        }
+        
+        .chatgpt-document-header {
+            text-align: center;
+            border-bottom: 2px solid var(--chat-primary);
+            padding-bottom: 1rem;
+            margin-bottom: 1.25rem;
+        }
+        
+        .chatgpt-document-title {
+            font-size: 1.375rem;
+            color: var(--chat-primary);
+            margin-bottom: 0.5rem;
+            word-wrap: break-word;
+            font-weight: 600;
+        }
+        
+        .chatgpt-document-subtitle {
+            color: var(--chat-dark-text-secondary);
+            font-size: 0.875rem;
+        }
+        
+        .chatgpt-document-section {
+            margin-bottom: 1.25rem;
+        }
+        
+        .chatgpt-document-section-title {
+            color: var(--chat-primary);
+            font-size: 1rem;
+            margin-bottom: 0.75rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--chat-dark-border);
+            word-wrap: break-word;
+            font-weight: 600;
+        }
+        
+        .chatgpt-document-clause {
+            margin-bottom: 0.875rem;
+            padding-left: 1rem;
+            border-left: 3px solid var(--chat-primary-light);
+        }
+        
+        .chatgpt-clause-title {
+            font-weight: 600;
+            color: var(--chat-dark-text);
+            margin-bottom: 0.5rem;
+            word-wrap: break-word;
+        }
+        
+        .chatgpt-clause-content {
+            color: var(--chat-dark-text-secondary);
+            line-height: 1.6;
+            word-wrap: break-word;
+        }
+        
+        .chatgpt-signature-section {
+            margin-top: 1.75rem;
+            padding-top: 1.25rem;
+            border-top: 1px solid var(--chat-dark-border);
+        }
+        
+        .chatgpt-signature-line {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+        
+        .chatgpt-signature-block {
+            flex: 1;
+            padding: 0.875rem;
+            min-width: 150px;
+        }
+        
+        .chatgpt-signature-name {
+            border-bottom: 1px solid var(--chat-dark-border);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.5rem;
+            min-height: 30px;
+        }
+        
+        .chatgpt-signature-label {
+            font-size: 0.8125rem;
+            color: var(--chat-dark-text-secondary);
+        }
+        
+        /* Welcome Message */
+        .chatgpt-welcome-message {
+            text-align: center;
+            max-width: 600px;
+            margin: 1.5rem auto;
+            padding: 1.25rem;
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.1) 0%, rgba(30, 64, 175, 0.1) 100%);
+            border: 1px solid var(--chat-dark-border);
+            border-radius: 12px;
+            width: 90%;
+        }
+        
+        .chatgpt-welcome-message h2 {
+            font-size: 1.5rem;
+            margin-bottom: 0.75rem;
+            background: linear-gradient(135deg, var(--chat-primary) 0%, var(--chat-secondary) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            word-wrap: break-word;
+            font-weight: 600;
+        }
+        
+        .chatgpt-welcome-message p {
+            color: var(--chat-dark-text-secondary);
+            font-size: 0.9375rem;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+            word-wrap: break-word;
+        }
+        
+        .chatgpt-welcome-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 0.875rem;
+            margin-top: 1.25rem;
+        }
+        
+        .chatgpt-feature {
+            background: var(--chat-dark-surface);
+            padding: 0.875rem;
+            border-radius: 8px;
+            border: 1px solid var(--chat-dark-border);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            word-wrap: break-word;
+        }
+        
+        .chatgpt-feature i {
+            font-size: 1.375rem;
+            color: var(--chat-primary);
+            margin-bottom: 0.5rem;
+        }
+        
+        .chatgpt-feature h4 {
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
+            color: var(--chat-dark-text);
+            font-weight: 600;
+        }
+        
+        .chatgpt-feature p {
+            font-size: 0.8125rem;
+            color: var(--chat-dark-text-secondary);
+        }
+        
+        /* Message Actions */
+        .chatgpt-message-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 0.75rem;
+            flex-wrap: wrap;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        
+        .chatgpt-message:hover .chatgpt-message-actions {
+            opacity: 1;
+        }
+        
+        .chatgpt-action-btn {
+            background: var(--chat-dark-surface-light);
+            color: var(--chat-dark-text-secondary);
+            border: 1px solid var(--chat-dark-border);
+            border-radius: 6px;
+            padding: 0.375rem 0.75rem;
+            cursor: pointer;
+            font-size: 0.8125rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-height: 32px;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+        
+        .chatgpt-action-btn:hover {
+            background: var(--chat-dark-border);
+            color: var(--chat-dark-text);
+        }
+        
+        .chatgpt-action-btn.copy:hover {
+            background: #10b981;
+            border-color: #10b981;
+            color: white;
+        }
+        
+        .chatgpt-document-download-btn {
+            position: absolute;
+            top: -12px;
+            right: 8px;
+            background: var(--chat-dark-surface);
+            border: 1px solid var(--chat-primary);
+            border-radius: 20px;
+            padding: 6px 12px;
+            color: var(--chat-primary);
+            cursor: pointer;
+            font-size: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            transition: all 0.2s;
+            z-index: 5;
+            opacity: 0;
+            transform: translateY(5px);
+            font-weight: 500;
+        }
+        
+        .chatgpt-ai-message .chatgpt-message-content:hover .chatgpt-document-download-btn {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        .chatgpt-document-download-btn:hover {
+            background: var(--chat-primary);
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 163, 127, 0.3);
+        }
+        
+        /* Attachments */
+        .chatgpt-attachments-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin-bottom: 8px;
+            padding: 6px;
+            background: var(--chat-dark-surface-light);
+            border-radius: 8px;
+            border: 1px solid var(--chat-dark-border);
+            max-height: 100px;
+            overflow-y: auto;
+        }
+        
+        .chatgpt-attachment-preview-item {
+            position: relative;
+            width: 70px;
+            height: 70px;
+            border-radius: 6px;
+            overflow: hidden;
+            border: 1px solid var(--chat-dark-border);
+        }
+        
+        .chatgpt-attachment-preview-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .chatgpt-remove-attachment {
+            position: absolute;
+            top: 2px;
+            right: 2px;
+            width: 20px;
+            height: 20px;
+            background: rgba(239, 68, 68, 0.9);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.75rem;
+        }
+        
+        .chatgpt-attachment-preview-name {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
+            padding: 2px 4px;
+            font-size: 0.625rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        /* Light Mode Support */
+        .chatgpt-container.light-mode {
+            background: var(--chat-light-bg);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-header {
+            background: var(--chat-light-surface);
+            border-bottom-color: var(--chat-light-border);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-logo h1 {
+            color: var(--chat-light-text);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-btn {
+            background: var(--chat-light-surface-light);
+            color: var(--chat-light-text);
+            border-color: var(--chat-light-border);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-btn:hover {
+            background: var(--chat-light-border);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-close {
+            color: var(--chat-light-text);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-close:hover {
+            background: var(--chat-light-surface-light);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-sidebar {
+            background: var(--chat-light-surface);
+            border-right-color: var(--chat-light-border);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-sidebar-tabs {
+            background: var(--chat-light-surface);
+            border-bottom-color: var(--chat-light-border);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-sidebar-tab {
+            color: var(--chat-light-text-secondary);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-sidebar-tab:hover {
+            color: var(--chat-light-text);
+            background: var(--chat-light-surface-light);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-sidebar-tab.active {
+            background: var(--chat-light-surface-light);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-sidebar-header {
+            border-bottom-color: var(--chat-light-border);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-sidebar-header h2 {
+            color: var(--chat-light-text-secondary);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-topic-item {
+            color: var(--chat-light-text);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-topic-item:hover {
+            background: var(--chat-light-surface-light);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-history-header {
+            border-bottom-color: var(--chat-light-border);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-new-chat-btn {
+            background: var(--chat-light-surface-light);
+            color: var(--chat-light-text);
+            border-color: var(--chat-light-border);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-new-chat-btn:hover {
+            background: var(--chat-light-border);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-history-item {
+            color: var(--chat-light-text);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-history-item:hover {
+            background: var(--chat-light-surface-light);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-history-preview {
+            color: var(--chat-light-text-secondary);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-history-date {
+            color: var(--chat-light-text-secondary);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-chat-container {
+            background: var(--chat-light-bg);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-user-message {
+            background: var(--chat-light-surface);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-message-text {
+            color: var(--chat-light-text);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-input-container {
+            background: var(--chat-light-bg);
+            border-top-color: var(--chat-light-border);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-input-area textarea {
+            background: var(--chat-light-surface);
+            border-color: var(--chat-light-border);
+            color: var(--chat-light-text);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-attachment-btn {
+            color: var(--chat-light-text-secondary);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-attachment-btn:hover {
+            background: var(--chat-light-surface-light);
+            color: var(--chat-light-text);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-send-button:disabled {
+            background: var(--chat-light-border);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-typing-indicator {
+            background: var(--chat-light-surface);
+            border-color: var(--chat-light-border);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-document-template {
+            background: var(--chat-light-surface);
+            border-color: var(--chat-light-border);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-document-subtitle {
+            color: var(--chat-light-text-secondary);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-document-section-title {
+            border-bottom-color: var(--chat-light-border);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-clause-title {
+            color: var(--chat-light-text);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-clause-content {
+            color: var(--chat-light-text-secondary);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-signature-section {
+            border-top-color: var(--chat-light-border);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-signature-name {
+            border-bottom-color: var(--chat-light-border);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-signature-label {
+            color: var(--chat-light-text-secondary);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-welcome-message {
+            background: linear-gradient(135deg, rgba(16, 163, 127, 0.08) 0%, rgba(30, 64, 175, 0.08) 100%);
+            border-color: var(--chat-light-border);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-welcome-message p {
+            color: var(--chat-light-text-secondary);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-feature {
+            background: var(--chat-light-surface);
+            border-color: var(--chat-light-border);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-feature h4 {
+            color: var(--chat-light-text);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-feature p {
+            color: var(--chat-light-text-secondary);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-action-btn {
+            background: var(--chat-light-surface-light);
+            color: var(--chat-light-text-secondary);
+            border-color: var(--chat-light-border);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-action-btn:hover {
+            background: var(--chat-light-border);
+            color: var(--chat-light-text);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-document-download-btn {
+            background: var(--chat-light-surface);
+            border-color: var(--chat-primary);
+            color: var(--chat-primary);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-attachments-preview {
+            background: var(--chat-light-surface-light);
+            border-color: var(--chat-light-border);
+        }
+        
+        .chatgpt-container.light-mode .chatgpt-attachment-preview-item {
+            border-color: var(--chat-light-border);
+        }
+        
+        /* Mobile Responsiveness */
+        @media (max-width: 768px) {
+            .chatgpt-sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                bottom: 0;
+                width: 85vw;
+                max-width: 280px;
+                transform: translateX(-100%);
+                z-index: 10000;
+            }
+            
+            .chatgpt-sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .chatgpt-header {
+                padding: 0.625rem 0.75rem;
+                min-height: 56px;
+            }
+            
+            .chatgpt-logo h1 {
+                font-size: 1rem;
+            }
+            
+            .chatgpt-btn span {
+                display: none;
+            }
+            
+            .chatgpt-messages {
+                padding: 0.75rem 0.5rem;
+                gap: 1rem;
+            }
+            
+            .chatgpt-message {
+                padding: 0 0.5rem;
+                gap: 0.625rem;
+            }
+            
+            .chatgpt-avatar {
+                width: 28px;
+                height: 28px;
+                font-size: 0.75rem;
+            }
+            
+            .chatgpt-message-text {
+                font-size: 0.875rem;
+            }
+            
+            .chatgpt-document-download-btn {
+                opacity: 1;
+                transform: translateY(0);
+                top: -8px;
+                right: 4px;
+                padding: 4px 8px;
+                font-size: 0.625rem;
+            }
+            
+            .chatgpt-welcome-message {
+                padding: 0.875rem;
+                margin: 0.875rem auto;
+            }
+            
+            .chatgpt-welcome-message h2 {
+                font-size: 1.25rem;
+            }
+            
+            .chatgpt-welcome-features {
+                grid-template-columns: 1fr;
+            }
+            
+            .chatgpt-input-container {
+                padding: 0.75rem;
+            }
+            
+            .chatgpt-input-area textarea {
+                padding: 0.75rem 5.5rem 0.75rem 0.875rem;
+                font-size: 0.875rem;
+                min-height: 48px;
+            }
+            
+            .chatgpt-input-buttons {
+                right: 0.5rem;
+                bottom: 0.5rem;
+                gap: 4px;
+            }
+            
+            .chatgpt-send-button {
+                padding: 0.5rem 0.75rem;
+                min-height: 36px;
+                font-size: 0.8125rem;
+            }
+            
+            .chatgpt-attachment-btn {
+                width: 28px;
+                height: 28px;
+                padding: 0.375rem;
+            }
+        }
+        
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .chatgpt-sidebar {
+                width: 300px;
+            }
+            
+            .chatgpt-welcome-features {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
         /* Additional Mobile & Tablet Optimizations */
         @media (max-width: 768px) {
             /* Base font size adjustment for mobile */
@@ -294,6 +1475,129 @@
             <div class="progress-bar mt-4">
                 <div class="progress-fill"></div>
             </div>
+        </div>
+    </div>
+
+    <!-- ChatGPT-like Chat Interface (Hidden by default) -->
+    <div id="chatgptInterface" class="chatgpt-container">
+        <header class="chatgpt-header">
+            <div class="chatgpt-logo">
+                <div class="chatgpt-logo-icon">
+                    <i class="fas fa-scale-balanced"></i>
+                </div>
+                <h1>LegalSwami</h1>
+            </div>
+            
+            <div class="chatgpt-actions">
+                <button class="chatgpt-btn" id="chatgptNewChatBtn">
+                    <i class="fas fa-plus"></i>
+                    <span>New Chat</span>
+                </button>
+                <button class="chatgpt-btn" id="chatgptDownloadBtn">
+                    <i class="fas fa-download"></i>
+                    <span>Download</span>
+                </button>
+                <button class="chatgpt-btn" id="chatgptClearBtn">
+                    <i class="fas fa-trash"></i>
+                    <span>Clear</span>
+                </button>
+                <button class="chatgpt-close" id="chatgptCloseBtn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </header>
+        
+        <div class="chatgpt-main">
+            <!-- Sidebar -->
+            <aside class="chatgpt-sidebar" id="chatgptSidebar">
+                <div class="chatgpt-sidebar-tabs">
+                    <button class="chatgpt-sidebar-tab active" data-tab="legal-topics">
+                        <i class="fas fa-book"></i>
+                        <span>Legal Topics</span>
+                    </button>
+                    <button class="chatgpt-sidebar-tab" data-tab="chat-history">
+                        <i class="fas fa-history"></i>
+                        <span>History</span>
+                    </button>
+                </div>
+                
+                <!-- Legal Topics Tab Content -->
+                <div class="chatgpt-tab-content active" id="legal-topics-content">
+                    <div class="chatgpt-sidebar-header">
+                        <h2><i class="fas fa-book"></i> Legal Topics</h2>
+                    </div>
+                    
+                    <div class="chatgpt-topic-list">
+                        <button class="chatgpt-topic-item" data-topic="contract">
+                            <i class="fas fa-file-contract"></i>
+                            <span>Contract Law</span>
+                        </button>
+                        <button class="chatgpt-topic-item" data-topic="employment">
+                            <i class="fas fa-briefcase"></i>
+                            <span>Employment Law</span>
+                        </button>
+                        <button class="chatgpt-topic-item" data-topic="intellectual">
+                            <i class="fas fa-lightbulb"></i>
+                            <span>Intellectual Property</span>
+                        </button>
+                        <button class="chatgpt-topic-item" data-topic="realestate">
+                            <i class="fas fa-house"></i>
+                            <span>Real Estate Law</span>
+                        </button>
+                        <button class="chatgpt-topic-item" data-topic="family">
+                            <i class="fas fa-heart"></i>
+                            <span>Family Law</span>
+                        </button>
+                        <button class="chatgpt-topic-item" data-topic="criminal">
+                            <i class="fas fa-gavel"></i>
+                            <span>Criminal Law</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Chat History Tab Content -->
+                <div class="chatgpt-tab-content" id="chat-history-content">
+                    <div class="chatgpt-history-header">
+                        <h2><i class="fas fa-history"></i> Chat History</h2>
+                        <button class="chatgpt-new-chat-btn" id="chatgptNewChatFromHistory">
+                            <i class="fas fa-plus"></i>
+                            <span>New</span>
+                        </button>
+                    </div>
+                    
+                    <div class="chatgpt-history-list" id="chatgptHistoryList">
+                        <!-- History will be loaded here -->
+                    </div>
+                </div>
+            </aside>
+            
+            <!-- Main Chat Area -->
+            <main class="chatgpt-chat-container">
+                <div class="chatgpt-messages" id="chatgptMessages">
+                    <!-- Welcome message will be added here -->
+                </div>
+                
+                <div class="chatgpt-input-container">
+                    <div class="chatgpt-input-area">
+                        <div class="chatgpt-attachments-preview" id="chatgptAttachmentsPreview" style="display: none;"></div>
+                        
+                        <textarea 
+                            id="chatgptUserInput" 
+                            placeholder="Ask any legal question or attach files (images, PDF, TXT)... (Press Enter for new line, Ctrl+Enter to send)"
+                            rows="1"
+                        ></textarea>
+                        
+                        <div class="chatgpt-input-buttons">
+                            <button class="chatgpt-attachment-btn" id="chatgptAttachmentBtn" title="Attach files">
+                                <i class="fas fa-paperclip"></i>
+                            </button>
+                            <button class="chatgpt-send-button" id="chatgptSendButton">
+                                <i class="fas fa-paper-plane"></i> <span>Send</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </main>
         </div>
     </div>
 
@@ -1130,301 +2434,6 @@
             </div>
         </section>
 
-        <!-- Chat Interface -->
-        <div id="chatInterface" class="chat-interface">
-            <div class="chat-container">
-                <!-- Chat Header -->
-                <div class="chat-header">
-                    <div class="chat-header-left">
-                        <button id="backToHome" class="chat-back-btn" title="Back to Home">
-                            <i class="fas fa-arrow-left"></i>
-                        </button>
-                        <div class="chat-title">
-                            <div class="chat-title-icon">
-                                <i class="fas fa-robot"></i>
-                            </div>
-                            <div class="chat-title-text">
-                                <h3>LegalSwami Assistant</h3>
-                                <p>AI Legal Assistant</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="chat-header-right">
-                        <button id="clearChat" class="chat-action-btn" title="Clear Chat">
-                            <i class="fas fa-trash-alt"></i>
-                            <div class="badge"></div>
-                        </button>
-                        <button id="exportChat" class="chat-action-btn" title="Export Chat">
-                            <i class="fas fa-download"></i>
-                        </button>
-                        <button id="historyToggle" class="chat-action-btn" title="Chat History">
-                            <i class="fas fa-history"></i>
-                            <div class="badge">3</div>
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Main Chat Area -->
-                <div class="chat-main">
-                    <!-- Chat History Sidebar -->
-                    <div id="historySidebar" class="chat-history-sidebar">
-                        <div class="history-header">
-                            <h4><i class="fas fa-history"></i> Chat History</h4>
-                            <button id="closeHistory" class="history-close">
-                                <i class="fas fa-times"></i>
-                            </button>
-                        </div>
-                        <div class="history-content">
-                            <div class="history-search">
-                                <i class="fas fa-search"></i>
-                                <input type="text" placeholder="Search chat history...">
-                            </div>
-                            <div class="history-list" id="historyList">
-                                <div class="history-empty">
-                                    <i class="fas fa-history"></i>
-                                    <p>No chat history yet</p>
-                                    <small>Start chatting to see your history here</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Chat Messages Area -->
-                    <div class="chat-messages-area">
-                        <!-- Welcome Screen -->
-                        <div class="chat-welcome" id="chatWelcome">
-                            <div class="welcome-illustration">
-                                <i class="fas fa-balance-scale"></i>
-                            </div>
-                            <div class="welcome-content">
-                                <h3>Welcome to LegalSwami! ⚖️</h3>
-                                <p>I'm your AI legal assistant. I can help you with:</p>
-                                
-                                <div class="welcome-features">
-                                    <div class="welcome-feature">
-                                        <i class="fas fa-comments"></i>
-                                        <h5>Legal Advice</h5>
-                                        <p>Get instant answers to your legal questions</p>
-                                    </div>
-                                    <div class="welcome-feature">
-                                        <i class="fas fa-file-contract"></i>
-                                        <h5>Document Generation</h5>
-                                        <p>Generate legal documents instantly</p>
-                                    </div>
-                                    <div class="welcome-feature">
-                                        <i class="fas fa-search"></i>
-                                        <h5>Legal Research</h5>
-                                        <p>Research laws and regulations</p>
-                                    </div>
-                                    <div class="welcome-feature">
-                                        <i class="fas fa-gavel"></i>
-                                        <h5>Case Law Search</h5>
-                                        <p>Find relevant case laws</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="language-selector">
-                                    <h5><i class="fas fa-language"></i> Select Language:</h5>
-                                    <div class="language-buttons">
-                                        <button class="lang-btn" data-lang="en">English</button>
-                                        <button class="lang-btn" data-lang="hi">हिंदी</button>
-                                        <button class="lang-btn" data-lang="mr">मराठी</button>
-                                        <button class="lang-btn" data-lang="gu">ગુજરાતી</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Chat Messages Container -->
-                        <div class="chat-messages-container" id="chatMessagesContainer">
-                            <div class="chat-messages" id="chatMessages">
-                                <!-- Messages will be loaded here -->
-                            </div>
-                        </div>
-
-                        <!-- Quick Questions -->
-                        <div class="quick-questions">
-                            <div class="quick-questions-header">
-                                <h5><i class="fas fa-bolt"></i> Try asking:</h5>
-                                <button class="btn-refresh" title="Refresh suggestions">
-                                    <i class="fas fa-redo"></i>
-                                </button>
-                            </div>
-                            <div class="quick-buttons">
-                                <button class="quick-btn" data-question="What are the requirements for a valid contract?">
-                                    Contract Requirements
-                                </button>
-                                <button class="quick-btn" data-question="How to draft a rental agreement?">
-                                    Rental Agreement
-                                </button>
-                                <button class="quick-btn" data-question="What is consumer protection law?">
-                                    Consumer Rights
-                                </button>
-                                <button class="quick-btn" data-question="How to file a legal notice?">
-                                    Legal Notice
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Chat Input Area -->
-                <div class="chat-input-area">
-                    <div class="input-container">
-                        <div class="input-actions-left">
-                            <button id="attachFile" class="input-action-btn" title="Attach File">
-                                <i class="fas fa-paperclip"></i>
-                                <div class="tooltip">Attach File</div>
-                            </button>
-                            <button id="voiceInput" class="input-action-btn" title="Voice Input">
-                                <i class="fas fa-microphone"></i>
-                                <div class="tooltip">Voice Input</div>
-                            </button>
-                            <button id="legalTools" class="input-action-btn" title="Legal Tools">
-                                <i class="fas fa-tools"></i>
-                                <div class="tooltip">Legal Tools</div>
-                            </button>
-                        </div>
-                        
-                        <textarea 
-                            id="messageInput" 
-                            placeholder="Type your legal question here... (Press Shift+Enter for new line, Enter to send)"
-                            rows="1"
-                        ></textarea>
-                        
-                        <div class="input-actions-right">
-                            <button id="sendMessage" class="btn-send" title="Send Message">
-                                <i class="fas fa-paper-plane send-icon"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="input-options">
-                        <div class="attachments-container" id="fileAttachments">
-                            <!-- Attached files will appear here -->
-                        </div>
-                        
-                        <div class="document-options">
-                            <div class="checkbox-group">
-                                <label class="checkbox-label">
-                                    <input type="checkbox" id="generateDocument">
-                                    <span>Generate as Document</span>
-                                </label>
-                            </div>
-                            
-                            <div class="select-group">
-                                <label class="select-label">Format:</label>
-                                <select id="documentType" disabled>
-                                    <option value="PDF">PDF Document</option>
-                                    <option value="DOC">Word Document</option>
-                                    <option value="TXT">Text File</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="typing-indicator" id="typingIndicator">
-                        <div class="typing-dots">
-                            <div class="dot"></div>
-                            <div class="dot"></div>
-                            <div class="dot"></div>
-                        </div>
-                        <span>LegalSwami is thinking...</span>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Legal Tools Modal -->
-        <div id="legalToolsModal" class="modal">
-            <div class="modal-overlay"></div>
-            <div class="modal-content">
-                <button id="closeLegalTools" class="modal-close">
-                    <i class="fas fa-times"></i>
-                </button>
-                
-                <div class="modal-header">
-                    <div class="modal-icon legal-seal">
-                        <i class="fas fa-tools"></i>
-                    </div>
-                    <h3>Legal Tools & Calculators</h3>
-                    <p>Access various legal utilities</p>
-                </div>
-                
-                <div class="modal-body">
-                    <div class="tools-grid">
-                        <button class="tool-card" onclick="openCalculator('court-fee')">
-                            <i class="fas fa-calculator"></i>
-                            <h4>Court Fee Calculator</h4>
-                            <p>Calculate court fees for different cases</p>
-                        </button>
-                        
-                        <button class="tool-card" onclick="openCalculator('stamp-duty')">
-                            <i class="fas fa-file-invoice-dollar"></i>
-                            <h4>Stamp Duty Calculator</h4>
-                            <p>Calculate stamp duty for documents</p>
-                        </button>
-                        
-                        <button class="tool-card" onclick="openCalculator('compensation')">
-                            <i class="fas fa-money-check-alt"></i>
-                            <h4>Compensation Calculator</h4>
-                            <p>Calculate compensation amounts</p>
-                        </button>
-                        
-                        <button class="tool-card" onclick="openLegalActSearch()">
-                            <i class="fas fa-search"></i>
-                            <h4>Act & Statute Search</h4>
-                            <p>Search legal acts and statutes</p>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Modern Login Modal -->
-        <div id="loginModal" class="modal">
-            <div class="modal-overlay"></div>
-            <div class="modal-content">
-                <button id="closeLoginModal" class="modal-close">
-                    <i class="fas fa-times"></i>
-                </button>
-                
-                <div class="modal-header">
-                    <div class="modal-icon legal-seal">
-                        <i class="fas fa-balance-scale"></i>
-                    </div>
-                    <h3>Welcome to LegalSwami</h3>
-                    <p>Secure login to access all features</p>
-                </div>
-                
-                <div class="modal-body">
-                    <!-- Google Sign-In Container -->
-                    <div id="googleSignInContainer"></div>
-                    
-                    <!-- Custom Google Button -->
-                    <button id="customGoogleBtn" class="google-signin-btn">
-                        <i class="fab fa-google"></i>
-                        Continue with Google
-                    </button>
-                    
-                    <div class="divider">
-                        <span>or</span>
-                    </div>
-                    
-                    <!-- Demo Login Button -->
-                    <button id="demoLoginBtn" class="demo-login-btn">
-                        <i class="fas fa-user"></i> Try Demo Version
-                    </button>
-                    
-                    <div class="login-info">
-                        <p><i class="fas fa-lock"></i> Your data is encrypted and secure</p>
-                        <p><i class="fas fa-shield-alt"></i> We never share your personal information</p>
-                        <p><i class="fas fa-bolt"></i> No credit card required</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- Footer -->
         <footer class="premium-footer">
             <div class="container">
@@ -1531,50 +2540,76 @@
     
     <!-- Main App Script -->
     <script>
-        // Global variables
-        let currentChatId = null;
-        let isProcessing = false;
-        let googleGISInitialized = false;
-        let isMobileMenuOpen = false;
-        let isChatOpen = false;
-        let isLoginModalOpen = false;
-        let selectedLanguage = 'en';
+        // Global variables for chat functionality
+        let chatgptInitialized = false;
+        let chatgptConversationHistory = [];
+        let chatgptCurrentChatId = null;
+        let chatgptAttachedFiles = [];
+        let chatgptIsStreaming = false;
+        let chatgptCurrentStreamingMessageId = null;
+        let chatgptCurrentStreamingContent = '';
+        let chatgptStreamingTextChunks = [];
+        let chatgptStreamingTextIndex = 0;
         
-        // Check if device is mobile
-        const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-        const isTablet = window.innerWidth <= 1024 && window.innerWidth > 480;
+        // API Configuration
+        const API_KEYS = [
+            "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",
+            "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",
+            "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",
+            "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",
+            "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"
+        ];
         
-        // Legal Acts Database
-        const legalActs = [
-            { id: 1, name: "Indian Penal Code (IPC)", year: 1860, category: "criminal" },
-            { id: 2, name: "Code of Criminal Procedure (CrPC)", year: 1973, category: "criminal" },
-            { id: 3, name: "Code of Civil Procedure (CPC)", year: 1908, category: "civil" },
-            { id: 4, name: "Indian Evidence Act", year: 1872, category: "evidence" },
-            { id: 5, name: "Consumer Protection Act", year: 2019, category: "consumer" },
-            { id: 6, name: "Transfer of Property Act", year: 1882, category: "property" },
-            { id: 7, name: "Contract Act", year: 1872, category: "civil" },
-            { id: 8, name: "Constitution of India", year: 1950, category: "constitutional" }
+        const WORKING_MODELS = [
+            "llama-3.3-70b-versatile",
+            "llama-3.1-8b-instant",
+            "llama3-70b-8192",
+            "llama3-8b-8192",
+            "mixtral-8x7b-32768"
         ];
-
-        // Lawyers Database
-        const lawyers = [
-            { id: 1, name: "Adv. Rajesh Kumar", specialization: "criminal", experience: 15, location: "Delhi", rating: 4.8, fee: "₹2000/consultation" },
-            { id: 2, name: "Adv. Priya Sharma", specialization: "family", experience: 10, location: "Mumbai", rating: 4.7, fee: "₹2500/consultation" },
-            { id: 3, name: "Adv. Amit Patel", specialization: "corporate", experience: 12, location: "Bangalore", rating: 4.9, fee: "₹3000/consultation" },
-            { id: 4, name: "Adv. Sneha Desai", specialization: "property", experience: 8, location: "Pune", rating: 4.6, fee: "₹1800/consultation" },
-            { id: 5, name: "Adv. Rohit Verma", specialization: "civil", experience: 20, location: "Delhi", rating: 4.9, fee: "₹3500/consultation" },
-            { id: 6, name: "Adv. Anjali Singh", specialization: "consumer", experience: 7, location: "Chennai", rating: 4.5, fee: "₹1500/consultation" }
-        ];
+        
+        let currentModel = "llama-3.3-70b-versatile";
+        let currentApiKeyIndex = 0;
+        let requestCount = 0;
+        const REQUEST_LIMIT_PER_KEY = 5;
+        
+        // Welcome message HTML for chat
+        const CHATGPT_WELCOME_MESSAGE_HTML = `
+            <div class="chatgpt-welcome-message">
+                <h2>Welcome to LegalSwami Chat</h2>
+                <p>Your AI-powered legal assistant for accurate, comprehensive legal information and guidance.</p>
+                <p style="color: var(--chat-primary); margin-top: 10px; font-size: 0.875rem;">
+                    <i class="fas fa-language"></i> Supports multiple Indian languages including Marathi, Hindi, and more!
+                </p>
+                
+                <div class="chatgpt-welcome-features">
+                    <div class="chatgpt-feature">
+                        <i class="fas fa-bolt"></i>
+                        <h4>Instant Responses</h4>
+                        <p>Get immediate legal insights powered by advanced AI</p>
+                    </div>
+                    <div class="chatgpt-feature">
+                        <i class="fas fa-shield-alt"></i>
+                        <h4>Confidential & Secure</h4>
+                        <p>Your conversations are private and encrypted</p>
+                    </div>
+                    <div class="chatgpt-feature">
+                        <i class="fas fa-language"></i>
+                        <h4>Multi-Language</h4>
+                        <p>Responds in same language as your query</p>
+                    </div>
+                    <div class="chatgpt-feature">
+                        <i class="fas fa-file-contract"></i>
+                        <h4>Document Generation</h4>
+                        <p>Create legal documents instantly</p>
+                    </div>
+                </div>
+            </div>
+        `;
 
         // DOM Content Loaded
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 LegalSwami Premium Frontend Initialized');
-            console.log('📱 Device Type:', isMobile ? 'Mobile' : isTablet ? 'Tablet' : 'Desktop');
-            
-            // Apply mobile-specific optimizations
-            if (isMobile) {
-                applyMobileOptimizations();
-            }
             
             // Hide loading screen
             setTimeout(function() {
@@ -1588,8 +2623,8 @@
                 }
             }, 1500);
             
-            // Initialize backend connection
-            initializeAppWithBackend();
+            // Initialize main app
+            initializeMainApp();
             
             // Setup event listeners
             setupEventListeners();
@@ -1606,57 +2641,21 @@
             // Setup mobile menu
             setupMobileMenu();
             
-            // Initialize chat interface
-            initializeChat();
-            
-            // Setup device-specific optimizations
-            setupDeviceSpecificOptimizations();
-            
             // Load lawyers
             loadLawyers();
-            
-            // Setup language buttons
-            setupLanguageButtons();
             
             console.log('✅ All initialization complete');
         });
         
-        // Setup Language Buttons
-        function setupLanguageButtons() {
-            document.querySelectorAll('.lang-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const lang = this.getAttribute('data-lang');
-                    selectedLanguage = lang;
-                    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    // Update chat placeholder based on language
-                    const messageInput = document.getElementById('messageInput');
-                    if (messageInput) {
-                        if (lang === 'hi') {
-                            messageInput.placeholder = "अपना कानूनी प्रश्न यहां टाइप करें...";
-                        } else if (lang === 'mr') {
-                            messageInput.placeholder = "तुमचा कायदेशीर प्रश्न येथे टाइप करा...";
-                        } else if (lang === 'gu') {
-                            messageInput.placeholder = "તમારો કાનૂની પ્રશ્ન અહીં ટાઈપ કરો...";
-                        } else {
-                            messageInput.placeholder = "Type your legal question here...";
-                        }
-                    }
-                    
-                    showToast(`Language changed to ${getLanguageName(lang)}`, 'info');
-                });
-            });
-        }
-        
-        function getLanguageName(code) {
-            const languages = {
-                'en': 'English',
-                'hi': 'Hindi',
-                'mr': 'Marathi',
-                'gu': 'Gujarati'
-            };
-            return languages[code] || 'English';
+        // Initialize Main App
+        function initializeMainApp() {
+            // Check if device is mobile
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            const isTablet = window.innerWidth <= 1024 && window.innerWidth > 480;
+            
+            if (isMobile) {
+                applyMobileOptimizations();
+            }
         }
         
         // Apply mobile optimizations
@@ -1674,73 +2673,16 @@
             const inputs = document.querySelectorAll('input, select, textarea');
             inputs.forEach(input => {
                 input.addEventListener('focus', function() {
-                    if (isMobile) {
-                        setTimeout(() => {
-                            this.style.fontSize = '16px';
-                        }, 100);
-                    }
+                    setTimeout(() => {
+                        this.style.fontSize = '16px';
+                    }, 100);
                 });
             });
-            
-            // Better mobile scrolling
-            document.body.style.overflowX = 'hidden';
-            document.body.style.touchAction = 'manipulation';
             
             console.log('✅ Mobile optimizations applied');
         }
         
-        // Setup device specific optimizations
-        function setupDeviceSpecificOptimizations() {
-            // Tablet specific optimizations
-            if (isTablet) {
-                console.log('📱 Tablet optimizations enabled');
-                
-                // Adjust font sizes for tablet
-                document.documentElement.style.fontSize = '15px';
-                
-                // Adjust grid layouts
-                const grids = document.querySelectorAll('.features-grid, .documents-grid');
-                grids.forEach(grid => {
-                    if (window.innerWidth <= 1024) {
-                        grid.style.gridTemplateColumns = 'repeat(2, 1fr)';
-                    }
-                });
-            }
-            
-            // Mobile specific optimizations
-            if (isMobile) {
-                // Add swipe support for mobile menu
-                let startX, startY;
-                
-                document.addEventListener('touchstart', function(e) {
-                    startX = e.touches[0].clientX;
-                    startY = e.touches[0].clientY;
-                });
-                
-                document.addEventListener('touchend', function(e) {
-                    if (!startX || !startY) return;
-                    
-                    const endX = e.changedTouches[0].clientX;
-                    const endY = e.changedTouches[0].clientY;
-                    
-                    const diffX = startX - endX;
-                    const diffY = startY - endY;
-                    
-                    // Horizontal swipe (for chat interface)
-                    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
-                        if (diffX > 0 && isChatOpen) {
-                            // Swipe left - go back to home
-                            const backBtn = document.getElementById('backToHome');
-                            if (backBtn) {
-                                backBtn.click();
-                            }
-                        }
-                    }
-                });
-            }
-        }
-        
-        // SETUP SCROLL EFFECTS
+        // Setup Scroll Effects
         function setupScrollEffects() {
             const header = document.querySelector('.premium-navbar');
             const navLinks = document.querySelectorAll('.nav-link');
@@ -1764,34 +2706,32 @@
                 }
                 
                 // Update active nav link based on scroll position
-                if (!isChatOpen) {
-                    const sections = document.querySelectorAll('section[id]');
-                    let currentSection = '';
-                    
-                    sections.forEach(function(section) {
-                        const sectionTop = section.offsetTop - 100;
-                        const sectionHeight = section.clientHeight;
-                        if (scrollY >= sectionTop && scrollY < sectionTop + sectionHeight) {
-                            currentSection = section.getAttribute('id') || 'home';
-                        }
-                    });
-                    
-                    navLinks.forEach(function(link) {
-                        link.classList.remove('active');
-                        if (link.getAttribute('href') === '#' + currentSection) {
-                            link.classList.add('active');
-                        }
-                    });
-                    
-                    // Update mobile links
-                    const mobileLinks = document.querySelectorAll('.mobile-link');
-                    mobileLinks.forEach(function(link) {
-                        link.classList.remove('active');
-                        if (link.getAttribute('href') === '#' + currentSection) {
-                            link.classList.add('active');
-                        }
-                    });
-                }
+                const sections = document.querySelectorAll('section[id]');
+                let currentSection = '';
+                
+                sections.forEach(function(section) {
+                    const sectionTop = section.offsetTop - 100;
+                    const sectionHeight = section.clientHeight;
+                    if (scrollY >= sectionTop && scrollY < sectionTop + sectionHeight) {
+                        currentSection = section.getAttribute('id') || 'home';
+                    }
+                });
+                
+                navLinks.forEach(function(link) {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === '#' + currentSection) {
+                        link.classList.add('active');
+                    }
+                });
+                
+                // Update mobile links
+                const mobileLinks = document.querySelectorAll('.mobile-link');
+                mobileLinks.forEach(function(link) {
+                    link.classList.remove('active');
+                    if (link.getAttribute('href') === '#' + currentSection) {
+                        link.classList.add('active');
+                    }
+                });
             });
             
             // Back to top functionality
@@ -1802,13 +2742,15 @@
             }
         }
         
-        // SETUP MOBILE MENU
+        // Setup Mobile Menu
         function setupMobileMenu() {
             const mobileToggle = document.getElementById('mobileToggle');
             const mobileMenu = document.getElementById('mobileMenu');
             const mobileClose = document.getElementById('mobileClose');
             const mobileLinks = document.querySelectorAll('.mobile-link');
             const mobileStartChat = document.getElementById('mobileStartChat');
+            
+            let isMobileMenuOpen = false;
             
             if (mobileToggle) {
                 mobileToggle.addEventListener('click', function() {
@@ -1819,14 +2761,12 @@
                             setTimeout(function() {
                                 mobileMenu.style.opacity = '1';
                             }, 10);
-                            // Prevent background scrolling
                             document.body.style.overflow = 'hidden';
                         } else {
                             mobileMenu.style.opacity = '0';
                             setTimeout(function() {
                                 mobileMenu.style.display = 'none';
                             }, 300);
-                            // Restore scrolling
                             document.body.style.overflow = '';
                         }
                         this.innerHTML = isMobileMenuOpen ? 
@@ -1844,7 +2784,6 @@
                         setTimeout(function() {
                             mobileMenu.style.display = 'none';
                         }, 300);
-                        // Restore scrolling
                         document.body.style.overflow = '';
                         if (mobileToggle) {
                             mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
@@ -1871,7 +2810,6 @@
                         setTimeout(function() {
                             mobileMenu.style.display = 'none';
                         }, 300);
-                        // Restore scrolling
                         document.body.style.overflow = '';
                         if (mobileToggle) {
                             mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
@@ -1884,14 +2822,13 @@
             if (mobileStartChat) {
                 mobileStartChat.addEventListener('click', function(e) {
                     e.preventDefault();
-                    startChat();
+                    openChatGPTInterface();
                     if (mobileMenu) {
                         mobileMenu.style.opacity = '0';
                         setTimeout(function() {
                             mobileMenu.style.display = 'none';
                         }, 300);
                         isMobileMenuOpen = false;
-                        // Restore scrolling
                         document.body.style.overflow = '';
                         if (mobileToggle) {
                             mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
@@ -1906,10 +2843,9 @@
                     if (e.target === this) {
                         isMobileMenuOpen = false;
                         this.style.opacity = '0';
-                        setTimeout(function() {
+                        setTimeout(() => {
                             this.style.display = 'none';
                         }, 300);
-                        // Restore scrolling
                         document.body.style.overflow = '';
                         if (mobileToggle) {
                             mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
@@ -1919,8 +2855,866 @@
             }
         }
         
+        // Setup Event Listeners
+        function setupEventListeners() {
+            console.log('🔧 Setting up event listeners');
+            
+            // Chat open buttons
+            document.getElementById('startChatBtn')?.addEventListener('click', openChatGPTInterface);
+            document.getElementById('heroAssistantBtn')?.addEventListener('click', openChatGPTInterface);
+            document.getElementById('ctaStartChat')?.addEventListener('click', openChatGPTInterface);
+            document.getElementById('freePlanBtn')?.addEventListener('click', openChatGPTInterface);
+            
+            // Watch demo button
+            document.getElementById('watchDemo')?.addEventListener('click', showDemo);
+            
+            // Pro plan button
+            document.getElementById('proPlanBtn')?.addEventListener('click', showLoginModal);
+            
+            // Business plan button
+            document.getElementById('businessPlanBtn')?.addEventListener('click', function() {
+                showToast('Contact sales feature coming soon!', 'info');
+            });
+            
+            // Schedule demo button
+            document.getElementById('ctaScheduleDemo')?.addEventListener('click', function() {
+                showToast('Demo scheduling feature coming soon!', 'info');
+            });
+            
+            // Legal links
+            document.getElementById('termsLink')?.addEventListener('click', showTerms);
+            document.getElementById('privacyLink')?.addEventListener('click', showPrivacy);
+            document.getElementById('disclaimerLink')?.addEventListener('click', showDisclaimer);
+            document.getElementById('cookieLink')?.addEventListener('click', showCookiePolicy);
+            
+            // Header login button
+            document.getElementById('headerLoginBtn')?.addEventListener('click', showLoginModal);
+            
+            console.log('✅ Main event listeners set up');
+        }
+        
+        // SIMPLE GOOGLE AUTH
+        function initializeSimpleGoogleAuth() {
+            console.log('🔐 Initializing Google Authentication...');
+            
+            if (typeof google === 'undefined') {
+                console.warn('⚠️ Google Identity Services not loaded yet, will retry...');
+                setTimeout(initializeSimpleGoogleAuth, 1000);
+                return;
+            }
+            
+            try {
+                google.accounts.id.initialize({
+                    client_id: '166511615962-bohur5q8d4i5hud6icr4185kcte9enk8.apps.googleusercontent.com',
+                    callback: handleGoogleCredentialResponse,
+                    auto_select: false,
+                    cancel_on_tap_outside: true,
+                    context: 'signin',
+                    itp_support: false,
+                    ux_mode: 'popup'
+                });
+                
+                console.log('✅ Google Authentication initialized');
+                
+            } catch (error) {
+                console.error('❌ Google Authentication initialization failed:', error);
+            }
+        }
+        
+        // HANDLE GOOGLE CREDENTIAL RESPONSE
+        function handleGoogleCredentialResponse(response) {
+            console.log('🔐 Google credential received');
+            
+            try {
+                const payload = JSON.parse(atob(response.credential.split('.')[1]));
+                
+                const userData = {
+                    id: 'google_' + payload.sub,
+                    name: payload.name,
+                    email: payload.email,
+                    picture: payload.picture,
+                    provider: 'google',
+                    token: response.credential
+                };
+                
+                console.log('✅ Google user authenticated:', userData.email);
+                
+                localStorage.setItem('legal_swami_user', JSON.stringify(userData));
+                localStorage.setItem('legal_swami_token', response.credential);
+                
+                updateUserUI();
+                showToast('Successfully logged in with Google!', 'success');
+                
+            } catch (error) {
+                console.error('❌ Failed to process Google credential:', error);
+                showToast('Login failed. Please try again.', 'error');
+            }
+        }
+        
+        // CHECK FOR EXISTING USER
+        function checkExistingUser() {
+            console.log('👤 Checking for existing user...');
+            
+            const userStr = localStorage.getItem('legal_swami_user');
+            if (userStr) {
+                try {
+                    const user = JSON.parse(userStr);
+                    console.log('✅ Found existing user:', user.name);
+                    updateUserUI();
+                    return;
+                } catch (e) {
+                    console.error('Error parsing user data:', e);
+                    localStorage.removeItem('legal_swami_user');
+                    localStorage.removeItem('legal_swami_token');
+                }
+            }
+            
+            updateUserUI();
+        }
+        
+        // UPDATE USER UI
+        function updateUserUI() {
+            console.log('👤 Updating user UI...');
+            
+            const userProfile = document.getElementById('userProfile');
+            const headerLoginBtn = document.getElementById('headerLoginBtn');
+            
+            if (!userProfile || !headerLoginBtn) {
+                console.warn('⚠️ User UI elements not found');
+                return;
+            }
+            
+            let user = null;
+            const userStr = localStorage.getItem('legal_swami_user');
+            
+            if (userStr) {
+                try {
+                    user = JSON.parse(userStr);
+                } catch (e) {
+                    console.error('Error parsing user data:', e);
+                }
+            }
+            
+            if (user && user.id) {
+                console.log('✅ User logged in:', user.name);
+                
+                headerLoginBtn.style.display = 'none';
+                userProfile.style.display = 'flex';
+                
+                const userName = document.getElementById('userName');
+                const userEmail = document.getElementById('userEmail');
+                const userAvatar = document.getElementById('userAvatar');
+                
+                if (userName) userName.textContent = user.name || 'User';
+                if (userEmail) userEmail.textContent = user.email || '';
+                
+                if (userAvatar) {
+                    userAvatar.innerHTML = '';
+                    if (user.picture) {
+                        const img = document.createElement('img');
+                        img.src = user.picture;
+                        img.alt = user.name;
+                        img.style.width = '100%';
+                        img.style.height = '100%';
+                        img.style.borderRadius = '8px';
+                        img.style.objectFit = 'cover';
+                        userAvatar.appendChild(img);
+                    } else {
+                        const initials = user.name ? user.name.charAt(0).toUpperCase() : 'U';
+                        const span = document.createElement('span');
+                        span.textContent = initials;
+                        span.style.fontSize = '14px';
+                        span.style.fontWeight = '600';
+                        userAvatar.appendChild(span);
+                    }
+                }
+                
+            } else {
+                console.log('👤 No user logged in, showing login button');
+                
+                headerLoginBtn.style.display = 'flex';
+                userProfile.style.display = 'none';
+            }
+        }
+        
+        // SHOW LOGIN MODAL
+        function showLoginModal() {
+            console.log('🔐 Showing login modal...');
+            
+            // For now, just show a toast
+            showToast('Login feature coming soon! Using guest mode for now.', 'info');
+            openChatGPTInterface();
+        }
+        
+        // OPEN CHATGPT INTERFACE
+        function openChatGPTInterface() {
+            console.log('💬 Opening ChatGPT-like interface...');
+            
+            const chatgptInterface = document.getElementById('chatgptInterface');
+            if (!chatgptInterface) return;
+            
+            // Show the interface
+            chatgptInterface.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Initialize chat if not already initialized
+            if (!chatgptInitialized) {
+                initializeChatGPTInterface();
+                chatgptInitialized = true;
+            }
+            
+            // Focus input
+            setTimeout(() => {
+                const input = document.getElementById('chatgptUserInput');
+                if (input) input.focus();
+            }, 300);
+        }
+        
+        // INITIALIZE CHATGPT INTERFACE
+        function initializeChatGPTInterface() {
+            console.log('🤖 Initializing ChatGPT interface...');
+            
+            // Get elements
+            const closeBtn = document.getElementById('chatgptCloseBtn');
+            const newChatBtn = document.getElementById('chatgptNewChatBtn');
+            const downloadBtn = document.getElementById('chatgptDownloadBtn');
+            const clearBtn = document.getElementById('chatgptClearBtn');
+            const sendBtn = document.getElementById('chatgptSendButton');
+            const userInput = document.getElementById('chatgptUserInput');
+            const attachmentBtn = document.getElementById('chatgptAttachmentBtn');
+            const sidebarTabs = document.querySelectorAll('.chatgpt-sidebar-tab');
+            const topicItems = document.querySelectorAll('.chatgpt-topic-item');
+            const newChatFromHistoryBtn = document.getElementById('chatgptNewChatFromHistory');
+            
+            // Event listeners for chat interface
+            closeBtn.addEventListener('click', closeChatGPTInterface);
+            newChatBtn.addEventListener('click', createNewChatGPTChat);
+            newChatFromHistoryBtn.addEventListener('click', createNewChatGPTChat);
+            clearBtn.addEventListener('click', clearChatGPTChat);
+            downloadBtn.addEventListener('click', downloadChatGPTChat);
+            sendBtn.addEventListener('click', sendChatGPTMessage);
+            
+            // User input handling
+            userInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && e.ctrlKey) {
+                    e.preventDefault();
+                    sendChatGPTMessage();
+                }
+                if (e.key === 'Enter' && !e.ctrlKey) {
+                    setTimeout(() => {
+                        this.style.height = 'auto';
+                        this.style.height = Math.min(this.scrollHeight, 150) + 'px';
+                    }, 10);
+                }
+            });
+            
+            userInput.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = Math.min(this.scrollHeight, 150) + 'px';
+                sendBtn.disabled = this.value.trim() === '' && chatgptAttachedFiles.length === 0;
+            });
+            
+            // Attachment button
+            attachmentBtn.addEventListener('click', function() {
+                showToast('File attachment feature coming soon!', 'info');
+            });
+            
+            // Sidebar tabs
+            sidebarTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.dataset.tab;
+                    
+                    // Update active tab
+                    sidebarTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show corresponding content
+                    document.querySelectorAll('.chatgpt-tab-content').forEach(content => {
+                        content.classList.remove('active');
+                    });
+                    document.getElementById(`${tabId}-content`).classList.add('active');
+                });
+            });
+            
+            // Topic items
+            topicItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const topic = this.dataset.topic;
+                    const topicName = this.querySelector('span').textContent;
+                    
+                    // Set input with topic-specific question
+                    const questions = {
+                        'contract': 'What are the essential elements of a valid contract under Indian law? ⚖️',
+                        'employment': 'What are the rights of employees regarding workplace harassment in India? 💼',
+                        'intellectual': 'How does copyright protection work for software in India? 🧠',
+                        'realestate': 'What documents are required for property registration in India? 🏠',
+                        'family': 'What are the grounds for divorce under Hindu Marriage Act? 👨‍👩‍👧',
+                        'criminal': 'What is the difference between bailable and non-bailable offenses? ⚖️'
+                    };
+                    
+                    userInput.value = questions[topic] || `Tell me about ${topicName.toLowerCase()} in Indian law. ⚖️`;
+                    userInput.focus();
+                    userInput.style.height = Math.min(userInput.scrollHeight, 150) + 'px';
+                    sendBtn.disabled = false;
+                    
+                    // Close sidebar on mobile
+                    if (window.innerWidth < 768) {
+                        document.getElementById('chatgptSidebar').classList.remove('active');
+                    }
+                });
+            });
+            
+            // Initialize first chat
+            createNewChatGPTChat();
+            
+            console.log('✅ ChatGPT interface initialized');
+        }
+        
+        // CLOSE CHATGPT INTERFACE
+        function closeChatGPTInterface() {
+            console.log('💬 Closing ChatGPT interface...');
+            
+            const chatgptInterface = document.getElementById('chatgptInterface');
+            if (chatgptInterface) {
+                chatgptInterface.classList.remove('active');
+                document.body.style.overflow = '';
+            }
+        }
+        
+        // CREATE NEW CHATGPT CHAT
+        function createNewChatGPTChat() {
+            console.log('💬 Creating new chat...');
+            
+            // Generate new chat ID
+            chatgptCurrentChatId = 'chat_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            chatgptConversationHistory = [];
+            chatgptAttachedFiles = [];
+            
+            // Clear messages and show welcome
+            const messagesContainer = document.getElementById('chatgptMessages');
+            if (messagesContainer) {
+                messagesContainer.innerHTML = CHATGPT_WELCOME_MESSAGE_HTML;
+            }
+            
+            // Clear input
+            const userInput = document.getElementById('chatgptUserInput');
+            if (userInput) {
+                userInput.value = '';
+                userInput.style.height = '52px';
+            }
+            
+            // Update send button
+            const sendBtn = document.getElementById('chatgptSendButton');
+            if (sendBtn) {
+                sendBtn.disabled = true;
+            }
+            
+            // Clear attachments preview
+            const attachmentsPreview = document.getElementById('chatgptAttachmentsPreview');
+            if (attachmentsPreview) {
+                attachmentsPreview.innerHTML = '';
+                attachmentsPreview.style.display = 'none';
+            }
+            
+            showToast('New chat started!', 'success');
+        }
+        
+        // CLEAR CHATGPT CHAT
+        function clearChatGPTChat() {
+            if (confirm('Are you sure you want to clear the current chat?')) {
+                createNewChatGPTChat();
+            }
+        }
+        
+        // DOWNLOAD CHATGPT CHAT
+        function downloadChatGPTChat() {
+            if (chatgptConversationHistory.length === 0) {
+                showToast('No chat content to download!', 'warning');
+                return;
+            }
+            
+            let content = `LegalSwami Chat - ${new Date().toLocaleString()}\n\n`;
+            content += '='.repeat(50) + '\n\n';
+            
+            chatgptConversationHistory.forEach((msg, index) => {
+                const role = msg.role === 'user' ? 'You' : 'LegalSwami';
+                content += `${role}:\n${msg.content}\n\n`;
+                content += '-'.repeat(30) + '\n\n';
+            });
+            
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `legalswami-chat-${new Date().toISOString().slice(0, 10)}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast('Chat downloaded successfully!', 'success');
+        }
+        
+        // SEND CHATGPT MESSAGE
+        async function sendChatGPTMessage() {
+            const userInput = document.getElementById('chatgptUserInput');
+            const sendBtn = document.getElementById('chatgptSendButton');
+            const message = userInput.value.trim();
+            
+            // Check if there's either text or attachments
+            if (!message && chatgptAttachedFiles.length === 0) {
+                showToast('Please enter a message or attach a file!', 'warning');
+                return;
+            }
+            
+            // Disable send button
+            sendBtn.disabled = true;
+            
+            // Add user message to chat
+            addChatGPTMessage(message, true);
+            
+            // Store in conversation history
+            chatgptConversationHistory.push({
+                role: 'user',
+                content: message,
+                timestamp: new Date().toISOString()
+            });
+            
+            // Clear input
+            userInput.value = '';
+            userInput.style.height = '52px';
+            
+            // Show typing indicator
+            showChatGPTTypingIndicator();
+            
+            try {
+                // Call AI API
+                const response = await callGroqAPIWithRotation(message, 'english');
+                
+                // Remove typing indicator
+                removeChatGPTTypingIndicator();
+                
+                // Add AI response to chat
+                addChatGPTMessage(response, false);
+                
+                // Store in conversation history
+                chatgptConversationHistory.push({
+                    role: 'assistant',
+                    content: response,
+                    timestamp: new Date().toISOString()
+                });
+                
+            } catch (error) {
+                console.error('AI Service Error:', error);
+                
+                // Remove typing indicator
+                removeChatGPTTypingIndicator();
+                
+                // Show error message
+                addChatGPTMessage("I apologize for the inconvenience. I'm currently experiencing technical difficulties. Please try again in a moment. ⚠️", false);
+                
+                showToast('Service temporarily unavailable!', 'error');
+            } finally {
+                // Re-enable send button
+                sendBtn.disabled = userInput.value.trim() === '' && chatgptAttachedFiles.length === 0;
+                
+                // Focus input
+                userInput.focus();
+            }
+        }
+        
+        // ADD MESSAGE TO CHATGPT CHAT
+        function addChatGPTMessage(content, isUser) {
+            const messagesContainer = document.getElementById('chatgptMessages');
+            if (!messagesContainer) return;
+            
+            // Remove welcome message if it exists
+            const welcomeMessage = messagesContainer.querySelector('.chatgpt-welcome-message');
+            if (welcomeMessage && isUser) {
+                welcomeMessage.remove();
+            }
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chatgpt-message ${isUser ? 'chatgpt-user-message' : 'chatgpt-ai-message'}`;
+            
+            // Avatar
+            const avatar = document.createElement('div');
+            avatar.className = 'chatgpt-avatar';
+            if (isUser) {
+                const user = JSON.parse(localStorage.getItem('legal_swami_user') || '{"name": "User"}');
+                const initials = user.name ? user.name.charAt(0).toUpperCase() : 'U';
+                avatar.innerHTML = `<i class="fas fa-user"></i>`;
+            } else {
+                avatar.innerHTML = '<i class="fas fa-scale-balanced"></i>';
+            }
+            
+            // Message content
+            const messageContent = document.createElement('div');
+            messageContent.className = 'chatgpt-message-content';
+            
+            const messageText = document.createElement('div');
+            messageText.className = 'chatgpt-message-text';
+            
+            if (isUser) {
+                messageText.textContent = content;
+            } else {
+                // Check if it's a document response
+                if (isDocumentRequest(content)) {
+                    messageText.innerHTML = formatChatGPTDocumentResponse(content);
+                } else {
+                    messageText.innerHTML = formatChatGPTLegalResponse(content);
+                }
+                
+                // Add action buttons for AI messages
+                const messageActions = document.createElement('div');
+                messageActions.className = 'chatgpt-message-actions';
+                messageActions.innerHTML = `
+                    <button class="chatgpt-action-btn copy" onclick="copyChatGPTMessage(this)" title="Copy response">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
+                    <button class="chatgpt-action-btn" onclick="likeChatGPTMessage(this)" title="Mark as helpful">
+                        <i class="far fa-thumbs-up"></i> Helpful
+                    </button>
+                `;
+                
+                // Add download button for document responses
+                if (isDocumentRequest(content)) {
+                    const downloadBtn = document.createElement('button');
+                    downloadBtn.className = 'chatgpt-document-download-btn';
+                    downloadBtn.innerHTML = '<i class="fas fa-file-download"></i> Download';
+                    downloadBtn.onclick = () => downloadChatGPTMessage(content);
+                    messageContent.appendChild(downloadBtn);
+                }
+                
+                messageContent.appendChild(messageActions);
+            }
+            
+            messageText.appendChild(messageContent);
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(messageContent);
+            messageContent.appendChild(messageText);
+            
+            messagesContainer.appendChild(messageDiv);
+            
+            // Scroll to bottom
+            setTimeout(() => {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }, 100);
+        }
+        
+        // SHOW TYPING INDICATOR
+        function showChatGPTTypingIndicator() {
+            const messagesContainer = document.getElementById('chatgptMessages');
+            if (!messagesContainer) return;
+            
+            const typingDiv = document.createElement('div');
+            typingDiv.className = 'chatgpt-typing-indicator';
+            typingDiv.id = 'chatgptTypingIndicator';
+            typingDiv.innerHTML = `
+                <div class="chatgpt-typing-dot"></div>
+                <div class="chatgpt-typing-dot"></div>
+                <div class="chatgpt-typing-dot"></div>
+                <span>LegalSwami is thinking...</span>
+            `;
+            
+            messagesContainer.appendChild(typingDiv);
+            
+            // Scroll to bottom
+            setTimeout(() => {
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }, 100);
+        }
+        
+        // REMOVE TYPING INDICATOR
+        function removeChatGPTTypingIndicator() {
+            const typingIndicator = document.getElementById('chatgptTypingIndicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+        
+        // CHECK IF DOCUMENT REQUEST
+        function isDocumentRequest(message) {
+            if (!message) return false;
+            
+            const docKeywords = [
+                'draft', 'template', 'format', 'document', 'agreement', 
+                'contract', 'nda', 'non disclosure', 'employment', 
+                'rental', 'loan', 'will', 'testament', 'legal document',
+                'ready made', 'sample', 'example', 'form'
+            ];
+            
+            const lowerMessage = message.toLowerCase();
+            return docKeywords.some(keyword => lowerMessage.includes(keyword));
+        }
+        
+        // FORMAT DOCUMENT RESPONSE
+        function formatChatGPTDocumentResponse(text) {
+            // Simple formatting for now
+            return text.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        }
+        
+        // FORMAT LEGAL RESPONSE
+        function formatChatGPTLegalResponse(text) {
+            // Simple formatting for now
+            let formatted = text
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n/g, '<br>');
+            
+            // Add disclaimer styling if present
+            if (formatted.includes('Disclaimer:')) {
+                formatted = formatted.replace(/Disclaimer:(.*?)(?=<br><br>|$)/is, 
+                    '<div style="background: rgba(245, 158, 11, 0.1); border-left: 4px solid #f59e0b; padding: 10px; margin-top: 15px; border-radius: 4px;"><strong>Disclaimer:</strong>$1</div>');
+            }
+            
+            return formatted;
+        }
+        
+        // COPY CHATGPT MESSAGE
+        window.copyChatGPTMessage = function(button) {
+            const messageText = button.closest('.chatgpt-message-content').querySelector('.chatgpt-message-text');
+            const textToCopy = messageText.textContent || messageText.innerText;
+            
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                showToast('Copied to clipboard!', 'success');
+            }).catch(err => {
+                console.error('Copy failed:', err);
+                showToast('Failed to copy!', 'error');
+            });
+        };
+        
+        // LIKE CHATGPT MESSAGE
+        window.likeChatGPTMessage = function(button) {
+            button.innerHTML = '<i class="fas fa-thumbs-up"></i> Thank you!';
+            button.style.background = '#10b981';
+            button.style.borderColor = '#10b981';
+            button.style.color = 'white';
+            button.disabled = true;
+            showToast('Thank you for your feedback!', 'success');
+        };
+        
+        // DOWNLOAD CHATGPT MESSAGE
+        function downloadChatGPTMessage(content) {
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `legalswami-document-${new Date().toISOString().slice(0, 10)}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast('Document downloaded!', 'success');
+        }
+        
+        // API CALL WITH ROTATION
+        async function callGroqAPIWithRotation(message, responseLanguage, maxRetries = 3) {
+            for (let attempt = 0; attempt < maxRetries; attempt++) {
+                try {
+                    const currentApiKey = API_KEYS[currentApiKeyIndex];
+                    console.log(`Attempt ${attempt + 1} with API key ${currentApiKeyIndex + 1}`);
+                    
+                    const response = await callSingleGroqAPI(currentApiKey, message, responseLanguage);
+                    
+                    // Increment request count and rotate key if needed
+                    requestCount++;
+                    if (requestCount >= REQUEST_LIMIT_PER_KEY) {
+                        requestCount = 0;
+                        currentApiKeyIndex = (currentApiKeyIndex + 1) % API_KEYS.length;
+                        console.log(`Rotating to API key ${currentApiKeyIndex + 1}`);
+                    }
+                    
+                    return response;
+                } catch (error) {
+                    console.error(`Attempt ${attempt + 1} failed:`, error);
+                    
+                    // Rotate to next API key
+                    currentApiKeyIndex = (currentApiKeyIndex + 1) % API_KEYS.length;
+                    requestCount = 0;
+                    
+                    if (attempt === maxRetries - 1) {
+                        throw error;
+                    }
+                    
+                    // Wait before retrying
+                    await new Promise(resolve => setTimeout(resolve, 1000 * (attempt + 1)));
+                }
+            }
+        }
+        
+        // SINGLE API CALL
+        async function callSingleGroqAPI(apiKey, message, responseLanguage) {
+            const isDocumentReq = isDocumentRequest(message);
+            const systemPrompt = getChatGPTSystemPrompt(responseLanguage, isDocumentReq);
+            
+            // Prepare messages array
+            const messages = [
+                { role: 'system', content: systemPrompt },
+                ...chatgptConversationHistory.slice(-6).map(msg => ({
+                    role: msg.role,
+                    content: msg.content
+                })),
+                { role: 'user', content: message }
+            ];
+            
+            console.log(`Calling Groq API with model: ${currentModel}`);
+            
+            const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`
+                },
+                body: JSON.stringify({
+                    model: currentModel,
+                    messages: messages,
+                    temperature: 0.7,
+                    max_tokens: 4000
+                })
+            });
+            
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error(`API error: ${response.status}`, errorText);
+                throw new Error(`API error: ${response.status}`);
+            }
+            
+            const data = await response.json();
+            console.log("API response received successfully");
+            
+            return data.choices[0].message.content;
+        }
+        
+        // GET SYSTEM PROMPT
+        function getChatGPTSystemPrompt(language, isDocumentRequest = false) {
+            if (isDocumentRequest) {
+                return `You are LegalSwami, an expert AI legal assistant specializing in Indian law ⚖️
+                
+IMPORTANT: When the user asks for a legal document draft, you MUST create a complete, ready-to-use legal document template. Include:
+1. Proper document title and headings 📝
+2. All necessary legal clauses
+3. Placeholders for personal information [like this]
+4. Signature sections ✍️
+5. Date and witness sections if applicable
+
+Make sure the document is:
+- Legally sound for Indian context 🇮🇳
+- Professionally formatted
+- Ready for immediate download and use
+- Includes all standard legal clauses
+
+Format your response as a complete legal document.
+
+ALWAYS include this disclaimer at the end:
+"Disclaimer: This template is for educational purposes only. Consult a qualified attorney before use. ⚖️"`;
+            } else {
+                return `You are LegalSwami, an expert AI legal assistant specializing in Indian law ⚖️
+                
+Provide comprehensive, detailed legal information about Indian laws.
+Cite relevant Indian laws, acts, and sections when applicable.
+Mention important Indian legal precedents and case laws.
+Explain legal concepts clearly with practical examples.
+Include practical implications for Indian context.
+Provide actionable advice when appropriate.
+
+When answering:
+- Structure your response with clear headings
+- Use bullet points for lists
+- Bold important terms and sections
+- Include references to relevant laws
+- Provide practical next steps
+
+ALWAYS include this disclaimer at the end:
+"Disclaimer: This information is for educational purposes only and not legal advice. Consult a qualified attorney for specific legal matters. ⚖️"`;
+            }
+        }
+        
+        // SHOW TOAST NOTIFICATION
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toastContainer');
+            if (!container) return;
+            
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            
+            const icons = {
+                success: 'fas fa-check-circle',
+                error: 'fas fa-exclamation-circle',
+                warning: 'fas fa-exclamation-triangle',
+                info: 'fas fa-info-circle'
+            };
+            
+            toast.innerHTML = `<i class="${icons[type] || icons.info}"></i><span>${message}</span>`;
+            
+            container.appendChild(toast);
+            
+            // Position and show
+            toast.style.bottom = '20px';
+            toast.style.right = '20px';
+            toast.style.transform = 'translateY(100px)';
+            toast.style.opacity = '0';
+            
+            setTimeout(() => {
+                toast.style.transform = 'translateY(0)';
+                toast.style.opacity = '1';
+            }, 10);
+            
+            // Auto-remove after 3 seconds
+            setTimeout(() => {
+                toast.style.transform = 'translateY(100px)';
+                toast.style.opacity = '0';
+                setTimeout(() => {
+                    if (toast.parentNode === container) {
+                        container.removeChild(toast);
+                    }
+                }, 300);
+            }, 3000);
+            
+            console.log(`📢 Toast (${type}):`, message);
+        }
+        
+        // SHOW DEMO
+        function showDemo() {
+            window.open('https://www.youtube.com/watch?v=dQw4w9WgXcQ', '_blank');
+            console.log('🎬 Demo opened');
+        }
+        
+        // SHOW TERMS
+        function showTerms(e) {
+            e.preventDefault();
+            alert('LEGALSWAMI TERMS OF SERVICE\n\n1. ACCEPTANCE OF TERMS\nBy accessing and using LegalSwami, you agree to be bound by these Terms of Service.\n\n2. SERVICE DESCRIPTION\nLegalSwami is an AI-powered legal assistant providing informational guidance only.\n\n3. NOT LEGAL ADVICE\nThe service does not constitute legal advice. Consult a qualified attorney for legal matters.\n\n4. USER RESPONSIBILITIES\nYou are responsible for the accuracy of information provided to the service.\n\n5. PRIVACY\nYour data is protected as outlined in our Privacy Policy.\n\n6. LIMITATION OF LIABILITY\nLegalSwami is not liable for any damages arising from use of the service.\n\n7. MODIFICATIONS\nWe reserve the right to modify these terms at any time.\n\nLast Updated: ' + new Date().toLocaleDateString());
+        }
+        
+        // SHOW PRIVACY POLICY
+        function showPrivacy(e) {
+            e.preventDefault();
+            alert('LEGALSWAMI PRIVACY POLICY\n\n1. INFORMATION COLLECTION\nWe collect minimal information necessary to provide our services.\n\n2. DATA USAGE\nYour data is used solely to improve service quality and user experience.\n\n3. DATA PROTECTION\nWe implement industry-standard security measures to protect your information.\n\n4. THIRD-PARTY SHARING\nWe do not sell or share your personal data with third parties.\n\n5. COOKIES\nWe use cookies to enhance user experience and analyze service usage.\n\n6. USER RIGHTS\nYou have the right to access, modify, or delete your personal data.\n\n7. CHILDREN\'S PRIVACY\nOur service is not intended for users under 18 years of age.\n\n8. CHANGES TO POLICY\nWe may update this policy periodically.\n\nFor questions: privacy@legalswami.com');
+        }
+        
+        // SHOW DISCLAIMER
+        function showDisclaimer(e) {
+            e.preventDefault();
+            alert('⚖️ IMPORTANT LEGAL DISCLAIMER ⚖️\n\nLEGALSWAMI AI ASSISTANT - DISCLAIMER\n\n1. NATURE OF SERVICE\nLegalSwami is an artificial intelligence assistant designed to provide general legal information and guidance. It is NOT a licensed attorney.\n\n2. NOT LEGAL ADVICE\nThe information provided by LegalSwami does not constitute legal advice and should not be relied upon as such.\n\n3. NO ATTORNEY-CLIENT RELATIONSHIP\nUsing LegalSwami does not create an attorney-client relationship.\n\n4. CONSULT A LAWYER\nFor legal advice specific to your situation, please consult a qualified licensed attorney.\n\n5. ACCURACY OF INFORMATION\nWhile we strive for accuracy, we cannot guarantee the completeness or currentness of information provided.\n\n6. USE AT YOUR OWN RISK\nYou assume all risk for any actions taken based on information from LegalSwami.\n\n7. OFFICIAL DOCUMENTS\nFor official legal documents, court filings, or binding agreements, always consult a licensed attorney.\n\n8. EMERGENCY SITUATIONS\nFor urgent legal matters, contact a lawyer immediately.\n\nBy using LegalSwami, you acknowledge and agree to these terms.');
+        }
+        
+        // SHOW COOKIE POLICY
+        function showCookiePolicy(e) {
+            e.preventDefault();
+            alert('COOKIE POLICY\n\nWe use essential cookies for functionality and analytics cookies to improve our service. By continuing to use LegalSwami, you consent to our use of cookies.');
+        }
+        
         // Load Lawyers
         function loadLawyers(specialization = 'all') {
+            const lawyers = [
+                { id: 1, name: "Adv. Rajesh Kumar", specialization: "criminal", experience: 15, location: "Delhi", rating: 4.8, fee: "₹2000/consultation" },
+                { id: 2, name: "Adv. Priya Sharma", specialization: "family", experience: 10, location: "Mumbai", rating: 4.7, fee: "₹2500/consultation" },
+                { id: 3, name: "Adv. Amit Patel", specialization: "corporate", experience: 12, location: "Bangalore", rating: 4.9, fee: "₹3000/consultation" },
+                { id: 4, name: "Adv. Sneha Desai", specialization: "property", experience: 8, location: "Pune", rating: 4.6, fee: "₹1800/consultation" },
+                { id: 5, name: "Adv. Rohit Verma", specialization: "civil", experience: 20, location: "Delhi", rating: 4.9, fee: "₹3500/consultation" },
+                { id: 6, name: "Adv. Anjali Singh", specialization: "consumer", experience: 7, location: "Chennai", rating: 4.5, fee: "₹1500/consultation" }
+            ];
+            
             const lawyersGrid = document.getElementById('lawyersGrid');
             if (!lawyersGrid) return;
             
@@ -1985,19 +3779,27 @@
         }
         
         // Contact Lawyer
-        function contactLawyer(lawyerId) {
+        window.contactLawyer = function(lawyerId) {
+            const lawyers = [
+                { id: 1, name: "Adv. Rajesh Kumar", specialization: "criminal", experience: 15, location: "Delhi", rating: 4.8, fee: "₹2000/consultation" },
+                { id: 2, name: "Adv. Priya Sharma", specialization: "family", experience: 10, location: "Mumbai", rating: 4.7, fee: "₹2500/consultation" },
+                { id: 3, name: "Adv. Amit Patel", specialization: "corporate", experience: 12, location: "Bangalore", rating: 4.9, fee: "₹3000/consultation" },
+                { id: 4, name: "Adv. Sneha Desai", specialization: "property", experience: 8, location: "Pune", rating: 4.6, fee: "₹1800/consultation" },
+                { id: 5, name: "Adv. Rohit Verma", specialization: "civil", experience: 20, location: "Delhi", rating: 4.9, fee: "₹3500/consultation" },
+                { id: 6, name: "Adv. Anjali Singh", specialization: "consumer", experience: 7, location: "Chennai", rating: 4.5, fee: "₹1500/consultation" }
+            ];
+            
             const lawyer = lawyers.find(l => l.id === lawyerId);
             if (lawyer) {
                 showToast(`Connecting you with ${lawyer.name}...`, 'info');
-                // In a real app, this would initiate a call or chat
                 setTimeout(() => {
                     alert(`Contact Information:\n\nName: ${lawyer.name}\nSpecialization: ${lawyer.specialization}\nLocation: ${lawyer.location}\nFee: ${lawyer.fee}\n\nPlease note: This is a demo. In the real app, you would be able to call or message the lawyer directly.`);
                 }, 1000);
             }
-        }
+        };
         
         // Search Lawyers
-        function searchLawyers() {
+        window.searchLawyers = function() {
             const searchInput = document.getElementById('lawyerSearch');
             if (!searchInput) return;
             
@@ -2006,6 +3808,15 @@
                 loadLawyers('all');
                 return;
             }
+            
+            const lawyers = [
+                { id: 1, name: "Adv. Rajesh Kumar", specialization: "criminal", experience: 15, location: "Delhi", rating: 4.8, fee: "₹2000/consultation" },
+                { id: 2, name: "Adv. Priya Sharma", specialization: "family", experience: 10, location: "Mumbai", rating: 4.7, fee: "₹2500/consultation" },
+                { id: 3, name: "Adv. Amit Patel", specialization: "corporate", experience: 12, location: "Bangalore", rating: 4.9, fee: "₹3000/consultation" },
+                { id: 4, name: "Adv. Sneha Desai", specialization: "property", experience: 8, location: "Pune", rating: 4.6, fee: "₹1800/consultation" },
+                { id: 5, name: "Adv. Rohit Verma", specialization: "civil", experience: 20, location: "Delhi", rating: 4.9, fee: "₹3500/consultation" },
+                { id: 6, name: "Adv. Anjali Singh", specialization: "consumer", experience: 7, location: "Chennai", rating: 4.5, fee: "₹1500/consultation" }
+            ];
             
             const filteredLawyers = lawyers.filter(lawyer => 
                 lawyer.name.toLowerCase().includes(query) ||
@@ -2064,331 +3875,25 @@
                 
                 lawyersGrid.appendChild(lawyerCard);
             });
-        }
+        };
         
         // Legal Act Search
-        function searchActs() {
+        window.searchActs = function() {
             showToast('Opening Legal Acts Search...', 'info');
-            // In a real app, this would open a search interface
             alert('Legal Acts Search\n\nSearch through Indian legal acts and statutes:\n\n1. Indian Penal Code (IPC)\n2. Code of Criminal Procedure (CrPC)\n3. Code of Civil Procedure (CPC)\n4. Indian Evidence Act\n5. Consumer Protection Act\n6. Transfer of Property Act\n7. Contract Act\n8. Constitution of India\n\nThis feature would allow detailed search and browsing in the complete version.');
-        }
+        };
         
         // Case Law Search
-        function searchCaseLaws() {
+        window.searchCaseLaws = function() {
             showToast('Searching Case Laws...', 'info');
-            // In a real app, this would search a case law database
             alert('Case Law Search\n\nSearch through:\n- Supreme Court Judgments\n- High Court Judgments\n- Landmark Cases\n- Recent Judgments\n\nThis feature would connect to a legal database in the complete version.');
-        }
+        };
         
         // Open Legal Calculator
-        function openLegalCalculator(type = 'court-fee') {
-            const modal = document.getElementById('legalToolsModal');
-            if (modal) {
-                modal.style.display = 'none';
-            }
-            
-            let calculatorHTML = '';
-            let title = '';
-            
-            switch(type) {
-                case 'court-fee':
-                    title = 'Court Fee Calculator';
-                    calculatorHTML = `
-                        <div class="calculator">
-                            <h4>Calculate Court Fees</h4>
-                            <div class="input-group">
-                                <label>Case Type:</label>
-                                <select id="caseType">
-                                    <option value="civil">Civil Case</option>
-                                    <option value="criminal">Criminal Case</option>
-                                    <option value="family">Family Dispute</option>
-                                    <option value="property">Property Case</option>
-                                </select>
-                            </div>
-                            <div class="input-group">
-                                <label>Case Value (₹):</label>
-                                <input type="number" id="caseValue" placeholder="Enter case value" min="0" value="100000">
-                            </div>
-                            <div class="input-group">
-                                <label>State:</label>
-                                <select id="state">
-                                    <option value="delhi">Delhi</option>
-                                    <option value="mumbai">Maharashtra</option>
-                                    <option value="bangalore">Karnataka</option>
-                                    <option value="chennai">Tamil Nadu</option>
-                                </select>
-                            </div>
-                            <button class="btn-calculate" onclick="calculateCourtFee()">Calculate</button>
-                            <div class="result" id="feeResult"></div>
-                        </div>
-                    `;
-                    break;
-                    
-                case 'stamp-duty':
-                    title = 'Stamp Duty Calculator';
-                    calculatorHTML = `
-                        <div class="calculator">
-                            <h4>Calculate Stamp Duty</h4>
-                            <div class="input-group">
-                                <label>Document Type:</label>
-                                <select id="docType">
-                                    <option value="sale">Sale Deed</option>
-                                    <option value="rent">Rent Agreement</option>
-                                    <option value="gift">Gift Deed</option>
-                                    <option value="mortgage">Mortgage Deed</option>
-                                </select>
-                            </div>
-                            <div class="input-group">
-                                <label>Property Value (₹):</label>
-                                <input type="number" id="propertyValue" placeholder="Enter property value" min="0" value="5000000">
-                            </div>
-                            <div class="input-group">
-                                <label>State:</label>
-                                <select id="stateStamp">
-                                    <option value="delhi">Delhi</option>
-                                    <option value="mumbai">Maharashtra</option>
-                                    <option value="bangalore">Karnataka</option>
-                                    <option value="chennai">Tamil Nadu</option>
-                                </select>
-                            </div>
-                            <button class="btn-calculate" onclick="calculateStampDuty()">Calculate</button>
-                            <div class="result" id="stampResult"></div>
-                        </div>
-                    `;
-                    break;
-                    
-                case 'compensation':
-                    title = 'Compensation Calculator';
-                    calculatorHTML = `
-                        <div class="calculator">
-                            <h4>Calculate Compensation</h4>
-                            <div class="input-group">
-                                <label>Type of Claim:</label>
-                                <select id="claimType">
-                                    <option value="accident">Road Accident</option>
-                                    <option value="medical">Medical Negligence</option>
-                                    <option value="employment">Employment Dispute</option>
-                                    <option value="consumer">Consumer Complaint</option>
-                                </select>
-                            </div>
-                            <div class="input-group">
-                                <label>Monthly Income (₹):</label>
-                                <input type="number" id="monthlyIncome" placeholder="Enter monthly income" min="0" value="30000">
-                            </div>
-                            <div class="input-group">
-                                <label>Age:</label>
-                                <input type="number" id="age" placeholder="Enter age" min="18" max="70" value="35">
-                            </div>
-                            <div class="input-group">
-                                <label>Disability (%):</label>
-                                <input type="number" id="disability" placeholder="Enter disability percentage" min="0" max="100" value="40">
-                            </div>
-                            <button class="btn-calculate" onclick="calculateCompensation()">Calculate</button>
-                            <div class="result" id="compResult"></div>
-                        </div>
-                    `;
-                    break;
-            }
-            
-            showCalculatorModal(title, calculatorHTML);
-        }
-        
-        // Show Calculator Modal
-        function showCalculatorModal(title, content) {
-            const modal = document.createElement('div');
-            modal.className = 'modal';
-            modal.id = 'calculatorModal';
-            modal.innerHTML = `
-                <div class="modal-overlay" onclick="closeModal('calculatorModal')"></div>
-                <div class="modal-content">
-                    <button class="modal-close" onclick="closeModal('calculatorModal')">
-                        <i class="fas fa-times"></i>
-                    </button>
-                    <div class="modal-header">
-                        <div class="modal-icon legal-seal">
-                            <i class="fas fa-calculator"></i>
-                        </div>
-                        <h3>${title}</h3>
-                    </div>
-                    <div class="modal-body">
-                        ${content}
-                    </div>
-                </div>
-            `;
-            
-            document.body.appendChild(modal);
-            modal.style.display = 'flex';
-            document.body.classList.add('modal-open');
-        }
-        
-        // Close Modal
-        function closeModal(modalId) {
-            const modal = document.getElementById(modalId);
-            if (modal) {
-                modal.style.display = 'none';
-                document.body.classList.remove('modal-open');
-                setTimeout(() => {
-                    modal.remove();
-                }, 300);
-            }
-        }
-        
-        // Calculate Court Fee
-        function calculateCourtFee() {
-            const caseType = document.getElementById('caseType').value;
-            const caseValue = parseInt(document.getElementById('caseValue').value) || 0;
-            const state = document.getElementById('state').value;
-            
-            let fee = 0;
-            
-            // Simplified calculation (in real app, this would be more complex)
-            if (caseValue <= 100000) {
-                fee = caseValue * 0.05; // 5%
-            } else if (caseValue <= 500000) {
-                fee = 5000 + (caseValue - 100000) * 0.04; // 4%
-            } else if (caseValue <= 1000000) {
-                fee = 21000 + (caseValue - 500000) * 0.03; // 3%
-            } else {
-                fee = 36000 + (caseValue - 1000000) * 0.02; // 2%
-            }
-            
-            // Minimum fee
-            fee = Math.max(fee, 100);
-            
-            const resultDiv = document.getElementById('feeResult');
-            if (resultDiv) {
-                resultDiv.innerHTML = `
-                    <div class="result-card">
-                        <h5>Calculated Court Fee:</h5>
-                        <div class="result-amount">₹${fee.toFixed(2)}</div>
-                        <div class="result-details">
-                            <p><i class="fas fa-info-circle"></i> Based on case value: ₹${caseValue.toLocaleString()}</p>
-                            <p><i class="fas fa-map-marker-alt"></i> State: ${state.toUpperCase()}</p>
-                            <p><i class="fas fa-gavel"></i> Case Type: ${caseType.toUpperCase()}</p>
-                        </div>
-                        <p class="result-note"><i class="fas fa-exclamation-triangle"></i> Note: This is an estimate. Actual fees may vary based on specific circumstances.</p>
-                    </div>
-                `;
-            }
-        }
-        
-        // Calculate Stamp Duty
-        function calculateStampDuty() {
-            const docType = document.getElementById('docType').value;
-            const propertyValue = parseInt(document.getElementById('propertyValue').value) || 0;
-            const state = document.getElementById('stateStamp').value;
-            
-            let dutyRate = 0;
-            
-            // Simplified rates by state and document type
-            if (state === 'delhi') {
-                dutyRate = 0.06; // 6%
-            } else if (state === 'mumbai') {
-                dutyRate = 0.05; // 5%
-            } else if (state === 'bangalore') {
-                dutyRate = 0.055; // 5.5%
-            } else {
-                dutyRate = 0.07; // 7%
-            }
-            
-            // Adjust based on document type
-            if (docType === 'rent') {
-                dutyRate = 0.01; // 1% for rent agreements
-            } else if (docType === 'gift') {
-                dutyRate = dutyRate * 0.5; // 50% of normal rate for gifts
-            }
-            
-            const duty = propertyValue * dutyRate;
-            const registrationFee = Math.min(propertyValue * 0.01, 30000); // 1% max 30,000
-            const total = duty + registrationFee;
-            
-            const resultDiv = document.getElementById('stampResult');
-            if (resultDiv) {
-                resultDiv.innerHTML = `
-                    <div class="result-card">
-                        <h5>Calculated Stamp Duty:</h5>
-                        <div class="result-amount">₹${total.toFixed(2)}</div>
-                        <div class="result-breakdown">
-                            <p><i class="fas fa-file-invoice-dollar"></i> Stamp Duty: ₹${duty.toFixed(2)} (${(dutyRate*100).toFixed(1)}%)</p>
-                            <p><i class="fas fa-file-signature"></i> Registration Fee: ₹${registrationFee.toFixed(2)}</p>
-                            <p><i class="fas fa-tag"></i> Document Type: ${docType.toUpperCase()}</p>
-                            <p><i class="fas fa-map-marker-alt"></i> State: ${state.toUpperCase()}</p>
-                        </div>
-                        <p class="result-note"><i class="fas fa-exclamation-triangle"></i> Note: Additional charges may apply for franking and other services.</p>
-                    </div>
-                `;
-            }
-        }
-        
-        // Calculate Compensation
-        function calculateCompensation() {
-            const claimType = document.getElementById('claimType').value;
-            const monthlyIncome = parseInt(document.getElementById('monthlyIncome').value) || 0;
-            const age = parseInt(document.getElementById('age').value) || 35;
-            const disability = parseInt(document.getElementById('disability').value) || 0;
-            
-            let compensation = 0;
-            let multiplier = 0;
-            
-            // Calculate multiplier based on age
-            if (age <= 25) {
-                multiplier = 18;
-            } else if (age <= 30) {
-                multiplier = 17;
-            } else if (age <= 35) {
-                multiplier = 16;
-            } else if (age <= 40) {
-                multiplier = 15;
-            } else if (age <= 45) {
-                multiplier = 14;
-            } else if (age <= 50) {
-                multiplier = 13;
-            } else if (age <= 55) {
-                multiplier = 11;
-            } else if (age <= 60) {
-                multiplier = 9;
-            } else {
-                multiplier = 8;
-            }
-            
-            // Base compensation calculation
-            compensation = monthlyIncome * 12 * multiplier;
-            
-            // Adjust for disability
-            if (disability > 0) {
-                compensation = compensation * (disability / 100);
-            }
-            
-            // Add pain and suffering
-            let painSuffering = 0;
-            if (claimType === 'accident') {
-                painSuffering = compensation * 0.3; // 30% for pain and suffering
-            } else if (claimType === 'medical') {
-                painSuffering = compensation * 0.5; // 50% for medical negligence
-            }
-            
-            compensation += painSuffering;
-            
-            // Minimum compensation
-            compensation = Math.max(compensation, 100000);
-            
-            const resultDiv = document.getElementById('compResult');
-            if (resultDiv) {
-                resultDiv.innerHTML = `
-                    <div class="result-card">
-                        <h5>Estimated Compensation:</h5>
-                        <div class="result-amount">₹${compensation.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
-                        <div class="result-breakdown">
-                            <p><i class="fas fa-briefcase"></i> Monthly Income: ₹${monthlyIncome.toLocaleString()}</p>
-                            <p><i class="fas fa-user"></i> Age: ${age} years (Multiplier: ${multiplier})</p>
-                            <p><i class="fas fa-wheelchair"></i> Disability: ${disability}%</p>
-                            <p><i class="fas fa-stethoscope"></i> Claim Type: ${claimType.toUpperCase()}</p>
-                        </div>
-                        <p class="result-note"><i class="fas fa-exclamation-triangle"></i> Note: This is an estimate. Actual compensation depends on court judgment and specific circumstances.</p>
-                    </div>
-                `;
-            }
-        }
+        window.openLegalCalculator = function() {
+            showToast('Opening Legal Calculator...', 'info');
+            alert('Legal Calculator\n\nAvailable calculators:\n1. Court Fee Calculator\n2. Stamp Duty Calculator\n3. Compensation Calculator\n4. Interest Calculator\n\nThis feature would provide interactive calculators in the complete version.');
+        };
         
         // Generate Document
         function generateDocument(type) {
