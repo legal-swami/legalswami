@@ -14,31 +14,6 @@
     <!-- jsPDF Library for PDF generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous"></script>
     
-    <!-- CSS Files -->
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/chat.css">
-    <link rel="stylesheet" href="css/responsive.css">
-    
-    <!-- Google Client ID -->
-    <meta name="google-client-id" 
-          content="166511615962-bohur5q8d4i5hud6icr4185kcte9enk8.apps.googleusercontent.com">
-    
-    <!-- Favicon -->
-    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚖️</text></svg>">
-    
-    <!-- Theme Color -->
-    <meta name="theme-color" content="#0f172a">
-    
-    <!-- Apple Mobile Web App Capable -->
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    
-    <!-- Open Graph / Social Media -->
-    <meta property="og:title" content="LegalSwami - AI Legal Assistant">
-    <meta property="og:description" content="Get instant legal advice, generate documents, and understand laws with AI">
-    <meta property="og:image" content="https://legalswami.com/og-image.jpg">
-    <meta property="og:url" content="https://legalswami.com">
-
     <style>
         /* Reset and Base Styles */
         * {
@@ -1875,48 +1850,615 @@
             opacity: 1;
         }
 
-        /* Chat Interface Styles - Already in your code but keeping for reference */
-        /* ... (Your existing chat interface CSS remains here) ... */
+        /* Chat Interface Styles */
+        .chat-interface {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: #0f172a;
+            z-index: 9998;
+            display: none;
+            flex-direction: column;
+        }
 
-        /* Additional Responsive Styles */
-        @media (max-width: 480px) {
-            .hero-title {
-                font-size: 2rem;
-            }
-            
-            .section-title {
-                font-size: 1.75rem;
-            }
-            
-            .btn-hero-primary,
-            .btn-hero-secondary,
-            .btn-cta-primary,
-            .btn-cta-secondary {
-                padding: 0.875rem 1rem;
-                font-size: 0.875rem;
-            }
-            
-            .features-grid,
-            .database-grid,
-            .documents-grid,
-            .guides-grid,
-            .testimonials-carousel,
-            .pricing-cards {
-                grid-template-columns: 1fr;
-            }
-            
-            .footer-content {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-            
-            .footer-logo {
-                justify-content: center;
-            }
-            
-            .social-links {
-                justify-content: center;
-            }
+        .chat-interface.active {
+            display: flex;
+        }
+
+        .chat-header {
+            background: #1e293b;
+            padding: 1rem 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #334155;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .chat-header-left {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .chat-back-btn {
+            background: transparent;
+            border: none;
+            color: #94a3b8;
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 6px;
+            transition: all 0.3s ease;
+        }
+
+        .chat-back-btn:hover {
+            background: rgba(59, 130, 246, 0.1);
+            color: #60a5fa;
+        }
+
+        .chat-title {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .chat-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-avatar i {
+            font-size: 1.25rem;
+            color: white;
+        }
+
+        .chat-title-text h3 {
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .chat-title-text p {
+            font-size: 0.75rem;
+            color: #94a3b8;
+        }
+
+        .chat-header-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .chat-action-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #94a3b8;
+            cursor: pointer;
+            padding: 0.5rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-action-btn:hover {
+            background: rgba(59, 130, 246, 0.1);
+            color: #60a5fa;
+        }
+
+        .chat-main {
+            flex: 1;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .chat-welcome {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .chat-welcome-icon {
+            width: 80px;
+            height: 80px;
+            margin-bottom: 2rem;
+            border-radius: 16px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .chat-welcome-icon i {
+            font-size: 2rem;
+            color: white;
+        }
+
+        .chat-welcome h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+            background: linear-gradient(135deg, #60a5fa, #a78bfa);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .chat-welcome p {
+            color: #94a3b8;
+            max-width: 500px;
+            margin: 0 auto 2rem;
+            line-height: 1.6;
+        }
+
+        .quick-questions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            max-width: 600px;
+            margin-top: 2rem;
+        }
+
+        .quick-btn {
+            padding: 1rem;
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: #cbd5e1;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: left;
+        }
+
+        .quick-btn:hover {
+            background: rgba(59, 130, 246, 0.1);
+            border-color: rgba(59, 130, 246, 0.3);
+            transform: translateY(-2px);
+        }
+
+        .quick-btn i {
+            margin-right: 0.5rem;
+            color: #60a5fa;
+        }
+
+        .chat-messages-container {
+            flex: 1;
+            display: none;
+            flex-direction: column;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .message {
+            display: flex;
+            gap: 1rem;
+            max-width: 85%;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .user-message {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .ai-message {
+            align-self: flex-start;
+        }
+
+        .message-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            margin-top: 0.25rem;
+        }
+
+        .user-message .message-avatar {
+            background: linear-gradient(135deg, #10b981, #34d399);
+        }
+
+        .message-avatar i {
+            font-size: 0.875rem;
+            color: white;
+        }
+
+        .message-content {
+            flex: 1;
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .message-sender {
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+
+        .message-time {
+            font-size: 0.75rem;
+            color: #94a3b8;
+        }
+
+        .message-text {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 1rem;
+            line-height: 1.6;
+        }
+
+        .user-message .message-text {
+            background: linear-gradient(135deg, #1d4ed8, #3b82f6);
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .message-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .message:hover .message-actions {
+            opacity: 1;
+        }
+
+        .message-action-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 6px;
+            color: #94a3b8;
+            cursor: pointer;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            transition: all 0.3s ease;
+        }
+
+        .message-action-btn:hover {
+            background: rgba(59, 130, 246, 0.1);
+            color: #60a5fa;
+        }
+
+        .typing-indicator {
+            display: none;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem;
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            max-width: 120px;
+            margin-left: 3rem;
+            margin-top: 0.5rem;
+        }
+
+        .typing-dot {
+            width: 8px;
+            height: 8px;
+            background: #60a5fa;
+            border-radius: 50%;
+            animation: typing 1.4s infinite ease-in-out;
+        }
+
+        .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+        .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+
+        @keyframes typing {
+            0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+            40% { transform: scale(1); opacity: 1; }
+        }
+
+        .chat-input-container {
+            padding: 1rem;
+            background: #1e293b;
+            border-top: 1px solid #334155;
+            position: sticky;
+            bottom: 0;
+            z-index: 10;
+        }
+
+        .chat-input-area {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .chat-input-wrapper {
+            display: flex;
+            gap: 0.75rem;
+            align-items: flex-end;
+        }
+
+        .chat-input-wrapper textarea {
+            flex: 1;
+            padding: 0.875rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            color: white;
+            font-size: 0.9375rem;
+            resize: none;
+            min-height: 56px;
+            max-height: 150px;
+            transition: all 0.3s ease;
+            line-height: 1.5;
+            font-family: inherit;
+            outline: none;
+        }
+
+        .chat-input-wrapper textarea:focus {
+            border-color: #3b82f6;
+            background: rgba(59, 130, 246, 0.05);
+        }
+
+        .input-actions {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .input-action-btn {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            color: #94a3b8;
+            cursor: pointer;
+            padding: 0.5rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .input-action-btn:hover {
+            background: rgba(59, 130, 246, 0.1);
+            color: #60a5fa;
+        }
+
+        .send-button {
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 1.5rem;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-left: auto;
+        }
+
+        .send-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .send-button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .chat-options {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .chat-option {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 20px;
+            color: #94a3b8;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .chat-option:hover {
+            background: rgba(59, 130, 246, 0.1);
+            color: #60a5fa;
+            border-color: rgba(59, 130, 246, 0.3);
+        }
+
+        .chat-option input[type="checkbox"] {
+            accent-color: #3b82f6;
+        }
+
+        .chat-option select {
+            background: transparent;
+            border: none;
+            color: #cbd5e1;
+            outline: none;
+            cursor: pointer;
+        }
+
+        .chat-option select option {
+            background: #1e293b;
+            color: white;
+        }
+
+        /* Login Modal */
+        .login-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 3000;
+            padding: 1rem;
+        }
+
+        .login-modal.open {
+            display: flex;
+        }
+
+        .login-content {
+            background: #1e293b;
+            border-radius: 20px;
+            padding: 2rem;
+            max-width: 400px;
+            width: 100%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .login-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 1rem;
+            border-radius: 12px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .login-icon i {
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        .login-header h3 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+
+        .login-header p {
+            color: #94a3b8;
+        }
+
+        .login-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .btn-login-google {
+            background: white;
+            color: #333;
+            border: none;
+            border-radius: 8px;
+            padding: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .btn-login-google:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(255, 255, 255, 0.2);
+        }
+
+        .btn-login-demo {
+            background: linear-gradient(135deg, #10b981, #34d399);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+        }
+
+        .btn-login-demo:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .login-divider {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0;
+            color: #94a3b8;
+        }
+
+        .login-divider::before,
+        .login-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .login-divider span {
+            padding: 0 1rem;
+            font-size: 0.875rem;
+        }
+
+        .login-footer {
+            text-align: center;
+            margin-top: 1.5rem;
+            color: #94a3b8;
+            font-size: 0.875rem;
+        }
+
+        .login-footer a {
+            color: #60a5fa;
+            text-decoration: none;
+        }
+
+        .login-footer a:hover {
+            text-decoration: underline;
         }
 
         /* Custom Scrollbar */
@@ -1939,51 +2481,41 @@
             background: #1d4ed8;
         }
 
-        /* Selection Color */
-        ::selection {
-            background: rgba(59, 130, 246, 0.3);
-            color: #fff;
-        }
-
-        /* Focus Styles */
-        *:focus {
-            outline: 2px solid #3b82f6;
-            outline-offset: 2px;
-        }
-
-        *:focus:not(.focus-visible) {
-            outline: none;
-        }
-
-        /* Print Styles */
-        @media print {
-            .premium-navbar,
-            .hero-actions,
-            .cta-section,
-            .premium-footer,
-            .back-to-top {
-                display: none !important;
+        /* Additional Responsive Styles */
+        @media (max-width: 768px) {
+            .chat-header {
+                padding: 0.75rem 1rem;
             }
             
-            body {
-                background: white !important;
-                color: black !important;
+            .chat-title-text h3 {
+                font-size: 1rem;
             }
             
-            .hero-section {
-                padding: 2rem 0 !important;
+            .chat-messages {
+                padding: 1rem;
+                gap: 1rem;
             }
             
-            .hero-title {
-                color: black !important;
-                -webkit-text-fill-color: black !important;
+            .message {
+                max-width: 95%;
             }
             
-            .premium-card {
-                border: 1px solid #ddd !important;
-                box-shadow: none !important;
-                background: white !important;
-                color: black !important;
+            .chat-input-wrapper {
+                flex-direction: column;
+            }
+            
+            .input-actions {
+                order: -1;
+                justify-content: center;
+            }
+            
+            .send-button {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .quick-questions {
+                grid-template-columns: 1fr;
             }
         }
 
@@ -2028,169 +2560,6 @@
             }
         }
 
-        /* Dark/Light Mode Toggle (Future Enhancement) */
-        .theme-toggle {
-            position: fixed;
-            bottom: 2rem;
-            left: 2rem;
-            width: 50px;
-            height: 50px;
-            background: rgba(30, 41, 59, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #cbd5e1;
-            z-index: 999;
-            transition: all 0.3s ease;
-        }
-
-        .theme-toggle:hover {
-            background: rgba(59, 130, 246, 0.1);
-            color: #60a5fa;
-            transform: translateY(-2px);
-        }
-
-        /* Loading States */
-        .loading {
-            position: relative;
-            pointer-events: none;
-            opacity: 0.7;
-        }
-
-        .loading::after {
-            content: '';
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 20px;
-            height: 20px;
-            margin: -10px 0 0 -10px;
-            border: 2px solid rgba(59, 130, 246, 0.3);
-            border-top-color: #3b82f6;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Error States */
-        .error {
-            border-color: #ef4444 !important;
-            background: rgba(239, 68, 68, 0.05) !important;
-        }
-
-        .error-message {
-            color: #ef4444;
-            font-size: 0.875rem;
-            margin-top: 0.25rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        /* Success States */
-        .success {
-            border-color: #10b981 !important;
-            background: rgba(16, 185, 129, 0.05) !important;
-        }
-
-        .success-message {
-            color: #10b981;
-            font-size: 0.875rem;
-            margin-top: 0.25rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        /* Empty States */
-        .empty-state {
-            text-align: center;
-            padding: 3rem 1rem;
-            color: #94a3b8;
-        }
-
-        .empty-state i {
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            color: #64748b;
-        }
-
-        .empty-state h3 {
-            font-size: 1.25rem;
-            margin-bottom: 0.5rem;
-            color: #cbd5e1;
-        }
-
-        /* Tooltips */
-        [data-tooltip] {
-            position: relative;
-        }
-
-        [data-tooltip]::before {
-            content: attr(data-tooltip);
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            padding: 0.5rem 0.75rem;
-            background: #1e293b;
-            color: #cbd5e1;
-            font-size: 0.75rem;
-            border-radius: 6px;
-            white-space: nowrap;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            z-index: 1000;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            pointer-events: none;
-        }
-
-        [data-tooltip]::after {
-            content: '';
-            position: absolute;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            border: 5px solid transparent;
-            border-top-color: #1e293b;
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-            z-index: 1000;
-            pointer-events: none;
-        }
-
-        [data-tooltip]:hover::before,
-        [data-tooltip]:hover::after {
-            opacity: 1;
-            visibility: visible;
-            bottom: calc(100% + 5px);
-        }
-
-        /* Accessibility: Skip to Content */
-        .skip-to-content {
-            position: absolute;
-            top: -40px;
-            left: 0;
-            background: #3b82f6;
-            color: white;
-            padding: 8px 16px;
-            text-decoration: none;
-            z-index: 9999;
-            transition: top 0.3s ease;
-        }
-
-        .skip-to-content:focus {
-            top: 0;
-        }
-
         /* Loading Bar */
         .loading-bar {
             position: fixed;
@@ -2214,1410 +2583,24 @@
             display: block;
         }
 
-        /* Chat Interface Specific Styles */
-        :root {
-            /* ChatGPT-like Colors */
-            --chat-primary: #10a37f;
-            --chat-primary-dark: #0d8c6d;
-            --chat-primary-light: #12b886;
-            --chat-secondary: #7e57c2;
-            --chat-accent: #ec4899;
-            
-            /* Dark Mode (ChatGPT-like) */
-            --chat-dark-bg: #343541;
-            --chat-dark-surface: #40414f;
-            --chat-dark-surface-light: #444654;
-            --chat-dark-border: #565869;
-            --chat-dark-text: #ececf1;
-            --chat-dark-text-secondary: #8e8ea0;
-            --chat-dark-text-tertiary: #6e6e80;
-            
-            /* Light Mode (ChatGPT-like) */
-            --chat-light-bg: #ffffff;
-            --chat-light-surface: #f7f7f8;
-            --chat-light-surface-light: #f0f0f0;
-            --chat-light-border: #e5e5e5;
-            --chat-light-text: #000000;
-            --chat-light-text-secondary: #6e6e80;
-            --chat-light-text-tertiary: #8e8ea0;
-        }
-        
-        /* ChatGPT-like Chat Container */
-        .chatgpt-container {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: var(--chat-dark-bg);
-            z-index: 9998;
-            flex-direction: column;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-        }
-        
-        .chatgpt-container.active {
-            display: flex;
-        }
-        
-        /* ChatGPT Header */
-        .chatgpt-header {
-            background: var(--chat-dark-surface);
-            padding: 0.75rem 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--chat-dark-border);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            min-height: 60px;
-        }
-        
-        .chatgpt-logo {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .chatgpt-logo-icon {
-            font-size: 1.1rem;
-            background: linear-gradient(135deg, var(--chat-primary) 0%, var(--chat-primary-dark) 100%);
-            color: white;
-            width: 32px;
-            height: 32px;
-            border-radius: 6px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        .chatgpt-logo h1 {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: var(--chat-dark-text);
-            white-space: nowrap;
-        }
-        
-        .chatgpt-actions {
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-        
-        .chatgpt-btn {
-            background: var(--chat-dark-surface-light);
-            color: var(--chat-dark-text);
-            border: 1px solid var(--chat-dark-border);
-            border-radius: 6px;
-            padding: 0.5rem 0.75rem;
-            cursor: pointer;
-            font-size: 0.85rem;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            min-height: 36px;
-            font-weight: 500;
-        }
-        
-        .chatgpt-btn:hover {
-            background: var(--chat-dark-border);
-        }
-        
-        .chatgpt-close {
-            background: transparent;
-            border: none;
-            color: var(--chat-dark-text);
-            font-size: 1.375rem;
-            cursor: pointer;
-            padding: 0.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 6px;
-            transition: all 0.2s;
-            width: 36px;
-            height: 36px;
-        }
-        
-        .chatgpt-close:hover {
-            background: var(--chat-dark-surface-light);
-        }
-        
-        /* Main Chat Area */
-        .chatgpt-main {
-            flex: 1;
-            display: flex;
-            overflow: hidden;
-        }
-        
-        /* ChatGPT Sidebar */
-        .chatgpt-sidebar {
-            width: 260px;
-            background: var(--chat-dark-surface);
-            border-right: 1px solid var(--chat-dark-border);
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.2s ease;
-            z-index: 50;
-        }
-        
-        .chatgpt-sidebar-tabs {
-            display: flex;
-            border-bottom: 1px solid var(--chat-dark-border);
-            background: var(--chat-dark-surface);
-        }
-        
-        .chatgpt-sidebar-tab {
-            flex: 1;
-            padding: 0.875rem 0.5rem;
-            background: transparent;
-            border: none;
-            color: var(--chat-dark-text-secondary);
-            font-size: 0.85rem;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: center;
-        }
-        
-        .chatgpt-sidebar-tab:hover {
-            color: var(--chat-dark-text);
-            background: var(--chat-dark-surface-light);
-        }
-        
-        .chatgpt-sidebar-tab.active {
-            color: var(--chat-primary);
-            background: var(--chat-dark-surface-light);
-        }
-        
-        .chatgpt-tab-content {
-            flex: 1;
-            overflow-y: auto;
-            display: none;
-        }
-        
-        .chatgpt-tab-content.active {
-            display: block;
-        }
-        
-        .chatgpt-sidebar-header {
-            padding: 0.875rem 1rem;
-            border-bottom: 1px solid var(--chat-dark-border);
-        }
-        
-        .chatgpt-sidebar-header h2 {
-            font-size: 0.85rem;
-            font-weight: 600;
-            color: var(--chat-dark-text-secondary);
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        
-        .chatgpt-topic-list {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            padding: 0.875rem 1rem;
-        }
-        
-        .chatgpt-topic-item {
-            padding: 0.75rem;
-            background: transparent;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: none;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            color: var(--chat-dark-text);
-            min-height: 40px;
-            text-align: left;
-            width: 100%;
-            font-size: 0.875rem;
-            font-weight: 500;
-        }
-        
-        .chatgpt-topic-item:hover {
-            background: var(--chat-dark-surface-light);
-        }
-        
-        .chatgpt-topic-item i {
-            width: 18px;
-            text-align: center;
-            font-size: 0.9rem;
-        }
-        
-        .chatgpt-history-header {
-            padding: 0.875rem 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--chat-dark-border);
-        }
-        
-        .chatgpt-new-chat-btn {
-            background: var(--chat-dark-surface-light);
-            color: var(--chat-dark-text);
-            border: 1px solid var(--chat-dark-border);
-            border-radius: 6px;
-            padding: 0.5rem 0.75rem;
-            cursor: pointer;
-            font-size: 0.85rem;
-            font-weight: 500;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            white-space: nowrap;
-        }
-        
-        .chatgpt-new-chat-btn:hover {
-            background: var(--chat-dark-border);
-        }
-        
-        .chatgpt-history-list {
-            padding: 0.5rem;
-        }
-        
-        .chatgpt-history-item {
-            padding: 0.75rem;
-            background: transparent;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.2s;
-            border: none;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            color: var(--chat-dark-text);
-            margin-bottom: 4px;
-            position: relative;
-            text-align: left;
-            width: 100%;
-        }
-        
-        .chatgpt-history-item:hover {
-            background: var(--chat-dark-surface-light);
-        }
-        
-        .chatgpt-history-item.active {
-            background: rgba(16, 163, 127, 0.1);
-            border: 1px solid rgba(16, 163, 127, 0.3);
-        }
-        
-        .chatgpt-history-title {
-            font-size: 0.875rem;
-            font-weight: 500;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        
-        .chatgpt-history-preview {
-            font-size: 0.8rem;
-            color: var(--chat-dark-text-secondary);
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        
-        .chatgpt-history-date {
-            font-size: 0.75rem;
-            color: var(--chat-dark-text-secondary);
-        }
-        
-        /* ChatGPT Chat Container */
-        .chatgpt-chat-container {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            background: var(--chat-dark-bg);
-            width: 100%;
-            height: 100%;
-            min-height: 0;
-            overflow: hidden;
-        }
-        
-        .chatgpt-messages {
-            flex: 1;
-            overflow-y: auto;
-            padding: 1.25rem 1rem;
-            display: flex;
-            flex-direction: column;
-            gap: 1.25rem;
-            scroll-behavior: smooth;
-            min-height: 0;
-            width: 100%;
-        }
-        
-        .chatgpt-message {
-            display: flex;
-            gap: 0.75rem;
-            max-width: 100%;
-            padding: 0 0.75rem;
-            animation: fadeIn 0.2s ease-out;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        
-        .chatgpt-user-message {
-            background: var(--chat-dark-surface);
-            border-radius: 8px;
-            padding: 1rem;
-            max-width: 100%;
-        }
-        
-        .chatgpt-ai-message {
-            background: transparent;
-        }
-        
-        .chatgpt-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 4px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.85rem;
-            flex-shrink: 0;
-            margin-top: 4px;
-        }
-        
-        .chatgpt-user-message .chatgpt-avatar {
-            background: linear-gradient(135deg, var(--chat-primary) 0%, var(--chat-primary-dark) 100%);
-        }
-        
-        .chatgpt-ai-message .chatgpt-avatar {
-            background: linear-gradient(135deg, var(--chat-secondary) 0%, #5e35b1 100%);
-        }
-        
-        .chatgpt-message-content {
-            flex: 1;
-            position: relative;
-            width: 100%;
-            min-width: 0;
-        }
-        
-        .chatgpt-message-text {
-            padding: 0;
-            border-radius: 0;
-            font-size: 0.9375rem;
-            line-height: 1.6;
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            overflow: hidden;
-            color: var(--chat-dark-text);
-        }
-        
-        .chatgpt-user-message .chatgpt-message-text {
-            color: white;
-        }
-        
-        /* ChatGPT Input Area */
-        .chatgpt-input-container {
-            padding: 0.875rem;
-            background: var(--chat-dark-bg);
-            border-top: 1px solid var(--chat-dark-border);
-            position: sticky;
-            bottom: 0;
-            z-index: 10;
-            width: 100%;
-            flex-shrink: 0;
-        }
-        
-        .chatgpt-input-area {
-            max-width: 800px;
-            margin: 0 auto;
-            position: relative;
-            width: 100%;
-        }
-        
-        .chatgpt-input-area textarea {
-            width: 100%;
-            padding: 0.875rem 6.5rem 0.875rem 1rem;
-            background: var(--chat-dark-surface);
-            border: 1px solid var(--chat-dark-border);
-            border-radius: 12px;
-            color: var(--chat-dark-text);
-            font-size: 0.9375rem;
-            resize: none;
-            min-height: 52px;
-            max-height: 150px;
-            transition: all 0.2s;
-            line-height: 1.5;
-            font-family: inherit;
-            outline: none;
-        }
-        
-        .chatgpt-input-area textarea:focus {
-            outline: none;
-            border-color: var(--chat-primary);
-            box-shadow: 0 0 0 2px rgba(16, 163, 127, 0.1);
-        }
-        
-        .chatgpt-input-buttons {
-            position: absolute;
-            right: 0.75rem;
-            bottom: 0.75rem;
-            display: flex;
-            gap: 6px;
-            align-items: center;
-        }
-        
-        .chatgpt-attachment-btn {
-            background: transparent;
-            border: none;
-            color: var(--chat-dark-text-secondary);
-            cursor: pointer;
-            padding: 0.5rem;
-            border-radius: 8px;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 32px;
-            height: 32px;
-        }
-        
-        .chatgpt-attachment-btn:hover {
-            background: var(--chat-dark-surface-light);
-            color: var(--chat-dark-text);
-        }
-        
-        .chatgpt-send-button {
-            background: linear-gradient(135deg, var(--chat-primary) 0%, var(--chat-primary-dark) 100%);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            padding: 0.5rem 0.875rem;
-            cursor: pointer;
-            font-weight: 500;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            min-height: 40px;
-            font-size: 0.875rem;
-        }
-        
-        .chatgpt-send-button:hover:not(:disabled) {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(16, 163, 127, 0.3);
-        }
-        
-        .chatgpt-send-button:disabled {
-            background: var(--chat-dark-border);
-            cursor: not-allowed;
-            opacity: 0.5;
-        }
-        
-        .chatgpt-typing-indicator {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 0.875rem 1rem;
-            background: var(--chat-dark-surface);
-            border: 1px solid var(--chat-dark-border);
-            border-radius: 12px;
-            max-width: fit-content;
-            margin-left: 2.5rem;
-            margin-top: 0.5rem;
-        }
-        
-        .chatgpt-typing-dot {
-            width: 8px;
-            height: 8px;
-            background-color: var(--chat-primary);
-            border-radius: 50%;
-            animation: typing 1.4s infinite ease-in-out;
-        }
-        
-        .chatgpt-typing-dot:nth-child(1) {
-            animation-delay: -0.32s;
-        }
-        
-        .chatgpt-typing-dot:nth-child(2) {
-            animation-delay: -0.16s;
-        }
-        
-        @keyframes typing {
-            0%, 80%, 100% {
-                transform: scale(0.8);
-                opacity: 0.5;
-            }
-            40% {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-        
-        /* Document Template Styles */
-        .chatgpt-document-template {
-            background: var(--chat-dark-surface);
-            border: 1px solid var(--chat-dark-border);
-            border-radius: 8px;
-            padding: 1.25rem;
-            margin: 0.75rem 0;
-            overflow: hidden;
-        }
-        
-        .chatgpt-document-header {
-            text-align: center;
-            border-bottom: 2px solid var(--chat-primary);
-            padding-bottom: 1rem;
-            margin-bottom: 1.25rem;
-        }
-        
-        .chatgpt-document-title {
-            font-size: 1.375rem;
-            color: var(--chat-primary);
-            margin-bottom: 0.5rem;
-            word-wrap: break-word;
-            font-weight: 600;
-        }
-        
-        .chatgpt-document-subtitle {
-            color: var(--chat-dark-text-secondary);
-            font-size: 0.875rem;
-        }
-        
-        .chatgpt-document-section {
-            margin-bottom: 1.25rem;
-        }
-        
-        .chatgpt-document-section-title {
-            color: var(--chat-primary);
-            font-size: 1rem;
-            margin-bottom: 0.75rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid var(--chat-dark-border);
-            word-wrap: break-word;
-            font-weight: 600;
-        }
-        
-        .chatgpt-document-clause {
-            margin-bottom: 0.875rem;
-            padding-left: 1rem;
-            border-left: 3px solid var(--chat-primary-light);
-        }
-        
-        .chatgpt-clause-title {
-            font-weight: 600;
-            color: var(--chat-dark-text);
-            margin-bottom: 0.5rem;
-            word-wrap: break-word;
-        }
-        
-        .chatgpt-clause-content {
-            color: var(--chat-dark-text-secondary);
-            line-height: 1.6;
-            word-wrap: break-word;
-        }
-        
-        .chatgpt-signature-section {
-            margin-top: 1.75rem;
-            padding-top: 1.25rem;
-            border-top: 1px solid var(--chat-dark-border);
-        }
-        
-        .chatgpt-signature-line {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 1.5rem;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-        
-        .chatgpt-signature-block {
-            flex: 1;
-            padding: 0.875rem;
-            min-width: 150px;
-        }
-        
-        .chatgpt-signature-name {
-            border-bottom: 1px solid var(--chat-dark-border);
-            padding-bottom: 0.5rem;
-            margin-bottom: 0.5rem;
-            min-height: 30px;
-        }
-        
-        .chatgpt-signature-label {
-            font-size: 0.8125rem;
-            color: var(--chat-dark-text-secondary);
-        }
-        
-        /* Welcome Message */
-        .chatgpt-welcome-message {
-            text-align: center;
-            max-width: 600px;
-            margin: 1.5rem auto;
-            padding: 1.25rem;
-            background: linear-gradient(135deg, rgba(16, 163, 127, 0.1) 0%, rgba(30, 64, 175, 0.1) 100%);
-            border: 1px solid var(--chat-dark-border);
-            border-radius: 12px;
-            width: 90%;
-        }
-        
-        .chatgpt-welcome-message h2 {
-            font-size: 1.5rem;
-            margin-bottom: 0.75rem;
-            background: linear-gradient(135deg, var(--chat-primary) 0%, var(--chat-secondary) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            word-wrap: break-word;
-            font-weight: 600;
-        }
-        
-        .chatgpt-welcome-message p {
-            color: var(--chat-dark-text-secondary);
-            font-size: 0.9375rem;
-            margin-bottom: 1rem;
-            line-height: 1.5;
-            word-wrap: break-word;
-        }
-        
-        .chatgpt-welcome-features {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 0.875rem;
-            margin-top: 1.25rem;
-        }
-        
-        .chatgpt-feature {
-            background: var(--chat-dark-surface);
-            padding: 0.875rem;
-            border-radius: 8px;
-            border: 1px solid var(--chat-dark-border);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            word-wrap: break-word;
-        }
-        
-        .chatgpt-feature i {
-            font-size: 1.375rem;
-            color: var(--chat-primary);
-            margin-bottom: 0.5rem;
-        }
-        
-        .chatgpt-feature h4 {
-            font-size: 0.875rem;
-            margin-bottom: 0.25rem;
-            color: var(--chat-dark-text);
-            font-weight: 600;
-        }
-        
-        .chatgpt-feature p {
-            font-size: 0.8125rem;
-            color: var(--chat-dark-text-secondary);
-        }
-        
-        /* Message Actions */
-        .chatgpt-message-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 0.75rem;
-            flex-wrap: wrap;
-            opacity: 0;
-            transition: opacity 0.2s ease;
-        }
-        
-        .chatgpt-message:hover .chatgpt-message-actions {
-            opacity: 1;
-        }
-        
-        .chatgpt-action-btn {
-            background: var(--chat-dark-surface-light);
-            color: var(--chat-dark-text-secondary);
-            border: 1px solid var(--chat-dark-border);
-            border-radius: 6px;
-            padding: 0.375rem 0.75rem;
-            cursor: pointer;
-            font-size: 0.8125rem;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            min-height: 32px;
-            font-weight: 500;
-            white-space: nowrap;
-        }
-        
-        .chatgpt-action-btn:hover {
-            background: var(--chat-dark-border);
-            color: var(--chat-dark-text);
-        }
-        
-        .chatgpt-action-btn.copy:hover {
-            background: #10b981;
-            border-color: #10b981;
-            color: white;
-        }
-        
-        .chatgpt-document-download-btn {
-            position: absolute;
-            top: -12px;
-            right: 8px;
-            background: var(--chat-dark-surface);
-            border: 1px solid var(--chat-primary);
-            border-radius: 20px;
-            padding: 6px 12px;
-            color: var(--chat-primary);
-            cursor: pointer;
-            font-size: 0.75rem;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            transition: all 0.2s;
-            z-index: 5;
-            opacity: 0;
-            transform: translateY(5px);
-            font-weight: 500;
-        }
-        
-        .chatgpt-ai-message .chatgpt-message-content:hover .chatgpt-document-download-btn {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        .chatgpt-document-download-btn:hover {
-            background: var(--chat-primary);
-            color: white;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(16, 163, 127, 0.3);
-        }
-        
-        /* Attachments */
-        .chatgpt-attachments-preview {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 6px;
-            margin-bottom: 8px;
-            padding: 6px;
-            background: var(--chat-dark-surface-light);
-            border-radius: 8px;
-            border: 1px solid var(--chat-dark-border);
-            max-height: 100px;
-            overflow-y: auto;
-        }
-        
-        .chatgpt-attachment-preview-item {
-            position: relative;
-            width: 70px;
-            height: 70px;
-            border-radius: 6px;
-            overflow: hidden;
-            border: 1px solid var(--chat-dark-border);
-        }
-        
-        .chatgpt-attachment-preview-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        
-        .chatgpt-remove-attachment {
-            position: absolute;
-            top: 2px;
-            right: 2px;
-            width: 20px;
-            height: 20px;
-            background: rgba(239, 68, 68, 0.9);
-            color: white;
-            border: none;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.75rem;
-        }
-        
-        .chatgpt-attachment-preview-name {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            padding: 2px 4px;
-            font-size: 0.625rem;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-        
-        /* Light Mode Support */
-        .chatgpt-container.light-mode {
-            background: var(--chat-light-bg);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-header {
-            background: var(--chat-light-surface);
-            border-bottom-color: var(--chat-light-border);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-logo h1 {
-            color: var(--chat-light-text);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-btn {
-            background: var(--chat-light-surface-light);
-            color: var(--chat-light-text);
-            border-color: var(--chat-light-border);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-btn:hover {
-            background: var(--chat-light-border);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-close {
-            color: var(--chat-light-text);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-close:hover {
-            background: var(--chat-light-surface-light);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-sidebar {
-            background: var(--chat-light-surface);
-            border-right-color: var(--chat-light-border);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-sidebar-tabs {
-            background: var(--chat-light-surface);
-            border-bottom-color: var(--chat-light-border);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-sidebar-tab {
-            color: var(--chat-light-text-secondary);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-sidebar-tab:hover {
-            color: var(--chat-light-text);
-            background: var(--chat-light-surface-light);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-sidebar-tab.active {
-            background: var(--chat-light-surface-light);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-sidebar-header {
-            border-bottom-color: var(--chat-light-border);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-sidebar-header h2 {
-            color: var(--chat-light-text-secondary);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-topic-item {
-            color: var(--chat-light-text);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-topic-item:hover {
-            background: var(--chat-light-surface-light);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-history-header {
-            border-bottom-color: var(--chat-light-border);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-new-chat-btn {
-            background: var(--chat-light-surface-light);
-            color: var(--chat-light-text);
-            border-color: var(--chat-light-border);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-new-chat-btn:hover {
-            background: var(--chat-light-border);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-history-item {
-            color: var(--chat-light-text);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-history-item:hover {
-            background: var(--chat-light-surface-light);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-history-preview {
-            color: var(--chat-light-text-secondary);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-history-date {
-            color: var(--chat-light-text-secondary);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-chat-container {
-            background: var(--chat-light-bg);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-user-message {
-            background: var(--chat-light-surface);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-message-text {
-            color: var(--chat-light-text);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-input-container {
-            background: var(--chat-light-bg);
-            border-top-color: var(--chat-light-border);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-input-area textarea {
-            background: var(--chat-light-surface);
-            border-color: var(--chat-light-border);
-            color: var(--chat-light-text);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-attachment-btn {
-            color: var(--chat-light-text-secondary);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-attachment-btn:hover {
-            background: var(--chat-light-surface-light);
-            color: var(--chat-light-text);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-send-button:disabled {
-            background: var(--chat-light-border);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-typing-indicator {
-            background: var(--chat-light-surface);
-            border-color: var(--chat-light-border);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-document-template {
-            background: var(--chat-light-surface);
-            border-color: var(--chat-light-border);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-document-subtitle {
-            color: var(--chat-light-text-secondary);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-document-section-title {
-            border-bottom-color: var(--chat-light-border);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-clause-title {
-            color: var(--chat-light-text);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-clause-content {
-            color: var(--chat-light-text-secondary);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-signature-section {
-            border-top-color: var(--chat-light-border);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-signature-name {
-            border-bottom-color: var(--chat-light-border);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-signature-label {
-            color: var(--chat-light-text-secondary);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-welcome-message {
-            background: linear-gradient(135deg, rgba(16, 163, 127, 0.08) 0%, rgba(30, 64, 175, 0.08) 100%);
-            border-color: var(--chat-light-border);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-welcome-message p {
-            color: var(--chat-light-text-secondary);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-feature {
-            background: var(--chat-light-surface);
-            border-color: var(--chat-light-border);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-feature h4 {
-            color: var(--chat-light-text);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-feature p {
-            color: var(--chat-light-text-secondary);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-action-btn {
-            background: var(--chat-light-surface-light);
-            color: var(--chat-light-text-secondary);
-            border-color: var(--chat-light-border);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-action-btn:hover {
-            background: var(--chat-light-border);
-            color: var(--chat-light-text);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-document-download-btn {
-            background: var(--chat-light-surface);
-            border-color: var(--chat-primary);
-            color: var(--chat-primary);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-attachments-preview {
-            background: var(--chat-light-surface-light);
-            border-color: var(--chat-light-border);
-        }
-        
-        .chatgpt-container.light-mode .chatgpt-attachment-preview-item {
-            border-color: var(--chat-light-border);
-        }
-        
-        /* Mobile Responsiveness */
-        @media (max-width: 768px) {
-            .chatgpt-sidebar {
-                position: fixed;
-                top: 0;
-                left: 0;
-                bottom: 0;
-                width: 85vw;
-                max-width: 280px;
-                transform: translateX(-100%);
-                z-index: 10000;
-            }
-            
-            .chatgpt-sidebar.active {
-                transform: translateX(0);
-            }
-            
-            .chatgpt-header {
-                padding: 0.625rem 0.75rem;
-                min-height: 56px;
-            }
-            
-            .chatgpt-logo h1 {
-                font-size: 1rem;
-            }
-            
-            .chatgpt-btn span {
-                display: none;
-            }
-            
-            .chatgpt-messages {
-                padding: 0.75rem 0.5rem;
-                gap: 1rem;
-            }
-            
-            .chatgpt-message {
-                padding: 0 0.5rem;
-                gap: 0.625rem;
-            }
-            
-            .chatgpt-avatar {
-                width: 28px;
-                height: 28px;
-                font-size: 0.75rem;
-            }
-            
-            .chatgpt-message-text {
-                font-size: 0.875rem;
-            }
-            
-            .chatgpt-document-download-btn {
-                opacity: 1;
-                transform: translateY(0);
-                top: -8px;
-                right: 4px;
-                padding: 4px 8px;
-                font-size: 0.625rem;
-            }
-            
-            .chatgpt-welcome-message {
-                padding: 0.875rem;
-                margin: 0.875rem auto;
-            }
-            
-            .chatgpt-welcome-message h2 {
-                font-size: 1.25rem;
-            }
-            
-            .chatgpt-welcome-features {
-                grid-template-columns: 1fr;
-            }
-            
-            .chatgpt-input-container {
-                padding: 0.75rem;
-            }
-            
-            .chatgpt-input-area textarea {
-                padding: 0.75rem 5.5rem 0.75rem 0.875rem;
-                font-size: 0.875rem;
-                min-height: 48px;
-            }
-            
-            .chatgpt-input-buttons {
-                right: 0.5rem;
-                bottom: 0.5rem;
-                gap: 4px;
-            }
-            
-            .chatgpt-send-button {
-                padding: 0.5rem 0.75rem;
-                min-height: 36px;
-                font-size: 0.8125rem;
-            }
-            
-            .chatgpt-attachment-btn {
-                width: 28px;
-                height: 28px;
-                padding: 0.375rem;
-            }
-        }
-        
-        @media (min-width: 769px) and (max-width: 1024px) {
-            .chatgpt-sidebar {
-                width: 300px;
-            }
-            
-            .chatgpt-welcome-features {
-                grid-template-columns: repeat(3, 1fr);
-            }
-        }
-        
-        /* Additional Mobile & Tablet Optimizations */
-        @media (max-width: 768px) {
-            /* Base font size adjustment for mobile */
-            html {
-                font-size: 14px;
-            }
-            
-            /* Better touch targets */
-            button, 
-            .nav-link, 
-            .quick-btn, 
-            .btn-generate,
-            .chat-action-btn,
-            .input-action-btn {
-                min-height: 44px;
-                min-width: 44px;
-            }
-            
-            /* Prevent zoom on input focus */
-            input, 
-            select, 
-            textarea {
-                font-size: 16px !important;
-            }
-            
-            /* Mobile chat interface optimization */
-            .chat-messages {
-                padding: 10px;
-            }
-            
-            .message {
-                max-width: 95%;
-            }
-            
-            /* Better mobile navigation */
-            .nav-container {
-                padding: 0 15px;
-            }
-            
-            /* Mobile hero section optimization */
-            .hero-title {
-                font-size: 2.2rem;
-                line-height: 1.2;
-            }
-            
-            .hero-subtitle {
-                font-size: 1rem;
-                line-height: 1.5;
-            }
-            
-            /* Mobile button stacking */
-            .hero-actions {
-                flex-direction: column;
-                width: 100%;
-            }
-            
-            .btn-hero-primary,
-            .btn-hero-secondary {
-                width: 100%;
-                margin-bottom: 10px;
-            }
-            
-            /* Mobile grid adjustments */
-            .features-grid,
-            .documents-grid,
-            .pricing-cards {
-                grid-template-columns: 1fr;
-                gap: 15px;
-            }
-            
-            /* Fix modal on mobile */
-            .modal-content {
-                width: 95%;
-                max-width: 95%;
-                margin: 10px;
-            }
-            
-            /* Mobile footer adjustments */
-            .footer-content {
-                grid-template-columns: 1fr;
-                text-align: center;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            /* Extra small devices */
-            .hero-title {
-                font-size: 1.8rem;
-            }
-            
-            .section-title {
-                font-size: 1.5rem;
-            }
-            
-            .feature-card,
-            .document-category,
-            .pricing-card {
-                padding: 20px 15px;
-            }
-            
-            /* Chat interface for very small screens */
-            .chat-header {
-                padding: 10px;
-            }
-            
-            .chat-title-text h3 {
-                font-size: 1rem;
-            }
-            
-            .message-text {
-                font-size: 0.875rem;
-                padding: 10px;
-            }
-            
-            /* Input area optimization */
-            .input-container {
-                flex-wrap: wrap;
-            }
-            
-            textarea#messageInput {
-                min-height: 50px;
-            }
-        }
-        
-        /* Tablet specific optimizations */
-        @media (min-width: 769px) and (max-width: 1024px) {
-            .container {
-                padding: 0 30px;
-            }
-            
-            .hero-container {
-                grid-template-columns: 1fr;
-                gap: 40px;
-            }
-            
-            .hero-illustration {
-                max-width: 500px;
-                margin: 0 auto;
-            }
-            
-            .features-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            
-            .pricing-cards {
-                grid-template-columns: repeat(2, 1fr);
-                gap: 20px;
-            }
-            
-            .chat-container {
-                max-width: 95%;
-            }
-        }
-        
-        /* Additional modal fixes */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 2000;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            overflow-y: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-        
-        .modal-content {
-            position: relative;
-            background: #1e293b;
-            border-radius: 16px;
-            max-width: 420px;
-            width: 100%;
-            overflow: hidden;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-            z-index: 2001;
-            max-height: 90vh;
-            overflow-y: auto;
-            border: 1px solid #334155;
-        }
-        
-        /* Fix for iOS input zoom */
-        @media screen and (max-width: 767px) {
-            input[type="text"],
-            input[type="email"],
-            input[type="password"],
-            textarea {
-                font-size: 16px !important;
-            }
-        }
-        
-        /* Safe area insets for modern devices */
-        @supports (padding: max(0px)) {
-            .hero-section,
-            .chat-interface {
-                padding-left: max(15px, env(safe-area-inset-left));
-                padding-right: max(15px, env(safe-area-inset-right));
-            }
-            
-            .chat-input-area {
-                padding-bottom: max(15px, env(safe-area-inset-bottom));
-            }
-        }
-        
-        /* Prevent pull-to-refresh on mobile */
-        body {
-            overscroll-behavior-y: contain;
-        }
-        
-        /* Better scrolling on mobile */
-        .chat-messages,
-        .history-list {
-            -webkit-overflow-scrolling: touch;
+        /* Focus Styles */
+        *:focus {
+            outline: 2px solid #3b82f6;
+            outline-offset: 2px;
         }
 
-        /* Your existing chat interface CSS continues... */
-        /* I've kept your original chat interface CSS and added the missing styles above */
+        *:focus:not(.focus-visible) {
+            outline: none;
+        }
+
+        /* Selection Color */
+        ::selection {
+            background: rgba(59, 130, 246, 0.3);
+            color: #fff;
+        }
     </style>
 </head>
 <body>
-    <!-- Skip to Content Link for Accessibility -->
-    <a href="#main-content" class="skip-to-content">Skip to main content</a>
-    
     <!-- Loading Bar -->
     <div class="loading-bar" id="loadingBar"></div>
     
@@ -3635,15 +2618,166 @@
         </div>
     </div>
 
-    <!-- Theme Toggle (Future Enhancement) -->
-    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
-        <i class="fas fa-moon"></i>
-    </button>
+    <!-- Chat Interface -->
+    <div id="chatInterface" class="chat-interface">
+        <div class="chat-header">
+            <div class="chat-header-left">
+                <button id="backToHome" class="chat-back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                </button>
+                <div class="chat-title">
+                    <div class="chat-avatar legal-seal">
+                        <i class="fas fa-robot"></i>
+                    </div>
+                    <div class="chat-title-text">
+                        <h3>AI Legal Assistant</h3>
+                        <p>Available 24/7 • Powered by AI</p>
+                    </div>
+                </div>
+            </div>
+            <div class="chat-header-actions">
+                <button id="clearChat" class="chat-action-btn" title="Clear Chat">
+                    <i class="fas fa-trash"></i>
+                </button>
+                <button id="exportChat" class="chat-action-btn" title="Export Chat">
+                    <i class="fas fa-download"></i>
+                </button>
+                <button id="historyToggle" class="chat-action-btn" title="Chat History">
+                    <i class="fas fa-history"></i>
+                </button>
+            </div>
+        </div>
+        
+        <div class="chat-main">
+            <!-- Welcome Screen -->
+            <div id="chatWelcome" class="chat-welcome">
+                <div class="chat-welcome-icon legal-seal">
+                    <i class="fas fa-robot"></i>
+                </div>
+                <h2>How can I help you today?</h2>
+                <p>I'm your AI legal assistant. Ask me any legal questions, request document generation, or get guidance on legal procedures. I'm here to help 24/7.</p>
+                
+                <div class="quick-questions">
+                    <button class="quick-btn" data-question="How to draft a rental agreement?">
+                        <i class="fas fa-file-contract"></i>
+                        Draft Rental Agreement
+                    </button>
+                    <button class="quick-btn" data-question="What are my rights as a tenant?">
+                        <i class="fas fa-balance-scale"></i>
+                        Tenant Rights
+                    </button>
+                    <button class="quick-btn" data-question="How to file a consumer complaint?">
+                        <i class="fas fa-user-shield"></i>
+                        Consumer Complaint
+                    </button>
+                    <button class="quick-btn" data-question="What documents are needed for property registration?">
+                        <i class="fas fa-home"></i>
+                        Property Registration
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Chat Messages Container -->
+            <div id="chatMessagesContainer" class="chat-messages-container">
+                <div id="chatMessages" class="chat-messages">
+                    <!-- Messages will be added here dynamically -->
+                </div>
+                
+                <!-- Typing Indicator -->
+                <div id="typingIndicator" class="typing-indicator">
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                    <div class="typing-dot"></div>
+                </div>
+                
+                <!-- Input Area -->
+                <div class="chat-input-container">
+                    <div class="chat-input-area">
+                        <div class="chat-input-wrapper">
+                            <textarea 
+                                id="messageInput" 
+                                placeholder="Type your legal question here..." 
+                                rows="1"
+                                maxlength="2000"
+                            ></textarea>
+                            <div class="input-actions">
+                                <button id="attachFile" class="input-action-btn" title="Attach File">
+                                    <i class="fas fa-paperclip"></i>
+                                </button>
+                                <button id="voiceInput" class="input-action-btn" title="Voice Input">
+                                    <i class="fas fa-microphone"></i>
+                                </button>
+                            </div>
+                            <button id="sendMessage" class="send-button">
+                                <i class="fas fa-paper-plane"></i>
+                                <span>Send</span>
+                            </button>
+                        </div>
+                        
+                        <div class="chat-options">
+                            <label class="chat-option">
+                                <input type="checkbox" id="generateDocument">
+                                <span>Generate Document</span>
+                            </label>
+                            <label class="chat-option">
+                                <select id="documentType">
+                                    <option value="PDF">PDF</option>
+                                    <option value="DOC">Word</option>
+                                    <option value="TXT">Text</option>
+                                </select>
+                            </label>
+                            <div class="chat-option">
+                                <i class="fas fa-language"></i>
+                                <select id="languageSelect">
+                                    <option value="en">English</option>
+                                    <option value="hi">Hindi</option>
+                                    <option value="mr">Marathi</option>
+                                    <option value="gu">Gujarati</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <!-- ChatGPT-like Chat Interface (Hidden by default) -->
-    <div id="chatgptInterface" class="chatgpt-container">
-        <!-- Your existing chat interface HTML remains here -->
-        <!-- ... -->
+    <!-- Login Modal -->
+    <div id="loginModal" class="login-modal">
+        <div class="login-content">
+            <button id="closeLoginModal" class="modal-close">
+                <i class="fas fa-times"></i>
+            </button>
+            <div class="login-header">
+                <div class="login-icon legal-seal">
+                    <i class="fas fa-user-lock"></i>
+                </div>
+                <h3>Welcome Back</h3>
+                <p>Login to access all features</p>
+            </div>
+            
+            <div class="login-buttons">
+                <button id="customGoogleBtn" class="btn-login-google">
+                    <i class="fab fa-google"></i>
+                    Continue with Google
+                </button>
+                
+                <div id="googleSignInContainer"></div>
+                
+                <div class="login-divider">
+                    <span>or</span>
+                </div>
+                
+                <button id="demoLoginBtn" class="btn-login-demo">
+                    <i class="fas fa-rocket"></i>
+                    Try Demo Version
+                </button>
+            </div>
+            
+            <div class="login-footer">
+                By continuing, you agree to our <a href="#" id="termsLink">Terms</a> and <a href="#" id="privacyLink">Privacy Policy</a>
+            </div>
+        </div>
     </div>
 
     <!-- Main Container -->
@@ -4583,7 +3717,6 @@
     <!-- Google Identity Services -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     
-    <!-- Main App Script -->
     <script>
         // Global variables
         let currentChatId = null;
@@ -4669,49 +3802,27 @@
             // Load lawyers
             loadLawyers();
             
-            // Setup language buttons
-            setupLanguageButtons();
+            // Setup language selection
+            const languageSelect = document.getElementById('languageSelect');
+            if (languageSelect) {
+                languageSelect.addEventListener('change', function() {
+                    selectedLanguage = this.value;
+                    const placeholders = {
+                        'en': 'Type your legal question here...',
+                        'hi': 'अपना कानूनी प्रश्न यहाँ टाइप करें...',
+                        'mr': 'तुमचा कायदेशीर प्रश्न येथे टाइप करा...',
+                        'gu': 'તમારો કાનૂની પ્રશ્ન અહીં ટાઈપ કરો...'
+                    };
+                    const messageInput = document.getElementById('messageInput');
+                    if (messageInput) {
+                        messageInput.placeholder = placeholders[selectedLanguage] || placeholders.en;
+                    }
+                    showToast(`Language changed to ${this.options[this.selectedIndex].text}`, 'info');
+                });
+            }
             
             console.log('✅ All initialization complete');
         });
-        
-        // Setup Language Buttons
-        function setupLanguageButtons() {
-            document.querySelectorAll('.lang-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const lang = this.getAttribute('data-lang');
-                    selectedLanguage = lang;
-                    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    // Update chat placeholder based on language
-                    const messageInput = document.getElementById('messageInput');
-                    if (messageInput) {
-                        if (lang === 'hi') {
-                            messageInput.placeholder = "अपना कानूनी प्रश्न यहां टाइप करें...";
-                        } else if (lang === 'mr') {
-                            messageInput.placeholder = "तुमचा कायदेशीर प्रश्न येथे टाइप करा...";
-                        } else if (lang === 'gu') {
-                            messageInput.placeholder = "તમારો કાનૂની પ્રશ્ન અહીં ટાઈપ કરો...";
-                        } else {
-                            messageInput.placeholder = "Type your legal question here...";
-                        }
-                    }
-                    
-                    showToast(`Language changed to ${getLanguageName(lang)}`, 'info');
-                });
-            });
-        }
-        
-        function getLanguageName(code) {
-            const languages = {
-                'en': 'English',
-                'hi': 'Hindi',
-                'mr': 'Marathi',
-                'gu': 'Gujarati'
-            };
-            return languages[code] || 'English';
-        }
         
         // Apply mobile optimizations
         function applyMobileOptimizations() {
@@ -4757,38 +3868,6 @@
                 grids.forEach(grid => {
                     if (window.innerWidth <= 1024) {
                         grid.style.gridTemplateColumns = 'repeat(2, 1fr)';
-                    }
-                });
-            }
-            
-            // Mobile specific optimizations
-            if (isMobile) {
-                // Add swipe support for mobile menu
-                let startX, startY;
-                
-                document.addEventListener('touchstart', function(e) {
-                    startX = e.touches[0].clientX;
-                    startY = e.touches[0].clientY;
-                });
-                
-                document.addEventListener('touchend', function(e) {
-                    if (!startX || !startY) return;
-                    
-                    const endX = e.changedTouches[0].clientX;
-                    const endY = e.changedTouches[0].clientY;
-                    
-                    const diffX = startX - endX;
-                    const diffY = startY - endY;
-                    
-                    // Horizontal swipe (for chat interface)
-                    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
-                        if (diffX > 0 && isChatOpen) {
-                            // Swipe left - go back to home
-                            const backBtn = document.getElementById('backToHome');
-                            if (backBtn) {
-                                backBtn.click();
-                            }
-                        }
                     }
                 });
             }
@@ -5072,7 +4151,7 @@
             
             lawyersGrid.innerHTML = '';
             
-            if (filteredLawyers.length === 0) {
+            if (filterLawyers.length === 0) {
                 lawyersGrid.innerHTML = '<div class="no-results">No lawyers found matching your search criteria.</div>';
                 return;
             }
@@ -5136,312 +4215,9 @@
         
         // Open Legal Calculator
         function openLegalCalculator(type = 'court-fee') {
-            const modal = document.getElementById('legalToolsModal');
-            if (modal) {
-                modal.style.display = 'none';
-            }
-            
-            let calculatorHTML = '';
-            let title = '';
-            
-            switch(type) {
-                case 'court-fee':
-                    title = 'Court Fee Calculator';
-                    calculatorHTML = `
-                        <div class="calculator">
-                            <h4>Calculate Court Fees</h4>
-                            <div class="input-group">
-                                <label>Case Type:</label>
-                                <select id="caseType">
-                                    <option value="civil">Civil Case</option>
-                                    <option value="criminal">Criminal Case</option>
-                                    <option value="family">Family Dispute</option>
-                                    <option value="property">Property Case</option>
-                                </select>
-                            </div>
-                            <div class="input-group">
-                                <label>Case Value (₹):</label>
-                                <input type="number" id="caseValue" placeholder="Enter case value" min="0" value="100000">
-                            </div>
-                            <div class="input-group">
-                                <label>State:</label>
-                                <select id="state">
-                                    <option value="delhi">Delhi</option>
-                                    <option value="mumbai">Maharashtra</option>
-                                    <option value="bangalore">Karnataka</option>
-                                    <option value="chennai">Tamil Nadu</option>
-                                </select>
-                            </div>
-                            <button class="btn-calculate" onclick="calculateCourtFee()">Calculate</button>
-                            <div class="result" id="feeResult"></div>
-                        </div>
-                    `;
-                    break;
-                    
-                case 'stamp-duty':
-                    title = 'Stamp Duty Calculator';
-                    calculatorHTML = `
-                        <div class="calculator">
-                            <h4>Calculate Stamp Duty</h4>
-                            <div class="input-group">
-                                <label>Document Type:</label>
-                                <select id="docType">
-                                    <option value="sale">Sale Deed</option>
-                                    <option value="rent">Rent Agreement</option>
-                                    <option value="gift">Gift Deed</option>
-                                    <option value="mortgage">Mortgage Deed</option>
-                                </select>
-                            </div>
-                            <div class="input-group">
-                                <label>Property Value (₹):</label>
-                                <input type="number" id="propertyValue" placeholder="Enter property value" min="0" value="5000000">
-                            </div>
-                            <div class="input-group">
-                                <label>State:</label>
-                                <select id="stateStamp">
-                                    <option value="delhi">Delhi</option>
-                                    <option value="mumbai">Maharashtra</option>
-                                    <option value="bangalore">Karnataka</option>
-                                    <option value="chennai">Tamil Nadu</option>
-                                </select>
-                            </div>
-                            <button class="btn-calculate" onclick="calculateStampDuty()">Calculate</button>
-                            <div class="result" id="stampResult"></div>
-                        </div>
-                    `;
-                    break;
-                    
-                case 'compensation':
-                    title = 'Compensation Calculator';
-                    calculatorHTML = `
-                        <div class="calculator">
-                            <h4>Calculate Compensation</h4>
-                            <div class="input-group">
-                                <label>Type of Claim:</label>
-                                <select id="claimType">
-                                    <option value="accident">Road Accident</option>
-                                    <option value="medical">Medical Negligence</option>
-                                    <option value="employment">Employment Dispute</option>
-                                    <option value="consumer">Consumer Complaint</option>
-                                </select>
-                            </div>
-                            <div class="input-group">
-                                <label>Monthly Income (₹):</label>
-                                <input type="number" id="monthlyIncome" placeholder="Enter monthly income" min="0" value="30000">
-                            </div>
-                            <div class="input-group">
-                                <label>Age:</label>
-                                <input type="number" id="age" placeholder="Enter age" min="18" max="70" value="35">
-                            </div>
-                            <div class="input-group">
-                                <label>Disability (%):</label>
-                                <input type="number" id="disability" placeholder="Enter disability percentage" min="0" max="100" value="40">
-                            </div>
-                            <button class="btn-calculate" onclick="calculateCompensation()">Calculate</button>
-                            <div class="result" id="compResult"></div>
-                        </div>
-                    `;
-                    break;
-            }
-            
-            showCalculatorModal(title, calculatorHTML);
-        }
-        
-        // Show Calculator Modal
-        function showCalculatorModal(title, content) {
-            const modal = document.createElement('div');
-            modal.className = 'modal';
-            modal.id = 'calculatorModal';
-            modal.innerHTML = `
-                <div class="modal-overlay" onclick="closeModal('calculatorModal')"></div>
-                <div class="modal-content">
-                    <button class="modal-close" onclick="closeModal('calculatorModal')">
-                        <i class="fas fa-times"></i>
-                    </button>
-                    <div class="modal-header">
-                        <div class="modal-icon legal-seal">
-                            <i class="fas fa-calculator"></i>
-                        </div>
-                        <h3>${title}</h3>
-                    </div>
-                    <div class="modal-body">
-                        ${content}
-                    </div>
-                </div>
-            `;
-            
-            document.body.appendChild(modal);
-            modal.style.display = 'flex';
-            document.body.classList.add('modal-open');
-        }
-        
-        // Close Modal
-        function closeModal(modalId) {
-            const modal = document.getElementById(modalId);
-            if (modal) {
-                modal.style.display = 'none';
-                document.body.classList.remove('modal-open');
-                setTimeout(() => {
-                    modal.remove();
-                }, 300);
-            }
-        }
-        
-        // Calculate Court Fee
-        function calculateCourtFee() {
-            const caseType = document.getElementById('caseType').value;
-            const caseValue = parseInt(document.getElementById('caseValue').value) || 0;
-            const state = document.getElementById('state').value;
-            
-            let fee = 0;
-            
-            // Simplified calculation (in real app, this would be more complex)
-            if (caseValue <= 100000) {
-                fee = caseValue * 0.05; // 5%
-            } else if (caseValue <= 500000) {
-                fee = 5000 + (caseValue - 100000) * 0.04; // 4%
-            } else if (caseValue <= 1000000) {
-                fee = 21000 + (caseValue - 500000) * 0.03; // 3%
-            } else {
-                fee = 36000 + (caseValue - 1000000) * 0.02; // 2%
-            }
-            
-            // Minimum fee
-            fee = Math.max(fee, 100);
-            
-            const resultDiv = document.getElementById('feeResult');
-            if (resultDiv) {
-                resultDiv.innerHTML = `
-                    <div class="result-card">
-                        <h5>Calculated Court Fee:</h5>
-                        <div class="result-amount">₹${fee.toFixed(2)}</div>
-                        <div class="result-details">
-                            <p><i class="fas fa-info-circle"></i> Based on case value: ₹${caseValue.toLocaleString()}</p>
-                            <p><i class="fas fa-map-marker-alt"></i> State: ${state.toUpperCase()}</p>
-                            <p><i class="fas fa-gavel"></i> Case Type: ${caseType.toUpperCase()}</p>
-                        </div>
-                        <p class="result-note"><i class="fas fa-exclamation-triangle"></i> Note: This is an estimate. Actual fees may vary based on specific circumstances.</p>
-                    </div>
-                `;
-            }
-        }
-        
-        // Calculate Stamp Duty
-        function calculateStampDuty() {
-            const docType = document.getElementById('docType').value;
-            const propertyValue = parseInt(document.getElementById('propertyValue').value) || 0;
-            const state = document.getElementById('stateStamp').value;
-            
-            let dutyRate = 0;
-            
-            // Simplified rates by state and document type
-            if (state === 'delhi') {
-                dutyRate = 0.06; // 6%
-            } else if (state === 'mumbai') {
-                dutyRate = 0.05; // 5%
-            } else if (state === 'bangalore') {
-                dutyRate = 0.055; // 5.5%
-            } else {
-                dutyRate = 0.07; // 7%
-            }
-            
-            // Adjust based on document type
-            if (docType === 'rent') {
-                dutyRate = 0.01; // 1% for rent agreements
-            } else if (docType === 'gift') {
-                dutyRate = dutyRate * 0.5; // 50% of normal rate for gifts
-            }
-            
-            const duty = propertyValue * dutyRate;
-            const registrationFee = Math.min(propertyValue * 0.01, 30000); // 1% max 30,000
-            const total = duty + registrationFee;
-            
-            const resultDiv = document.getElementById('stampResult');
-            if (resultDiv) {
-                resultDiv.innerHTML = `
-                    <div class="result-card">
-                        <h5>Calculated Stamp Duty:</h5>
-                        <div class="result-amount">₹${total.toFixed(2)}</div>
-                        <div class="result-breakdown">
-                            <p><i class="fas fa-file-invoice-dollar"></i> Stamp Duty: ₹${duty.toFixed(2)} (${(dutyRate*100).toFixed(1)}%)</p>
-                            <p><i class="fas fa-file-signature"></i> Registration Fee: ₹${registrationFee.toFixed(2)}</p>
-                            <p><i class="fas fa-tag"></i> Document Type: ${docType.toUpperCase()}</p>
-                            <p><i class="fas fa-map-marker-alt"></i> State: ${state.toUpperCase()}</p>
-                        </div>
-                        <p class="result-note"><i class="fas fa-exclamation-triangle"></i> Note: Additional charges may apply for franking and other services.</p>
-                    </div>
-                `;
-            }
-        }
-        
-        // Calculate Compensation
-        function calculateCompensation() {
-            const claimType = document.getElementById('claimType').value;
-            const monthlyIncome = parseInt(document.getElementById('monthlyIncome').value) || 0;
-            const age = parseInt(document.getElementById('age').value) || 35;
-            const disability = parseInt(document.getElementById('disability').value) || 0;
-            
-            let compensation = 0;
-            let multiplier = 0;
-            
-            // Calculate multiplier based on age
-            if (age <= 25) {
-                multiplier = 18;
-            } else if (age <= 30) {
-                multiplier = 17;
-            } else if (age <= 35) {
-                multiplier = 16;
-            } else if (age <= 40) {
-                multiplier = 15;
-            } else if (age <= 45) {
-                multiplier = 14;
-            } else if (age <= 50) {
-                multiplier = 13;
-            } else if (age <= 55) {
-                multiplier = 11;
-            } else if (age <= 60) {
-                multiplier = 9;
-            } else {
-                multiplier = 8;
-            }
-            
-            // Base compensation calculation
-            compensation = monthlyIncome * 12 * multiplier;
-            
-            // Adjust for disability
-            if (disability > 0) {
-                compensation = compensation * (disability / 100);
-            }
-            
-            // Add pain and suffering
-            let painSuffering = 0;
-            if (claimType === 'accident') {
-                painSuffering = compensation * 0.3; // 30% for pain and suffering
-            } else if (claimType === 'medical') {
-                painSuffering = compensation * 0.5; // 50% for medical negligence
-            }
-            
-            compensation += painSuffering;
-            
-            // Minimum compensation
-            compensation = Math.max(compensation, 100000);
-            
-            const resultDiv = document.getElementById('compResult');
-            if (resultDiv) {
-                resultDiv.innerHTML = `
-                    <div class="result-card">
-                        <h5>Estimated Compensation:</h5>
-                        <div class="result-amount">₹${compensation.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
-                        <div class="result-breakdown">
-                            <p><i class="fas fa-briefcase"></i> Monthly Income: ₹${monthlyIncome.toLocaleString()}</p>
-                            <p><i class="fas fa-user"></i> Age: ${age} years (Multiplier: ${multiplier})</p>
-                            <p><i class="fas fa-wheelchair"></i> Disability: ${disability}%</p>
-                            <p><i class="fas fa-stethoscope"></i> Claim Type: ${claimType.toUpperCase()}</p>
-                        </div>
-                        <p class="result-note"><i class="fas fa-exclamation-triangle"></i> Note: This is an estimate. Actual compensation depends on court judgment and specific circumstances.</p>
-                    </div>
-                `;
-            }
+            showToast('Opening Legal Calculator...', 'info');
+            // In a real app, this would open a calculator interface
+            alert('Legal Calculator\n\nChoose from:\n- Court Fee Calculator\n- Stamp Duty Calculator\n- Compensation Calculator\n- Interest Calculator\n\nThis feature would provide interactive calculators in the complete version.');
         }
         
         // Generate Document
@@ -5642,6 +4418,18 @@
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
+        }
+        
+        // Close Modal
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.classList.remove('modal-open');
+                setTimeout(() => {
+                    modal.remove();
+                }, 300);
+            }
         }
         
         // SIMPLE GOOGLE AUTH
@@ -5942,39 +4730,6 @@
                 });
             }
             
-            // Legal Tools Modal
-            const legalToolsBtn = document.getElementById('legalTools');
-            if (legalToolsBtn) {
-                legalToolsBtn.addEventListener('click', function() {
-                    const modal = document.getElementById('legalToolsModal');
-                    if (modal) {
-                        modal.style.display = 'flex';
-                        document.body.classList.add('modal-open');
-                    }
-                });
-            }
-            
-            const closeLegalTools = document.getElementById('closeLegalTools');
-            if (closeLegalTools) {
-                closeLegalTools.addEventListener('click', function() {
-                    const modal = document.getElementById('legalToolsModal');
-                    if (modal) {
-                        modal.style.display = 'none';
-                        document.body.classList.remove('modal-open');
-                    }
-                });
-            }
-            
-            const legalToolsModal = document.getElementById('legalToolsModal');
-            if (legalToolsModal) {
-                legalToolsModal.addEventListener('click', function(e) {
-                    if (e.target === this || e.target.classList.contains('modal-overlay')) {
-                        this.style.display = 'none';
-                        document.body.classList.remove('modal-open');
-                    }
-                });
-            }
-            
             // Chat interface
             const backToHome = document.getElementById('backToHome');
             if (backToHome) {
@@ -5989,16 +4744,6 @@
             const exportChat = document.getElementById('exportChat');
             if (exportChat) {
                 exportChat.addEventListener('click', exportChatHandler);
-            }
-            
-            const historyToggle = document.getElementById('historyToggle');
-            if (historyToggle) {
-                historyToggle.addEventListener('click', toggleHistory);
-            }
-            
-            const closeHistory = document.getElementById('closeHistory');
-            if (closeHistory) {
-                closeHistory.addEventListener('click', toggleHistory);
             }
             
             const sendMessage = document.getElementById('sendMessage');
@@ -6528,7 +5273,7 @@
             let exportText = '================================\n';
             exportText += 'LEGALSWAMI CHAT EXPORT\n';
             exportText += 'Generated on: ' + new Date().toLocaleString() + '\n';
-            exportText += 'Language: ' + getLanguageName(selectedLanguage) + '\n';
+            exportText += 'Language: ' + document.getElementById('languageSelect').value + '\n';
             exportText += '================================\n\n';
             
             messages.forEach(function(message) {
@@ -6559,80 +5304,6 @@
             
             showToast('Chat exported successfully!', 'success');
             console.log('📥 Chat exported');
-        }
-        
-        // TOGGLE HISTORY SIDEBAR
-        function toggleHistory() {
-            const sidebar = document.getElementById('historySidebar');
-            if (sidebar) {
-                sidebar.classList.toggle('active');
-                console.log('📜 History sidebar toggled');
-            }
-        }
-        
-        // LOAD CHAT HISTORY
-        async function loadChatHistory() {
-            try {
-                if (!window.legalSwamiAPI) {
-                    console.warn('API not initialized');
-                    return;
-                }
-                
-                console.log('📜 Loading chat history...');
-                const history = await window.legalSwamiAPI.getChatHistory(0, 10);
-                updateHistoryList(history);
-                console.log('✅ Chat history loaded:', history.length, 'items');
-            } catch (error) {
-                console.error('Failed to load history:', error);
-                showToast('Failed to load chat history', 'error');
-            }
-        }
-        
-        // UPDATE HISTORY LIST UI
-        function updateHistoryList(history) {
-            const historyList = document.getElementById('historyList');
-            if (!historyList) return;
-            
-            historyList.innerHTML = '';
-            
-            if (!history || history.length === 0) {
-                historyList.innerHTML = '<div class="history-empty"><i class="fas fa-history"></i><p>No chat history yet</p><small>Start chatting to see your history here</small></div>';
-                return;
-            }
-            
-            history.forEach(function(item) {
-                const historyItem = document.createElement('div');
-                historyItem.className = 'history-item';
-                historyItem.innerHTML = '<div class="history-item-header"><div class="history-item-title">' + 
-                    item.message.substring(0, 50) + (item.message.length > 50 ? '...' : '') + 
-                    '</div><span class="history-item-time">' + formatTime(item.createdAt) + 
-                    '</span></div><div class="history-item-preview">' + 
-                    item.message.substring(0, 100) + (item.message.length > 100 ? '...' : '') + 
-                    '</div><div class="history-item-actions"><button class="history-action-btn" onclick="loadChatFromHistory(\'' + 
-                    item.id + '\')"><i class="fas fa-eye"></i> View</button><button class="history-action-btn" onclick="deleteChatHistory(\'' + 
-                    item.id + '\')"><i class="fas fa-trash"></i> Delete</button></div>';
-                historyList.appendChild(historyItem);
-            });
-        }
-        
-        // LOAD CHAT FROM HISTORY
-        async function loadChatFromHistory(chatId) {
-            try {
-                showToast('Loading chat from history...', 'info');
-                toggleHistory();
-                console.log('📜 Loading chat:', chatId);
-            } catch (error) {
-                console.error('Failed to load chat:', error);
-                showToast('Failed to load chat', 'error');
-            }
-        }
-        
-        // DELETE CHAT HISTORY
-        function deleteChatHistory(chatId) {
-            if (confirm('Are you sure you want to delete this chat?')) {
-                showToast('Chat deleted successfully', 'success');
-                console.log('🗑️ Chat deleted:', chatId);
-            }
         }
         
         // SEND MESSAGE HANDLER
@@ -6700,8 +5371,6 @@
                 
                 addMessageToChat(data.response || 'No response received', false, generateDocument, documentType);
                 
-                await loadChatHistory();
-                
             } catch (error) {
                 console.error('❌ Failed to send message:', error);
                 addMessageToChat('Sorry, I encountered an error while processing your request. Please try again in a moment. If the problem persists, please check your internet connection.', false);
@@ -6751,7 +5420,6 @@
             } else {
                 messageContent = '<div class="message-header"><div class="message-sender">' + 
                     (isUser ? '👤 You' : '🤖 AI Assistant') + 
-                    (!isUser ? '<span class="message-sender-badge">AI</span>' : '') + 
                     '</div><div class="message-time">' + time + 
                     '</div></div><div class="message-text">' + formatMessageText(content) + 
                     '</div><div class="message-actions"><button class="message-action-btn" title="Copy"><i class="fas fa-copy"></i></button><button class="message-action-btn" title="Share"><i class="fas fa-share"></i></button><button class="message-action-btn" title="Save"><i class="fas fa-bookmark"></i></button></div>';
@@ -6861,18 +5529,6 @@
             console.log('🍪 Cookie Policy shown');
         }
         
-        // FORMAT TIME
-        function formatTime(dateString) {
-            const date = new Date(dateString);
-            const now = new Date();
-            const diff = now - date;
-            
-            if (diff < 60000) return 'Just now';
-            if (diff < 3600000) return Math.floor(diff / 60000) + 'm ago';
-            if (diff < 86400000) return Math.floor(diff / 3600000) + 'h ago';
-            return date.toLocaleDateString();
-        }
-        
         // SHOW TOAST NOTIFICATION
         function showToast(message, type) {
             type = type || 'info';
@@ -6912,8 +5568,6 @@
         }
         
         // MAKE FUNCTIONS AVAILABLE GLOBALLY
-        window.loadChatFromHistory = loadChatFromHistory;
-        window.deleteChatHistory = deleteChatHistory;
         window.searchActs = searchActs;
         window.searchCaseLaws = searchCaseLaws;
         window.openLegalCalculator = openLegalCalculator;
@@ -6923,10 +5577,6 @@
         window.openGuide = openGuide;
         window.downloadGuide = downloadGuide;
         window.finalizeDocument = finalizeDocument;
-        window.openLegalActSearch = searchActs;
-        window.calculateCourtFee = calculateCourtFee;
-        window.calculateStampDuty = calculateStampDuty;
-        window.calculateCompensation = calculateCompensation;
         window.closeModal = closeModal;
         
         console.log('✅ LegalSwami Premium App Initialization Complete!');
