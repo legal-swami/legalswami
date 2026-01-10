@@ -612,6 +612,79 @@
             </div>
         </section>
 
+        <!-- NEW SECTION: Legal Database -->
+        <section id="legalDatabase" class="database-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <span class="shimmer-text">Legal Database</span> & Research Tools
+                    </h2>
+                    <p class="section-subtitle">
+                        Access comprehensive legal resources and research materials
+                    </p>
+                </div>
+                
+                <div class="database-grid">
+                    <!-- Legal Acts Database -->
+                    <div class="database-card premium-card">
+                        <div class="database-icon">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <h3 class="database-title">Acts & Statutes</h3>
+                        <ul class="database-list">
+                            <li><i class="fas fa-search"></i> IPC (Indian Penal Code)</li>
+                            <li><i class="fas fa-search"></i> CrPC (Criminal Procedure Code)</li>
+                            <li><i class="fas fa-search"></i> CPC (Civil Procedure Code)</li>
+                            <li><i class="fas fa-search"></i> Constitution of India</li>
+                            <li><i class="fas fa-search"></i> Consumer Protection Act</li>
+                        </ul>
+                        <button class="btn-database" onclick="searchActs()">
+                            <i class="fas fa-search"></i>
+                            Search Acts
+                        </button>
+                    </div>
+                    
+                    <!-- Case Laws Database -->
+                    <div class="database-card premium-card">
+                        <div class="database-icon">
+                            <i class="fas fa-gavel"></i>
+                        </div>
+                        <h3 class="database-title">Case Laws Database</h3>
+                        <ul class="database-list">
+                            <li><i class="fas fa-balance-scale"></i> Supreme Court Judgments</li>
+                            <li><i class="fas fa-balance-scale"></i> High Court Judgments</li>
+                            <li><i class="fas fa-balance-scale"></i> Landmark Cases</li>
+                            <li><i class="fas fa-balance-scale"></i> Recent Judgments</li>
+                            <li><i class="fas fa-balance-scale"></i> Case Citations</li>
+                        </ul>
+                        <button class="btn-database" onclick="searchCaseLaws()">
+                            <i class="fas fa-gavel"></i>
+                            Search Case Laws
+                        </button>
+                    </div>
+                    
+                    <!-- Legal Calculator -->
+                    <div class="database-card premium-card">
+                        <div class="database-icon">
+                            <i class="fas fa-calculator"></i>
+                        </div>
+                        <h3 class="database-title">Legal Calculators</h3>
+                        <ul class="database-list">
+                            <li><i class="fas fa-calculator"></i> Court Fee Calculator</li>
+                            <li><i class="fas fa-calculator"></i> Stamp Duty Calculator</li>
+                            <li><i class="fas fa-calculator"></i> Compensation Calculator</li>
+                            <li><i class="fas fa-calculator"></i> Interest Calculator</li>
+                            <li><i class="fas fa-calculator"></i> Tax Calculator</li>
+                        </ul>
+                        <button class="btn-database" onclick="openLegalCalculator()">
+                            <i class="fas fa-calculator"></i>
+                            Open Calculator
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
         <!-- Document Types Section -->
         <section id="documents" class="documents-section">
             <div class="container">
@@ -638,7 +711,7 @@
                             <li><i class="fas fa-check-circle"></i> Service Agreement</li>
                             <li><i class="fas fa-check-circle"></i> Partnership Agreement</li>
                         </ul>
-                        <button class="btn-generate">
+                        <button class="btn-generate" onclick="generateDocument('rental-agreement')">
                             <i class="fas fa-magic"></i>
                             Generate Now
                         </button>
@@ -657,7 +730,7 @@
                             <li><i class="fas fa-check-circle"></i> Notice to Quit</li>
                             <li><i class="fas fa-check-circle"></i> Consumer Complaint</li>
                         </ul>
-                        <button class="btn-generate">
+                        <button class="btn-generate" onclick="generateDocument('legal-notice')">
                             <i class="fas fa-magic"></i>
                             Generate Now
                         </button>
@@ -676,9 +749,123 @@
                             <li><i class="fas fa-check-circle"></i> Gift Deed</li>
                             <li><i class="fas fa-check-circle"></i> Divorce Papers</li>
                         </ul>
-                        <button class="btn-generate">
+                        <button class="btn-generate" onclick="generateDocument('will-testament')">
                             <i class="fas fa-magic"></i>
                             Generate Now
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- NEW SECTION: Lawyer Directory -->
+        <section id="lawyerDirectory" class="lawyer-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        Find <span class="shimmer-text">Qualified Lawyers</span>
+                    </h2>
+                    <p class="section-subtitle">
+                        Connect with experienced legal professionals
+                    </p>
+                </div>
+                
+                <div class="lawyer-search">
+                    <div class="search-container">
+                        <i class="fas fa-search"></i>
+                        <input type="text" id="lawyerSearch" placeholder="Search by specialization, location, or name...">
+                        <button class="btn-search" onclick="searchLawyers()">
+                            <i class="fas fa-search"></i>
+                            Search
+                        </button>
+                    </div>
+                    
+                    <div class="specialization-filters">
+                        <button class="filter-btn active" data-specialization="all">All</button>
+                        <button class="filter-btn" data-specialization="criminal">Criminal</button>
+                        <button class="filter-btn" data-specialization="civil">Civil</button>
+                        <button class="filter-btn" data-specialization="corporate">Corporate</button>
+                        <button class="filter-btn" data-specialization="family">Family</button>
+                        <button class="filter-btn" data-specialization="property">Property</button>
+                    </div>
+                </div>
+                
+                <div class="lawyers-grid" id="lawyersGrid">
+                    <!-- Lawyers will be dynamically loaded here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- NEW SECTION: Legal Procedure Guides -->
+        <section id="legalGuides" class="guides-section">
+            <div class="container">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <span class="shimmer-text">Step-by-Step</span> Legal Guides
+                    </h2>
+                    <p class="section-subtitle">
+                        Understand legal procedures with easy-to-follow guides
+                    </p>
+                </div>
+                
+                <div class="guides-grid">
+                    <div class="guide-card premium-card">
+                        <div class="guide-icon">
+                            <i class="fas fa-user-plus"></i>
+                        </div>
+                        <h3 class="guide-title">How to File a Case</h3>
+                        <p class="guide-description">
+                            Complete step-by-step guide for filing different types of cases in Indian courts.
+                        </p>
+                        <div class="guide-steps">
+                            <span class="step">1. Document Preparation</span>
+                            <span class="step">2. Court Selection</span>
+                            <span class="step">3. Fee Payment</span>
+                            <span class="step">4. Case Number</span>
+                        </div>
+                        <button class="btn-guide" onclick="openGuide('file-case')">
+                            <i class="fas fa-book-open"></i>
+                            View Guide
+                        </button>
+                    </div>
+                    
+                    <div class="guide-card premium-card">
+                        <div class="guide-icon">
+                            <i class="fas fa-file-contract"></i>
+                        </div>
+                        <h3 class="guide-title">Document Registration Process</h3>
+                        <p class="guide-description">
+                            Learn how to register legal documents with proper procedures and fees.
+                        </p>
+                        <div class="guide-steps">
+                            <span class="step">1. Stamp Duty</span>
+                            <span class="step">2. Witness Arrangement</span>
+                            <span class="step">3. Registration Office</span>
+                            <span class="step">4. Final Registration</span>
+                        </div>
+                        <button class="btn-guide" onclick="openGuide('registration')">
+                            <i class="fas fa-book-open"></i>
+                            View Guide
+                        </button>
+                    </div>
+                    
+                    <div class="guide-card premium-card">
+                        <div class="guide-icon">
+                            <i class="fas fa-balance-scale"></i>
+                        </div>
+                        <h3 class="guide-title">Consumer Complaint Process</h3>
+                        <p class="guide-description">
+                            Guide to filing consumer complaints with proper documentation and procedures.
+                        </p>
+                        <div class="guide-steps">
+                            <span class="step">1. Complaint Drafting</span>
+                            <span class="step">2. Evidence Collection</span>
+                            <span class="step">3. Forum Selection</span>
+                            <span class="step">4. Hearing Process</span>
+                        </div>
+                        <button class="btn-guide" onclick="openGuide('consumer-complaint')">
+                            <i class="fas fa-book-open"></i>
+                            View Guide
                         </button>
                     </div>
                 </div>
@@ -970,7 +1157,7 @@
                             </div>
                             <div class="welcome-content">
                                 <h3>Welcome to LegalSwami! ⚖️</h3>
-                                <p>I'm your AI legal assistant. I can help you with legal advice, document generation, legal research, and understanding complex legal concepts in simple language.</p>
+                                <p>I'm your AI legal assistant. I can help you with:</p>
                                 
                                 <div class="welcome-features">
                                     <div class="welcome-feature">
@@ -987,6 +1174,21 @@
                                         <i class="fas fa-search"></i>
                                         <h5>Legal Research</h5>
                                         <p>Research laws and regulations</p>
+                                    </div>
+                                    <div class="welcome-feature">
+                                        <i class="fas fa-gavel"></i>
+                                        <h5>Case Law Search</h5>
+                                        <p>Find relevant case laws</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="language-selector">
+                                    <h5><i class="fas fa-language"></i> Select Language:</h5>
+                                    <div class="language-buttons">
+                                        <button class="lang-btn" data-lang="en">English</button>
+                                        <button class="lang-btn" data-lang="hi">हिंदी</button>
+                                        <button class="lang-btn" data-lang="mr">मराठी</button>
+                                        <button class="lang-btn" data-lang="gu">ગુજરાતી</button>
                                     </div>
                                 </div>
                             </div>
@@ -1037,6 +1239,10 @@
                                 <i class="fas fa-microphone"></i>
                                 <div class="tooltip">Voice Input</div>
                             </button>
+                            <button id="legalTools" class="input-action-btn" title="Legal Tools">
+                                <i class="fas fa-tools"></i>
+                                <div class="tooltip">Legal Tools</div>
+                            </button>
                         </div>
                         
                         <textarea 
@@ -1083,6 +1289,52 @@
                             <div class="dot"></div>
                         </div>
                         <span>LegalSwami is thinking...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Legal Tools Modal -->
+        <div id="legalToolsModal" class="modal">
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <button id="closeLegalTools" class="modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+                
+                <div class="modal-header">
+                    <div class="modal-icon legal-seal">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <h3>Legal Tools & Calculators</h3>
+                    <p>Access various legal utilities</p>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="tools-grid">
+                        <button class="tool-card" onclick="openCalculator('court-fee')">
+                            <i class="fas fa-calculator"></i>
+                            <h4>Court Fee Calculator</h4>
+                            <p>Calculate court fees for different cases</p>
+                        </button>
+                        
+                        <button class="tool-card" onclick="openCalculator('stamp-duty')">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                            <h4>Stamp Duty Calculator</h4>
+                            <p>Calculate stamp duty for documents</p>
+                        </button>
+                        
+                        <button class="tool-card" onclick="openCalculator('compensation')">
+                            <i class="fas fa-money-check-alt"></i>
+                            <h4>Compensation Calculator</h4>
+                            <p>Calculate compensation amounts</p>
+                        </button>
+                        
+                        <button class="tool-card" onclick="openLegalActSearch()">
+                            <i class="fas fa-search"></i>
+                            <h4>Act & Statute Search</h4>
+                            <p>Search legal acts and statutes</p>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -1173,6 +1425,9 @@
                             <li><a href="#home">Home</a></li>
                             <li><a href="#features">Features</a></li>
                             <li><a href="#documents">Documents</a></li>
+                            <li><a href="#legalDatabase">Legal Database</a></li>
+                            <li><a href="#lawyerDirectory">Find Lawyers</a></li>
+                            <li><a href="#legalGuides">Legal Guides</a></li>
                             <li><a href="#testimonials">Testimonials</a></li>
                             <li><a href="#pricing">Pricing</a></li>
                         </ul>
@@ -1242,11 +1497,34 @@
         let isMobileMenuOpen = false;
         let isChatOpen = false;
         let isLoginModalOpen = false;
+        let selectedLanguage = 'en';
         
         // Check if device is mobile
         const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
         const isTablet = window.innerWidth <= 1024 && window.innerWidth > 480;
         
+        // Legal Acts Database
+        const legalActs = [
+            { id: 1, name: "Indian Penal Code (IPC)", year: 1860, category: "criminal" },
+            { id: 2, name: "Code of Criminal Procedure (CrPC)", year: 1973, category: "criminal" },
+            { id: 3, name: "Code of Civil Procedure (CPC)", year: 1908, category: "civil" },
+            { id: 4, name: "Indian Evidence Act", year: 1872, category: "evidence" },
+            { id: 5, name: "Consumer Protection Act", year: 2019, category: "consumer" },
+            { id: 6, name: "Transfer of Property Act", year: 1882, category: "property" },
+            { id: 7, name: "Contract Act", year: 1872, category: "civil" },
+            { id: 8, name: "Constitution of India", year: 1950, category: "constitutional" }
+        ];
+
+        // Lawyers Database
+        const lawyers = [
+            { id: 1, name: "Adv. Rajesh Kumar", specialization: "criminal", experience: 15, location: "Delhi", rating: 4.8, fee: "₹2000/consultation" },
+            { id: 2, name: "Adv. Priya Sharma", specialization: "family", experience: 10, location: "Mumbai", rating: 4.7, fee: "₹2500/consultation" },
+            { id: 3, name: "Adv. Amit Patel", specialization: "corporate", experience: 12, location: "Bangalore", rating: 4.9, fee: "₹3000/consultation" },
+            { id: 4, name: "Adv. Sneha Desai", specialization: "property", experience: 8, location: "Pune", rating: 4.6, fee: "₹1800/consultation" },
+            { id: 5, name: "Adv. Rohit Verma", specialization: "civil", experience: 20, location: "Delhi", rating: 4.9, fee: "₹3500/consultation" },
+            { id: 6, name: "Adv. Anjali Singh", specialization: "consumer", experience: 7, location: "Chennai", rating: 4.5, fee: "₹1500/consultation" }
+        ];
+
         // DOM Content Loaded
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 LegalSwami Premium Frontend Initialized');
@@ -1293,8 +1571,52 @@
             // Setup device-specific optimizations
             setupDeviceSpecificOptimizations();
             
+            // Load lawyers
+            loadLawyers();
+            
+            // Setup language buttons
+            setupLanguageButtons();
+            
             console.log('✅ All initialization complete');
         });
+        
+        // NEW: Setup Language Buttons
+        function setupLanguageButtons() {
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const lang = this.getAttribute('data-lang');
+                    selectedLanguage = lang;
+                    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Update chat placeholder based on language
+                    const messageInput = document.getElementById('messageInput');
+                    if (messageInput) {
+                        if (lang === 'hi') {
+                            messageInput.placeholder = "अपना कानूनी प्रश्न यहां टाइप करें...";
+                        } else if (lang === 'mr') {
+                            messageInput.placeholder = "तुमचा कायदेशीर प्रश्न येथे टाइप करा...";
+                        } else if (lang === 'gu') {
+                            messageInput.placeholder = "તમારો કાનૂની પ્રશ્ન અહીં ટાઈપ કરો...";
+                        } else {
+                            messageInput.placeholder = "Type your legal question here...";
+                        }
+                    }
+                    
+                    showToast(`Language changed to ${getLanguageName(lang)}`, 'info');
+                });
+            });
+        }
+        
+        function getLanguageName(code) {
+            const languages = {
+                'en': 'English',
+                'hi': 'Hindi',
+                'mr': 'Marathi',
+                'gu': 'Gujarati'
+            };
+            return languages[code] || 'English';
+        }
         
         // Apply mobile optimizations
         function applyMobileOptimizations() {
@@ -1554,6 +1876,677 @@
                     }
                 });
             }
+        }
+        
+        // NEW: Load Lawyers
+        function loadLawyers(specialization = 'all') {
+            const lawyersGrid = document.getElementById('lawyersGrid');
+            if (!lawyersGrid) return;
+            
+            let filteredLawyers = lawyers;
+            if (specialization !== 'all') {
+                filteredLawyers = lawyers.filter(lawyer => lawyer.specialization === specialization);
+            }
+            
+            lawyersGrid.innerHTML = '';
+            
+            filteredLawyers.forEach(lawyer => {
+                const lawyerCard = document.createElement('div');
+                lawyerCard.className = 'lawyer-card premium-card';
+                
+                lawyerCard.innerHTML = `
+                    <div class="lawyer-avatar">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <div class="lawyer-info">
+                        <h3 class="lawyer-name">${lawyer.name}</h3>
+                        <div class="lawyer-specialization">
+                            <i class="fas fa-briefcase"></i>
+                            <span>${lawyer.specialization.charAt(0).toUpperCase() + lawyer.specialization.slice(1)} Law</span>
+                        </div>
+                        <div class="lawyer-details">
+                            <div class="detail">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>${lawyer.location}</span>
+                            </div>
+                            <div class="detail">
+                                <i class="fas fa-history"></i>
+                                <span>${lawyer.experience} years</span>
+                            </div>
+                            <div class="detail">
+                                <i class="fas fa-star"></i>
+                                <span>${lawyer.rating}/5</span>
+                            </div>
+                            <div class="detail">
+                                <i class="fas fa-rupee-sign"></i>
+                                <span>${lawyer.fee}</span>
+                            </div>
+                        </div>
+                        <button class="btn-contact" onclick="contactLawyer(${lawyer.id})">
+                            <i class="fas fa-phone"></i>
+                            Contact Lawyer
+                        </button>
+                    </div>
+                `;
+                
+                lawyersGrid.appendChild(lawyerCard);
+            });
+            
+            // Setup filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    const spec = this.getAttribute('data-specialization');
+                    loadLawyers(spec);
+                });
+            });
+        }
+        
+        // NEW: Contact Lawyer
+        function contactLawyer(lawyerId) {
+            const lawyer = lawyers.find(l => l.id === lawyerId);
+            if (lawyer) {
+                showToast(`Connecting you with ${lawyer.name}...`, 'info');
+                // In a real app, this would initiate a call or chat
+                setTimeout(() => {
+                    alert(`Contact Information:\n\nName: ${lawyer.name}\nSpecialization: ${lawyer.specialization}\nLocation: ${lawyer.location}\nFee: ${lawyer.fee}\n\nPlease note: This is a demo. In the real app, you would be able to call or message the lawyer directly.`);
+                }, 1000);
+            }
+        }
+        
+        // NEW: Search Lawyers
+        function searchLawyers() {
+            const searchInput = document.getElementById('lawyerSearch');
+            if (!searchInput) return;
+            
+            const query = searchInput.value.toLowerCase().trim();
+            if (!query) {
+                loadLawyers('all');
+                return;
+            }
+            
+            const filteredLawyers = lawyers.filter(lawyer => 
+                lawyer.name.toLowerCase().includes(query) ||
+                lawyer.specialization.toLowerCase().includes(query) ||
+                lawyer.location.toLowerCase().includes(query)
+            );
+            
+            const lawyersGrid = document.getElementById('lawyersGrid');
+            if (!lawyersGrid) return;
+            
+            lawyersGrid.innerHTML = '';
+            
+            if (filteredLawyers.length === 0) {
+                lawyersGrid.innerHTML = '<div class="no-results">No lawyers found matching your search criteria.</div>';
+                return;
+            }
+            
+            filteredLawyers.forEach(lawyer => {
+                const lawyerCard = document.createElement('div');
+                lawyerCard.className = 'lawyer-card premium-card';
+                
+                lawyerCard.innerHTML = `
+                    <div class="lawyer-avatar">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <div class="lawyer-info">
+                        <h3 class="lawyer-name">${lawyer.name}</h3>
+                        <div class="lawyer-specialization">
+                            <i class="fas fa-briefcase"></i>
+                            <span>${lawyer.specialization.charAt(0).toUpperCase() + lawyer.specialization.slice(1)} Law</span>
+                        </div>
+                        <div class="lawyer-details">
+                            <div class="detail">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>${lawyer.location}</span>
+                            </div>
+                            <div class="detail">
+                                <i class="fas fa-history"></i>
+                                <span>${lawyer.experience} years</span>
+                            </div>
+                            <div class="detail">
+                                <i class="fas fa-star"></i>
+                                <span>${lawyer.rating}/5</span>
+                            </div>
+                            <div class="detail">
+                                <i class="fas fa-rupee-sign"></i>
+                                <span>${lawyer.fee}</span>
+                            </div>
+                        </div>
+                        <button class="btn-contact" onclick="contactLawyer(${lawyer.id})">
+                            <i class="fas fa-phone"></i>
+                            Contact Lawyer
+                        </button>
+                    </div>
+                `;
+                
+                lawyersGrid.appendChild(lawyerCard);
+            });
+        }
+        
+        // NEW: Legal Act Search
+        function searchActs() {
+            showToast('Opening Legal Acts Search...', 'info');
+            // In a real app, this would open a search interface
+            alert('Legal Acts Search\n\nSearch through Indian legal acts and statutes:\n\n1. Indian Penal Code (IPC)\n2. Code of Criminal Procedure (CrPC)\n3. Code of Civil Procedure (CPC)\n4. Indian Evidence Act\n5. Consumer Protection Act\n6. Transfer of Property Act\n7. Contract Act\n8. Constitution of India\n\nThis feature would allow detailed search and browsing in the complete version.');
+        }
+        
+        // NEW: Case Law Search
+        function searchCaseLaws() {
+            showToast('Searching Case Laws...', 'info');
+            // In a real app, this would search a case law database
+            alert('Case Law Search\n\nSearch through:\n- Supreme Court Judgments\n- High Court Judgments\n- Landmark Cases\n- Recent Judgments\n\nThis feature would connect to a legal database in the complete version.');
+        }
+        
+        // NEW: Open Legal Calculator
+        function openLegalCalculator(type = 'court-fee') {
+            const modal = document.getElementById('legalToolsModal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+            
+            let calculatorHTML = '';
+            let title = '';
+            
+            switch(type) {
+                case 'court-fee':
+                    title = 'Court Fee Calculator';
+                    calculatorHTML = `
+                        <div class="calculator">
+                            <h4>Calculate Court Fees</h4>
+                            <div class="input-group">
+                                <label>Case Type:</label>
+                                <select id="caseType">
+                                    <option value="civil">Civil Case</option>
+                                    <option value="criminal">Criminal Case</option>
+                                    <option value="family">Family Dispute</option>
+                                    <option value="property">Property Case</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label>Case Value (₹):</label>
+                                <input type="number" id="caseValue" placeholder="Enter case value" min="0" value="100000">
+                            </div>
+                            <div class="input-group">
+                                <label>State:</label>
+                                <select id="state">
+                                    <option value="delhi">Delhi</option>
+                                    <option value="mumbai">Maharashtra</option>
+                                    <option value="bangalore">Karnataka</option>
+                                    <option value="chennai">Tamil Nadu</option>
+                                </select>
+                            </div>
+                            <button class="btn-calculate" onclick="calculateCourtFee()">Calculate</button>
+                            <div class="result" id="feeResult"></div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'stamp-duty':
+                    title = 'Stamp Duty Calculator';
+                    calculatorHTML = `
+                        <div class="calculator">
+                            <h4>Calculate Stamp Duty</h4>
+                            <div class="input-group">
+                                <label>Document Type:</label>
+                                <select id="docType">
+                                    <option value="sale">Sale Deed</option>
+                                    <option value="rent">Rent Agreement</option>
+                                    <option value="gift">Gift Deed</option>
+                                    <option value="mortgage">Mortgage Deed</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label>Property Value (₹):</label>
+                                <input type="number" id="propertyValue" placeholder="Enter property value" min="0" value="5000000">
+                            </div>
+                            <div class="input-group">
+                                <label>State:</label>
+                                <select id="stateStamp">
+                                    <option value="delhi">Delhi</option>
+                                    <option value="mumbai">Maharashtra</option>
+                                    <option value="bangalore">Karnataka</option>
+                                    <option value="chennai">Tamil Nadu</option>
+                                </select>
+                            </div>
+                            <button class="btn-calculate" onclick="calculateStampDuty()">Calculate</button>
+                            <div class="result" id="stampResult"></div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'compensation':
+                    title = 'Compensation Calculator';
+                    calculatorHTML = `
+                        <div class="calculator">
+                            <h4>Calculate Compensation</h4>
+                            <div class="input-group">
+                                <label>Type of Claim:</label>
+                                <select id="claimType">
+                                    <option value="accident">Road Accident</option>
+                                    <option value="medical">Medical Negligence</option>
+                                    <option value="employment">Employment Dispute</option>
+                                    <option value="consumer">Consumer Complaint</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label>Monthly Income (₹):</label>
+                                <input type="number" id="monthlyIncome" placeholder="Enter monthly income" min="0" value="30000">
+                            </div>
+                            <div class="input-group">
+                                <label>Age:</label>
+                                <input type="number" id="age" placeholder="Enter age" min="18" max="70" value="35">
+                            </div>
+                            <div class="input-group">
+                                <label>Disability (%):</label>
+                                <input type="number" id="disability" placeholder="Enter disability percentage" min="0" max="100" value="40">
+                            </div>
+                            <button class="btn-calculate" onclick="calculateCompensation()">Calculate</button>
+                            <div class="result" id="compResult"></div>
+                        </div>
+                    `;
+                    break;
+            }
+            
+            showCalculatorModal(title, calculatorHTML);
+        }
+        
+        // NEW: Show Calculator Modal
+        function showCalculatorModal(title, content) {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.id = 'calculatorModal';
+            modal.innerHTML = `
+                <div class="modal-overlay" onclick="closeModal('calculatorModal')"></div>
+                <div class="modal-content">
+                    <button class="modal-close" onclick="closeModal('calculatorModal')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <div class="modal-header">
+                        <div class="modal-icon legal-seal">
+                            <i class="fas fa-calculator"></i>
+                        </div>
+                        <h3>${title}</h3>
+                    </div>
+                    <div class="modal-body">
+                        ${content}
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            modal.style.display = 'flex';
+            document.body.classList.add('modal-open');
+        }
+        
+        // NEW: Close Modal
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.classList.remove('modal-open');
+                setTimeout(() => {
+                    modal.remove();
+                }, 300);
+            }
+        }
+        
+        // NEW: Calculate Court Fee
+        function calculateCourtFee() {
+            const caseType = document.getElementById('caseType').value;
+            const caseValue = parseInt(document.getElementById('caseValue').value) || 0;
+            const state = document.getElementById('state').value;
+            
+            let fee = 0;
+            
+            // Simplified calculation (in real app, this would be more complex)
+            if (caseValue <= 100000) {
+                fee = caseValue * 0.05; // 5%
+            } else if (caseValue <= 500000) {
+                fee = 5000 + (caseValue - 100000) * 0.04; // 4%
+            } else if (caseValue <= 1000000) {
+                fee = 21000 + (caseValue - 500000) * 0.03; // 3%
+            } else {
+                fee = 36000 + (caseValue - 1000000) * 0.02; // 2%
+            }
+            
+            // Minimum fee
+            fee = Math.max(fee, 100);
+            
+            const resultDiv = document.getElementById('feeResult');
+            if (resultDiv) {
+                resultDiv.innerHTML = `
+                    <div class="result-card">
+                        <h5>Calculated Court Fee:</h5>
+                        <div class="result-amount">₹${fee.toFixed(2)}</div>
+                        <div class="result-details">
+                            <p><i class="fas fa-info-circle"></i> Based on case value: ₹${caseValue.toLocaleString()}</p>
+                            <p><i class="fas fa-map-marker-alt"></i> State: ${state.toUpperCase()}</p>
+                            <p><i class="fas fa-gavel"></i> Case Type: ${caseType.toUpperCase()}</p>
+                        </div>
+                        <p class="result-note"><i class="fas fa-exclamation-triangle"></i> Note: This is an estimate. Actual fees may vary based on specific circumstances.</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // NEW: Calculate Stamp Duty
+        function calculateStampDuty() {
+            const docType = document.getElementById('docType').value;
+            const propertyValue = parseInt(document.getElementById('propertyValue').value) || 0;
+            const state = document.getElementById('stateStamp').value;
+            
+            let dutyRate = 0;
+            
+            // Simplified rates by state and document type
+            if (state === 'delhi') {
+                dutyRate = 0.06; // 6%
+            } else if (state === 'mumbai') {
+                dutyRate = 0.05; // 5%
+            } else if (state === 'bangalore') {
+                dutyRate = 0.055; // 5.5%
+            } else {
+                dutyRate = 0.07; // 7%
+            }
+            
+            // Adjust based on document type
+            if (docType === 'rent') {
+                dutyRate = 0.01; // 1% for rent agreements
+            } else if (docType === 'gift') {
+                dutyRate = dutyRate * 0.5; // 50% of normal rate for gifts
+            }
+            
+            const duty = propertyValue * dutyRate;
+            const registrationFee = Math.min(propertyValue * 0.01, 30000); // 1% max 30,000
+            const total = duty + registrationFee;
+            
+            const resultDiv = document.getElementById('stampResult');
+            if (resultDiv) {
+                resultDiv.innerHTML = `
+                    <div class="result-card">
+                        <h5>Calculated Stamp Duty:</h5>
+                        <div class="result-amount">₹${total.toFixed(2)}</div>
+                        <div class="result-breakdown">
+                            <p><i class="fas fa-file-invoice-dollar"></i> Stamp Duty: ₹${duty.toFixed(2)} (${(dutyRate*100).toFixed(1)}%)</p>
+                            <p><i class="fas fa-file-signature"></i> Registration Fee: ₹${registrationFee.toFixed(2)}</p>
+                            <p><i class="fas fa-tag"></i> Document Type: ${docType.toUpperCase()}</p>
+                            <p><i class="fas fa-map-marker-alt"></i> State: ${state.toUpperCase()}</p>
+                        </div>
+                        <p class="result-note"><i class="fas fa-exclamation-triangle"></i> Note: Additional charges may apply for franking and other services.</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // NEW: Calculate Compensation
+        function calculateCompensation() {
+            const claimType = document.getElementById('claimType').value;
+            const monthlyIncome = parseInt(document.getElementById('monthlyIncome').value) || 0;
+            const age = parseInt(document.getElementById('age').value) || 35;
+            const disability = parseInt(document.getElementById('disability').value) || 0;
+            
+            let compensation = 0;
+            let multiplier = 0;
+            
+            // Calculate multiplier based on age
+            if (age <= 25) {
+                multiplier = 18;
+            } else if (age <= 30) {
+                multiplier = 17;
+            } else if (age <= 35) {
+                multiplier = 16;
+            } else if (age <= 40) {
+                multiplier = 15;
+            } else if (age <= 45) {
+                multiplier = 14;
+            } else if (age <= 50) {
+                multiplier = 13;
+            } else if (age <= 55) {
+                multiplier = 11;
+            } else if (age <= 60) {
+                multiplier = 9;
+            } else {
+                multiplier = 8;
+            }
+            
+            // Base compensation calculation
+            compensation = monthlyIncome * 12 * multiplier;
+            
+            // Adjust for disability
+            if (disability > 0) {
+                compensation = compensation * (disability / 100);
+            }
+            
+            // Add pain and suffering
+            let painSuffering = 0;
+            if (claimType === 'accident') {
+                painSuffering = compensation * 0.3; // 30% for pain and suffering
+            } else if (claimType === 'medical') {
+                painSuffering = compensation * 0.5; // 50% for medical negligence
+            }
+            
+            compensation += painSuffering;
+            
+            // Minimum compensation
+            compensation = Math.max(compensation, 100000);
+            
+            const resultDiv = document.getElementById('compResult');
+            if (resultDiv) {
+                resultDiv.innerHTML = `
+                    <div class="result-card">
+                        <h5>Estimated Compensation:</h5>
+                        <div class="result-amount">₹${compensation.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
+                        <div class="result-breakdown">
+                            <p><i class="fas fa-briefcase"></i> Monthly Income: ₹${monthlyIncome.toLocaleString()}</p>
+                            <p><i class="fas fa-user"></i> Age: ${age} years (Multiplier: ${multiplier})</p>
+                            <p><i class="fas fa-wheelchair"></i> Disability: ${disability}%</p>
+                            <p><i class="fas fa-stethoscope"></i> Claim Type: ${claimType.toUpperCase()}</p>
+                        </div>
+                        <p class="result-note"><i class="fas fa-exclamation-triangle"></i> Note: This is an estimate. Actual compensation depends on court judgment and specific circumstances.</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // NEW: Generate Document
+        function generateDocument(type) {
+            showToast(`Generating ${type.replace('-', ' ')} document...`, 'info');
+            
+            // In a real app, this would open a form to fill details
+            setTimeout(() => {
+                const modal = document.createElement('div');
+                modal.className = 'modal';
+                modal.id = 'documentModal';
+                modal.innerHTML = `
+                    <div class="modal-overlay" onclick="closeModal('documentModal')"></div>
+                    <div class="modal-content">
+                        <button class="modal-close" onclick="closeModal('documentModal')">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <div class="modal-header">
+                            <div class="modal-icon legal-seal">
+                                <i class="fas fa-file-contract"></i>
+                            </div>
+                            <h3>Generate ${type.replace('-', ' ').toUpperCase()}</h3>
+                            <p>Fill in the details below</p>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Parties Information</label>
+                                <input type="text" id="party1" placeholder="First Party Name" class="form-input">
+                                <input type="text" id="party2" placeholder="Second Party Name" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label>Date</label>
+                                <input type="date" id="agreementDate" class="form-input" value="${new Date().toISOString().split('T')[0]}">
+                            </div>
+                            <div class="form-group">
+                                <label>Additional Details</label>
+                                <textarea id="additionalDetails" placeholder="Any specific terms or conditions..." class="form-textarea" rows="3"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Document Format</label>
+                                <select id="docFormat" class="form-select">
+                                    <option value="PDF">PDF Document</option>
+                                    <option value="DOC">Word Document</option>
+                                    <option value="TXT">Text File</option>
+                                </select>
+                            </div>
+                            <button class="btn-generate-final" onclick="finalizeDocument('${type}')">
+                                <i class="fas fa-magic"></i>
+                                Generate Document
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(modal);
+                modal.style.display = 'flex';
+                document.body.classList.add('modal-open');
+            }, 500);
+        }
+        
+        // NEW: Finalize Document Generation
+        function finalizeDocument(type) {
+            const party1 = document.getElementById('party1')?.value || 'Party A';
+            const party2 = document.getElementById('party2')?.value || 'Party B';
+            const date = document.getElementById('agreementDate')?.value || new Date().toISOString().split('T')[0];
+            const format = document.getElementById('docFormat')?.value || 'PDF';
+            
+            showToast(`Generating ${format} document...`, 'success');
+            
+            setTimeout(() => {
+                closeModal('documentModal');
+                showToast(`${type.replace('-', ' ')} document generated successfully!`, 'success');
+                
+                // In a real app, this would download the document
+                const blob = new Blob([`LEGAL DOCUMENT\n\nType: ${type}\nParties: ${party1} and ${party2}\nDate: ${date}\n\nThis is a sample generated document. In the complete version, this would be a fully formatted legal document.`], 
+                    { type: 'text/plain' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${type}_${date}.txt`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            }, 1500);
+        }
+        
+        // NEW: Open Legal Guide
+        function openGuide(guideType) {
+            const guides = {
+                'file-case': {
+                    title: 'How to File a Case in India',
+                    steps: [
+                        '1. Consult a Lawyer: Get professional legal advice',
+                        '2. Prepare Documents: Collect all relevant documents',
+                        '3. Draft Plaint/Petition: Prepare the legal document',
+                        '4. Pay Court Fees: Calculate and pay required fees',
+                        '5. File in Appropriate Court: Submit to correct jurisdiction',
+                        '6. Get Case Number: Receive unique case identifier',
+                        '7. Serve Notice: Notify the opposite party',
+                        '8. Attend Hearings: Participate in court proceedings'
+                    ]
+                },
+                'registration': {
+                    title: 'Document Registration Process',
+                    steps: [
+                        '1. Prepare Original Document',
+                        '2. Pay Stamp Duty (based on property value)',
+                        '3. Get Witnesses (minimum 2 required)',
+                        '4. Visit Sub-Registrar Office',
+                        '5. Submit Documents for Verification',
+                        '6. Pay Registration Fees',
+                        '7. Biometric Verification',
+                        '8. Receive Registered Document'
+                    ]
+                },
+                'consumer-complaint': {
+                    title: 'Consumer Complaint Process',
+                    steps: [
+                        '1. Collect Evidence (bills, receipts, correspondence)',
+                        '2. Send Legal Notice to opposite party',
+                        '3. Wait for Reply (30 days)',
+                        '4. File Complaint in Consumer Forum',
+                        '5. Pay Required Fees',
+                        '6. Attend Mediation/Conciliation',
+                        '7. Participate in Hearings',
+                        '8. Receive Order/Compensation'
+                    ]
+                }
+            };
+            
+            const guide = guides[guideType];
+            if (!guide) return;
+            
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.id = 'guideModal';
+            modal.innerHTML = `
+                <div class="modal-overlay" onclick="closeModal('guideModal')"></div>
+                <div class="modal-content">
+                    <button class="modal-close" onclick="closeModal('guideModal')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <div class="modal-header">
+                        <div class="modal-icon legal-seal">
+                            <i class="fas fa-book-open"></i>
+                        </div>
+                        <h3>${guide.title}</h3>
+                        <p>Step-by-step guide</p>
+                    </div>
+                    <div class="modal-body">
+                        <div class="guide-content">
+                            <div class="guide-steps">
+                                ${guide.steps.map(step => `<div class="guide-step">${step}</div>`).join('')}
+                            </div>
+                            <div class="guide-tips">
+                                <h4><i class="fas fa-lightbulb"></i> Important Tips:</h4>
+                                <ul>
+                                    <li>Always keep copies of all documents</li>
+                                    <li>Meet all deadlines strictly</li>
+                                    <li>Consult a lawyer for complex matters</li>
+                                    <li>Maintain proper communication records</li>
+                                </ul>
+                            </div>
+                            <button class="btn-download-guide" onclick="downloadGuide('${guideType}')">
+                                <i class="fas fa-download"></i>
+                                Download This Guide
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            modal.style.display = 'flex';
+            document.body.classList.add('modal-open');
+        }
+        
+        // NEW: Download Guide
+        function downloadGuide(guideType) {
+            const guideContent = {
+                'file-case': 'How to File a Case in India - Complete Guide.pdf',
+                'registration': 'Document Registration Process Guide.pdf',
+                'consumer-complaint': 'Consumer Complaint Process Guide.pdf'
+            };
+            
+            const filename = guideContent[guideType] || 'Legal_Guide.pdf';
+            showToast(`Downloading ${filename}...`, 'success');
+            
+            // In a real app, this would download the actual guide
+            const blob = new Blob(['This would be the complete guide document in PDF format.'], 
+                { type: 'application/pdf' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = filename;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
         }
         
         // SIMPLE GOOGLE AUTH
@@ -1854,6 +2847,39 @@
                 });
             }
             
+            // Legal Tools Modal
+            const legalToolsBtn = document.getElementById('legalTools');
+            if (legalToolsBtn) {
+                legalToolsBtn.addEventListener('click', function() {
+                    const modal = document.getElementById('legalToolsModal');
+                    if (modal) {
+                        modal.style.display = 'flex';
+                        document.body.classList.add('modal-open');
+                    }
+                });
+            }
+            
+            const closeLegalTools = document.getElementById('closeLegalTools');
+            if (closeLegalTools) {
+                closeLegalTools.addEventListener('click', function() {
+                    const modal = document.getElementById('legalToolsModal');
+                    if (modal) {
+                        modal.style.display = 'none';
+                        document.body.classList.remove('modal-open');
+                    }
+                });
+            }
+            
+            const legalToolsModal = document.getElementById('legalToolsModal');
+            if (legalToolsModal) {
+                legalToolsModal.addEventListener('click', function(e) {
+                    if (e.target === this || e.target.classList.contains('modal-overlay')) {
+                        this.style.display = 'none';
+                        document.body.classList.remove('modal-open');
+                    }
+                });
+            }
+            
             // Chat interface
             const backToHome = document.getElementById('backToHome');
             if (backToHome) {
@@ -1960,32 +2986,6 @@
             if (scheduleDemo) {
                 scheduleDemo.addEventListener('click', function() {
                     showToast('Demo scheduling feature coming soon!', 'info');
-                });
-            }
-            
-            // Generate document buttons
-            document.querySelectorAll('.btn-generate').forEach(function(btn) {
-                btn.addEventListener('click', function() {
-                    showToast('Document generation feature coming soon!', 'info');
-                });
-            });
-            
-            // Mobile specific events
-            if (isMobile) {
-                // Double tap to go back (for chat)
-                let lastTap = 0;
-                document.addEventListener('touchend', function(e) {
-                    const currentTime = new Date().getTime();
-                    const tapLength = currentTime - lastTap;
-                    
-                    if (tapLength < 500 && tapLength > 0 && isChatOpen) {
-                        // Double tap detected in chat
-                        const backBtn = document.getElementById('backToHome');
-                        if (backBtn) {
-                            backBtn.click();
-                        }
-                    }
-                    lastTap = currentTime;
                 });
             }
             
@@ -2233,7 +3233,8 @@
                                 },
                                 body: JSON.stringify({
                                     message: message,
-                                    generateDocument: document.getElementById('generateDocument') ? document.getElementById('generateDocument').checked : false
+                                    generateDocument: document.getElementById('generateDocument') ? document.getElementById('generateDocument').checked : false,
+                                    language: selectedLanguage
                                 })
                             });
                             
@@ -2432,6 +3433,7 @@
             let exportText = '================================\n';
             exportText += 'LEGALSWAMI CHAT EXPORT\n';
             exportText += 'Generated on: ' + new Date().toLocaleString() + '\n';
+            exportText += 'Language: ' + getLanguageName(selectedLanguage) + '\n';
             exportText += '================================\n\n';
             
             messages.forEach(function(message) {
@@ -2583,11 +3585,13 @@
                     headers: {
                         'Content-Type': 'application/json',
                         'x-user-id': userId,
-                        'x-request-id': 'req_' + Date.now()
+                        'x-request-id': 'req_' + Date.now(),
+                        'x-language': selectedLanguage
                     },
                     body: JSON.stringify({
                         message: message,
-                        generateDocument: generateDocument
+                        generateDocument: generateDocument,
+                        language: selectedLanguage
                     })
                 });
                 
@@ -2815,6 +3819,20 @@
         // MAKE FUNCTIONS AVAILABLE GLOBALLY
         window.loadChatFromHistory = loadChatFromHistory;
         window.deleteChatHistory = deleteChatHistory;
+        window.searchActs = searchActs;
+        window.searchCaseLaws = searchCaseLaws;
+        window.openLegalCalculator = openLegalCalculator;
+        window.searchLawyers = searchLawyers;
+        window.contactLawyer = contactLawyer;
+        window.generateDocument = generateDocument;
+        window.openGuide = openGuide;
+        window.downloadGuide = downloadGuide;
+        window.finalizeDocument = finalizeDocument;
+        window.openLegalActSearch = searchActs;
+        window.calculateCourtFee = calculateCourtFee;
+        window.calculateStampDuty = calculateStampDuty;
+        window.calculateCompensation = calculateCompensation;
+        window.closeModal = closeModal;
         
         console.log('✅ LegalSwami Premium App Initialization Complete!');
     </script>
