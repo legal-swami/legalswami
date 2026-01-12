@@ -234,6 +234,174 @@
     background: var(--light-border);
 }
 
+/* FIX 1: Make chat container hidden by default */
+#appContainer {
+    display: none !important;
+}
+
+/* FIX 2: Fix chat box visibility issue */
+.main-content {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+/* FIX 3: Google login button styling */
+.google-signin-btn {
+    background: white;
+    color: #757575;
+    border: 1px solid #dadce0;
+    border-radius: 4px;
+    padding: 12px 16px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+    transition: all 0.3s ease;
+    margin-bottom: 16px;
+}
+
+.google-signin-btn:hover {
+    background: #f8f9fa;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.google-signin-btn i {
+    color: #4285f4;
+    font-size: 18px;
+}
+
+/* Modal fixes */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1000;
+}
+
+.modal.active {
+    display: block;
+}
+
+.modal-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    position: relative;
+    background: var(--dark-bg);
+    border-radius: 16px;
+    padding: 2rem;
+    max-width: 480px;
+    width: 90%;
+    margin: 5% auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+.light-mode .modal-content {
+    background: var(--light-bg);
+}
+
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.modal-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: transparent;
+    border: none;
+    color: var(--dark-text-secondary);
+    cursor: pointer;
+    font-size: 1.25rem;
+    padding: 0.5rem;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.modal-close:hover {
+    background: var(--dark-surface);
+    color: var(--dark-text);
+}
+
+.light-mode .modal-close:hover {
+    background: var(--light-surface);
+    color: var(--light-text);
+}
+
+/* Fix scroll behavior */
+html, body {
+    overflow-x: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+.main-container {
+    position: relative;
+    overflow-x: hidden;
+}
+
+/* Loading screen fix */
+.loading-screen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--dark-bg);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    transition: opacity 0.3s ease;
+}
+
+.loading-screen.hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+/* Fix for mobile menu */
+.mobile-menu-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    z-index: 1000;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.mobile-menu-overlay.active {
+    display: block;
+    opacity: 1;
+}
+
     </style>
     
 </head>
@@ -1085,278 +1253,279 @@
             </div>
         </section>
 
-        <!-- CHATGPT-LIKE CHAT INTERFACE -->
-<div class="container" id="appContainer" style="display: none;">
-        <header>
-            <div class="logo">
-                <button class="sidebar-toggle" id="sidebarToggle">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <div class="logo-icon">
-                    <i class="fas fa-scale-balanced"></i>
+        <!-- CHATGPT-LIKE CHAT INTERFACE (Hidden by default) -->
+        <div class="container" id="appContainer">
+            <header>
+                <div class="logo">
+                    <button class="sidebar-toggle" id="sidebarToggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+                    <div class="logo-icon">
+                        <i class="fas fa-scale-balanced"></i>
+                    </div>
+                    <h1>LegalSwami</h1>
                 </div>
-                <h1>LegalSwami</h1>
-            </div>
+                
+                <div class="header-actions">
+                    <div class="status-indicator">
+                        <div class="status-dot"></div>
+                        <span class="hide-on-mobile">AI Assistant Ready</span>
+                    </div>
+                    
+                    <!-- Search Counter Display -->
+                    <div class="search-counter" id="searchCounter">
+                        <i class="fas fa-search"></i>
+                        <span class="hide-on-mobile">Free searches: 500/500</span>
+                    </div>
+                    
+                    <!-- Login Button -->
+                    <button class="login-btn" id="chatHeaderLoginBtn">
+                        <i class="fas fa-sign-in-alt"></i>
+                        <span class="hide-on-mobile">Login</span>
+                    </button>
+                    
+                    <button class="header-btn voice-search-btn" id="voiceSearchBtn" title="Voice Search">
+                        <i class="fas fa-microphone"></i>
+                    </button>
+                    <button class="header-btn theme-toggle" id="themeToggle" title="Toggle Theme">
+                        <i class="fas fa-sun"></i>
+                    </button>
+                    <button class="header-btn" id="clearChatBtn">
+                        <i class="fas fa-broom"></i>
+                        <span class="hide-on-mobile">Clear Chat</span>
+                    </button>
+                    <button class="header-btn" id="downloadCurrentBtn">
+                        <i class="fas fa-download"></i>
+                        <span class="hide-on-mobile">Download Chat</span>
+                    </button>
+                    <button class="header-btn" id="suggestionsBtn">
+                        <i class="fas fa-lightbulb"></i>
+                        <span class="hide-on-mobile">Suggestions</span>
+                    </button>
+                    
+                    <!-- User Profile -->
+                    <div class="user-profile" id="userProfile" style="display: none;">
+                        <div class="user-avatar" id="userAvatar">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="user-info">
+                            <div class="user-name" id="userName">Guest User</div>
+                            <div class="user-email" id="userEmail">Local Browser Mode</div>
+                        </div>
+                        <i class="fas fa-chevron-down" style="font-size: 0.75rem;"></i>
+                    </div>
+                </div>
+            </header>
             
-            <div class="header-actions">
-                <div class="status-indicator">
-                    <div class="status-dot"></div>
-                    <span class="hide-on-mobile">AI Assistant Ready</span>
-                </div>
-                
-                <!-- Search Counter Display -->
-                <div class="search-counter" id="searchCounter">
-                    <i class="fas fa-search"></i>
-                    <span class="hide-on-mobile">Free searches: 500/500</span>
-                </div>
-                
-                <!-- Login Button -->
-                <button class="login-btn" id="headerLoginBtn">
-                    <i class="fas fa-sign-in-alt"></i>
-                    <span class="hide-on-mobile">Login</span>
-                </button>
-                
-                <button class="header-btn voice-search-btn" id="voiceSearchBtn" title="Voice Search">
-                    <i class="fas fa-microphone"></i>
-                </button>
-                <button class="header-btn theme-toggle" id="themeToggle" title="Toggle Theme">
-                    <i class="fas fa-sun"></i>
-                </button>
-                <button class="header-btn" id="clearChatBtn">
-                    <i class="fas fa-broom"></i>
-                    <span class="hide-on-mobile">Clear Chat</span>
-                </button>
-                <button class="header-btn" id="downloadCurrentBtn">
-                    <i class="fas fa-download"></i>
-                    <span class="hide-on-mobile">Download Chat</span>
-                </button>
-                <button class="header-btn" id="suggestionsBtn">
-                    <i class="fas fa-lightbulb"></i>
-                    <span class="hide-on-mobile">Suggestions</span>
-                </button>
-                
-                <!-- User Profile -->
-                <div class="user-profile" id="userProfile" style="display: none;">
-                    <div class="user-avatar" id="userAvatar">
+            <!-- User Dropdown Menu -->
+            <div class="user-dropdown" id="userDropdown">
+                <div class="dropdown-header">
+                    <div class="user-avatar" id="dropdownAvatar">
                         <i class="fas fa-user"></i>
                     </div>
                     <div class="user-info">
-                        <div class="user-name" id="userName">Guest User</div>
-                        <div class="user-email" id="userEmail">Local Browser Mode</div>
+                        <div class="user-name" id="dropdownName">Guest User</div>
+                        <div class="user-email" id="dropdownEmail">Local Browser Mode</div>
                     </div>
-                    <i class="fas fa-chevron-down" style="font-size: 0.75rem;"></i>
                 </div>
-            </div>
-        </header>
-        
-        <!-- User Dropdown Menu -->
-        <div class="user-dropdown" id="userDropdown">
-            <div class="dropdown-header">
-                <div class="user-avatar" id="dropdownAvatar">
-                    <i class="fas fa-user"></i>
-                </div>
-                <div class="user-info">
-                    <div class="user-name" id="dropdownName">Guest User</div>
-                    <div class="user-email" id="dropdownEmail">Local Browser Mode</div>
-                </div>
-            </div>
-            
-            <div class="dropdown-items">
-                <button class="dropdown-item" id="profileBtn">
-                    <i class="fas fa-user-circle"></i>
-                    <span>My Profile</span>
-                </button>
-                <button class="dropdown-item" id="settingsBtn">
-                    <i class="fas fa-cog"></i>
-                    <span>Settings</span>
-                </button>
-                <button class="dropdown-item" id="historyBtn">
-                    <i class="fas fa-history"></i>
-                    <span>Chat History</span>
-                </button>
-                <button class="dropdown-item" id="helpBtn">
-                    <i class="fas fa-question-circle"></i>
-                    <span>Help & Support</span>
-                </button>
-                <div class="dropdown-footer">
-                    <button class="dropdown-item logout" id="logoutBtn">
-                        <i class="fas fa-sign-out-alt"></i>
-                        <span>Clear Local Data</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-        
-        <div class="main-content">
-            <!-- Down Arrow Button (Scroll to Bottom) -->
-            <button class="scroll-to-bottom-btn" id="scrollToBottomBtn" title="Scroll to bottom">
-                <i class="fas fa-chevron-down"></i>
-            </button>
-            
-            <div class="sidebar-overlay" id="sidebarOverlay"></div>
-            
-            <aside class="sidebar" id="sidebar">
-                <!-- Sidebar Close Button -->
-                <button class="sidebar-close" id="sidebarClose">
-                    <i class="fas fa-times"></i>
-                </button>
                 
-                <!-- Sidebar Tabs -->
-                <div class="sidebar-tabs">
-                    <button class="sidebar-tab active" data-tab="legal-topics">
-                        <i class="fas fa-book"></i>
-                        <span class="hide-on-mobile">Legal Topics</span>
+                <div class="dropdown-items">
+                    <button class="dropdown-item" id="profileBtn">
+                        <i class="fas fa-user-circle"></i>
+                        <span>My Profile</span>
                     </button>
-                    <button class="sidebar-tab" data-tab="chat-history">
+                    <button class="dropdown-item" id="settingsBtn">
+                        <i class="fas fa-cog"></i>
+                        <span>Settings</span>
+                    </button>
+                    <button class="dropdown-item" id="historyBtn">
                         <i class="fas fa-history"></i>
-                        <span class="hide-on-mobile">Chat History</span>
+                        <span>Chat History</span>
                     </button>
-                </div>
-                
-                <!-- Legal Topics Tab Content -->
-                <div class="tab-content active" id="legal-topics-content">
-                    <div class="sidebar-header">
-                        <h2><i class="fas fa-book"></i> Legal Topics</h2>
-                    </div>
-                    
-                    <div class="sidebar-section">
-                        <h3><i class="fas fa-gavel"></i> Common Legal Areas</h3>
-                        <div class="topic-list">
-                            <button class="topic-item" data-topic="contract">
-                                <i class="fas fa-file-contract"></i>
-                                <span>Contract Law</span>
-                            </button>
-                            <button class="topic-item" data-topic="employment">
-                                <i class="fas fa-briefcase"></i>
-                                <span>Employment Law</span>
-                            </button>
-                            <button class="topic-item" data-topic="intellectual">
-                                <i class="fas fa-lightbulb"></i>
-                                <span>Intellectual Property</span>
-                            </button>
-                            <button class="topic-item" data-topic="realestate">
-                                <i class="fas fa-house"></i>
-                                <span>Real Estate Law</span>
-                            </button>
-                            <button class="topic-item" data-topic="family">
-                                <i class="fas fa-heart"></i>
-                                <span>Family Law</span>
-                            </button>
-                            <button class="topic-item" data-topic="criminal">
-                                <i class="fas fa-gavel"></i>
-                                <span>Criminal Law</span>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Active Topics Tabs Section -->
-                    <div class="sidebar-section" id="activeTopicsSection" style="display: none;">
-                        <h3><i class="fas fa-folder-open"></i> Active Topics</h3>
-                        <div class="topic-list" id="activeTopicsList">
-                            <!-- Active topics will be added here dynamically -->
-                        </div>
-                    </div>
-                    
-                    <div class="sidebar-section">
-                        <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
-                        <div class="quick-actions">
-                            <button class="action-item" data-action="document-drafts">
-                                <i class="fas fa-file-alt"></i>
-                                <span>Document Drafts</span>
-                            </button>
-                            <button class="action-item" data-action="legal-research">
-                                <i class="fas fa-search"></i>
-                                <span>Legal Research</span>
-                            </button>
-                            <button class="action-item" data-action="case-analysis">
-                                <i class="fas fa-chart-bar"></i>
-                                <span>Case Analysis</span>
-                            </button>
-                        </div>
+                    <button class="dropdown-item" id="helpBtn">
+                        <i class="fas fa-question-circle"></i>
+                        <span>Help & Support</span>
+                    </button>
+                    <div class="dropdown-footer">
+                        <button class="dropdown-item logout" id="logoutBtn">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Clear Local Data</span>
+                        </button>
                     </div>
                 </div>
+            </div>
+            
+            <div class="main-content">
+                <!-- Down Arrow Button (Scroll to Bottom) -->
+                <button class="scroll-to-bottom-btn" id="scrollToBottomBtn" title="Scroll to bottom">
+                    <i class="fas fa-chevron-down"></i>
+                </button>
                 
-                <!-- Chat History Tab Content -->
-                <div class="tab-content" id="chat-history-content">
-                    <div class="history-header">
-                        <h2><i class="fas fa-history"></i> Chat History</h2>
-                        <button class="new-chat-btn" id="newChatBtn">
-                            <i class="fas fa-plus"></i>
-                            <span class="hide-on-mobile">New Chat</span>
+                <div class="sidebar-overlay" id="sidebarOverlay"></div>
+                
+                <aside class="sidebar" id="sidebar">
+                    <!-- Sidebar Close Button -->
+                    <button class="sidebar-close" id="sidebarClose">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    
+                    <!-- Sidebar Tabs -->
+                    <div class="sidebar-tabs">
+                        <button class="sidebar-tab active" data-tab="legal-topics">
+                            <i class="fas fa-book"></i>
+                            <span class="hide-on-mobile">Legal Topics</span>
+                        </button>
+                        <button class="sidebar-tab" data-tab="chat-history">
+                            <i class="fas fa-history"></i>
+                            <span class="hide-on-mobile">Chat History</span>
                         </button>
                     </div>
                     
-                    <div class="history-list" id="historyList">
-                        <!-- History items will be loaded here -->
-                        <div class="empty-history">
-                            <i class="fas fa-comments"></i>
-                            <p>No chat history yet</p>
-                            <p style="font-size: 0.8125rem; margin-top: 0.5rem;">Start a conversation to see it here</p>
+                    <!-- Legal Topics Tab Content -->
+                    <div class="tab-content active" id="legal-topics-content">
+                        <div class="sidebar-header">
+                            <h2><i class="fas fa-book"></i> Legal Topics</h2>
                         </div>
-                    </div>
-                </div>
-            </aside>
-            
-            <main class="chat-container" id="chatContainer">
-                <div class="chat-messages" id="chatMessages">
-                    <!-- Welcome Message will be added dynamically -->
-                </div>
-                
-                <!-- Scroll Position Indicator -->
-                <div class="scroll-position-indicator" id="scrollPositionIndicator">
-                    Scroll to see more messages
-                </div>
-                
-                <div class="input-container">
-                    <div class="input-area">
-                        <!-- Attachments Preview -->
-                        <div class="attachments-preview" id="attachmentsPreview" style="display: none;"></div>
                         
-                        <div class="voice-input-status" id="voiceInputStatus">
-                            <div class="voice-animation">
-                                <div class="voice-bar"></div>
-                                <div class="voice-bar"></div>
-                                <div class="voice-bar"></div>
-                                <div class="voice-bar"></div>
-                                <div class="voice-bar"></div>
+                        <div class="sidebar-section">
+                            <h3><i class="fas fa-gavel"></i> Common Legal Areas</h3>
+                            <div class="topic-list">
+                                <button class="topic-item" data-topic="contract">
+                                    <i class="fas fa-file-contract"></i>
+                                    <span>Contract Law</span>
+                                </button>
+                                <button class="topic-item" data-topic="employment">
+                                    <i class="fas fa-briefcase"></i>
+                                    <span>Employment Law</span>
+                                </button>
+                                <button class="topic-item" data-topic="intellectual">
+                                    <i class="fas fa-lightbulb"></i>
+                                    <span>Intellectual Property</span>
+                                </button>
+                                <button class="topic-item" data-topic="realestate">
+                                    <i class="fas fa-house"></i>
+                                    <span>Real Estate Law</span>
+                                </button>
+                                <button class="topic-item" data-topic="family">
+                                    <i class="fas fa-heart"></i>
+                                    <span>Family Law</span>
+                                </button>
+                                <button class="topic-item" data-topic="criminal">
+                                    <i class="fas fa-gavel"></i>
+                                    <span>Criminal Law</span>
+                                </button>
                             </div>
-                            <span>Listening... Speak now</span>
                         </div>
                         
-                        <textarea 
-                            id="userInput" 
-                            placeholder="Ask any legal question or attach files (images, PDF, TXT)... (Press Enter for new line, Ctrl+Enter to send)"
-                            rows="1"
-                        ></textarea>
+                        <!-- Active Topics Tabs Section -->
+                        <div class="sidebar-section" id="activeTopicsSection" style="display: none;">
+                            <h3><i class="fas fa-folder-open"></i> Active Topics</h3>
+                            <div class="topic-list" id="activeTopicsList">
+                                <!-- Active topics will be added here dynamically -->
+                            </div>
+                        </div>
                         
-                        <div class="voice-input-text" id="voiceInputText"></div>
-                        
-                        <div class="input-buttons">
-                            <!-- Emoji Picker Button -->
-                            <button class="emoji-picker-btn" id="emojiPickerBtn" title="Insert emoji">
-                                <i class="far fa-smile"></i>
-                            </button>
-                            
-                            <!-- Attachment Button -->
-                            <button class="attachment-btn" id="attachmentBtn" title="Attach files (images, PDF, TXT)">
-                                <i class="fas fa-paperclip"></i>
-                            </button>
-                            
-                            <!-- Voice Input Button -->
-                            <button class="input-microphone-btn" id="inputMicrophoneBtn" title="Voice input">
-                                <i class="fas fa-microphone"></i>
-                            </button>
-                            
-                            <!-- Send/Stop Button -->
-                            <button class="send-button" id="sendButton">
-                                <i class="fas fa-paper-plane"></i> <span class="hide-on-mobile">Send</span>
-                            </button>
+                        <div class="sidebar-section">
+                            <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+                            <div class="quick-actions">
+                                <button class="action-item" data-action="document-drafts">
+                                    <i class="fas fa-file-alt"></i>
+                                    <span>Document Drafts</span>
+                                </button>
+                                <button class="action-item" data-action="legal-research">
+                                    <i class="fas fa-search"></i>
+                                    <span>Legal Research</span>
+                                </button>
+                                <button class="action-item" data-action="case-analysis">
+                                    <i class="fas fa-chart-bar"></i>
+                                    <span>Case Analysis</span>
+                                </button>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </main>
+                    
+                    <!-- Chat History Tab Content -->
+                    <div class="tab-content" id="chat-history-content">
+                        <div class="history-header">
+                            <h2><i class="fas fa-history"></i> Chat History</h2>
+                            <button class="new-chat-btn" id="newChatBtn">
+                                <i class="fas fa-plus"></i>
+                                <span class="hide-on-mobile">New Chat</span>
+                            </button>
+                        </div>
+                        
+                        <div class="history-list" id="historyList">
+                            <!-- History items will be loaded here -->
+                            <div class="empty-history">
+                                <i class="fas fa-comments"></i>
+                                <p>No chat history yet</p>
+                                <p style="font-size: 0.8125rem; margin-top: 0.5rem;">Start a conversation to see it here</p>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+                
+                <main class="chat-container" id="chatContainer">
+                    <div class="chat-messages" id="chatMessages">
+                        <!-- Welcome Message will be added dynamically -->
+                    </div>
+                    
+                    <!-- Scroll Position Indicator -->
+                    <div class="scroll-position-indicator" id="scrollPositionIndicator">
+                        Scroll to see more messages
+                    </div>
+                    
+                    <div class="input-container">
+                        <div class="input-area">
+                            <!-- Attachments Preview -->
+                            <div class="attachments-preview" id="attachmentsPreview" style="display: none;"></div>
+                            
+                            <div class="voice-input-status" id="voiceInputStatus">
+                                <div class="voice-animation">
+                                    <div class="voice-bar"></div>
+                                    <div class="voice-bar"></div>
+                                    <div class="voice-bar"></div>
+                                    <div class="voice-bar"></div>
+                                    <div class="voice-bar"></div>
+                                </div>
+                                <span>Listening... Speak now</span>
+                            </div>
+                            
+                            <textarea 
+                                id="userInput" 
+                                placeholder="Ask any legal question or attach files (images, PDF, TXT)... (Press Enter for new line, Ctrl+Enter to send)"
+                                rows="1"
+                            ></textarea>
+                            
+                            <div class="voice-input-text" id="voiceInputText"></div>
+                            
+                            <div class="input-buttons">
+                                <!-- Emoji Picker Button -->
+                                <button class="emoji-picker-btn" id="emojiPickerBtn" title="Insert emoji">
+                                    <i class="far fa-smile"></i>
+                                </button>
+                                
+                                <!-- Attachment Button -->
+                                <button class="attachment-btn" id="attachmentBtn" title="Attach files (images, PDF, TXT)">
+                                    <i class="fas fa-paperclip"></i>
+                                </button>
+                                
+                                <!-- Voice Input Button -->
+                                <button class="input-microphone-btn" id="inputMicrophoneBtn" title="Voice input">
+                                    <i class="fas fa-microphone"></i>
+                                </button>
+                                
+                                <!-- Send/Stop Button -->
+                                <button class="send-button" id="sendButton">
+                                    <i class="fas fa-paper-plane"></i> <span class="hide-on-mobile">Send</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </main>
+            </div>
         </div>
-        
+
         <!-- Download Modal (for full chat) -->
         <div class="modal-overlay" id="downloadModal">
             <div class="modal">
@@ -1521,7 +1690,6 @@
             <i class="fas fa-check-circle"></i>
             <span id="toast-message">Message sent successfully</span>
         </div>
-    </div>
 
         <!-- Legal Tools Modal -->
         <div id="legalToolsModal" class="modal">
@@ -2089,8 +2257,7 @@
         const sidebarTabs = document.querySelectorAll('.sidebar-tab');
         const newChatBtn = document.getElementById('newChatBtn');
         const attachmentBtn = document.getElementById('attachmentBtn');
-        const guestLoginBtn = document.getElementById('guestLoginBtn');
-        const headerLoginBtn = document.getElementById('headerLoginBtn');
+        const headerLoginBtn = document.getElementById('chatHeaderLoginBtn');
         const logoutBtn = document.getElementById('logoutBtn');
         const userProfile = document.getElementById('userProfile');
         const emojiPickerBtn = document.getElementById('emojiPickerBtn');
@@ -2320,12 +2487,6 @@
                 }
             });
         });
-        // Guest login button click
-        if (guestLoginBtn) {
-            guestLoginBtn.addEventListener('click', function() {
-                initializeAppForGuest();
-            });
-        }
         // Header login button click
         headerLoginBtn.addEventListener('click', function() {
             document.getElementById('loginModal').classList.add('active');
@@ -4532,8 +4693,14 @@
     function setupBackendEventListeners() {
         // Header login button
         const headerLoginBtn = document.getElementById('headerLoginBtn');
+        const chatHeaderLoginBtn = document.getElementById('chatHeaderLoginBtn');
+        
         if (headerLoginBtn) {
             headerLoginBtn.addEventListener('click', showLoginModal);
+        }
+        
+        if (chatHeaderLoginBtn) {
+            chatHeaderLoginBtn.addEventListener('click', showLoginModal);
         }
         
         // Demo login button
@@ -4546,6 +4713,26 @@
         const customGoogleBtn = document.getElementById('customGoogleBtn');
         if (customGoogleBtn) {
             customGoogleBtn.addEventListener('click', handleCustomGoogleLogin);
+        }
+        
+        // Close login modal
+        const closeLoginModal = document.getElementById('closeLoginModal');
+        if (closeLoginModal) {
+            closeLoginModal.addEventListener('click', function() {
+                document.getElementById('loginModal').classList.remove('active');
+            });
+        }
+        
+        // Start chat buttons
+        const startChatBtn = document.getElementById('startChatBtn');
+        const ctaStartChat = document.getElementById('ctaStartChat');
+        
+        if (startChatBtn) {
+            startChatBtn.addEventListener('click', startChat);
+        }
+        
+        if (ctaStartChat) {
+            ctaStartChat.addEventListener('click', startChat);
         }
     }
 
@@ -4785,17 +4972,24 @@
     function startChat() {
         console.log('💬 Starting chat...');
         
+        document.getElementById('appContainer').style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+        isChatOpen = true;
+        
         if (!isLoggedIn) {
-            showToast('Please login to start chatting', 'warning');
-            showLoginModal();
-            return;
+            initializeAppForGuest();
+        } else {
+            // If already logged in, just show the chat
+            initializeChatApp();
         }
         
-        // Focus on chat input
-        const userInput = document.getElementById('userInput');
-        if (userInput) {
-            userInput.focus();
-        }
+        // Scroll to chat container
+        setTimeout(() => {
+            window.scrollTo({
+                top: document.getElementById('appContainer').offsetTop,
+                behavior: 'smooth'
+            });
+        }, 100);
     }
 
     // Apply mobile optimizations
@@ -4938,9 +5132,12 @@
                 if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
                     if (diffX > 0 && isChatOpen) {
                         // Swipe left - go back to home
-                        const backBtn = document.getElementById('backToHome');
-                        if (backBtn) {
-                            backBtn.click();
+                        const appContainer = document.getElementById('appContainer');
+                        if (appContainer && appContainer.style.display === 'flex') {
+                            appContainer.style.display = 'none';
+                            isChatOpen = false;
+                            document.body.style.overflow = '';
+                            showToast('Returned to home screen', 'info');
                         }
                     }
                 }
@@ -5032,21 +5229,13 @@
         // Setup language buttons
         setupLanguageButtons();
         
-        // Force guest login on page load for testing
+        // Auto-initialize guest mode after 2 seconds
         setTimeout(function() {
             if (!isLoggedIn && !document.getElementById('loginModal').classList.contains('active')) {
                 console.log("Auto-initializing guest mode...");
-                initializeAppForGuest();
+                // Don't auto-start chat, just make sure login modal is available
             }
-        }, 1000);
-        
-        const guestBtn = document.getElementById('guestLoginBtn');
-        if (guestBtn) {
-            guestBtn.addEventListener('click', function() {
-                console.log("Guest button clicked!");
-                initializeAppForGuest();
-            });
-        }
+        }, 2000);
         
         initializeSearchCounter();
         
