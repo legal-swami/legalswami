@@ -11,2575 +11,270 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
-    <!-- jsPDF Library for PDF generation -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" crossorigin="anonymous"></script>
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/chat.css">
+    <link rel="stylesheet" href="css/responsive.css">
     
+    <!-- Google Client ID -->
+    <meta name="google-client-id" 
+          content="166511615962-bohur5q8d4i5hud6icr4185kcte9enk8.apps.googleusercontent.com">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>⚖️</text></svg>">
+    
+    <!-- Theme Color -->
+    <meta name="theme-color" content="#0f172a">
+    
+    <!-- Apple Mobile Web App Capable -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:title" content="LegalSwami - AI Legal Assistant">
+    <meta property="og:description" content="Get instant legal advice, generate documents, and understand laws with AI">
+    <meta property="og:image" content="https://legalswami.com/og-image.jpg">
+    <meta property="og:url" content="https://legalswami.com">
+
     <style>
-        /* Reset and Base Styles */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-            background: #0f172a;
-            color: #f8fafc;
-            line-height: 1.6;
-            overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
-        }
-
-        /* Loading Screen */
-        .loading-screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: #0f172a;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 9999;
-            transition: opacity 0.3s ease;
-        }
-
-        .loading-content {
-            text-align: center;
-            max-width: 400px;
-            padding: 2rem;
-        }
-
-        .loading-spinner {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            animation: pulse 2s infinite;
-        }
-
-        .loading-spinner i {
-            font-size: 2rem;
-            color: white;
-        }
-
-        .shimmer-text {
-            background: linear-gradient(90deg, #60a5fa, #8b5cf6, #60a5fa);
-            background-size: 200% 100%;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: shimmer 3s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-        }
-
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 6px;
-            background: #1e293b;
-            border-radius: 3px;
-            overflow: hidden;
-            margin-top: 1rem;
-        }
-
-        .progress-fill {
-            width: 0;
-            height: 100%;
-            background: linear-gradient(90deg, #3b82f6, #8b5cf6);
-            animation: progress 1.5s ease-in-out forwards;
-        }
-
-        @keyframes progress {
-            to { width: 100%; }
-        }
-
-        /* Main Container */
-        .main-container {
-            min-height: 100vh;
-            position: relative;
-        }
-
-        /* Premium Navigation */
-        .premium-navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            z-index: 1000;
-            padding: 0.75rem 0;
-            transition: all 0.3s ease;
-        }
-
-        .premium-navbar.scrolled {
-            background: rgba(15, 23, 42, 0.98);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
-        }
-
-        .nav-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .nav-logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            text-decoration: none;
-        }
-
-        .logo-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 12px;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .logo-icon i {
-            font-size: 1.25rem;
-            color: white;
-            animation: gavelSwing 3s infinite ease-in-out;
-        }
-
-        @keyframes gavelSwing {
-            0%, 100% { transform: rotate(0deg); }
-            25% { transform: rotate(-5deg); }
-            75% { transform: rotate(5deg); }
-        }
-
-        .logo-text h1 {
-            font-size: 1.5rem;
-            font-weight: 800;
-            background: linear-gradient(135deg, #60a5fa, #a78bfa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .logo-subtitle {
-            font-size: 0.75rem;
-            color: #94a3b8;
-            letter-spacing: 1px;
-        }
-
-        .nav-menu {
-            display: flex;
-            gap: 1.5rem;
-            align-items: center;
-        }
-
+        /* Additional Mobile & Tablet Optimizations */
         @media (max-width: 768px) {
-            .nav-menu {
-                display: none;
+            /* Base font size adjustment for mobile */
+            html {
+                font-size: 14px;
             }
-        }
-
-        .nav-link {
-            color: #cbd5e1;
-            text-decoration: none;
-            font-weight: 500;
-            font-size: 0.875rem;
-            padding: 0.5rem 0.75rem;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .nav-link:hover,
-        .nav-link.active {
-            color: #60a5fa;
-            background: rgba(59, 130, 246, 0.1);
-        }
-
-        .nav-actions {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .btn-login {
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            color: white;
-            border: none;
-            padding: 0.625rem 1.25rem;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.875rem;
-        }
-
-        .btn-login:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
-        }
-
-        .user-profile {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.5rem;
-            border-radius: 12px;
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .profile-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 8px;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-            font-size: 0.875rem;
-        }
-
-        .profile-info {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .profile-name {
-            font-weight: 600;
-            font-size: 0.875rem;
-        }
-
-        .profile-email {
-            font-size: 0.75rem;
-            color: #94a3b8;
-        }
-
-        .btn-logout {
-            background: transparent;
-            border: none;
-            color: #94a3b8;
-            cursor: pointer;
-            padding: 0.5rem;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-        }
-
-        .btn-logout:hover {
-            color: #ef4444;
-            background: rgba(239, 68, 68, 0.1);
-        }
-
-        .mobile-toggle {
-            display: none;
-            background: transparent;
-            border: none;
-            color: #cbd5e1;
-            font-size: 1.25rem;
-            cursor: pointer;
-            padding: 0.5rem;
-        }
-
-        @media (max-width: 768px) {
-            .mobile-toggle {
-                display: block;
+            
+            /* Better touch targets */
+            button, 
+            .nav-link, 
+            .quick-btn, 
+            .btn-generate,
+            .chat-action-btn,
+            .input-action-btn {
+                min-height: 44px;
+                min-width: 44px;
             }
-        }
-
-        /* Mobile Menu */
-        .mobile-menu-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(5px);
-            z-index: 2000;
-            display: none;
-        }
-
-        .mobile-menu-container {
-            position: absolute;
-            top: 0;
-            right: 0;
-            bottom: 0;
-            width: 300px;
-            background: #0f172a;
-            border-left: 1px solid rgba(255, 255, 255, 0.1);
-            padding: 1.5rem;
-            overflow-y: auto;
-        }
-
-        .mobile-menu-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 2rem;
-        }
-
-        .mobile-close {
-            background: transparent;
-            border: none;
-            color: #cbd5e1;
-            font-size: 1.25rem;
-            cursor: pointer;
-            padding: 0.5rem;
-        }
-
-        .mobile-menu-links {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .mobile-link {
-            color: #cbd5e1;
-            text-decoration: none;
-            padding: 0.875rem 1rem;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            transition: all 0.3s ease;
-        }
-
-        .mobile-link:hover,
-        .mobile-link.active {
-            color: #60a5fa;
-            background: rgba(59, 130, 246, 0.1);
-        }
-
-        .mobile-link i {
-            width: 20px;
-            text-align: center;
-        }
-
-        /* Hero Section */
-        .hero-section {
-            min-height: 100vh;
-            padding: 120px 1.5rem 60px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-            align-items: center;
-        }
-
-        @media (max-width: 1024px) {
-            .hero-container {
+            
+            /* Prevent zoom on input focus */
+            input, 
+            select, 
+            textarea {
+                font-size: 16px !important;
+            }
+            
+            /* Mobile chat interface optimization */
+            .chat-messages {
+                padding: 10px;
+            }
+            
+            .message {
+                max-width: 95%;
+            }
+            
+            /* Better mobile navigation */
+            .nav-container {
+                padding: 0 15px;
+            }
+            
+            /* Mobile hero section optimization */
+            .hero-title {
+                font-size: 2.2rem;
+                line-height: 1.2;
+            }
+            
+            .hero-subtitle {
+                font-size: 1rem;
+                line-height: 1.5;
+            }
+            
+            /* Mobile button stacking */
+            .hero-actions {
+                flex-direction: column;
+                width: 100%;
+            }
+            
+            .btn-hero-primary,
+            .btn-hero-secondary {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            
+            /* Mobile grid adjustments */
+            .features-grid,
+            .documents-grid,
+            .pricing-cards {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            /* Fix modal on mobile */
+            .modal-content {
+                width: 95%;
+                max-width: 95%;
+                margin: 10px;
+            }
+            
+            /* Mobile footer adjustments */
+            .footer-content {
                 grid-template-columns: 1fr;
                 text-align: center;
             }
         }
-
-        .hero-bg-elements {
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            pointer-events: none;
-            z-index: -1;
-        }
-
-        .floating-element {
-            position: absolute;
-            font-size: 2rem;
-            color: rgba(59, 130, 246, 0.1);
-        }
-
-        .floating-icon-1 { top: 20%; left: 5%; animation: float 6s ease-in-out infinite; }
-        .floating-icon-2 { top: 60%; right: 10%; animation: float 8s ease-in-out infinite 1s; }
-        .floating-icon-3 { bottom: 20%; left: 15%; animation: float 7s ease-in-out infinite 0.5s; }
-
-        @keyframes float {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            50% { transform: translateY(-20px) rotate(5deg); }
-        }
-
-        .hero-badge {
-            display: inline-block;
-            background: rgba(59, 130, 246, 0.1);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            border-radius: 20px;
-            padding: 0.5rem 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .badge-text {
-            font-size: 0.75rem;
-            font-weight: 600;
-            color: #60a5fa;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .hero-title {
-            font-size: 3.5rem;
-            font-weight: 800;
-            line-height: 1.2;
-            margin-bottom: 1.5rem;
-        }
-
-        @media (max-width: 768px) {
+        
+        @media (max-width: 480px) {
+            /* Extra small devices */
             .hero-title {
-                font-size: 2.5rem;
+                font-size: 1.8rem;
             }
-        }
-
-        .hero-subtitle {
-            font-size: 1.125rem;
-            color: #94a3b8;
-            margin-bottom: 2rem;
-            line-height: 1.6;
-        }
-
-        .hero-stats {
-            display: flex;
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        @media (max-width: 768px) {
-            .hero-stats {
-                flex-direction: column;
-                gap: 1rem;
-            }
-        }
-
-        .stat-item {
-            text-align: center;
-        }
-
-        .stat-number {
-            font-size: 1.75rem;
-            font-weight: 700;
-            margin-bottom: 0.25rem;
-        }
-
-        .stat-label {
-            font-size: 0.875rem;
-            color: #94a3b8;
-        }
-
-        .hero-actions {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        @media (max-width: 768px) {
-            .hero-actions {
-                flex-direction: column;
-            }
-        }
-
-        .btn-hero-primary,
-        .btn-hero-secondary {
-            padding: 1rem 2rem;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
-            min-width: 200px;
-        }
-
-        @media (max-width: 768px) {
-            .btn-hero-primary,
-            .btn-hero-secondary {
-                width: 100%;
-            }
-        }
-
-        .btn-hero-primary {
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            color: white;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-hero-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
-        }
-
-        .btn-sparkle {
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: linear-gradient(
-                45deg,
-                transparent 30%,
-                rgba(255, 255, 255, 0.1) 50%,
-                transparent 70%
-            );
-            animation: sparkle 3s infinite linear;
-        }
-
-        @keyframes sparkle {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .btn-hero-secondary {
-            background: transparent;
-            color: #60a5fa;
-            border: 2px solid rgba(59, 130, 246, 0.3);
-        }
-
-        .btn-hero-secondary:hover {
-            background: rgba(59, 130, 246, 0.1);
-            border-color: #3b82f6;
-        }
-
-        .hero-trust {
-            margin-top: 2rem;
-        }
-
-        .trust-label {
-            font-size: 0.875rem;
-            color: #94a3b8;
-            margin-bottom: 1rem;
-        }
-
-        .trust-badges {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-
-        .trust-badge {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 8px;
-            font-size: 0.875rem;
-        }
-
-        .trust-badge i {
-            color: #60a5fa;
-        }
-
-        /* Hero Illustration */
-        .hero-illustration {
-            position: relative;
-        }
-
-        .ai-assistant-card {
-            background: rgba(30, 41, 59, 0.8);
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            border-radius: 20px;
-            padding: 2rem;
-            text-align: center;
-            backdrop-filter: blur(10px);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            animation: pulse-glow 2s infinite alternate;
-        }
-
-        @keyframes pulse-glow {
-            from { box-shadow: 0 20px 60px rgba(59, 130, 246, 0.2); }
-            to { box-shadow: 0 20px 80px rgba(59, 130, 246, 0.4); }
-        }
-
-        .assistant-avatar {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 1rem;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .assistant-avatar i {
-            font-size: 2rem;
-            color: white;
-        }
-
-        .assistant-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        .assistant-subtitle {
-            color: #94a3b8;
-            margin-bottom: 1.5rem;
-        }
-
-        .assistant-features {
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-            margin-bottom: 2rem;
-        }
-
-        .feature {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            color: #cbd5e1;
-        }
-
-        .feature i {
-            color: #10b981;
-        }
-
-        .btn-assistant {
-            width: 100%;
-            padding: 1rem;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
-        }
-
-        .btn-assistant:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.4);
-        }
-
-        /* Scroll Indicator */
-        .scroll-indicator {
-            position: absolute;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-            animation: bounce 2s infinite;
-        }
-
-        .mouse {
-            width: 30px;
-            height: 50px;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 20px;
-            position: relative;
-        }
-
-        .wheel {
-            width: 4px;
-            height: 8px;
-            background: #60a5fa;
-            border-radius: 2px;
-            position: absolute;
-            top: 10px;
-            left: 50%;
-            transform: translateX(-50%);
-            animation: scroll 2s infinite;
-        }
-
-        @keyframes scroll {
-            0% { opacity: 1; transform: translateX(-50%) translateY(0); }
-            100% { opacity: 0; transform: translateX(-50%) translateY(20px); }
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateX(-50%) translateY(0); }
-            50% { transform: translateX(-50%) translateY(-10px); }
-        }
-
-        .arrow i {
-            color: #60a5fa;
-            font-size: 1.25rem;
-        }
-
-        /* Section Styles */
-        .features-section,
-        .database-section,
-        .documents-section,
-        .lawyer-section,
-        .guides-section,
-        .testimonials-section,
-        .pricing-section,
-        .cta-section {
-            padding: 6rem 1.5rem;
-        }
-
-        @media (max-width: 768px) {
-            .features-section,
-            .database-section,
-            .documents-section,
-            .lawyer-section,
-            .guides-section,
-            .testimonials-section,
-            .pricing-section,
-            .cta-section {
-                padding: 4rem 1rem;
-            }
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: 3rem;
-        }
-
-        .section-title {
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin-bottom: 1rem;
-        }
-
-        @media (max-width: 768px) {
+            
             .section-title {
-                font-size: 2rem;
+                font-size: 1.5rem;
+            }
+            
+            .feature-card,
+            .document-category,
+            .pricing-card {
+                padding: 20px 15px;
+            }
+            
+            /* Chat interface for very small screens */
+            .chat-header {
+                padding: 10px;
+            }
+            
+            .chat-title-text h3 {
+                font-size: 1rem;
+            }
+            
+            .message-text {
+                font-size: 0.875rem;
+                padding: 10px;
+            }
+            
+            /* Input area optimization */
+            .input-container {
+                flex-wrap: wrap;
+            }
+            
+            textarea#messageInput {
+                min-height: 50px;
             }
         }
-
-        .section-subtitle {
-            font-size: 1.125rem;
-            color: #94a3b8;
-            max-width: 600px;
-            margin: 0 auto;
-        }
-
-        /* Premium Cards */
-        .premium-card {
-            background: rgba(30, 41, 59, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 2rem;
-            transition: all 0.3s ease;
-            backdrop-filter: blur(10px);
-        }
-
-        .premium-card:hover {
-            transform: translateY(-5px);
-            border-color: rgba(59, 130, 246, 0.5);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
-        }
-
-        /* Features Grid */
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-
-        .feature-card {
-            text-align: center;
-        }
-
-        .feature-icon {
-            width: 60px;
-            height: 60px;
-            margin: 0 auto 1.5rem;
-            border-radius: 12px;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .feature-icon i {
-            font-size: 1.5rem;
-            color: white;
-        }
-
-        .feature-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-        }
-
-        .feature-description {
-            color: #94a3b8;
-            margin-bottom: 1.5rem;
-        }
-
-        .feature-tags {
-            display: flex;
-            gap: 0.5rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .tag {
-            background: rgba(59, 130, 246, 0.1);
-            color: #60a5fa;
-            padding: 0.25rem 0.75rem;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-        }
-
-        /* Database Grid */
-        .database-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-
-        .database-icon {
-            width: 60px;
-            height: 60px;
-            margin-bottom: 1.5rem;
-            border-radius: 12px;
-            background: rgba(59, 130, 246, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .database-icon i {
-            font-size: 1.5rem;
-            color: #60a5fa;
-        }
-
-        .database-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-        }
-
-        .database-list {
-            list-style: none;
-            margin-bottom: 2rem;
-        }
-
-        .database-list li {
-            padding: 0.5rem 0;
-            color: #94a3b8;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .database-list i {
-            color: #60a5fa;
-        }
-
-        .btn-database,
-        .btn-generate,
-        .btn-guide {
-            width: 100%;
-            padding: 0.875rem;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .btn-database:hover,
-        .btn-generate:hover,
-        .btn-guide:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
-        }
-
-        /* Documents Grid */
-        .documents-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-
-        .category-icon {
-            width: 60px;
-            height: 60px;
-            margin-bottom: 1.5rem;
-            border-radius: 12px;
-            background: rgba(139, 92, 246, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .category-icon i {
-            font-size: 1.5rem;
-            color: #8b5cf6;
-        }
-
-        .category-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-        }
-
-        .document-list {
-            list-style: none;
-            margin-bottom: 2rem;
-        }
-
-        .document-list li {
-            padding: 0.5rem 0;
-            color: #94a3b8;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .document-list i {
-            color: #10b981;
-        }
-
-        /* Lawyer Section */
-        .lawyer-search {
-            background: rgba(30, 41, 59, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            padding: 2rem;
-            margin-bottom: 3rem;
-        }
-
-        .search-container {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        @media (max-width: 768px) {
-            .search-container {
-                flex-direction: column;
+        
+        /* Tablet specific optimizations */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .container {
+                padding: 0 30px;
+            }
+            
+            .hero-container {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+            
+            .hero-illustration {
+                max-width: 500px;
+                margin: 0 auto;
+            }
+            
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .pricing-cards {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 20px;
+            }
+            
+            .chat-container {
+                max-width: 95%;
             }
         }
-
-        .search-container input {
-            flex: 1;
-            padding: 1rem 1.5rem;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            color: white;
-            font-size: 1rem;
-        }
-
-        .search-container input:focus {
-            outline: none;
-            border-color: #3b82f6;
-        }
-
-        .search-container i {
-            position: absolute;
-            left: 1.5rem;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #94a3b8;
-        }
-
-        .btn-search {
-            padding: 1rem 2rem;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            white-space: nowrap;
-        }
-
-        .btn-search:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
-        }
-
-        .specialization-filters {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-        }
-
-        .filter-btn {
-            padding: 0.5rem 1rem;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 20px;
-            color: #94a3b8;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 0.875rem;
-        }
-
-        .filter-btn:hover,
-        .filter-btn.active {
-            background: rgba(59, 130, 246, 0.1);
-            color: #60a5fa;
-            border-color: #3b82f6;
-        }
-
-        .lawyers-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-
-        .lawyer-card {
-            text-align: center;
-        }
-
-        .lawyer-avatar {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 1.5rem;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .lawyer-avatar i {
-            font-size: 2rem;
-            color: white;
-        }
-
-        .lawyer-name {
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        .lawyer-specialization {
-            color: #60a5fa;
-            margin-bottom: 1.5rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .lawyer-details {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .detail {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: #94a3b8;
-            font-size: 0.875rem;
-        }
-
-        .detail i {
-            color: #60a5fa;
-        }
-
-        .btn-contact {
-            width: 100%;
-            padding: 0.875rem;
-            background: rgba(59, 130, 246, 0.1);
-            color: #60a5fa;
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .btn-contact:hover {
-            background: rgba(59, 130, 246, 0.2);
-            border-color: #3b82f6;
-            transform: translateY(-2px);
-        }
-
-        /* Guides Grid */
-        .guides-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-
-        .guide-icon {
-            width: 60px;
-            height: 60px;
-            margin-bottom: 1.5rem;
-            border-radius: 12px;
-            background: rgba(34, 197, 94, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .guide-icon i {
-            font-size: 1.5rem;
-            color: #22c55e;
-        }
-
-        .guide-title {
-            font-size: 1.25rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-        }
-
-        .guide-description {
-            color: #94a3b8;
-            margin-bottom: 1.5rem;
-        }
-
-        .guide-steps {
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-            margin-bottom: 2rem;
-        }
-
-        .step {
-            padding: 0.5rem 0.75rem;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 6px;
-            font-size: 0.875rem;
-            color: #cbd5e1;
-        }
-
-        /* Testimonials */
-        .testimonials-carousel {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-
-        .testimonial-rating {
-            color: #fbbf24;
-            margin-bottom: 1rem;
-            display: flex;
-            gap: 0.25rem;
-        }
-
-        .testimonial-text {
-            color: #94a3b8;
-            margin-bottom: 1.5rem;
-            font-style: italic;
-            line-height: 1.6;
-        }
-
-        .testimonial-author {
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-        }
-
-        .author-avatar {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            overflow: hidden;
-        }
-
-        .author-avatar img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-
-        .author-info {
-            flex: 1;
-        }
-
-        .author-name {
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-        }
-
-        .author-title {
-            font-size: 0.875rem;
-            color: #94a3b8;
-        }
-
-        /* Pricing Section */
-        .pricing-cards {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-        }
-
-        .pricing-badge {
-            display: inline-block;
-            padding: 0.25rem 0.75rem;
-            background: rgba(59, 130, 246, 0.1);
-            color: #60a5fa;
-            border-radius: 20px;
-            font-size: 0.75rem;
-            font-weight: 600;
-            margin-bottom: 1.5rem;
-        }
-
-        .pricing-badge.popular {
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            color: white;
-        }
-
-        .pricing-title {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 1rem;
-        }
-
-        .pricing-price {
-            display: flex;
-            align-items: baseline;
-            gap: 0.25rem;
-            margin-bottom: 1rem;
-        }
-
-        .currency {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: #60a5fa;
-        }
-
-        .amount {
-            font-size: 3rem;
-            font-weight: 800;
-            color: white;
-        }
-
-        .period {
-            font-size: 1rem;
-            color: #94a3b8;
-        }
-
-        .pricing-description {
-            color: #94a3b8;
-            margin-bottom: 2rem;
-        }
-
-        .pricing-features {
-            list-style: none;
-            margin-bottom: 2rem;
-        }
-
-        .pricing-features li {
-            padding: 0.5rem 0;
-            color: #94a3b8;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-        }
-
-        .pricing-features i {
-            color: #10b981;
-        }
-
-        .pricing-features i.fa-times-circle {
-            color: #ef4444;
-        }
-
-        .btn-pricing {
-            width: 100%;
-            padding: 1rem;
-            background: rgba(59, 130, 246, 0.1);
-            color: #60a5fa;
-            border: 1px solid rgba(59, 130, 246, 0.3);
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .btn-pricing:hover {
-            background: rgba(59, 130, 246, 0.2);
-            border-color: #3b82f6;
-            transform: translateY(-2px);
-        }
-
-        .premium-plan {
-            border: 2px solid #3b82f6;
-            transform: scale(1.05);
-        }
-
-        @media (max-width: 768px) {
-            .premium-plan {
-                transform: scale(1);
-            }
-        }
-
-        .btn-premium {
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6) !important;
-            color: white !important;
-            border: none !important;
-        }
-
-        /* CTA Section */
-        .cta-section {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-            text-align: center;
-        }
-
-        .cta-title {
-            font-size: 2.5rem;
-            font-weight: 800;
-            margin-bottom: 1.5rem;
-        }
-
-        @media (max-width: 768px) {
-            .cta-title {
-                font-size: 2rem;
-            }
-        }
-
-        .cta-description {
-            font-size: 1.125rem;
-            color: #94a3b8;
-            max-width: 600px;
-            margin: 0 auto 2rem;
-        }
-
-        .cta-actions {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-            margin-bottom: 3rem;
-        }
-
-        @media (max-width: 768px) {
-            .cta-actions {
-                flex-direction: column;
-            }
-        }
-
-        .btn-cta-primary,
-        .btn-cta-secondary {
-            padding: 1rem 2rem;
-            border-radius: 12px;
-            font-weight: 600;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            border: none;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.75rem;
-            min-width: 200px;
-        }
-
-        @media (max-width: 768px) {
-            .btn-cta-primary,
-            .btn-cta-secondary {
-                width: 100%;
-            }
-        }
-
-        .btn-cta-primary {
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            color: white;
-        }
-
-        .btn-cta-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4);
-        }
-
-        .btn-cta-secondary {
-            background: transparent;
-            color: #60a5fa;
-            border: 2px solid rgba(59, 130, 246, 0.3);
-        }
-
-        .btn-cta-secondary:hover {
-            background: rgba(59, 130, 246, 0.1);
-            border-color: #3b82f6;
-        }
-
-        .cta-guarantee {
-            display: flex;
-            gap: 2rem;
-            justify-content: center;
-            flex-wrap: wrap;
-        }
-
-        .guarantee-item {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            color: #cbd5e1;
-        }
-
-        .guarantee-item i {
-            color: #60a5fa;
-        }
-
-        /* Footer */
-        .premium-footer {
-            background: #0a1120;
-            padding: 4rem 1.5rem 2rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .footer-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 3rem;
-            margin-bottom: 3rem;
-        }
-
-        .footer-logo {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .footer-description {
-            color: #94a3b8;
-            margin-bottom: 1.5rem;
-            line-height: 1.6;
-        }
-
-        .social-links {
-            display: flex;
-            gap: 1rem;
-        }
-
-        .social-link {
-            width: 40px;
-            height: 40px;
-            border-radius: 8px;
-            background: rgba(255, 255, 255, 0.05);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #cbd5e1;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        .social-link:hover {
-            background: rgba(59, 130, 246, 0.1);
-            color: #60a5fa;
-            transform: translateY(-2px);
-        }
-
-        .footer-heading {
-            font-size: 1.125rem;
-            font-weight: 700;
-            margin-bottom: 1.5rem;
-            color: white;
-        }
-
-        .footer-links {
-            list-style: none;
-        }
-
-        .footer-links li {
-            margin-bottom: 0.75rem;
-        }
-
-        .footer-links a {
-            color: #94a3b8;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        .footer-links a:hover {
-            color: #60a5fa;
-            padding-left: 5px;
-        }
-
-        .footer-contact {
-            list-style: none;
-        }
-
-        .footer-contact li {
-            margin-bottom: 1rem;
-            display: flex;
-            align-items: flex-start;
-            gap: 0.75rem;
-            color: #94a3b8;
-        }
-
-        .footer-contact i {
-            color: #60a5fa;
-            margin-top: 0.25rem;
-        }
-
-        .footer-contact a {
-            color: #94a3b8;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-
-        .footer-contact a:hover {
-            color: #60a5fa;
-        }
-
-        .footer-bottom {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding-top: 2rem;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-            text-align: center;
-        }
-
-        .copyright {
-            color: #94a3b8;
-            margin-bottom: 1rem;
-        }
-
-        .disclaimer {
-            color: #fbbf24;
-            font-size: 0.875rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .disclaimer i {
-            color: #f59e0b;
-        }
-
-        /* Back to Top Button */
-        .back-to-top {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            width: 50px;
-            height: 50px;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            color: white;
-            border: none;
-            border-radius: 12px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            opacity: 0;
-            transform: translateY(20px);
-            z-index: 999;
-        }
-
-        .back-to-top.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .back-to-top:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.4);
-        }
-
-        /* Toast Notifications */
-        .toast-container {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            gap: 0.75rem;
-        }
-
-        .toast {
-            padding: 1rem 1.5rem;
-            background: #1e293b;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            animation: slideIn 0.3s ease;
-            max-width: 350px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-        }
-
-        @keyframes slideIn {
-            from {
-                opacity: 0;
-                transform: translateX(100px);
-            }
-            to {
-                opacity: 1;
-                transform: translateX(0);
-            }
-        }
-
-        .toast i {
-            font-size: 1.25rem;
-        }
-
-        .toast-success i { color: #10b981; }
-        .toast-error i { color: #ef4444; }
-        .toast-warning i { color: #f59e0b; }
-        .toast-info i { color: #60a5fa; }
-
-        .toast span {
-            flex: 1;
-            font-size: 0.875rem;
-        }
-
-        /* Modal Styles */
+        
+        /* Additional modal fixes */
         .modal {
+            display: none;
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0, 0, 0, 0.8);
-            backdrop-filter: blur(5px);
-            display: none;
+            z-index: 2000;
             align-items: center;
             justify-content: center;
-            z-index: 2000;
-            padding: 1rem;
+            padding: 20px;
+            overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
         }
-
-        .modal.open {
-            display: flex;
-        }
-
+        
         .modal-content {
+            position: relative;
             background: #1e293b;
-            border-radius: 20px;
-            padding: 2rem;
-            max-width: 500px;
+            border-radius: 16px;
+            max-width: 420px;
             width: 100%;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            z-index: 2001;
             max-height: 90vh;
             overflow-y: auto;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
-        }
-
-        .modal-header {
-            text-align: center;
-            margin-bottom: 2rem;
-        }
-
-        .modal-icon {
-            width: 60px;
-            height: 60px;
-            margin: 0 auto 1rem;
-            border-radius: 12px;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-icon i {
-            font-size: 1.5rem;
-            color: white;
-        }
-
-        .modal-header h3 {
-            font-size: 1.5rem;
-            font-weight: 700;
-            margin-bottom: 0.5rem;
-        }
-
-        .modal-header p {
-            color: #94a3b8;
-        }
-
-        .modal-body {
-            margin-bottom: 2rem;
-        }
-
-        .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: #cbd5e1;
-            font-weight: 500;
-        }
-
-        .form-input,
-        .form-select,
-        .form-textarea {
-            width: 100%;
-            padding: 0.875rem 1rem;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            color: white;
-            font-size: 1rem;
-            transition: all 0.3s ease;
-        }
-
-        .form-input:focus,
-        .form-select:focus,
-        .form-textarea:focus {
-            outline: none;
-            border-color: #3b82f6;
-            background: rgba(59, 130, 246, 0.05);
-        }
-
-        .form-textarea {
-            min-height: 100px;
-            resize: vertical;
-        }
-
-        .btn-generate-final {
-            width: 100%;
-            padding: 1rem;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-        }
-
-        .btn-generate-final:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: transparent;
-            border: none;
-            color: #94a3b8;
-            font-size: 1.25rem;
-            cursor: pointer;
-            padding: 0.5rem;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-        }
-
-        .modal-close:hover {
-            color: #ef4444;
-            background: rgba(239, 68, 68, 0.1);
-        }
-
-        /* Legal Seal Animation */
-        .legal-seal {
-            position: relative;
-        }
-
-        .legal-seal::before {
-            content: '';
-            position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: linear-gradient(45deg, #3b82f6, #8b5cf6, #3b82f6);
-            border-radius: inherit;
-            z-index: -1;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .legal-seal:hover::before {
-            opacity: 1;
-        }
-
-        /* CHATGPT 5.2 STYLE CHAT INTERFACE */
-        .chat-interface {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: #0f172a;
-            z-index: 9998;
-            display: none;
-            flex-direction: row;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-        }
-
-        .chat-interface.active {
-            display: flex;
-        }
-
-        /* Left Sidebar - ChatGPT Style */
-        .chat-sidebar {
-            width: 260px;
-            background: #0f172a;
-            border-right: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            overflow: hidden;
-        }
-
-        .sidebar-header {
-            padding: 16px 12px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .new-chat-btn {
-            width: 100%;
-            padding: 12px;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            justify-content: center;
-            margin-bottom: 16px;
-        }
-
-        .new-chat-btn:hover {
-            background: linear-gradient(135deg, #2563eb, #7c3aed);
-            transform: translateY(-1px);
-        }
-
-        .search-chats {
-            position: relative;
-            margin-bottom: 16px;
-        }
-
-        .search-chats input {
-            width: 100%;
-            padding: 10px 12px 10px 36px;
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            color: white;
-            font-size: 14px;
-        }
-
-        .search-chats i {
-            position: absolute;
-            left: 12px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #94a3b8;
-            font-size: 14px;
-        }
-
-        .sidebar-nav {
-            padding: 12px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .nav-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 12px;
-            color: #cbd5e1;
-            text-decoration: none;
-            border-radius: 8px;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            font-size: 14px;
-        }
-
-        .nav-item:hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: white;
-        }
-
-        .nav-item.active {
-            background: rgba(59, 130, 246, 0.1);
-            color: #60a5fa;
-        }
-
-        .sidebar-chats {
-            flex: 1;
-            overflow-y: auto;
-            padding: 12px;
-        }
-
-        .chats-title {
-            color: #94a3b8;
-            font-size: 12px;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 12px;
-            padding-left: 12px;
-        }
-
-        .chat-history-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 10px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-bottom: 4px;
-        }
-
-        .chat-history-item:hover {
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .chat-history-item.active {
-            background: rgba(59, 130, 246, 0.1);
-        }
-
-        .chat-icon {
-            color: #94a3b8;
-            font-size: 14px;
-        }
-
-        .chat-title {
-            flex: 1;
-            color: #cbd5e1;
-            font-size: 14px;
-            white-space: nowrap;
-            overflow: hidden;
-            text-overflow: ellipsis;
-        }
-
-        .chat-actions {
-            display: flex;
-            gap: 4px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .chat-history-item:hover .chat-actions {
-            opacity: 1;
-        }
-
-        .chat-action-btn {
-            background: none;
-            border: none;
-            color: #94a3b8;
-            cursor: pointer;
-            padding: 4px;
-            border-radius: 4px;
-            transition: all 0.3s ease;
-        }
-
-        .chat-action-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: white;
-        }
-
-        .sidebar-footer {
-            padding: 12px;
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .user-profile-small {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 8px 12px;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .user-profile-small:hover {
-            background: rgba(255, 255, 255, 0.05);
-        }
-
-        .user-avatar-small {
-            width: 32px;
-            height: 32px;
-            border-radius: 6px;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: 600;
-            font-size: 12px;
-        }
-
-        .user-info-small {
-            flex: 1;
-        }
-
-        .user-name-small {
-            font-size: 14px;
-            color: #cbd5e1;
-        }
-
-        .user-status {
-            font-size: 12px;
-            color: #94a3b8;
-        }
-
-        /* Main Chat Area */
-        .chat-main-area {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            height: 100vh;
-            background: #0f172a;
-        }
-
-        .chat-header-gpt {
-            padding: 16px 24px;
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .chat-title-gpt {
-            font-size: 18px;
-            font-weight: 600;
-            color: white;
-        }
-
-        .chat-actions-gpt {
-            display: flex;
-            gap: 8px;
-        }
-
-        .chat-action-gpt {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            color: #94a3b8;
-            cursor: pointer;
-            padding: 8px 12px;
-            font-size: 14px;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .chat-action-gpt:hover {
-            background: rgba(59, 130, 246, 0.1);
-            color: #60a5fa;
-        }
-
-        .messages-container {
-            flex: 1;
-            overflow-y: auto;
-            padding: 24px;
-            display: flex;
-            flex-direction: column;
-            gap: 24px;
-        }
-
-        /* Message Styles - ChatGPT Like */
-        .message-gpt {
-            display: flex;
-            gap: 16px;
-            max-width: 100%;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .user-message-gpt {
-            align-self: flex-end;
-            flex-direction: row-reverse;
-        }
-
-        .ai-message-gpt {
-            align-self: flex-start;
-        }
-
-        .message-avatar-gpt {
-            width: 30px;
-            height: 30px;
-            border-radius: 6px;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-            margin-top: 4px;
-        }
-
-        .user-message-gpt .message-avatar-gpt {
-            background: linear-gradient(135deg, #10b981, #34d399);
-        }
-
-        .message-avatar-gpt i {
-            font-size: 14px;
-            color: white;
-        }
-
-        .message-content-gpt {
-            max-width: 700px;
-        }
-
-        .message-header-gpt {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 8px;
-        }
-
-        .message-sender-gpt {
-            font-weight: 600;
-            font-size: 14px;
-            color: white;
-        }
-
-        .message-time-gpt {
-            font-size: 12px;
-            color: #94a3b8;
-        }
-
-        .message-text-gpt {
-            background: rgba(30, 41, 59, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            padding: 16px;
-            line-height: 1.6;
-            font-size: 15px;
-        }
-
-        .user-message-gpt .message-text-gpt {
-            background: linear-gradient(135deg, #1d4ed8, #3b82f6);
-            border-color: rgba(59, 130, 246, 0.3);
-        }
-
-        .message-actions-gpt {
-            display: flex;
-            gap: 8px;
-            margin-top: 8px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-
-        .message-gpt:hover .message-actions-gpt {
-            opacity: 1;
-        }
-
-        .message-action-btn-gpt {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 6px;
-            color: #94a3b8;
-            cursor: pointer;
-            padding: 6px 10px;
-            font-size: 12px;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .message-action-btn-gpt:hover {
-            background: rgba(59, 130, 246, 0.1);
-            color: #60a5fa;
-        }
-
-        /* Typing Indicator */
-        .typing-indicator-gpt {
-            display: none;
-            align-items: center;
-            gap: 8px;
-            padding: 16px;
-            background: rgba(30, 41, 59, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            max-width: 120px;
-            margin-left: 46px;
-            margin-top: 8px;
-        }
-
-        .typing-dot-gpt {
-            width: 8px;
-            height: 8px;
-            background: #60a5fa;
-            border-radius: 50%;
-            animation: typing 1.4s infinite ease-in-out;
-        }
-
-        .typing-dot-gpt:nth-child(1) { animation-delay: -0.32s; }
-        .typing-dot-gpt:nth-child(2) { animation-delay: -0.16s; }
-
-        @keyframes typing {
-            0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
-            40% { transform: scale(1); opacity: 1; }
-        }
-
-        /* Input Area - ChatGPT Style */
-        .input-container-gpt {
-            padding: 20px 24px;
-            background: rgba(15, 23, 42, 0.95);
-            backdrop-filter: blur(10px);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .input-wrapper-gpt {
-            max-width: 768px;
-            margin: 0 auto;
-            position: relative;
-        }
-
-        .textarea-container {
-            position: relative;
-        }
-
-        .chat-textarea {
-            width: 100%;
-            min-height: 56px;
-            max-height: 200px;
-            padding: 16px 48px 16px 16px;
-            background: rgba(30, 41, 59, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            color: white;
-            font-size: 15px;
-            line-height: 1.5;
-            resize: none;
-            overflow-y: auto;
-            font-family: inherit;
-        }
-
-        .chat-textarea:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
-        }
-
-        .send-button-gpt {
-            position: absolute;
-            right: 12px;
-            bottom: 12px;
-            width: 32px;
-            height: 32px;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.3s ease;
-        }
-
-        .send-button-gpt:hover {
-            background: linear-gradient(135deg, #2563eb, #7c3aed);
-            transform: translateY(-1px);
-        }
-
-        .send-button-gpt:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            transform: none;
-        }
-
-        .input-options {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-top: 12px;
-            padding: 0 4px;
-        }
-
-        .option-left {
-            display: flex;
-            gap: 8px;
-        }
-
-        .option-btn {
-            background: none;
-            border: none;
-            color: #94a3b8;
-            cursor: pointer;
-            padding: 6px;
-            border-radius: 6px;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            gap: 4px;
-            font-size: 13px;
-        }
-
-        .option-btn:hover {
-            background: rgba(255, 255, 255, 0.05);
-            color: white;
-        }
-
-        .model-selector {
-            background: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 6px;
-            color: #cbd5e1;
-            padding: 6px 12px;
-            font-size: 13px;
-            cursor: pointer;
-            outline: none;
-        }
-
-        /* Welcome Screen */
-        .welcome-screen {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            padding: 40px 24px;
-            text-align: center;
-        }
-
-        .welcome-icon {
-            width: 64px;
-            height: 64px;
-            margin-bottom: 24px;
-            border-radius: 16px;
-            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .welcome-icon i {
-            font-size: 28px;
-            color: white;
-        }
-
-        .welcome-title {
-            font-size: 32px;
-            font-weight: 700;
-            margin-bottom: 16px;
-            background: linear-gradient(135deg, #60a5fa, #a78bfa);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .welcome-subtitle {
-            color: #94a3b8;
-            max-width: 600px;
-            margin: 0 auto 40px;
-            line-height: 1.6;
-            font-size: 16px;
-        }
-
-        .quick-actions {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 16px;
-            max-width: 600px;
-            margin-top: 32px;
-        }
-
-        @media (max-width: 768px) {
-            .quick-actions {
-                grid-template-columns: 1fr;
+            border: 1px solid #334155;
+        }
+        
+        /* Fix for iOS input zoom */
+        @media screen and (max-width: 767px) {
+            input[type="text"],
+            input[type="email"],
+            input[type="password"],
+            textarea {
+                font-size: 16px !important;
             }
         }
-
-        .quick-action-btn {
-            padding: 16px;
-            background: rgba(30, 41, 59, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 12px;
-            color: #cbd5e1;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-align: left;
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
+        
+        /* Safe area insets for modern devices */
+        @supports (padding: max(0px)) {
+            .hero-section,
+            .chat-interface {
+                padding-left: max(15px, env(safe-area-inset-left));
+                padding-right: max(15px, env(safe-area-inset-right));
+            }
+            
+            .chat-input-area {
+                padding-bottom: max(15px, env(safe-area-inset-bottom));
+            }
         }
-
-        .quick-action-btn:hover {
-            background: rgba(59, 130, 246, 0.1);
-            border-color: rgba(59, 130, 246, 0.3);
-            transform: translateY(-2px);
+        
+        /* Prevent pull-to-refresh on mobile */
+        body {
+            overscroll-behavior-y: contain;
         }
-
-        .quick-action-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            background: rgba(59, 130, 246, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
+        
+        /* Better scrolling on mobile */
+        .chat-messages,
+        .history-list {
+            -webkit-overflow-scrolling: touch;
         }
-
-        .quick-action-icon i {
-            color: #60a5fa;
-        }
-
-        .quick-action-content h4 {
-            font-size: 15px;
-            font-weight: 600;
-            margin-bottom: 4px;
-            color: white;
-        }
-
-        .quick-action-content p {
-            font-size: 13px;
-            color: #94a3b8;
-            line-height: 1.4;
-        }
-
+        
         /* Custom Scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
             height: 8px;
         }
-
+        
         ::-webkit-scrollbar-track {
             background: #1e293b;
             border-radius: 4px;
         }
-
+        
         ::-webkit-scrollbar-thumb {
             background: #3b82f6;
             border-radius: 4px;
         }
-
+        
         ::-webkit-scrollbar-thumb:hover {
             background: #1d4ed8;
         }
-
-        /* Responsive Design */
-        @media (max-width: 1024px) {
-            .chat-sidebar {
-                width: 220px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .chat-interface {
-                flex-direction: column;
-            }
-            
-            .chat-sidebar {
-                width: 100%;
-                height: auto;
-                max-height: 60vh;
-                border-right: none;
-                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            }
-            
-            .chat-main-area {
-                height: calc(100vh - 60vh);
-            }
-            
-            .chat-header-gpt {
-                padding: 12px 16px;
-            }
-            
-            .messages-container {
-                padding: 16px;
-            }
-            
-            .input-container-gpt {
-                padding: 16px;
-            }
-        }
-
-        /* Loading Bar */
-        .loading-bar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, #3b82f6, #8b5cf6, #3b82f6);
-            background-size: 200% 100%;
-            animation: loading 2s linear infinite;
-            z-index: 10000;
-            display: none;
-        }
-
-        @keyframes loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-
-        .loading-bar.active {
-            display: block;
-        }
-
-        /* Focus Styles */
-        *:focus {
-            outline: 2px solid #3b82f6;
-            outline-offset: 2px;
-        }
-
-        *:focus:not(.focus-visible) {
-            outline: none;
-        }
-
+        
         /* Selection Color */
         ::selection {
             background: rgba(59, 130, 246, 0.3);
@@ -2588,9 +283,6 @@
     </style>
 </head>
 <body>
-    <!-- Loading Bar -->
-    <div class="loading-bar" id="loadingBar"></div>
-    
     <!-- Premium Loading Screen -->
     <div id="loadingScreen" class="loading-screen">
         <div class="loading-content">
@@ -2605,253 +297,8 @@
         </div>
     </div>
 
-    <!-- ChatGPT 5.2 Style Chat Interface -->
-    <div id="chatInterface" class="chat-interface">
-        <!-- Left Sidebar -->
-        <div class="chat-sidebar">
-            <div class="sidebar-header">
-                <button id="newChatBtn" class="new-chat-btn">
-                    <i class="fas fa-plus"></i>
-                    New Chat
-                </button>
-                
-                <div class="search-chats">
-                    <i class="fas fa-search"></i>
-                    <input type="text" id="chatSearch" placeholder="Search chats...">
-                </div>
-            </div>
-            
-            <div class="sidebar-nav">
-                <a href="#" class="nav-item active">
-                    <i class="fas fa-comment"></i>
-                    <span>Chat</span>
-                </a>
-                <a href="#" class="nav-item">
-                    <i class="fas fa-image"></i>
-                    <span>Images</span>
-                </a>
-                <a href="#" class="nav-item">
-                    <i class="fas fa-mobile-alt"></i>
-                    <span>Apps</span>
-                </a>
-                <a href="#" class="nav-item">
-                    <i class="fas fa-robot"></i>
-                    <span>GPTs</span>
-                </a>
-                <a href="#" class="nav-item">
-                    <i class="fas fa-project-diagram"></i>
-                    <span>Projects</span>
-                </a>
-            </div>
-            
-            <div class="sidebar-chats">
-                <div class="chats-title">Your chats</div>
-                <div id="chatHistoryList">
-                    <!-- Chat history will be loaded here -->
-                    <div class="chat-history-item active">
-                        <i class="fas fa-comment chat-icon"></i>
-                        <span class="chat-title">Legal Consultation</span>
-                        <div class="chat-actions">
-                            <button class="chat-action-btn">
-                                <i class="fas fa-ellipsis-h"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="chat-history-item">
-                        <i class="fas fa-file-contract chat-icon"></i>
-                        <span class="chat-title">Document Review</span>
-                        <div class="chat-actions">
-                            <button class="chat-action-btn">
-                                <i class="fas fa-ellipsis-h"></i>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="chat-history-item">
-                        <i class="fas fa-balance-scale chat-icon"></i>
-                        <span class="chat-title">Case Analysis</span>
-                        <div class="chat-actions">
-                            <button class="chat-action-btn">
-                                <i class="fas fa-ellipsis-h"></i>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="sidebar-footer">
-                <div class="user-profile-small" id="sidebarUserProfile">
-                    <div class="user-avatar-small" id="sidebarUserAvatar">U</div>
-                    <div class="user-info-small">
-                        <div class="user-name-small" id="sidebarUserName">User</div>
-                        <div class="user-status" id="sidebarUserStatus">Free Plan</div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Main Chat Area -->
-        <div class="chat-main-area">
-            <!-- Chat Header -->
-            <div class="chat-header-gpt">
-                <div class="chat-title-gpt" id="currentChatTitle">LegalSwami AI Assistant</div>
-                <div class="chat-actions-gpt">
-                    <button class="chat-action-gpt" id="clearChatBtn">
-                        <i class="fas fa-trash"></i>
-                        Clear Chat
-                    </button>
-                    <button class="chat-action-gpt" id="exportChatBtn">
-                        <i class="fas fa-download"></i>
-                        Export
-                    </button>
-                    <button class="chat-action-gpt" id="shareChatBtn">
-                        <i class="fas fa-share"></i>
-                        Share
-                    </button>
-                </div>
-            </div>
-            
-            <!-- Messages Container -->
-            <div class="messages-container" id="messagesContainer">
-                <!-- Welcome Screen (shown when no messages) -->
-                <div class="welcome-screen" id="welcomeScreen">
-                    <div class="welcome-icon legal-seal">
-                        <i class="fas fa-robot"></i>
-                    </div>
-                    <h1 class="welcome-title">How can I help you today?</h1>
-                    <p class="welcome-subtitle">
-                        I'm your AI legal assistant. Ask me any legal questions, request document generation, 
-                        or get guidance on legal procedures. I'm here to help 24/7.
-                    </p>
-                    
-                    <div class="quick-actions">
-                        <button class="quick-action-btn" data-question="How to draft a rental agreement?">
-                            <div class="quick-action-icon">
-                                <i class="fas fa-file-contract"></i>
-                            </div>
-                            <div class="quick-action-content">
-                                <h4>Draft Rental Agreement</h4>
-                                <p>Create a legally sound rental agreement with all necessary clauses</p>
-                            </div>
-                        </button>
-                        <button class="quick-action-btn" data-question="What are my rights as a tenant?">
-                            <div class="quick-action-icon">
-                                <i class="fas fa-balance-scale"></i>
-                            </div>
-                            <div class="quick-action-content">
-                                <h4>Tenant Rights</h4>
-                                <p>Understand your rights and protections as a tenant under Indian law</p>
-                            </div>
-                        </button>
-                        <button class="quick-action-btn" data-question="How to file a consumer complaint?">
-                            <div class="quick-action-icon">
-                                <i class="fas fa-user-shield"></i>
-                            </div>
-                            <div class="quick-action-content">
-                                <h4>Consumer Complaint</h4>
-                                <p>Step-by-step guide to filing a consumer complaint</p>
-                            </div>
-                        </button>
-                        <button class="quick-action-btn" data-question="What documents are needed for property registration?">
-                            <div class="quick-action-icon">
-                                <i class="fas fa-home"></i>
-                            </div>
-                            <div class="quick-action-content">
-                                <h4>Property Registration</h4>
-                                <p>Complete checklist for property registration documents</p>
-                            </div>
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Messages will be inserted here -->
-                <div id="chatMessagesGpt"></div>
-                
-                <!-- Typing Indicator -->
-                <div id="typingIndicatorGpt" class="typing-indicator-gpt">
-                    <div class="typing-dot-gpt"></div>
-                    <div class="typing-dot-gpt"></div>
-                    <div class="typing-dot-gpt"></div>
-                </div>
-            </div>
-            
-            <!-- Input Area -->
-            <div class="input-container-gpt">
-                <div class="input-wrapper-gpt">
-                    <div class="textarea-container">
-                        <textarea 
-                            id="chatTextarea" 
-                            class="chat-textarea" 
-                            placeholder="Message LegalSwami AI..." 
-                            rows="1"
-                            maxlength="5000"
-                        ></textarea>
-                        <button id="sendBtnGpt" class="send-button-gpt">
-                            <i class="fas fa-paper-plane"></i>
-                        </button>
-                    </div>
-                    
-                    <div class="input-options">
-                        <div class="option-left">
-                            <button class="option-btn" id="attachFileGpt">
-                                <i class="fas fa-paperclip"></i>
-                                Attach
-                            </button>
-                            <button class="option-btn" id="voiceInputGpt">
-                                <i class="fas fa-microphone"></i>
-                                Voice
-                            </button>
-                        </div>
-                        <select class="model-selector" id="modelSelector">
-                            <option value="legal-swami">LegalSwami 5.2</option>
-                            <option value="legal-expert">Legal Expert</option>
-                            <option value="document-generator">Document Generator</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Login Modal -->
-    <div id="loginModal" class="login-modal">
-        <div class="login-content">
-            <button id="closeLoginModal" class="modal-close">
-                <i class="fas fa-times"></i>
-            </button>
-            <div class="login-header">
-                <div class="login-icon legal-seal">
-                    <i class="fas fa-user-lock"></i>
-                </div>
-                <h3>Welcome Back</h3>
-                <p>Login to access all features</p>
-            </div>
-            
-            <div class="login-buttons">
-                <button id="customGoogleBtn" class="btn-login-google">
-                    <i class="fab fa-google"></i>
-                    Continue with Google
-                </button>
-                
-                <div id="googleSignInContainer"></div>
-                
-                <div class="login-divider">
-                    <span>or</span>
-                </div>
-                
-                <button id="demoLoginBtn" class="btn-login-demo">
-                    <i class="fas fa-rocket"></i>
-                    Try Demo Version
-                </button>
-            </div>
-            
-            <div class="login-footer">
-                By continuing, you agree to our <a href="#" id="termsLink">Terms</a> and <a href="#" id="privacyLink">Privacy Policy</a>
-            </div>
-        </div>
-    </div>
-
     <!-- Main Container -->
-    <div class="main-container" id="main-content">
+    <div class="main-container">
         <!-- Premium Navigation Bar -->
         <nav class="premium-navbar">
             <div class="nav-container">
@@ -3683,6 +1130,301 @@
             </div>
         </section>
 
+        <!-- Chat Interface -->
+        <div id="chatInterface" class="chat-interface">
+            <div class="chat-container">
+                <!-- Chat Header -->
+                <div class="chat-header">
+                    <div class="chat-header-left">
+                        <button id="backToHome" class="chat-back-btn" title="Back to Home">
+                            <i class="fas fa-arrow-left"></i>
+                        </button>
+                        <div class="chat-title">
+                            <div class="chat-title-icon">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="chat-title-text">
+                                <h3>LegalSwami Assistant</h3>
+                                <p>AI Legal Assistant</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chat-header-right">
+                        <button id="clearChat" class="chat-action-btn" title="Clear Chat">
+                            <i class="fas fa-trash-alt"></i>
+                            <div class="badge"></div>
+                        </button>
+                        <button id="exportChat" class="chat-action-btn" title="Export Chat">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <button id="historyToggle" class="chat-action-btn" title="Chat History">
+                            <i class="fas fa-history"></i>
+                            <div class="badge">3</div>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Main Chat Area -->
+                <div class="chat-main">
+                    <!-- Chat History Sidebar -->
+                    <div id="historySidebar" class="chat-history-sidebar">
+                        <div class="history-header">
+                            <h4><i class="fas fa-history"></i> Chat History</h4>
+                            <button id="closeHistory" class="history-close">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="history-content">
+                            <div class="history-search">
+                                <i class="fas fa-search"></i>
+                                <input type="text" placeholder="Search chat history...">
+                            </div>
+                            <div class="history-list" id="historyList">
+                                <div class="history-empty">
+                                    <i class="fas fa-history"></i>
+                                    <p>No chat history yet</p>
+                                    <small>Start chatting to see your history here</small>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chat Messages Area -->
+                    <div class="chat-messages-area">
+                        <!-- Welcome Screen -->
+                        <div class="chat-welcome" id="chatWelcome">
+                            <div class="welcome-illustration">
+                                <i class="fas fa-balance-scale"></i>
+                            </div>
+                            <div class="welcome-content">
+                                <h3>Welcome to LegalSwami! ⚖️</h3>
+                                <p>I'm your AI legal assistant. I can help you with:</p>
+                                
+                                <div class="welcome-features">
+                                    <div class="welcome-feature">
+                                        <i class="fas fa-comments"></i>
+                                        <h5>Legal Advice</h5>
+                                        <p>Get instant answers to your legal questions</p>
+                                    </div>
+                                    <div class="welcome-feature">
+                                        <i class="fas fa-file-contract"></i>
+                                        <h5>Document Generation</h5>
+                                        <p>Generate legal documents instantly</p>
+                                    </div>
+                                    <div class="welcome-feature">
+                                        <i class="fas fa-search"></i>
+                                        <h5>Legal Research</h5>
+                                        <p>Research laws and regulations</p>
+                                    </div>
+                                    <div class="welcome-feature">
+                                        <i class="fas fa-gavel"></i>
+                                        <h5>Case Law Search</h5>
+                                        <p>Find relevant case laws</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="language-selector">
+                                    <h5><i class="fas fa-language"></i> Select Language:</h5>
+                                    <div class="language-buttons">
+                                        <button class="lang-btn" data-lang="en">English</button>
+                                        <button class="lang-btn" data-lang="hi">हिंदी</button>
+                                        <button class="lang-btn" data-lang="mr">मराठी</button>
+                                        <button class="lang-btn" data-lang="gu">ગુજરાતી</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Chat Messages Container -->
+                        <div class="chat-messages-container" id="chatMessagesContainer">
+                            <div class="chat-messages" id="chatMessages">
+                                <!-- Messages will be loaded here -->
+                            </div>
+                        </div>
+
+                        <!-- Quick Questions -->
+                        <div class="quick-questions">
+                            <div class="quick-questions-header">
+                                <h5><i class="fas fa-bolt"></i> Try asking:</h5>
+                                <button class="btn-refresh" title="Refresh suggestions">
+                                    <i class="fas fa-redo"></i>
+                                </button>
+                            </div>
+                            <div class="quick-buttons">
+                                <button class="quick-btn" data-question="What are the requirements for a valid contract?">
+                                    Contract Requirements
+                                </button>
+                                <button class="quick-btn" data-question="How to draft a rental agreement?">
+                                    Rental Agreement
+                                </button>
+                                <button class="quick-btn" data-question="What is consumer protection law?">
+                                    Consumer Rights
+                                </button>
+                                <button class="quick-btn" data-question="How to file a legal notice?">
+                                    Legal Notice
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chat Input Area -->
+                <div class="chat-input-area">
+                    <div class="input-container">
+                        <div class="input-actions-left">
+                            <button id="attachFile" class="input-action-btn" title="Attach File">
+                                <i class="fas fa-paperclip"></i>
+                                <div class="tooltip">Attach File</div>
+                            </button>
+                            <button id="voiceInput" class="input-action-btn" title="Voice Input">
+                                <i class="fas fa-microphone"></i>
+                                <div class="tooltip">Voice Input</div>
+                            </button>
+                            <button id="legalTools" class="input-action-btn" title="Legal Tools">
+                                <i class="fas fa-tools"></i>
+                                <div class="tooltip">Legal Tools</div>
+                            </button>
+                        </div>
+                        
+                        <textarea 
+                            id="messageInput" 
+                            placeholder="Type your legal question here... (Press Shift+Enter for new line, Enter to send)"
+                            rows="1"
+                        ></textarea>
+                        
+                        <div class="input-actions-right">
+                            <button id="sendMessage" class="btn-send" title="Send Message">
+                                <i class="fas fa-paper-plane send-icon"></i>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="input-options">
+                        <div class="attachments-container" id="fileAttachments">
+                            <!-- Attached files will appear here -->
+                        </div>
+                        
+                        <div class="document-options">
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="generateDocument">
+                                    <span>Generate as Document</span>
+                                </label>
+                            </div>
+                            
+                            <div class="select-group">
+                                <label class="select-label">Format:</label>
+                                <select id="documentType" disabled>
+                                    <option value="PDF">PDF Document</option>
+                                    <option value="DOC">Word Document</option>
+                                    <option value="TXT">Text File</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="typing-indicator" id="typingIndicator">
+                        <div class="typing-dots">
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                            <div class="dot"></div>
+                        </div>
+                        <span>LegalSwami is thinking...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Legal Tools Modal -->
+        <div id="legalToolsModal" class="modal">
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <button id="closeLegalTools" class="modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+                
+                <div class="modal-header">
+                    <div class="modal-icon legal-seal">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <h3>Legal Tools & Calculators</h3>
+                    <p>Access various legal utilities</p>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="tools-grid">
+                        <button class="tool-card" onclick="openCalculator('court-fee')">
+                            <i class="fas fa-calculator"></i>
+                            <h4>Court Fee Calculator</h4>
+                            <p>Calculate court fees for different cases</p>
+                        </button>
+                        
+                        <button class="tool-card" onclick="openCalculator('stamp-duty')">
+                            <i class="fas fa-file-invoice-dollar"></i>
+                            <h4>Stamp Duty Calculator</h4>
+                            <p>Calculate stamp duty for documents</p>
+                        </button>
+                        
+                        <button class="tool-card" onclick="openCalculator('compensation')">
+                            <i class="fas fa-money-check-alt"></i>
+                            <h4>Compensation Calculator</h4>
+                            <p>Calculate compensation amounts</p>
+                        </button>
+                        
+                        <button class="tool-card" onclick="openLegalActSearch()">
+                            <i class="fas fa-search"></i>
+                            <h4>Act & Statute Search</h4>
+                            <p>Search legal acts and statutes</p>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modern Login Modal -->
+        <div id="loginModal" class="modal">
+            <div class="modal-overlay"></div>
+            <div class="modal-content">
+                <button id="closeLoginModal" class="modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+                
+                <div class="modal-header">
+                    <div class="modal-icon legal-seal">
+                        <i class="fas fa-balance-scale"></i>
+                    </div>
+                    <h3>Welcome to LegalSwami</h3>
+                    <p>Secure login to access all features</p>
+                </div>
+                
+                <div class="modal-body">
+                    <!-- Google Sign-In Container -->
+                    <div id="googleSignInContainer"></div>
+                    
+                    <!-- Custom Google Button -->
+                    <button id="customGoogleBtn" class="google-signin-btn">
+                        <i class="fab fa-google"></i>
+                        Continue with Google
+                    </button>
+                    
+                    <div class="divider">
+                        <span>or</span>
+                    </div>
+                    
+                    <!-- Demo Login Button -->
+                    <button id="demoLoginBtn" class="demo-login-btn">
+                        <i class="fas fa-user"></i> Try Demo Version
+                    </button>
+                    
+                    <div class="login-info">
+                        <p><i class="fas fa-lock"></i> Your data is encrypted and secure</p>
+                        <p><i class="fas fa-shield-alt"></i> We never share your personal information</p>
+                        <p><i class="fas fa-bolt"></i> No credit card required</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Footer -->
         <footer class="premium-footer">
             <div class="container">
@@ -3787,6 +1529,7 @@
     <!-- Google Identity Services -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
     
+    <!-- Main App Script -->
     <script>
         // Global variables
         let currentChatId = null;
@@ -3795,7 +1538,7 @@
         let isMobileMenuOpen = false;
         let isChatOpen = false;
         let isLoginModalOpen = false;
-        let selectedModel = 'legal-swami';
+        let selectedLanguage = 'en';
         
         // Check if device is mobile
         const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
@@ -3821,15 +1564,6 @@
             { id: 4, name: "Adv. Sneha Desai", specialization: "property", experience: 8, location: "Pune", rating: 4.6, fee: "₹1800/consultation" },
             { id: 5, name: "Adv. Rohit Verma", specialization: "civil", experience: 20, location: "Delhi", rating: 4.9, fee: "₹3500/consultation" },
             { id: 6, name: "Adv. Anjali Singh", specialization: "consumer", experience: 7, location: "Chennai", rating: 4.5, fee: "₹1500/consultation" }
-        ];
-
-        // Chat History
-        let chatHistory = [
-            { id: 1, title: "Legal Consultation", time: "2 hours ago", active: true },
-            { id: 2, title: "Document Review", time: "Yesterday", active: false },
-            { id: 3, title: "Case Analysis", time: "2 days ago", active: false },
-            { id: 4, title: "Property Query", time: "1 week ago", active: false },
-            { id: 5, title: "Consumer Rights", time: "2 weeks ago", active: false }
         ];
 
         // DOM Content Loaded
@@ -3881,11 +1615,49 @@
             // Load lawyers
             loadLawyers();
             
-            // Load chat history
-            loadChatHistory();
+            // Setup language buttons
+            setupLanguageButtons();
             
             console.log('✅ All initialization complete');
         });
+        
+        // Setup Language Buttons
+        function setupLanguageButtons() {
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const lang = this.getAttribute('data-lang');
+                    selectedLanguage = lang;
+                    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Update chat placeholder based on language
+                    const messageInput = document.getElementById('messageInput');
+                    if (messageInput) {
+                        if (lang === 'hi') {
+                            messageInput.placeholder = "अपना कानूनी प्रश्न यहां टाइप करें...";
+                        } else if (lang === 'mr') {
+                            messageInput.placeholder = "तुमचा कायदेशीर प्रश्न येथे टाइप करा...";
+                        } else if (lang === 'gu') {
+                            messageInput.placeholder = "તમારો કાનૂની પ્રશ્ન અહીં ટાઈપ કરો...";
+                        } else {
+                            messageInput.placeholder = "Type your legal question here...";
+                        }
+                    }
+                    
+                    showToast(`Language changed to ${getLanguageName(lang)}`, 'info');
+                });
+            });
+        }
+        
+        function getLanguageName(code) {
+            const languages = {
+                'en': 'English',
+                'hi': 'Hindi',
+                'mr': 'Marathi',
+                'gu': 'Gujarati'
+            };
+            return languages[code] || 'English';
+        }
         
         // Apply mobile optimizations
         function applyMobileOptimizations() {
@@ -3931,6 +1703,38 @@
                 grids.forEach(grid => {
                     if (window.innerWidth <= 1024) {
                         grid.style.gridTemplateColumns = 'repeat(2, 1fr)';
+                    }
+                });
+            }
+            
+            // Mobile specific optimizations
+            if (isMobile) {
+                // Add swipe support for mobile menu
+                let startX, startY;
+                
+                document.addEventListener('touchstart', function(e) {
+                    startX = e.touches[0].clientX;
+                    startY = e.touches[0].clientY;
+                });
+                
+                document.addEventListener('touchend', function(e) {
+                    if (!startX || !startY) return;
+                    
+                    const endX = e.changedTouches[0].clientX;
+                    const endY = e.changedTouches[0].clientY;
+                    
+                    const diffX = startX - endX;
+                    const diffY = startY - endY;
+                    
+                    // Horizontal swipe (for chat interface)
+                    if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+                        if (diffX > 0 && isChatOpen) {
+                            // Swipe left - go back to home
+                            const backBtn = document.getElementById('backToHome');
+                            if (backBtn) {
+                                backBtn.click();
+                            }
+                        }
                     }
                 });
             }
@@ -4180,113 +1984,6 @@
             });
         }
         
-        // Load Chat History
-        function loadChatHistory() {
-            const chatHistoryList = document.getElementById('chatHistoryList');
-            if (!chatHistoryList) return;
-            
-            chatHistoryList.innerHTML = '';
-            
-            chatHistory.forEach(chat => {
-                const chatItem = document.createElement('div');
-                chatItem.className = `chat-history-item ${chat.active ? 'active' : ''}`;
-                chatItem.dataset.id = chat.id;
-                
-                chatItem.innerHTML = `
-                    <i class="fas fa-comment chat-icon"></i>
-                    <span class="chat-title">${chat.title}</span>
-                    <div class="chat-actions">
-                        <button class="chat-action-btn" onclick="deleteChat(${chat.id})">
-                            <i class="fas fa-trash"></i>
-                        </button>
-                    </div>
-                `;
-                
-                chatItem.addEventListener('click', function(e) {
-                    if (!e.target.closest('.chat-action-btn')) {
-                        loadChat(chat.id);
-                    }
-                });
-                
-                chatHistoryList.appendChild(chatItem);
-            });
-        }
-        
-        // Load Chat
-        function loadChat(chatId) {
-            const chat = chatHistory.find(c => c.id === chatId);
-            if (!chat) return;
-            
-            // Update active state
-            chatHistory.forEach(c => c.active = false);
-            chat.active = true;
-            
-            // Update UI
-            document.querySelectorAll('.chat-history-item').forEach(item => {
-                item.classList.remove('active');
-                if (parseInt(item.dataset.id) === chatId) {
-                    item.classList.add('active');
-                }
-            });
-            
-            document.getElementById('currentChatTitle').textContent = chat.title;
-            
-            // Load chat messages
-            loadChatMessages(chatId);
-            
-            showToast(`Loaded chat: ${chat.title}`, 'info');
-        }
-        
-        // Load Chat Messages
-        function loadChatMessages(chatId) {
-            const chatMessages = document.getElementById('chatMessagesGpt');
-            if (!chatMessages) return;
-            
-            // Clear existing messages
-            chatMessages.innerHTML = '';
-            
-            // Hide welcome screen
-            const welcomeScreen = document.getElementById('welcomeScreen');
-            if (welcomeScreen) {
-                welcomeScreen.style.display = 'none';
-            }
-            
-            // For demo, add some sample messages
-            const sampleMessages = [
-                {
-                    id: 1,
-                    type: 'user',
-                    content: 'Hello, I need help with drafting a rental agreement.',
-                    time: '10:30 AM'
-                },
-                {
-                    id: 2,
-                    type: 'ai',
-                    content: 'I\'d be happy to help you draft a rental agreement. Could you please provide some details:\n\n1. Names of landlord and tenant\n2. Property address\n3. Monthly rent amount\n4. Security deposit amount\n5. Lease duration\n\nOnce I have these details, I can generate a comprehensive rental agreement for you.',
-                    time: '10:32 AM'
-                },
-                {
-                    id: 3,
-                    type: 'user',
-                    content: 'Landlord: Rajesh Kumar, Tenant: Priya Sharma, Property: 123 Main St, Mumbai, Rent: ₹15,000/month, Deposit: ₹30,000, Duration: 11 months',
-                    time: '10:35 AM'
-                }
-            ];
-            
-            sampleMessages.forEach(msg => {
-                addMessageToChatGpt(msg.content, msg.type === 'user', false, 'PDF');
-            });
-        }
-        
-        // Delete Chat
-        function deleteChat(chatId) {
-            if (confirm('Are you sure you want to delete this chat?')) {
-                chatHistory = chatHistory.filter(chat => chat.id !== chatId);
-                loadChatHistory();
-                showToast('Chat deleted successfully', 'success');
-            }
-        }
-        
         // Contact Lawyer
         function contactLawyer(lawyerId) {
             const lawyer = lawyers.find(l => l.id === lawyerId);
@@ -4385,9 +2082,312 @@
         
         // Open Legal Calculator
         function openLegalCalculator(type = 'court-fee') {
-            showToast('Opening Legal Calculator...', 'info');
-            // In a real app, this would open a calculator interface
-            alert('Legal Calculator\n\nChoose from:\n- Court Fee Calculator\n- Stamp Duty Calculator\n- Compensation Calculator\n- Interest Calculator\n\nThis feature would provide interactive calculators in the complete version.');
+            const modal = document.getElementById('legalToolsModal');
+            if (modal) {
+                modal.style.display = 'none';
+            }
+            
+            let calculatorHTML = '';
+            let title = '';
+            
+            switch(type) {
+                case 'court-fee':
+                    title = 'Court Fee Calculator';
+                    calculatorHTML = `
+                        <div class="calculator">
+                            <h4>Calculate Court Fees</h4>
+                            <div class="input-group">
+                                <label>Case Type:</label>
+                                <select id="caseType">
+                                    <option value="civil">Civil Case</option>
+                                    <option value="criminal">Criminal Case</option>
+                                    <option value="family">Family Dispute</option>
+                                    <option value="property">Property Case</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label>Case Value (₹):</label>
+                                <input type="number" id="caseValue" placeholder="Enter case value" min="0" value="100000">
+                            </div>
+                            <div class="input-group">
+                                <label>State:</label>
+                                <select id="state">
+                                    <option value="delhi">Delhi</option>
+                                    <option value="mumbai">Maharashtra</option>
+                                    <option value="bangalore">Karnataka</option>
+                                    <option value="chennai">Tamil Nadu</option>
+                                </select>
+                            </div>
+                            <button class="btn-calculate" onclick="calculateCourtFee()">Calculate</button>
+                            <div class="result" id="feeResult"></div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'stamp-duty':
+                    title = 'Stamp Duty Calculator';
+                    calculatorHTML = `
+                        <div class="calculator">
+                            <h4>Calculate Stamp Duty</h4>
+                            <div class="input-group">
+                                <label>Document Type:</label>
+                                <select id="docType">
+                                    <option value="sale">Sale Deed</option>
+                                    <option value="rent">Rent Agreement</option>
+                                    <option value="gift">Gift Deed</option>
+                                    <option value="mortgage">Mortgage Deed</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label>Property Value (₹):</label>
+                                <input type="number" id="propertyValue" placeholder="Enter property value" min="0" value="5000000">
+                            </div>
+                            <div class="input-group">
+                                <label>State:</label>
+                                <select id="stateStamp">
+                                    <option value="delhi">Delhi</option>
+                                    <option value="mumbai">Maharashtra</option>
+                                    <option value="bangalore">Karnataka</option>
+                                    <option value="chennai">Tamil Nadu</option>
+                                </select>
+                            </div>
+                            <button class="btn-calculate" onclick="calculateStampDuty()">Calculate</button>
+                            <div class="result" id="stampResult"></div>
+                        </div>
+                    `;
+                    break;
+                    
+                case 'compensation':
+                    title = 'Compensation Calculator';
+                    calculatorHTML = `
+                        <div class="calculator">
+                            <h4>Calculate Compensation</h4>
+                            <div class="input-group">
+                                <label>Type of Claim:</label>
+                                <select id="claimType">
+                                    <option value="accident">Road Accident</option>
+                                    <option value="medical">Medical Negligence</option>
+                                    <option value="employment">Employment Dispute</option>
+                                    <option value="consumer">Consumer Complaint</option>
+                                </select>
+                            </div>
+                            <div class="input-group">
+                                <label>Monthly Income (₹):</label>
+                                <input type="number" id="monthlyIncome" placeholder="Enter monthly income" min="0" value="30000">
+                            </div>
+                            <div class="input-group">
+                                <label>Age:</label>
+                                <input type="number" id="age" placeholder="Enter age" min="18" max="70" value="35">
+                            </div>
+                            <div class="input-group">
+                                <label>Disability (%):</label>
+                                <input type="number" id="disability" placeholder="Enter disability percentage" min="0" max="100" value="40">
+                            </div>
+                            <button class="btn-calculate" onclick="calculateCompensation()">Calculate</button>
+                            <div class="result" id="compResult"></div>
+                        </div>
+                    `;
+                    break;
+            }
+            
+            showCalculatorModal(title, calculatorHTML);
+        }
+        
+        // Show Calculator Modal
+        function showCalculatorModal(title, content) {
+            const modal = document.createElement('div');
+            modal.className = 'modal';
+            modal.id = 'calculatorModal';
+            modal.innerHTML = `
+                <div class="modal-overlay" onclick="closeModal('calculatorModal')"></div>
+                <div class="modal-content">
+                    <button class="modal-close" onclick="closeModal('calculatorModal')">
+                        <i class="fas fa-times"></i>
+                    </button>
+                    <div class="modal-header">
+                        <div class="modal-icon legal-seal">
+                            <i class="fas fa-calculator"></i>
+                        </div>
+                        <h3>${title}</h3>
+                    </div>
+                    <div class="modal-body">
+                        ${content}
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(modal);
+            modal.style.display = 'flex';
+            document.body.classList.add('modal-open');
+        }
+        
+        // Close Modal
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.classList.remove('modal-open');
+                setTimeout(() => {
+                    modal.remove();
+                }, 300);
+            }
+        }
+        
+        // Calculate Court Fee
+        function calculateCourtFee() {
+            const caseType = document.getElementById('caseType').value;
+            const caseValue = parseInt(document.getElementById('caseValue').value) || 0;
+            const state = document.getElementById('state').value;
+            
+            let fee = 0;
+            
+            // Simplified calculation (in real app, this would be more complex)
+            if (caseValue <= 100000) {
+                fee = caseValue * 0.05; // 5%
+            } else if (caseValue <= 500000) {
+                fee = 5000 + (caseValue - 100000) * 0.04; // 4%
+            } else if (caseValue <= 1000000) {
+                fee = 21000 + (caseValue - 500000) * 0.03; // 3%
+            } else {
+                fee = 36000 + (caseValue - 1000000) * 0.02; // 2%
+            }
+            
+            // Minimum fee
+            fee = Math.max(fee, 100);
+            
+            const resultDiv = document.getElementById('feeResult');
+            if (resultDiv) {
+                resultDiv.innerHTML = `
+                    <div class="result-card">
+                        <h5>Calculated Court Fee:</h5>
+                        <div class="result-amount">₹${fee.toFixed(2)}</div>
+                        <div class="result-details">
+                            <p><i class="fas fa-info-circle"></i> Based on case value: ₹${caseValue.toLocaleString()}</p>
+                            <p><i class="fas fa-map-marker-alt"></i> State: ${state.toUpperCase()}</p>
+                            <p><i class="fas fa-gavel"></i> Case Type: ${caseType.toUpperCase()}</p>
+                        </div>
+                        <p class="result-note"><i class="fas fa-exclamation-triangle"></i> Note: This is an estimate. Actual fees may vary based on specific circumstances.</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Calculate Stamp Duty
+        function calculateStampDuty() {
+            const docType = document.getElementById('docType').value;
+            const propertyValue = parseInt(document.getElementById('propertyValue').value) || 0;
+            const state = document.getElementById('stateStamp').value;
+            
+            let dutyRate = 0;
+            
+            // Simplified rates by state and document type
+            if (state === 'delhi') {
+                dutyRate = 0.06; // 6%
+            } else if (state === 'mumbai') {
+                dutyRate = 0.05; // 5%
+            } else if (state === 'bangalore') {
+                dutyRate = 0.055; // 5.5%
+            } else {
+                dutyRate = 0.07; // 7%
+            }
+            
+            // Adjust based on document type
+            if (docType === 'rent') {
+                dutyRate = 0.01; // 1% for rent agreements
+            } else if (docType === 'gift') {
+                dutyRate = dutyRate * 0.5; // 50% of normal rate for gifts
+            }
+            
+            const duty = propertyValue * dutyRate;
+            const registrationFee = Math.min(propertyValue * 0.01, 30000); // 1% max 30,000
+            const total = duty + registrationFee;
+            
+            const resultDiv = document.getElementById('stampResult');
+            if (resultDiv) {
+                resultDiv.innerHTML = `
+                    <div class="result-card">
+                        <h5>Calculated Stamp Duty:</h5>
+                        <div class="result-amount">₹${total.toFixed(2)}</div>
+                        <div class="result-breakdown">
+                            <p><i class="fas fa-file-invoice-dollar"></i> Stamp Duty: ₹${duty.toFixed(2)} (${(dutyRate*100).toFixed(1)}%)</p>
+                            <p><i class="fas fa-file-signature"></i> Registration Fee: ₹${registrationFee.toFixed(2)}</p>
+                            <p><i class="fas fa-tag"></i> Document Type: ${docType.toUpperCase()}</p>
+                            <p><i class="fas fa-map-marker-alt"></i> State: ${state.toUpperCase()}</p>
+                        </div>
+                        <p class="result-note"><i class="fas fa-exclamation-triangle"></i> Note: Additional charges may apply for franking and other services.</p>
+                    </div>
+                `;
+            }
+        }
+        
+        // Calculate Compensation
+        function calculateCompensation() {
+            const claimType = document.getElementById('claimType').value;
+            const monthlyIncome = parseInt(document.getElementById('monthlyIncome').value) || 0;
+            const age = parseInt(document.getElementById('age').value) || 35;
+            const disability = parseInt(document.getElementById('disability').value) || 0;
+            
+            let compensation = 0;
+            let multiplier = 0;
+            
+            // Calculate multiplier based on age
+            if (age <= 25) {
+                multiplier = 18;
+            } else if (age <= 30) {
+                multiplier = 17;
+            } else if (age <= 35) {
+                multiplier = 16;
+            } else if (age <= 40) {
+                multiplier = 15;
+            } else if (age <= 45) {
+                multiplier = 14;
+            } else if (age <= 50) {
+                multiplier = 13;
+            } else if (age <= 55) {
+                multiplier = 11;
+            } else if (age <= 60) {
+                multiplier = 9;
+            } else {
+                multiplier = 8;
+            }
+            
+            // Base compensation calculation
+            compensation = monthlyIncome * 12 * multiplier;
+            
+            // Adjust for disability
+            if (disability > 0) {
+                compensation = compensation * (disability / 100);
+            }
+            
+            // Add pain and suffering
+            let painSuffering = 0;
+            if (claimType === 'accident') {
+                painSuffering = compensation * 0.3; // 30% for pain and suffering
+            } else if (claimType === 'medical') {
+                painSuffering = compensation * 0.5; // 50% for medical negligence
+            }
+            
+            compensation += painSuffering;
+            
+            // Minimum compensation
+            compensation = Math.max(compensation, 100000);
+            
+            const resultDiv = document.getElementById('compResult');
+            if (resultDiv) {
+                resultDiv.innerHTML = `
+                    <div class="result-card">
+                        <h5>Estimated Compensation:</h5>
+                        <div class="result-amount">₹${compensation.toLocaleString('en-IN', {minimumFractionDigits: 2, maximumFractionDigits: 2})}</div>
+                        <div class="result-breakdown">
+                            <p><i class="fas fa-briefcase"></i> Monthly Income: ₹${monthlyIncome.toLocaleString()}</p>
+                            <p><i class="fas fa-user"></i> Age: ${age} years (Multiplier: ${multiplier})</p>
+                            <p><i class="fas fa-wheelchair"></i> Disability: ${disability}%</p>
+                            <p><i class="fas fa-stethoscope"></i> Claim Type: ${claimType.toUpperCase()}</p>
+                        </div>
+                        <p class="result-note"><i class="fas fa-exclamation-triangle"></i> Note: This is an estimate. Actual compensation depends on court judgment and specific circumstances.</p>
+                    </div>
+                `;
+            }
         }
         
         // Generate Document
@@ -4590,18 +2590,6 @@
             URL.revokeObjectURL(url);
         }
         
-        // Close Modal
-        function closeModal(modalId) {
-            const modal = document.getElementById(modalId);
-            if (modal) {
-                modal.style.display = 'none';
-                document.body.classList.remove('modal-open');
-                setTimeout(() => {
-                    modal.remove();
-                }, 300);
-            }
-        }
-        
         // SIMPLE GOOGLE AUTH
         function initializeSimpleGoogleAuth() {
             console.log('🔐 Initializing Google Authentication...');
@@ -4743,10 +2731,11 @@
             
             const userProfile = document.getElementById('userProfile');
             const headerLoginBtn = document.getElementById('headerLoginBtn');
-            const sidebarUserProfile = document.getElementById('sidebarUserProfile');
-            const sidebarUserName = document.getElementById('sidebarUserName');
-            const sidebarUserAvatar = document.getElementById('sidebarUserAvatar');
-            const sidebarUserStatus = document.getElementById('sidebarUserStatus');
+            
+            if (!userProfile || !headerLoginBtn) {
+                console.warn('⚠️ User UI elements not found');
+                return;
+            }
             
             let user = null;
             const userStr = localStorage.getItem('legal_swami_user');
@@ -4762,7 +2751,6 @@
             if (user && user.id) {
                 console.log('✅ User logged in:', user.name);
                 
-                // Main header
                 headerLoginBtn.style.display = 'none';
                 userProfile.style.display = 'flex';
                 
@@ -4794,38 +2782,11 @@
                     }
                 }
                 
-                // Sidebar
-                if (sidebarUserName) sidebarUserName.textContent = user.name || 'User';
-                if (sidebarUserStatus) sidebarUserStatus.textContent = 'Pro Plan';
-                
-                if (sidebarUserAvatar) {
-                    sidebarUserAvatar.innerHTML = '';
-                    if (user.picture) {
-                        const img = document.createElement('img');
-                        img.src = user.picture;
-                        img.alt = user.name;
-                        img.style.width = '100%';
-                        img.style.height = '100%';
-                        img.style.borderRadius = '6px';
-                        img.style.objectFit = 'cover';
-                        sidebarUserAvatar.appendChild(img);
-                    } else {
-                        const initials = user.name ? user.name.charAt(0).toUpperCase() : 'U';
-                        sidebarUserAvatar.textContent = initials;
-                    }
-                }
-                
             } else {
                 console.log('👤 No user logged in, showing login button');
                 
-                // Main header
                 headerLoginBtn.style.display = 'flex';
                 userProfile.style.display = 'none';
-                
-                // Sidebar
-                if (sidebarUserName) sidebarUserName.textContent = 'User';
-                if (sidebarUserStatus) sidebarUserStatus.textContent = 'Free Plan';
-                if (sidebarUserAvatar) sidebarUserAvatar.textContent = 'U';
                 
                 if (!localStorage.getItem('legalSwamiGuestId')) {
                     localStorage.setItem('legalSwamiGuestId', 'guest_' + Date.now());
@@ -4927,59 +2888,89 @@
                 });
             }
             
-            // ChatGPT Interface Buttons
-            const newChatBtn = document.getElementById('newChatBtn');
-            if (newChatBtn) {
-                newChatBtn.addEventListener('click', createNewChat);
-            }
-            
-            const clearChatBtn = document.getElementById('clearChatBtn');
-            if (clearChatBtn) {
-                clearChatBtn.addEventListener('click', clearChatGpt);
-            }
-            
-            const exportChatBtn = document.getElementById('exportChatBtn');
-            if (exportChatBtn) {
-                exportChatBtn.addEventListener('click', exportChatGpt);
-            }
-            
-            const shareChatBtn = document.getElementById('shareChatBtn');
-            if (shareChatBtn) {
-                shareChatBtn.addEventListener('click', shareChatGpt);
-            }
-            
-            const sendBtnGpt = document.getElementById('sendBtnGpt');
-            if (sendBtnGpt) {
-                sendBtnGpt.addEventListener('click', sendMessageGpt);
-            }
-            
-            const attachFileGpt = document.getElementById('attachFileGpt');
-            if (attachFileGpt) {
-                attachFileGpt.addEventListener('click', attachFileGptHandler);
-            }
-            
-            const voiceInputGpt = document.getElementById('voiceInputGpt');
-            if (voiceInputGpt) {
-                voiceInputGpt.addEventListener('click', startVoiceInputGpt);
-            }
-            
-            const modelSelector = document.getElementById('modelSelector');
-            if (modelSelector) {
-                modelSelector.addEventListener('change', function() {
-                    selectedModel = this.value;
-                    showToast(`Switched to ${this.options[this.selectedIndex].text} model`, 'info');
+            // Legal Tools Modal
+            const legalToolsBtn = document.getElementById('legalTools');
+            if (legalToolsBtn) {
+                legalToolsBtn.addEventListener('click', function() {
+                    const modal = document.getElementById('legalToolsModal');
+                    if (modal) {
+                        modal.style.display = 'flex';
+                        document.body.classList.add('modal-open');
+                    }
                 });
             }
             
+            const closeLegalTools = document.getElementById('closeLegalTools');
+            if (closeLegalTools) {
+                closeLegalTools.addEventListener('click', function() {
+                    const modal = document.getElementById('legalToolsModal');
+                    if (modal) {
+                        modal.style.display = 'none';
+                        document.body.classList.remove('modal-open');
+                    }
+                });
+            }
+            
+            const legalToolsModal = document.getElementById('legalToolsModal');
+            if (legalToolsModal) {
+                legalToolsModal.addEventListener('click', function(e) {
+                    if (e.target === this || e.target.classList.contains('modal-overlay')) {
+                        this.style.display = 'none';
+                        document.body.classList.remove('modal-open');
+                    }
+                });
+            }
+            
+            // Chat interface
+            const backToHome = document.getElementById('backToHome');
+            if (backToHome) {
+                backToHome.addEventListener('click', goBackToHome);
+            }
+            
+            const clearChat = document.getElementById('clearChat');
+            if (clearChat) {
+                clearChat.addEventListener('click', clearChatHandler);
+            }
+            
+            const exportChat = document.getElementById('exportChat');
+            if (exportChat) {
+                exportChat.addEventListener('click', exportChatHandler);
+            }
+            
+            const historyToggle = document.getElementById('historyToggle');
+            if (historyToggle) {
+                historyToggle.addEventListener('click', toggleHistory);
+            }
+            
+            const closeHistory = document.getElementById('closeHistory');
+            if (closeHistory) {
+                closeHistory.addEventListener('click', toggleHistory);
+            }
+            
+            const sendMessage = document.getElementById('sendMessage');
+            if (sendMessage) {
+                sendMessage.addEventListener('click', sendMessageHandler);
+            }
+            
+            const attachFile = document.getElementById('attachFile');
+            if (attachFile) {
+                attachFile.addEventListener('click', attachFileHandler);
+            }
+            
+            const voiceInput = document.getElementById('voiceInput');
+            if (voiceInput) {
+                voiceInput.addEventListener('click', startVoiceInput);
+            }
+            
             // Message input handling
-            const chatTextarea = document.getElementById('chatTextarea');
-            if (chatTextarea) {
-                chatTextarea.addEventListener('keydown', handleTextareaKeydown);
-                chatTextarea.addEventListener('input', autoResizeTextareaGpt);
+            const messageInput = document.getElementById('messageInput');
+            if (messageInput) {
+                messageInput.addEventListener('keydown', handleInputKeydown);
+                messageInput.addEventListener('input', autoResizeTextarea);
                 
                 // Prevent zoom on focus for mobile
                 if (isMobile) {
-                    chatTextarea.addEventListener('focus', function() {
+                    messageInput.addEventListener('focus', function() {
                         setTimeout(() => {
                             this.style.fontSize = '16px';
                         }, 100);
@@ -4987,33 +2978,26 @@
                 }
             }
             
-            // Quick action buttons
-            document.querySelectorAll('.quick-action-btn').forEach(function(btn) {
+            // Quick questions
+            document.querySelectorAll('.quick-btn').forEach(function(btn) {
                 btn.addEventListener('click', function() {
                     const question = this.getAttribute('data-question');
-                    const chatTextarea = document.getElementById('chatTextarea');
-                    if (chatTextarea) {
-                        chatTextarea.value = question;
-                        sendMessageGpt();
+                    const messageInput = document.getElementById('messageInput');
+                    if (messageInput) {
+                        messageInput.value = question;
+                        sendMessageHandler();
                     }
                 });
             });
             
-            // Chat search
-            const chatSearch = document.getElementById('chatSearch');
-            if (chatSearch) {
-                chatSearch.addEventListener('input', function() {
-                    const query = this.value.toLowerCase();
-                    const chatItems = document.querySelectorAll('.chat-history-item');
-                    
-                    chatItems.forEach(item => {
-                        const title = item.querySelector('.chat-title').textContent.toLowerCase();
-                        if (title.includes(query)) {
-                            item.style.display = 'flex';
-                        } else {
-                            item.style.display = 'none';
-                        }
-                    });
+            // Document generation checkbox
+            const generateDocument = document.getElementById('generateDocument');
+            if (generateDocument) {
+                generateDocument.addEventListener('change', function() {
+                    const documentType = document.getElementById('documentType');
+                    if (documentType) {
+                        documentType.disabled = !this.checked;
+                    }
                 });
             }
             
@@ -5046,47 +3030,58 @@
                 });
             }
             
-            // Close chat when clicking back to home
-            const backToHome = document.getElementById('backToHome');
-            if (backToHome) {
-                backToHome.addEventListener('click', goBackToHome);
-            }
-            
             console.log('✅ All event listeners set up');
         }
         
         // INITIALIZE CHAT
         function initializeChat() {
             // Hide typing indicator initially
-            const typingIndicator = document.getElementById('typingIndicatorGpt');
+            const typingIndicator = document.getElementById('typingIndicator');
             if (typingIndicator) {
                 typingIndicator.style.display = 'none';
+            }
+            
+            // Hide chat messages container initially
+            const chatMessagesContainer = document.getElementById('chatMessagesContainer');
+            if (chatMessagesContainer) {
+                chatMessagesContainer.style.display = 'none';
             }
             
             // Mobile chat optimizations
             if (isMobile) {
                 // Larger input for mobile
-                const chatTextarea = document.getElementById('chatTextarea');
-                if (chatTextarea) {
-                    chatTextarea.style.minHeight = '44px';
-                    chatTextarea.style.fontSize = '16px';
+                const messageInput = document.getElementById('messageInput');
+                if (messageInput) {
+                    messageInput.style.minHeight = '44px';
+                    messageInput.style.fontSize = '16px';
+                }
+                
+                // Better mobile chat layout
+                const chatMessages = document.getElementById('chatMessages');
+                if (chatMessages) {
+                    chatMessages.style.padding = '10px';
                 }
             }
         }
         
         // AUTO RESIZE TEXTAREA
-        function autoResizeTextareaGpt() {
+        function autoResizeTextarea() {
             const textarea = this;
             textarea.style.height = 'auto';
-            const newHeight = Math.min(textarea.scrollHeight, 200);
-            textarea.style.height = newHeight + 'px';
+            textarea.style.height = (textarea.scrollHeight) + 'px';
+            
+            // Limit height on mobile
+            if (isMobile && textarea.scrollHeight > 200) {
+                textarea.style.height = '200px';
+                textarea.style.overflowY = 'auto';
+            }
         }
         
-        // HANDLE TEXTAREA KEYDOWN
-        function handleTextareaKeydown(event) {
+        // HANDLE INPUT KEYDOWN
+        function handleInputKeydown(event) {
             if (event.key === 'Enter' && !event.shiftKey) {
                 event.preventDefault();
-                sendMessageGpt();
+                sendMessageHandler();
             }
             
             // Mobile specific: hide keyboard on escape
@@ -5279,8 +3274,8 @@
                                 },
                                 body: JSON.stringify({
                                     message: message,
-                                    model: selectedModel,
-                                    generateDocument: false
+                                    generateDocument: document.getElementById('generateDocument') ? document.getElementById('generateDocument').checked : false,
+                                    language: selectedLanguage
                                 })
                             });
                             
@@ -5369,9 +3364,9 @@
                     
                     // Focus input after a delay
                     setTimeout(function() {
-                        const chatTextarea = document.getElementById('chatTextarea');
-                        if (chatTextarea) {
-                            chatTextarea.focus();
+                        const messageInput = document.getElementById('messageInput');
+                        if (messageInput) {
+                            messageInput.focus();
                         }
                     }, 500);
                 }
@@ -5387,49 +3382,25 @@
                 document.body.style.overflow = 'hidden';
             }
             
-            // Show welcome screen if no messages
-            const chatMessages = document.getElementById('chatMessagesGpt');
-            if (chatMessages && chatMessages.children.length === 0) {
-                const welcomeScreen = document.getElementById('welcomeScreen');
-                if (welcomeScreen) {
-                    welcomeScreen.style.display = 'flex';
+            // Hide welcome screen, show messages
+            const chatWelcome = document.getElementById('chatWelcome');
+            const chatMessagesContainer = document.getElementById('chatMessagesContainer');
+            
+            if (chatWelcome) {
+                chatWelcome.style.display = 'none';
+            }
+            
+            if (chatMessagesContainer) {
+                chatMessagesContainer.style.display = 'flex';
+            }
+            
+            setTimeout(function() {
+                const messageInput = document.getElementById('messageInput');
+                if (messageInput) {
+                    messageInput.focus();
+                    console.log('✅ Message input focused');
                 }
-            }
-        }
-        
-        // CREATE NEW CHAT
-        function createNewChat() {
-            const newChatId = Date.now();
-            const newChat = {
-                id: newChatId,
-                title: 'New Chat ' + (chatHistory.length + 1),
-                time: 'Just now',
-                active: true
-            };
-            
-            // Deactivate all other chats
-            chatHistory.forEach(chat => chat.active = false);
-            
-            // Add new chat to history
-            chatHistory.unshift(newChat);
-            
-            // Update UI
-            loadChatHistory();
-            loadChat(newChatId);
-            
-            // Clear messages
-            const chatMessages = document.getElementById('chatMessagesGpt');
-            if (chatMessages) {
-                chatMessages.innerHTML = '';
-            }
-            
-            // Show welcome screen
-            const welcomeScreen = document.getElementById('welcomeScreen');
-            if (welcomeScreen) {
-                welcomeScreen.style.display = 'flex';
-            }
-            
-            showToast('New chat created', 'success');
+            }, 300);
         }
         
         // GO BACK TO HOME
@@ -5450,46 +3421,66 @@
             // Restore scrolling
             document.body.style.overflow = '';
             
+            // Show welcome screen again
+            const chatWelcome = document.getElementById('chatWelcome');
+            const chatMessagesContainer = document.getElementById('chatMessagesContainer');
+            
+            if (chatWelcome) {
+                chatWelcome.style.display = 'flex';
+            }
+            
+            if (chatMessagesContainer) {
+                chatMessagesContainer.style.display = 'none';
+            }
+            
+            // Clear messages
+            const chatMessages = document.getElementById('chatMessages');
+            if (chatMessages) {
+                chatMessages.innerHTML = '';
+            }
+            
+            // Reset message input
+            const messageInput = document.getElementById('messageInput');
+            if (messageInput) {
+                messageInput.value = '';
+                messageInput.style.height = 'auto';
+            }
+            
             window.scrollTo({ top: 0, behavior: 'smooth' });
             console.log('🏠 Returned to home');
         }
         
-        // CLEAR CHAT GPT
-        function clearChatGpt() {
-            if (confirm('Are you sure you want to clear this chat? This action cannot be undone.')) {
-                const chatMessages = document.getElementById('chatMessagesGpt');
+        // CLEAR CHAT HANDLER
+        function clearChatHandler() {
+            if (confirm('Are you sure you want to clear the chat? This action cannot be undone.')) {
+                const chatMessages = document.getElementById('chatMessages');
                 if (chatMessages) {
                     chatMessages.innerHTML = '';
                 }
                 
-                // Show welcome screen
-                const welcomeScreen = document.getElementById('welcomeScreen');
-                if (welcomeScreen) {
-                    welcomeScreen.style.display = 'flex';
-                }
-                
+                currentChatId = null;
                 showToast('Chat cleared successfully', 'success');
                 console.log('🗑️ Chat cleared');
             }
         }
         
-        // EXPORT CHAT GPT
-        function exportChatGpt() {
-            const chatMessages = document.getElementById('chatMessagesGpt');
+        // EXPORT CHAT HANDLER
+        function exportChatHandler() {
+            const chatMessages = document.getElementById('chatMessages');
             if (!chatMessages) return;
             
-            const messages = chatMessages.querySelectorAll('.message-gpt');
+            const messages = chatMessages.querySelectorAll('.message');
             
             let exportText = '================================\n';
             exportText += 'LEGALSWAMI CHAT EXPORT\n';
             exportText += 'Generated on: ' + new Date().toLocaleString() + '\n';
-            exportText += 'Model: ' + document.getElementById('modelSelector').value + '\n';
+            exportText += 'Language: ' + getLanguageName(selectedLanguage) + '\n';
             exportText += '================================\n\n';
             
             messages.forEach(function(message) {
-                const isAI = message.classList.contains('ai-message-gpt');
-                const text = message.querySelector('.message-text-gpt') ? message.querySelector('.message-text-gpt').textContent : '';
-                const time = message.querySelector('.message-time-gpt') ? message.querySelector('.message-time-gpt').textContent : '';
+                const isAI = message.classList.contains('ai-message');
+                const text = message.querySelector('.message-text') ? message.querySelector('.message-text').textContent : '';
+                const time = message.querySelector('.message-time') ? message.querySelector('.message-time').textContent : '';
                 
                 exportText += (isAI ? '🤖 AI Assistant' : '👤 You') + ' (' + time + '):\n';
                 exportText += text + '\n\n';
@@ -5516,20 +3507,88 @@
             console.log('📥 Chat exported');
         }
         
-        // SHARE CHAT GPT
-        function shareChatGpt() {
-            showToast('Share feature coming soon in version 2.3!', 'info');
-            console.log('📤 Share chat clicked');
+        // TOGGLE HISTORY SIDEBAR
+        function toggleHistory() {
+            const sidebar = document.getElementById('historySidebar');
+            if (sidebar) {
+                sidebar.classList.toggle('active');
+                console.log('📜 History sidebar toggled');
+            }
         }
         
-        // SEND MESSAGE GPT
-        async function sendMessageGpt() {
+        // LOAD CHAT HISTORY
+        async function loadChatHistory() {
+            try {
+                if (!window.legalSwamiAPI) {
+                    console.warn('API not initialized');
+                    return;
+                }
+                
+                console.log('📜 Loading chat history...');
+                const history = await window.legalSwamiAPI.getChatHistory(0, 10);
+                updateHistoryList(history);
+                console.log('✅ Chat history loaded:', history.length, 'items');
+            } catch (error) {
+                console.error('Failed to load history:', error);
+                showToast('Failed to load chat history', 'error');
+            }
+        }
+        
+        // UPDATE HISTORY LIST UI
+        function updateHistoryList(history) {
+            const historyList = document.getElementById('historyList');
+            if (!historyList) return;
+            
+            historyList.innerHTML = '';
+            
+            if (!history || history.length === 0) {
+                historyList.innerHTML = '<div class="history-empty"><i class="fas fa-history"></i><p>No chat history yet</p><small>Start chatting to see your history here</small></div>';
+                return;
+            }
+            
+            history.forEach(function(item) {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'history-item';
+                historyItem.innerHTML = '<div class="history-item-header"><div class="history-item-title">' + 
+                    item.message.substring(0, 50) + (item.message.length > 50 ? '...' : '') + 
+                    '</div><span class="history-item-time">' + formatTime(item.createdAt) + 
+                    '</span></div><div class="history-item-preview">' + 
+                    item.message.substring(0, 100) + (item.message.length > 100 ? '...' : '') + 
+                    '</div><div class="history-item-actions"><button class="history-action-btn" onclick="loadChatFromHistory(\'' + 
+                    item.id + '\')"><i class="fas fa-eye"></i> View</button><button class="history-action-btn" onclick="deleteChatHistory(\'' + 
+                    item.id + '\')"><i class="fas fa-trash"></i> Delete</button></div>';
+                historyList.appendChild(historyItem);
+            });
+        }
+        
+        // LOAD CHAT FROM HISTORY
+        async function loadChatFromHistory(chatId) {
+            try {
+                showToast('Loading chat from history...', 'info');
+                toggleHistory();
+                console.log('📜 Loading chat:', chatId);
+            } catch (error) {
+                console.error('Failed to load chat:', error);
+                showToast('Failed to load chat', 'error');
+            }
+        }
+        
+        // DELETE CHAT HISTORY
+        function deleteChatHistory(chatId) {
+            if (confirm('Are you sure you want to delete this chat?')) {
+                showToast('Chat deleted successfully', 'success');
+                console.log('🗑️ Chat deleted:', chatId);
+            }
+        }
+        
+        // SEND MESSAGE HANDLER
+        async function sendMessageHandler() {
             if (isProcessing) {
                 console.warn('⚠️ Message already being processed');
                 return;
             }
             
-            const input = document.getElementById('chatTextarea');
+            const input = document.getElementById('messageInput');
             if (!input) return;
             
             const message = input.value.trim();
@@ -5552,17 +3611,14 @@
             try {
                 console.log('💬 Sending message:', message.substring(0, 100));
                 
-                // Hide welcome screen
-                const welcomeScreen = document.getElementById('welcomeScreen');
-                if (welcomeScreen) {
-                    welcomeScreen.style.display = 'none';
-                }
-                
-                addMessageToChatGpt(message, true);
+                addMessageToChat(message, true);
                 input.value = '';
                 input.style.height = 'auto';
                 
-                showTypingIndicatorGpt(true);
+                showTypingIndicator(true);
+                
+                const generateDocument = document.getElementById('generateDocument') ? document.getElementById('generateDocument').checked : false;
+                const documentType = document.getElementById('documentType') ? document.getElementById('documentType').value : 'PDF';
                 
                 const backendUrl = 'https://legal-swami-backend.onrender.com';
                 const response = await fetch(backendUrl + '/api/v1/chat/send', {
@@ -5571,12 +3627,12 @@
                         'Content-Type': 'application/json',
                         'x-user-id': userId,
                         'x-request-id': 'req_' + Date.now(),
-                        'x-model': selectedModel
+                        'x-language': selectedLanguage
                     },
                     body: JSON.stringify({
                         message: message,
-                        model: selectedModel,
-                        generateDocument: false
+                        generateDocument: generateDocument,
+                        language: selectedLanguage
                     })
                 });
                 
@@ -5588,40 +3644,42 @@
                 const data = await response.json();
                 console.log('✅ Received response:', data.id);
                 
-                addMessageToChatGpt(data.response || 'No response received', false, false, 'PDF');
+                addMessageToChat(data.response || 'No response received', false, generateDocument, documentType);
+                
+                await loadChatHistory();
                 
             } catch (error) {
                 console.error('❌ Failed to send message:', error);
-                addMessageToChatGpt('Sorry, I encountered an error while processing your request. Please try again in a moment. If the problem persists, please check your internet connection.', false);
+                addMessageToChat('Sorry, I encountered an error while processing your request. Please try again in a moment. If the problem persists, please check your internet connection.', false);
                 showToast('Failed to send message: ' + error.message, 'error');
             } finally {
                 isProcessing = false;
-                showTypingIndicatorGpt(false);
+                showTypingIndicator(false);
                 
                 // Scroll to bottom on mobile
                 if (isMobile) {
-                    const messagesContainer = document.getElementById('messagesContainer');
-                    if (messagesContainer) {
+                    const chatMessages = document.getElementById('chatMessages');
+                    if (chatMessages) {
                         setTimeout(() => {
-                            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                            chatMessages.scrollTop = chatMessages.scrollHeight;
                         }, 100);
                     }
                 }
             }
         }
         
-        // ADD MESSAGE TO CHAT GPT
-        function addMessageToChatGpt(content, isUser, isDocument, documentType) {
+        // ADD MESSAGE TO CHAT UI
+        function addMessageToChat(content, isUser, isDocument, documentType) {
             isUser = isUser || false;
             isDocument = isDocument || false;
             documentType = documentType || 'PDF';
             
-            const chatMessages = document.getElementById('chatMessagesGpt');
+            const chatMessages = document.getElementById('chatMessages');
             if (!chatMessages) return;
             
             const messageDiv = document.createElement('div');
             
-            messageDiv.className = 'message-gpt ' + (isUser ? 'user-message-gpt' : 'ai-message-gpt');
+            messageDiv.className = 'message ' + (isUser ? 'user-message' : 'ai-message');
             if (isDocument) {
                 messageDiv.classList.add('document-message');
             }
@@ -5633,38 +3691,36 @@
                 messageContent = '<div class="document-header"><div class="document-icon"><i class="fas fa-file-' + 
                     documentType.toLowerCase() + '"></i></div><div class="document-info"><h5>' + 
                     documentType + ' Document Generated</h5><p>Generated on ' + new Date().toLocaleDateString() + 
-                    '</p></div></div><div class="message-text-gpt">' + content + 
+                    '</p></div></div><div class="message-text">' + content + 
                     '</div><div class="document-actions"><button class="btn-download"><i class="fas fa-download"></i>Download ' + 
                     documentType + '</button><button class="btn-preview"><i class="fas fa-eye"></i>Preview</button></div>';
             } else {
-                messageContent = '<div class="message-header-gpt"><div class="message-sender-gpt">' + 
+                messageContent = '<div class="message-header"><div class="message-sender">' + 
                     (isUser ? '👤 You' : '🤖 AI Assistant') + 
-                    '</div><div class="message-time-gpt">' + time + 
-                    '</div></div><div class="message-text-gpt">' + formatMessageText(content) + 
-                    '</div><div class="message-actions-gpt"><button class="message-action-btn-gpt" title="Copy"><i class="fas fa-copy"></i></button><button class="message-action-btn-gpt" title="Share"><i class="fas fa-share"></i></button><button class="message-action-btn-gpt" title="Save"><i class="fas fa-bookmark"></i></button></div>';
+                    (!isUser ? '<span class="message-sender-badge">AI</span>' : '') + 
+                    '</div><div class="message-time">' + time + 
+                    '</div></div><div class="message-text">' + formatMessageText(content) + 
+                    '</div><div class="message-actions"><button class="message-action-btn" title="Copy"><i class="fas fa-copy"></i></button><button class="message-action-btn" title="Share"><i class="fas fa-share"></i></button><button class="message-action-btn" title="Save"><i class="fas fa-bookmark"></i></button></div>';
             }
             
-            messageDiv.innerHTML = '<div class="message-avatar-gpt">' + 
+            messageDiv.innerHTML = '<div class="message-avatar">' + 
                 (isUser ? '<i class="fas fa-user"></i>' : '<i class="fas fa-robot"></i>') + 
-                '</div><div class="message-content-gpt">' + messageContent + '</div>';
+                '</div><div class="message-content">' + messageContent + '</div>';
             
             chatMessages.appendChild(messageDiv);
             
             // Scroll to bottom
             setTimeout(() => {
-                const messagesContainer = document.getElementById('messagesContainer');
-                if (messagesContainer) {
-                    messagesContainer.scrollTop = messagesContainer.scrollHeight;
-                }
+                chatMessages.scrollTop = chatMessages.scrollHeight;
             }, 100);
             
             console.log('💬 Message added to chat:', isUser ? 'User' : 'AI');
             
             // Add copy functionality
-            const copyBtn = messageDiv.querySelector('.message-action-btn-gpt');
+            const copyBtn = messageDiv.querySelector('.message-action-btn');
             if (copyBtn) {
                 copyBtn.addEventListener('click', function() {
-                    const text = messageDiv.querySelector('.message-text-gpt').textContent;
+                    const text = messageDiv.querySelector('.message-text').textContent;
                     navigator.clipboard.writeText(text).then(function() {
                         showToast('Message copied to clipboard!', 'success');
                     });
@@ -5682,31 +3738,31 @@
             return text;
         }
         
-        // SHOW TYPING INDICATOR GPT
-        function showTypingIndicatorGpt(show) {
-            const indicator = document.getElementById('typingIndicatorGpt');
+        // SHOW TYPING INDICATOR
+        function showTypingIndicator(show) {
+            const indicator = document.getElementById('typingIndicator');
             if (indicator) {
                 indicator.style.display = show ? 'flex' : 'none';
                 
                 if (show) {
-                    const messagesContainer = document.getElementById('messagesContainer');
-                    if (messagesContainer) {
+                    const chatMessages = document.getElementById('chatMessages');
+                    if (chatMessages) {
                         setTimeout(() => {
-                            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+                            chatMessages.scrollTop = chatMessages.scrollHeight;
                         }, 100);
                     }
                 }
             }
         }
         
-        // ATTACH FILE GPT HANDLER
-        function attachFileGptHandler() {
+        // ATTACH FILE HANDLER
+        function attachFileHandler() {
             showToast('File attachment feature coming soon in version 2.1!', 'info');
             console.log('📎 File attachment clicked');
         }
         
-        // START VOICE INPUT GPT
-        function startVoiceInputGpt() {
+        // START VOICE INPUT
+        function startVoiceInput() {
             showToast('Voice input feature coming soon in version 2.2!', 'info');
             console.log('🎤 Voice input clicked');
         }
@@ -5751,6 +3807,18 @@
             console.log('🍪 Cookie Policy shown');
         }
         
+        // FORMAT TIME
+        function formatTime(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const diff = now - date;
+            
+            if (diff < 60000) return 'Just now';
+            if (diff < 3600000) return Math.floor(diff / 60000) + 'm ago';
+            if (diff < 86400000) return Math.floor(diff / 3600000) + 'h ago';
+            return date.toLocaleDateString();
+        }
+        
         // SHOW TOAST NOTIFICATION
         function showToast(message, type) {
             type = type || 'info';
@@ -5790,6 +3858,8 @@
         }
         
         // MAKE FUNCTIONS AVAILABLE GLOBALLY
+        window.loadChatFromHistory = loadChatFromHistory;
+        window.deleteChatHistory = deleteChatHistory;
         window.searchActs = searchActs;
         window.searchCaseLaws = searchCaseLaws;
         window.openLegalCalculator = openLegalCalculator;
@@ -5799,8 +3869,11 @@
         window.openGuide = openGuide;
         window.downloadGuide = downloadGuide;
         window.finalizeDocument = finalizeDocument;
+        window.openLegalActSearch = searchActs;
+        window.calculateCourtFee = calculateCourtFee;
+        window.calculateStampDuty = calculateStampDuty;
+        window.calculateCompensation = calculateCompensation;
         window.closeModal = closeModal;
-        window.deleteChat = deleteChat;
         
         console.log('✅ LegalSwami Premium App Initialization Complete!');
     </script>
