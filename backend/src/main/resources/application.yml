@@ -65,7 +65,7 @@ jwt:
 groq:
   api:
     # Your 3 API keys for rotation
-    keys: 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,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,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,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,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
+    keys: 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,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,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,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,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
     
     # API URL
     url: https://api.groq.com/openai/v1/chat/completions
