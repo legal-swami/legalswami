@@ -1130,207 +1130,291 @@
             </div>
         </section>
 
-        <!-- Chat Interface -->
-        <div id="chatInterface" class="chat-interface">
-            <div class="chat-container">
-                <!-- Chat Header -->
-                <div class="chat-header">
-                    <div class="chat-header-left">
-                        <button id="backToHome" class="chat-back-btn" title="Back to Home">
-                            <i class="fas fa-arrow-left"></i>
+        <!-- CHATGPT-LIKE CHAT INTERFACE -->
+        <div id="chatInterface" class="chat-interface" style="display: none;">
+            <!-- ChatGPT-like Chat Container -->
+            <div class="chat-container" style="background: #343541; height: 100vh; display: flex; flex-direction: column;">
+                <!-- ChatGPT-like Header -->
+                <header style="background: #40414f; padding: 0.75rem 1rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #565869; position: sticky; top: 0; z-index: 1000;">
+                    <div class="logo" style="display: flex; align-items: center; gap: 10px;">
+                        <button class="sidebar-toggle" id="chatSidebarToggle" style="background: transparent; border: none; color: #ececf1; font-size: 1.375rem; cursor: pointer; padding: 0.5rem; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-bars"></i>
                         </button>
-                        <div class="chat-title">
-                            <div class="chat-title-icon">
-                                <i class="fas fa-robot"></i>
-                            </div>
-                            <div class="chat-title-text">
-                                <h3>LegalSwami Assistant</h3>
-                                <p>AI Legal Assistant</p>
-                            </div>
+                        <div class="logo-icon" style="font-size: 1.1rem; background: linear-gradient(135deg, #10a37f 0%, #0d8c6d 100%); color: white; width: 32px; height: 32px; border-radius: 6px; display: flex; align-items: center; justify-content: center;">
+                            <i class="fas fa-scale-balanced"></i>
+                        </div>
+                        <h1 style="font-size: 1.1rem; font-weight: 600; color: #ececf1;">LegalSwami</h1>
+                    </div>
+                    
+                    <div class="header-actions" style="display: flex; gap: 8px; align-items: center;">
+                        <button class="header-btn" id="chatBackToHome" style="background: #40414f; color: #ececf1; border: 1px solid #565869; border-radius: 6px; padding: 0.5rem 0.75rem; cursor: pointer; font-size: 0.85rem; transition: all 0.2s; display: flex; align-items: center; gap: 6px; min-height: 36px;">
+                            <i class="fas fa-arrow-left"></i>
+                            <span>Back to Home</span>
+                        </button>
+                        <button class="header-btn" id="chatClearChat" style="background: #40414f; color: #ececf1; border: 1px solid #565869; border-radius: 6px; padding: 0.5rem 0.75rem; cursor: pointer; font-size: 0.85rem; transition: all 0.2s; display: flex; align-items: center; gap: 6px; min-height: 36px;">
+                            <i class="fas fa-broom"></i>
+                            <span>Clear Chat</span>
+                        </button>
+                        <button class="header-btn" id="chatDownloadBtn" style="background: #40414f; color: #ececf1; border: 1px solid #565869; border-radius: 6px; padding: 0.5rem 0.75rem; cursor: pointer; font-size: 0.85rem; transition: all 0.2s; display: flex; align-items: center; gap: 6px; min-height: 36px;">
+                            <i class="fas fa-download"></i>
+                            <span>Download</span>
+                        </button>
+                        <div class="status-indicator" style="display: flex; align-items: center; gap: 6px; padding: 0.4rem 0.75rem; background: rgba(16, 163, 127, 0.1); border: 1px solid rgba(16, 163, 127, 0.3); border-radius: 6px; font-size: 0.85rem;">
+                            <div class="status-dot" style="width: 8px; height: 8px; background-color: #10b981; border-radius: 50%; animation: pulse 2s infinite;"></div>
+                            <span>AI Assistant Ready</span>
                         </div>
                     </div>
-                    <div class="chat-header-right">
-                        <button id="clearChat" class="chat-action-btn" title="Clear Chat">
-                            <i class="fas fa-trash-alt"></i>
-                            <div class="badge"></div>
+                </header>
+                
+                <div class="main-content" style="display: flex; flex: 1; overflow: hidden; position: relative;">
+                    <!-- ChatGPT-like Sidebar -->
+                    <aside class="sidebar" id="chatSidebar" style="width: 260px; background: #40414f; border-right: 1px solid #565869; display: flex; flex-direction: column; transition: transform 0.2s ease; z-index: 50; position: absolute; top: 0; left: 0; bottom: 0; overflow: hidden; transform: translateX(-100%);">
+                        <button class="sidebar-close" id="chatSidebarClose" style="position: absolute; top: 1rem; right: 1rem; background: #444654; color: #ececf1; border: 1px solid #565869; border-radius: 6px; padding: 0.5rem; cursor: pointer; z-index: 100; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px;">
+                            <i class="fas fa-times"></i>
                         </button>
-                        <button id="exportChat" class="chat-action-btn" title="Export Chat">
-                            <i class="fas fa-download"></i>
+                        
+                        <div class="sidebar-tabs" style="display: flex; border-bottom: 1px solid #565869; background: #40414f; position: sticky; top: 0; z-index: 20;">
+                            <button class="sidebar-tab active" data-tab="legal-topics" style="flex: 1; padding: 0.875rem 0.5rem; background: transparent; border: none; color: #8e8ea0; font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: all 0.2s; text-align: center; position: relative;">
+                                <i class="fas fa-book"></i>
+                                <span>Legal Topics</span>
+                            </button>
+                            <button class="sidebar-tab" data-tab="chat-history" style="flex: 1; padding: 0.875rem 0.5rem; background: transparent; border: none; color: #8e8ea0; font-size: 0.85rem; font-weight: 500; cursor: pointer; transition: all 0.2s; text-align: center; position: relative;">
+                                <i class="fas fa-history"></i>
+                                <span>Chat History</span>
+                            </button>
+                        </div>
+                        
+                        <!-- Legal Topics Tab Content -->
+                        <div class="tab-content active" id="legal-topics-content" style="flex: 1; overflow-y: auto; display: block;">
+                            <div class="sidebar-header" style="padding: 0.875rem 1rem; border-bottom: 1px solid #565869; position: sticky; top: 0; background: #40414f; z-index: 10;">
+                                <h2 style="font-size: 0.85rem; font-weight: 600; color: #8e8ea0; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px;">
+                                    <i class="fas fa-book"></i> Legal Topics
+                                </h2>
+                            </div>
+                            
+                            <div class="sidebar-section" style="padding: 0.875rem 1rem;">
+                                <h3 style="font-size: 0.85rem; margin-bottom: 0.75rem; color: #8e8ea0; display: flex; align-items: center; gap: 8px; font-weight: 600;">
+                                    <i class="fas fa-gavel"></i> Common Legal Areas
+                                </h3>
+                                <div class="topic-list" style="display: flex; flex-direction: column; gap: 4px;">
+                                    <button class="topic-item" data-topic="contract" style="padding: 0.75rem; background: transparent; border-radius: 6px; cursor: pointer; transition: all 0.2s; border: none; display: flex; align-items: center; gap: 8px; color: #ececf1; min-height: 40px; text-align: left; width: 100%; font-size: 0.875rem; font-weight: 500;">
+                                        <i class="fas fa-file-contract"></i>
+                                        <span>Contract Law</span>
+                                    </button>
+                                    <button class="topic-item" data-topic="employment" style="padding: 0.75rem; background: transparent; border-radius: 6px; cursor: pointer; transition: all 0.2s; border: none; display: flex; align-items: center; gap: 8px; color: #ececf1; min-height: 40px; text-align: left; width: 100%; font-size: 0.875rem; font-weight: 500;">
+                                        <i class="fas fa-briefcase"></i>
+                                        <span>Employment Law</span>
+                                    </button>
+                                    <button class="topic-item" data-topic="family" style="padding: 0.75rem; background: transparent; border-radius: 6px; cursor: pointer; transition: all 0.2s; border: none; display: flex; align-items: center; gap: 8px; color: #ececf1; min-height: 40px; text-align: left; width: 100%; font-size: 0.875rem; font-weight: 500;">
+                                        <i class="fas fa-heart"></i>
+                                        <span>Family Law</span>
+                                    </button>
+                                    <button class="topic-item" data-topic="property" style="padding: 0.75rem; background: transparent; border-radius: 6px; cursor: pointer; transition: all 0.2s; border: none; display: flex; align-items: center; gap: 8px; color: #ececf1; min-height: 40px; text-align: left; width: 100%; font-size: 0.875rem; font-weight: 500;">
+                                        <i class="fas fa-house"></i>
+                                        <span>Property Law</span>
+                                    </button>
+                                    <button class="topic-item" data-topic="criminal" style="padding: 0.75rem; background: transparent; border-radius: 6px; cursor: pointer; transition: all 0.2s; border: none; display: flex; align-items: center; gap: 8px; color: #ececf1; min-height: 40px; text-align: left; width: 100%; font-size: 0.875rem; font-weight: 500;">
+                                        <i class="fas fa-gavel"></i>
+                                        <span>Criminal Law</span>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="sidebar-section" style="padding: 0.875rem 1rem;">
+                                <h3 style="font-size: 0.85rem; margin-bottom: 0.75rem; color: #8e8ea0; display: flex; align-items: center; gap: 8px; font-weight: 600;">
+                                    <i class="fas fa-bolt"></i> Quick Actions
+                                </h3>
+                                <div class="quick-actions" style="display: flex; flex-direction: column; gap: 4px;">
+                                    <button class="action-item" data-action="nda" style="padding: 0.75rem; background: transparent; border-radius: 6px; cursor: pointer; transition: all 0.2s; border: none; display: flex; align-items: center; gap: 8px; color: #ececf1; min-height: 40px; text-align: left; width: 100%; font-size: 0.875rem; font-weight: 500;">
+                                        <i class="fas fa-file-signature"></i>
+                                        <span>NDA Template</span>
+                                    </button>
+                                    <button class="action-item" data-action="rental" style="padding: 0.75rem; background: transparent; border-radius: 6px; cursor: pointer; transition: all 0.2s; border: none; display: flex; align-items: center; gap: 8px; color: #ececf1; min-height: 40px; text-align: left; width: 100%; font-size: 0.875rem; font-weight: 500;">
+                                        <i class="fas fa-home"></i>
+                                        <span>Rental Agreement</span>
+                                    </button>
+                                    <button class="action-item" data-action="will" style="padding: 0.75rem; background: transparent; border-radius: 6px; cursor: pointer; transition: all 0.2s; border: none; display: flex; align-items: center; gap: 8px; color: #ececf1; min-height: 40px; text-align: left; width: 100%; font-size: 0.875rem; font-weight: 500;">
+                                        <i class="fas fa-file-contract"></i>
+                                        <span>Will Template</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Chat History Tab Content -->
+                        <div class="tab-content" id="chat-history-content" style="flex: 1; overflow-y: auto; display: none;">
+                            <div class="history-header" style="padding: 0.875rem 1rem; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #565869; position: sticky; top: 0; background: #40414f; z-index: 10;">
+                                <h2 style="font-size: 0.85rem; font-weight: 600; color: #8e8ea0; text-transform: uppercase; letter-spacing: 0.5px; display: flex; align-items: center; gap: 8px;">
+                                    <i class="fas fa-history"></i> Chat History
+                                </h2>
+                                <button class="new-chat-btn" id="newChatBtn" style="background: #444654; color: #ececf1; border: 1px solid #565869; border-radius: 6px; padding: 0.5rem 0.75rem; cursor: pointer; font-size: 0.85rem; font-weight: 500; transition: all 0.2s; display: flex; align-items: center; gap: 6px;">
+                                    <i class="fas fa-plus"></i>
+                                    <span>New Chat</span>
+                                </button>
+                            </div>
+                            
+                            <div class="history-list" id="chatHistoryList" style="padding: 0.5rem;">
+                                <div class="empty-history" style="text-align: center; padding: 2.5rem 1rem; color: #8e8ea0;">
+                                    <i class="fas fa-comments" style="font-size: 1.75rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                                    <p style="font-size: 0.875rem;">No chat history yet</p>
+                                    <p style="font-size: 0.8125rem; margin-top: 0.5rem;">Start a conversation to see it here</p>
+                                </div>
+                            </div>
+                        </div>
+                    </aside>
+                    
+                    <!-- Sidebar Overlay -->
+                    <div class="sidebar-overlay" id="chatSidebarOverlay" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.5); z-index: 45;"></div>
+                    
+                    <!-- ChatGPT-like Chat Messages Area -->
+                    <main class="chat-container" id="chatMainContainer" style="flex: 1; display: flex; flex-direction: column; background: #343541; width: 100%; height: 100%; min-height: 0; overflow: hidden;">
+                        <!-- Scroll to Bottom Button -->
+                        <button class="scroll-to-bottom-btn" id="scrollToBottomBtn" style="position: fixed; bottom: 90px; right: 20px; width: 40px; height: 40px; background: #40414f; border: 1px solid #565869; border-radius: 50%; color: #ececf1; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.2s; z-index: 900; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2); opacity: 0; transform: translateY(20px);">
+                            <i class="fas fa-chevron-down"></i>
                         </button>
-                        <button id="historyToggle" class="chat-action-btn" title="Chat History">
-                            <i class="fas fa-history"></i>
-                            <div class="badge">3</div>
-                        </button>
-                    </div>
+                        
+                        <div class="chat-messages" id="chatGPTMessages" style="flex: 1; overflow-y: auto; padding: 1.25rem 1rem; display: flex; flex-direction: column; gap: 1.25rem; scroll-behavior: smooth; min-height: 0; width: 100%;">
+                            <!-- Welcome Message -->
+                            <div class="welcome-message" style="text-align: center; max-width: 600px; margin: 1.5rem auto; padding: 1.25rem; background: linear-gradient(135deg, rgba(16, 163, 127, 0.1) 0%, rgba(30, 64, 175, 0.1) 100%); border: 1px solid #565869; border-radius: 12px; width: 90%;">
+                                <h2 style="font-size: 1.5rem; margin-bottom: 0.75rem; background: linear-gradient(135deg, #10a37f 0%, #7e57c2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; word-wrap: break-word; font-weight: 600;">
+                                    Welcome to LegalSwami! ⚖️
+                                </h2>
+                                <p style="color: #8e8ea0; font-size: 0.9375rem; margin-bottom: 1rem; line-height: 1.5; word-wrap: break-word;">
+                                    I'm your AI legal assistant. I can help you with legal questions, document generation, and legal research.
+                                </p>
+                                
+                                <div class="welcome-features" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.875rem; margin-top: 1.25rem;">
+                                    <div class="feature" style="background: #40414f; padding: 0.875rem; border-radius: 8px; border: 1px solid #565869; display: flex; flex-direction: column; align-items: center; text-align: center; word-wrap: break-word;">
+                                        <i class="fas fa-comments" style="font-size: 1.375rem; color: #10a37f; margin-bottom: 0.5rem;"></i>
+                                        <h4 style="font-size: 0.875rem; margin-bottom: 0.25rem; color: #ececf1; font-weight: 600;">Legal Advice</h4>
+                                        <p style="font-size: 0.8125rem; color: #8e8ea0;">Get instant answers to your legal questions</p>
+                                    </div>
+                                    <div class="feature" style="background: #40414f; padding: 0.875rem; border-radius: 8px; border: 1px solid #565869; display: flex; flex-direction: column; align-items: center; text-align: center; word-wrap: break-word;">
+                                        <i class="fas fa-file-contract" style="font-size: 1.375rem; color: #10a37f; margin-bottom: 0.5rem;"></i>
+                                        <h4 style="font-size: 0.875rem; margin-bottom: 0.25rem; color: #ececf1; font-weight: 600;">Document Generation</h4>
+                                        <p style="font-size: 0.8125rem; color: #8e8ea0;">Generate legal documents instantly</p>
+                                    </div>
+                                    <div class="feature" style="background: #40414f; padding: 0.875rem; border-radius: 8px; border: 1px solid #565869; display: flex; flex-direction: column; align-items: center; text-align: center; word-wrap: break-word;">
+                                        <i class="fas fa-search" style="font-size: 1.375rem; color: #10a37f; margin-bottom: 0.5rem;"></i>
+                                        <h4 style="font-size: 0.875rem; margin-bottom: 0.25rem; color: #ececf1; font-weight: 600;">Legal Research</h4>
+                                        <p style="font-size: 0.8125rem; color: #8e8ea0;">Research laws and regulations</p>
+                                    </div>
+                                    <div class="feature" style="background: #40414f; padding: 0.875rem; border-radius: 8px; border: 1px solid #565869; display: flex; flex-direction: column; align-items: center; text-align: center; word-wrap: break-word;">
+                                        <i class="fas fa-gavel" style="font-size: 1.375rem; color: #10a37f; margin-bottom: 0.5rem;"></i>
+                                        <h4 style="font-size: 0.875rem; margin-bottom: 0.25rem; color: #ececf1; font-weight: 600;">Case Law Search</h4>
+                                        <p style="font-size: 0.8125rem; color: #8e8ea0;">Find relevant case laws</p>
+                                    </div>
+                                </div>
+                                
+                                <div class="language-selector" style="margin-top: 1.5rem;">
+                                    <h5 style="color: #10a37f; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px; font-size: 0.875rem;">
+                                        <i class="fas fa-language"></i> Select Language:
+                                    </h5>
+                                    <div class="language-buttons" style="display: flex; gap: 8px; justify-content: center;">
+                                        <button class="lang-btn" data-lang="en" style="background: #40414f; color: #ececf1; border: 1px solid #565869; border-radius: 6px; padding: 0.5rem 1rem; cursor: pointer; font-size: 0.875rem; transition: all 0.2s;">English</button>
+                                        <button class="lang-btn" data-lang="hi" style="background: #40414f; color: #ececf1; border: 1px solid #565869; border-radius: 6px; padding: 0.5rem 1rem; cursor: pointer; font-size: 0.875rem; transition: all 0.2s;">हिंदी</button>
+                                        <button class="lang-btn" data-lang="mr" style="background: #40414f; color: #ececf1; border: 1px solid #565869; border-radius: 6px; padding: 0.5rem 1rem; cursor: pointer; font-size: 0.875rem; transition: all 0.2s;">मराठी</button>
+                                        <button class="lang-btn" data-lang="gu" style="background: #40414f; color: #ececf1; border: 1px solid #565869; border-radius: 6px; padding: 0.5rem 1rem; cursor: pointer; font-size: 0.875rem; transition: all 0.2s;">ગુજરાતી</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Scroll Position Indicator -->
+                        <div class="scroll-position-indicator" id="scrollPositionIndicator" style="position: absolute; bottom: -25px; left: 50%; transform: translateX(-50%); background: #40414f; color: #8e8ea0; padding: 4px 12px; border-radius: 8px; font-size: 0.75rem; border: 1px solid #565869; display: none; z-index: 10;">
+                            Scroll to see more messages
+                        </div>
+                        
+                        <!-- ChatGPT-like Input Area -->
+                        <div class="input-container" style="padding: 0.875rem; background: #343541; border-top: 1px solid #565869; position: sticky; bottom: 0; z-index: 10; transition: all 0.2s ease; width: 100%; flex-shrink: 0;">
+                            <div class="input-area" style="max-width: 800px; margin: 0 auto; position: relative; width: 100%;">
+                                <!-- Attachments Preview -->
+                                <div class="attachments-preview" id="chatAttachmentsPreview" style="display: none; flex-wrap: wrap; gap: 6px; margin-bottom: 8px; padding: 6px; background: #444654; border-radius: 8px; border: 1px solid #565869; max-height: 100px; overflow-y: auto;"></div>
+                                
+                                <div class="voice-input-status" id="chatVoiceInputStatus" style="position: absolute; left: 12px; bottom: 8px; background: rgba(239, 68, 68, 0.1); color: #ef4444; padding: 4px 8px; border-radius: 8px; font-size: 0.75rem; display: none; align-items: center; gap: 4px; animation: fadeIn 0.2s ease;">
+                                    <div class="voice-animation" style="display: flex; align-items: center; gap: 3px; height: 20px;">
+                                        <div class="voice-bar" style="width: 3px; background: #10a37f; border-radius: 3px; animation: voicePulse 0.8s ease-in-out infinite;"></div>
+                                        <div class="voice-bar" style="width: 3px; background: #10a37f; border-radius: 3px; animation: voicePulse 0.8s ease-in-out infinite; animation-delay: 0.2s;"></div>
+                                        <div class="voice-bar" style="width: 3px; background: #10a37f; border-radius: 3px; animation: voicePulse 0.8s ease-in-out infinite; animation-delay: 0.3s;"></div>
+                                        <div class="voice-bar" style="width: 3px; background: #10a37f; border-radius: 3px; animation: voicePulse 0.8s ease-in-out infinite; animation-delay: 0.4s;"></div>
+                                        <div class="voice-bar" style="width: 3px; background: #10a37f; border-radius: 3px; animation: voicePulse 0.8s ease-in-out infinite; animation-delay: 0.5s;"></div>
+                                    </div>
+                                    <span>Listening... Speak now</span>
+                                </div>
+                                
+                                <textarea 
+                                    id="chatMessageInput" 
+                                    placeholder="Ask any legal question... (Press Enter for new line, Ctrl+Enter to send)"
+                                    rows="1"
+                                    style="width: 100%; padding: 0.875rem 6.5rem 0.875rem 1rem; background: #40414f; border: 1px solid #565869; border-radius: 12px; color: #ececf1; font-size: 0.9375rem; resize: none; min-height: 52px; max-height: 150px; transition: all 0.2s; line-height: 1.5; font-family: inherit; outline: none;"
+                                ></textarea>
+                                
+                                <div class="input-buttons" style="position: absolute; right: 0.75rem; bottom: 0.75rem; display: flex; gap: 6px; align-items: center;">
+                                    <!-- Attachment Button -->
+                                    <button class="attachment-btn" id="chatAttachmentBtn" style="background: transparent; border: none; color: #8e8ea0; cursor: pointer; padding: 0.5rem; border-radius: 8px; transition: all 0.2s; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px;" title="Attach files">
+                                        <i class="fas fa-paperclip"></i>
+                                    </button>
+                                    
+                                    <!-- Voice Input Button -->
+                                    <button class="input-microphone-btn" id="chatInputMicrophoneBtn" style="background: transparent; border: none; color: #8e8ea0; cursor: pointer; padding: 0.5rem; border-radius: 8px; transition: all 0.2s; display: flex; align-items: center; justify-content: center; width: 32px; height: 32px;" title="Voice input">
+                                        <i class="fas fa-microphone"></i>
+                                    </button>
+                                    
+                                    <!-- Send/Stop Button -->
+                                    <button class="send-button" id="chatSendButton" style="background: linear-gradient(135deg, #10a37f 0%, #0d8c6d 100%); color: white; border: none; border-radius: 8px; padding: 0.5rem 0.875rem; cursor: pointer; font-weight: 500; transition: all 0.2s; display: flex; align-items: center; gap: 6px; min-height: 40px; font-size: 0.875rem;">
+                                        <i class="fas fa-paper-plane"></i> <span>Send</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </main>
                 </div>
-
-                <!-- Main Chat Area -->
-                <div class="chat-main">
-                    <!-- Chat History Sidebar -->
-                    <div id="historySidebar" class="chat-history-sidebar">
-                        <div class="history-header">
-                            <h4><i class="fas fa-history"></i> Chat History</h4>
-                            <button id="closeHistory" class="history-close">
+                
+                <!-- Download Modal -->
+                <div class="modal-overlay" id="chatDownloadModal" style="display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0, 0, 0, 0.7); z-index: 2000; align-items: center; justify-content: center; padding: 16px;">
+                    <div class="modal" style="background: #40414f; border-radius: 12px; border: 1px solid #565869; width: 100%; max-width: 480px; max-height: 90vh; overflow: hidden; animation: modalSlideIn 0.2s ease-out;">
+                        <div class="modal-header" style="padding: 1.25rem; border-bottom: 1px solid #565869; display: flex; justify-content: space-between; align-items: center;">
+                            <h2 style="font-size: 1.125rem; font-weight: 600; color: #ececf1;"><i class="fas fa-download"></i> Download Chat</h2>
+                            <button class="modal-close" id="closeChatDownloadModal" style="background: transparent; border: none; color: #8e8ea0; cursor: pointer; font-size: 1.125rem; padding: 4px; border-radius: 6px; transition: all 0.2s;">
                                 <i class="fas fa-times"></i>
                             </button>
                         </div>
-                        <div class="history-content">
-                            <div class="history-search">
-                                <i class="fas fa-search"></i>
-                                <input type="text" placeholder="Search chat history...">
-                            </div>
-                            <div class="history-list" id="historyList">
-                                <div class="history-empty">
-                                    <i class="fas fa-history"></i>
-                                    <p>No chat history yet</p>
-                                    <small>Start chatting to see your history here</small>
+                        <div class="modal-content" style="padding: 1.25rem;">
+                            <p style="color: #ececf1; margin-bottom: 1rem;">Select the format you want to download your chat in:</p>
+                            
+                            <div class="download-options" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 0.875rem; margin: 1.25rem 0;">
+                                <div class="download-option" data-format="doc" style="background: #444654; border: 1px solid #565869; border-radius: 8px; padding: 1.25rem 0.875rem; text-align: center; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                                    <i class="fas fa-file-word" style="font-size: 1.75rem; color: #10a37f;"></i>
+                                    <h3 style="font-size: 0.9375rem; font-weight: 600; color: #ececf1;">Word Document</h3>
+                                    <p style="font-size: 0.8125rem; color: #8e8ea0;">.doc format</p>
+                                </div>
+                                <div class="download-option" data-format="pdf" style="background: #444654; border: 1px solid #565869; border-radius: 8px; padding: 1.25rem 0.875rem; text-align: center; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                                    <i class="fas fa-file-pdf" style="font-size: 1.75rem; color: #10a37f;"></i>
+                                    <h3 style="font-size: 0.9375rem; font-weight: 600; color: #ececf1;">PDF Document</h3>
+                                    <p style="font-size: 0.8125rem; color: #8e8ea0;">.pdf format</p>
+                                </div>
+                                <div class="download-option" data-format="txt" style="background: #444654; border: 1px solid #565869; border-radius: 8px; padding: 1.25rem 0.875rem; text-align: center; cursor: pointer; transition: all 0.2s; display: flex; flex-direction: column; align-items: center; gap: 8px;">
+                                    <i class="fas fa-file-alt" style="font-size: 1.75rem; color: #10a37f;"></i>
+                                    <h3 style="font-size: 0.9375rem; font-weight: 600; color: #ececf1;">Text File</h3>
+                                    <p style="font-size: 0.8125rem; color: #8e8ea0;">.txt format</p>
                                 </div>
                             </div>
-                        </div>
-                    </div>
-
-                    <!-- Chat Messages Area -->
-                    <div class="chat-messages-area">
-                        <!-- Welcome Screen -->
-                        <div class="chat-welcome" id="chatWelcome">
-                            <div class="welcome-illustration">
-                                <i class="fas fa-balance-scale"></i>
-                            </div>
-                            <div class="welcome-content">
-                                <h3>Welcome to LegalSwami! ⚖️</h3>
-                                <p>I'm your AI legal assistant. I can help you with:</p>
-                                
-                                <div class="welcome-features">
-                                    <div class="welcome-feature">
-                                        <i class="fas fa-comments"></i>
-                                        <h5>Legal Advice</h5>
-                                        <p>Get instant answers to your legal questions</p>
-                                    </div>
-                                    <div class="welcome-feature">
-                                        <i class="fas fa-file-contract"></i>
-                                        <h5>Document Generation</h5>
-                                        <p>Generate legal documents instantly</p>
-                                    </div>
-                                    <div class="welcome-feature">
-                                        <i class="fas fa-search"></i>
-                                        <h5>Legal Research</h5>
-                                        <p>Research laws and regulations</p>
-                                    </div>
-                                    <div class="welcome-feature">
-                                        <i class="fas fa-gavel"></i>
-                                        <h5>Case Law Search</h5>
-                                        <p>Find relevant case laws</p>
-                                    </div>
-                                </div>
-                                
-                                <div class="language-selector">
-                                    <h5><i class="fas fa-language"></i> Select Language:</h5>
-                                    <div class="language-buttons">
-                                        <button class="lang-btn" data-lang="en">English</button>
-                                        <button class="lang-btn" data-lang="hi">हिंदी</button>
-                                        <button class="lang-btn" data-lang="mr">मराठी</button>
-                                        <button class="lang-btn" data-lang="gu">ગુજરાતી</button>
-                                    </div>
-                                </div>
+                            
+                            <div class="progress-indicator" id="chatProgressIndicator" style="display: none; flex-direction: column; align-items: center; gap: 0.875rem; padding: 1.5rem;">
+                                <div class="progress-spinner" style="width: 36px; height: 36px; border: 3px solid #565869; border-top: 3px solid #10a37f; border-radius: 50%; animation: spin 1s linear infinite;"></div>
+                                <p style="color: #ececf1;">Preparing your document...</p>
                             </div>
                         </div>
-
-                        <!-- Chat Messages Container -->
-                        <div class="chat-messages-container" id="chatMessagesContainer">
-                            <div class="chat-messages" id="chatMessages">
-                                <!-- Messages will be loaded here -->
-                            </div>
-                        </div>
-
-                        <!-- Quick Questions -->
-                        <div class="quick-questions">
-                            <div class="quick-questions-header">
-                                <h5><i class="fas fa-bolt"></i> Try asking:</h5>
-                                <button class="btn-refresh" title="Refresh suggestions">
-                                    <i class="fas fa-redo"></i>
-                                </button>
-                            </div>
-                            <div class="quick-buttons">
-                                <button class="quick-btn" data-question="What are the requirements for a valid contract?">
-                                    Contract Requirements
-                                </button>
-                                <button class="quick-btn" data-question="How to draft a rental agreement?">
-                                    Rental Agreement
-                                </button>
-                                <button class="quick-btn" data-question="What is consumer protection law?">
-                                    Consumer Rights
-                                </button>
-                                <button class="quick-btn" data-question="How to file a legal notice?">
-                                    Legal Notice
-                                </button>
-                            </div>
+                        <div class="modal-footer" style="padding: 1.25rem; border-top: 1px solid #565869; text-align: center;">
+                            <p style="font-size: 0.8125rem; color: #8e8ea0;">The document will include the complete chat conversation with timestamps.</p>
                         </div>
                     </div>
                 </div>
-
-                <!-- Chat Input Area -->
-                <div class="chat-input-area">
-                    <div class="input-container">
-                        <div class="input-actions-left">
-                            <button id="attachFile" class="input-action-btn" title="Attach File">
-                                <i class="fas fa-paperclip"></i>
-                                <div class="tooltip">Attach File</div>
-                            </button>
-                            <button id="voiceInput" class="input-action-btn" title="Voice Input">
-                                <i class="fas fa-microphone"></i>
-                                <div class="tooltip">Voice Input</div>
-                            </button>
-                            <button id="legalTools" class="input-action-btn" title="Legal Tools">
-                                <i class="fas fa-tools"></i>
-                                <div class="tooltip">Legal Tools</div>
-                            </button>
-                        </div>
-                        
-                        <textarea 
-                            id="messageInput" 
-                            placeholder="Type your legal question here... (Press Shift+Enter for new line, Enter to send)"
-                            rows="1"
-                        ></textarea>
-                        
-                        <div class="input-actions-right">
-                            <button id="sendMessage" class="btn-send" title="Send Message">
-                                <i class="fas fa-paper-plane send-icon"></i>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="input-options">
-                        <div class="attachments-container" id="fileAttachments">
-                            <!-- Attached files will appear here -->
-                        </div>
-                        
-                        <div class="document-options">
-                            <div class="checkbox-group">
-                                <label class="checkbox-label">
-                                    <input type="checkbox" id="generateDocument">
-                                    <span>Generate as Document</span>
-                                </label>
-                            </div>
-                            
-                            <div class="select-group">
-                                <label class="select-label">Format:</label>
-                                <select id="documentType" disabled>
-                                    <option value="PDF">PDF Document</option>
-                                    <option value="DOC">Word Document</option>
-                                    <option value="TXT">Text File</option>
-                                </select>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="typing-indicator" id="typingIndicator">
-                        <div class="typing-dots">
-                            <div class="dot"></div>
-                            <div class="dot"></div>
-                            <div class="dot"></div>
-                        </div>
-                        <span>LegalSwami is thinking...</span>
-                    </div>
+                
+                <!-- Toast Notification -->
+                <div class="toast" id="chatToast" style="position: fixed; bottom: 20px; right: 20px; background: #40414f; color: #ececf1; padding: 0.875rem 1rem; border-radius: 8px; border: 1px solid #565869; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); display: flex; align-items: center; gap: 8px; transform: translateY(100px); opacity: 0; transition: all 0.2s ease; z-index: 1000; max-width: 300px;">
+                    <i class="fas fa-check-circle"></i>
+                    <span id="chatToastMessage">Message sent successfully</span>
                 </div>
             </div>
         </div>
@@ -1566,6 +1650,19 @@
             { id: 6, name: "Adv. Anjali Singh", specialization: "consumer", experience: 7, location: "Chennai", rating: 4.5, fee: "₹1500/consultation" }
         ];
 
+        // ChatGPT-like chat variables
+        let chatHistory = [];
+        let conversationHistory = [];
+        let isListening = false;
+        let recognition = null;
+        let isStreamingActive = false;
+        let stopStreamingRequested = false;
+        let attachedFiles = [];
+        let currentStreamingMessageId = null;
+        let currentStreamingContent = '';
+        let streamingTextChunks = [];
+        let streamingTextIndex = 0;
+        
         // DOM Content Loaded
         document.addEventListener('DOMContentLoaded', function() {
             console.log('🚀 LegalSwami Premium Frontend Initialized');
@@ -1606,9 +1703,6 @@
             // Setup mobile menu
             setupMobileMenu();
             
-            // Initialize chat interface
-            initializeChat();
-            
             // Setup device-specific optimizations
             setupDeviceSpecificOptimizations();
             
@@ -1618,9 +1712,1171 @@
             // Setup language buttons
             setupLanguageButtons();
             
+            // Setup ChatGPT-like chat
+            setupChatGPTLikeChat();
+            
             console.log('✅ All initialization complete');
         });
         
+        // Setup ChatGPT-like chat
+        function setupChatGPTLikeChat() {
+            // Initialize chat history
+            loadChatHistory();
+            
+            // Setup sidebar toggle
+            const sidebarToggle = document.getElementById('chatSidebarToggle');
+            const sidebar = document.getElementById('chatSidebar');
+            const sidebarClose = document.getElementById('chatSidebarClose');
+            const sidebarOverlay = document.getElementById('chatSidebarOverlay');
+            
+            if (sidebarToggle) {
+                sidebarToggle.addEventListener('click', function() {
+                    sidebar.style.transform = 'translateX(0)';
+                    sidebarOverlay.style.display = 'block';
+                });
+            }
+            
+            if (sidebarClose) {
+                sidebarClose.addEventListener('click', function() {
+                    sidebar.style.transform = 'translateX(-100%)';
+                    sidebarOverlay.style.display = 'none';
+                });
+            }
+            
+            if (sidebarOverlay) {
+                sidebarOverlay.addEventListener('click', function() {
+                    sidebar.style.transform = 'translateX(-100%)';
+                    this.style.display = 'none';
+                });
+            }
+            
+            // Setup sidebar tabs
+            const sidebarTabs = document.querySelectorAll('.sidebar-tab');
+            sidebarTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabId = this.dataset.tab;
+                    
+                    // Update active tab
+                    sidebarTabs.forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Show corresponding content
+                    document.querySelectorAll('.tab-content').forEach(content => {
+                        content.classList.remove('active');
+                        content.style.display = 'none';
+                    });
+                    
+                    const content = document.getElementById(`${tabId}-content`);
+                    if (content) {
+                        content.classList.add('active');
+                        content.style.display = 'block';
+                    }
+                    
+                    // If switching to history tab, refresh the list
+                    if (tabId === 'chat-history') {
+                        loadChatHistoryList();
+                    }
+                });
+            });
+            
+            // Setup topic items
+            const topicItems = document.querySelectorAll('.topic-item');
+            topicItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const topic = this.dataset.topic;
+                    const topicName = this.querySelector('span').textContent;
+                    
+                    let question = '';
+                    switch(topic) {
+                        case 'contract':
+                            question = 'What are the essential elements of a valid contract under Indian law? ⚖️';
+                            break;
+                        case 'employment':
+                            question = 'What are the rights of employees regarding workplace harassment in India? 💼';
+                            break;
+                        case 'family':
+                            question = 'What are the grounds for divorce under Hindu Marriage Act? 👨‍👩‍👧';
+                            break;
+                        case 'property':
+                            question = 'What documents are required for property registration in India? 🏠';
+                            break;
+                        case 'criminal':
+                            question = 'What is the difference between bailable and non-bailable offenses? ⚖️';
+                            break;
+                        default:
+                            question = `Tell me about ${topicName.toLowerCase()} in Indian law. ⚖️`;
+                    }
+                    
+                    document.getElementById('chatMessageInput').value = question;
+                    document.getElementById('chatMessageInput').focus();
+                    
+                    // Adjust textarea height
+                    const textarea = document.getElementById('chatMessageInput');
+                    textarea.style.height = 'auto';
+                    textarea.style.height = Math.min(textarea.scrollHeight, 150) + 'px';
+                    
+                    // Enable send button
+                    document.getElementById('chatSendButton').disabled = false;
+                    
+                    // Close sidebar on mobile
+                    if (window.innerWidth < 1024) {
+                        sidebar.style.transform = 'translateX(-100%)';
+                        sidebarOverlay.style.display = 'none';
+                    }
+                });
+            });
+            
+            // Setup action items
+            const actionItems = document.querySelectorAll('.action-item');
+            actionItems.forEach(item => {
+                item.addEventListener('click', function() {
+                    const action = this.dataset.action;
+                    
+                    let question = '';
+                    switch(action) {
+                        case 'nda':
+                            question = 'Create a comprehensive non-disclosure agreement for Indian business use 🤝';
+                            break;
+                        case 'rental':
+                            question = 'Create a rental/tenancy agreement for residential property in India 🏠';
+                            break;
+                        case 'will':
+                            question = 'Draft a will template according to Indian succession laws 📝';
+                            break;
+                    }
+                    
+                    document.getElementById('chatMessageInput').value = question;
+                    document.getElementById('chatMessageInput').focus();
+                    
+                    // Adjust textarea height
+                    const textarea = document.getElementById('chatMessageInput');
+                    textarea.style.height = 'auto';
+                    textarea.style.height = Math.min(textarea.scrollHeight, 150) + 'px';
+                    
+                    // Enable send button
+                    document.getElementById('chatSendButton').disabled = false;
+                    
+                    // Close sidebar on mobile
+                    if (window.innerWidth < 1024) {
+                        sidebar.style.transform = 'translateX(-100%)';
+                        sidebarOverlay.style.display = 'none';
+                    }
+                });
+            });
+            
+            // Setup textarea auto-resize
+            const messageInput = document.getElementById('chatMessageInput');
+            if (messageInput) {
+                messageInput.addEventListener('input', function() {
+                    this.style.height = 'auto';
+                    this.style.height = Math.min(this.scrollHeight, 150) + 'px';
+                    
+                    // Update send button state
+                    document.getElementById('chatSendButton').disabled = this.value.trim() === '' && attachedFiles.length === 0;
+                });
+                
+                messageInput.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' && e.ctrlKey) {
+                        e.preventDefault();
+                        sendChatGPTMessage();
+                    }
+                });
+            }
+            
+            // Setup send button
+            const sendButton = document.getElementById('chatSendButton');
+            if (sendButton) {
+                sendButton.addEventListener('click', sendChatGPTMessage);
+            }
+            
+            // Setup back to home button
+            const backToHomeBtn = document.getElementById('chatBackToHome');
+            if (backToHomeBtn) {
+                backToHomeBtn.addEventListener('click', goBackToHome);
+            }
+            
+            // Setup clear chat button
+            const clearChatBtn = document.getElementById('chatClearChat');
+            if (clearChatBtn) {
+                clearChatBtn.addEventListener('click', clearChatGPTChat);
+            }
+            
+            // Setup download button
+            const downloadBtn = document.getElementById('chatDownloadBtn');
+            const downloadModal = document.getElementById('chatDownloadModal');
+            const closeDownloadModal = document.getElementById('closeChatDownloadModal');
+            
+            if (downloadBtn) {
+                downloadBtn.addEventListener('click', function() {
+                    downloadModal.style.display = 'flex';
+                });
+            }
+            
+            if (closeDownloadModal) {
+                closeDownloadModal.addEventListener('click', function() {
+                    downloadModal.style.display = 'none';
+                });
+            }
+            
+            // Setup download options
+            const downloadOptions = document.querySelectorAll('.download-option');
+            downloadOptions.forEach(option => {
+                option.addEventListener('click', function() {
+                    const format = this.dataset.format;
+                    downloadChatGPTConversation(format);
+                });
+            });
+            
+            // Setup voice input
+            if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+                const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                recognition = new SpeechRecognition();
+                recognition.continuous = false;
+                recognition.interimResults = true;
+                recognition.lang = 'en-IN,hi-IN,mr-IN';
+                
+                recognition.onstart = function() {
+                    isListening = true;
+                    document.getElementById('chatInputMicrophoneBtn').classList.add('listening');
+                    document.getElementById('chatVoiceInputStatus').style.display = 'flex';
+                };
+                
+                recognition.onresult = function(event) {
+                    const transcript = event.results[0][0].transcript;
+                    if (event.results[0].isFinal) {
+                        document.getElementById('chatMessageInput').value = transcript;
+                        const textarea = document.getElementById('chatMessageInput');
+                        textarea.style.height = Math.min(textarea.scrollHeight, 150) + 'px';
+                        document.getElementById('chatSendButton').disabled = false;
+                    }
+                };
+                
+                recognition.onerror = function(event) {
+                    console.error('Speech recognition error:', event.error);
+                    isListening = false;
+                    document.getElementById('chatInputMicrophoneBtn').classList.remove('listening');
+                    document.getElementById('chatVoiceInputStatus').style.display = 'none';
+                };
+                
+                recognition.onend = function() {
+                    isListening = false;
+                    document.getElementById('chatInputMicrophoneBtn').classList.remove('listening');
+                    document.getElementById('chatVoiceInputStatus').style.display = 'none';
+                };
+                
+                const voiceBtn = document.getElementById('chatInputMicrophoneBtn');
+                if (voiceBtn) {
+                    voiceBtn.addEventListener('click', function() {
+                        if (isListening) {
+                            recognition.stop();
+                        } else {
+                            recognition.start();
+                        }
+                    });
+                }
+            } else {
+                const voiceBtn = document.getElementById('chatInputMicrophoneBtn');
+                if (voiceBtn) {
+                    voiceBtn.style.display = 'none';
+                }
+            }
+            
+            // Setup scroll to bottom button
+            const scrollToBottomBtn = document.getElementById('scrollToBottomBtn');
+            if (scrollToBottomBtn) {
+                scrollToBottomBtn.addEventListener('click', function() {
+                    const chatMessages = document.getElementById('chatGPTMessages');
+                    chatMessages.scrollTo({
+                        top: chatMessages.scrollHeight,
+                        behavior: 'smooth'
+                    });
+                });
+            }
+            
+            // Monitor scroll position
+            const chatMessages = document.getElementById('chatGPTMessages');
+            if (chatMessages) {
+                chatMessages.addEventListener('scroll', checkChatScrollPosition);
+                setTimeout(checkChatScrollPosition, 500);
+            }
+        }
+        
+        // Check scroll position for chat
+        function checkChatScrollPosition() {
+            const chatMessages = document.getElementById('chatGPTMessages');
+            const scrollBtn = document.getElementById('scrollToBottomBtn');
+            const indicator = document.getElementById('scrollPositionIndicator');
+            
+            if (!chatMessages) return;
+            
+            const isAtBottom = chatMessages.scrollHeight - chatMessages.clientHeight <= chatMessages.scrollTop + 50;
+            
+            if (!isAtBottom) {
+                scrollBtn.style.opacity = '1';
+                scrollBtn.style.transform = 'translateY(0)';
+            } else {
+                scrollBtn.style.opacity = '0';
+                scrollBtn.style.transform = 'translateY(20px)';
+            }
+        }
+        
+        // Send ChatGPT-like message
+        async function sendChatGPTMessage() {
+            const messageInput = document.getElementById('chatMessageInput');
+            const message = messageInput.value.trim();
+            
+            if (!message && attachedFiles.length === 0) {
+                showChatToast('Please enter a message or attach a file 📝', 'warning');
+                return;
+            }
+            
+            if (isStreamingActive) {
+                stopStreaming();
+                return;
+            }
+            
+            // Add user message to chat
+            addChatGPTMessage(message, true);
+            messageInput.value = '';
+            messageInput.style.height = '52px';
+            
+            // Update send button to stop button
+            const sendButton = document.getElementById('chatSendButton');
+            sendButton.disabled = false;
+            sendButton.innerHTML = '<i class="fas fa-stop"></i> <span>Stop</span>';
+            sendButton.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+            isStreamingActive = true;
+            stopStreamingRequested = false;
+            
+            try {
+                // Store message in conversation history
+                const userMessage = {
+                    role: 'user',
+                    content: message,
+                    language: selectedLanguage,
+                    timestamp: new Date().toISOString()
+                };
+                
+                conversationHistory.push(userMessage);
+                
+                // Call your backend API
+                const userId = window.legalSwamiAPI ? window.legalSwamiAPI.user?.id : 'guest_' + Date.now();
+                const backendUrl = 'https://legal-swami-backend.onrender.com';
+                
+                const response = await fetch(backendUrl + '/api/v1/chat/send', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-user-id': userId,
+                        'x-request-id': 'req_' + Date.now(),
+                        'x-language': selectedLanguage
+                    },
+                    body: JSON.stringify({
+                        message: message,
+                        generateDocument: false,
+                        language: selectedLanguage
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('HTTP ' + response.status);
+                }
+                
+                const data = await response.json();
+                
+                // Create streaming message
+                const aiMessageId = createStreamingChatGPTMessage();
+                
+                // Start streaming the response
+                startStreamingChatGPTResponse(aiMessageId, data.response);
+                
+            } catch (error) {
+                console.error('Error sending message:', error);
+                addChatGPTMessage("I apologize for the inconvenience. I'm currently experiencing technical difficulties. Please try again in a moment. ⚠️", false);
+                
+                // Reset send button
+                const sendButton = document.getElementById('chatSendButton');
+                sendButton.disabled = messageInput.value.trim() === '' && attachedFiles.length === 0;
+                sendButton.innerHTML = '<i class="fas fa-paper-plane"></i> <span>Send</span>';
+                sendButton.style.background = 'linear-gradient(135deg, #10a37f 0%, #0d8c6d 100%)';
+                isStreamingActive = false;
+                
+                showChatToast('Failed to send message. Please try again. ❌', 'error');
+            }
+        }
+        
+        // Add ChatGPT-like message to chat
+        function addChatGPTMessage(content, isUser) {
+            const chatMessages = document.getElementById('chatGPTMessages');
+            
+            // Remove welcome message if it exists and this is a user message
+            if (isUser) {
+                const welcomeMessage = document.querySelector('.welcome-message');
+                if (welcomeMessage) {
+                    welcomeMessage.remove();
+                }
+            }
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message';
+            messageDiv.style.display = 'flex';
+            messageDiv.style.gap = '0.75rem';
+            messageDiv.style.maxWidth = '100%';
+            messageDiv.style.padding = '0 0.75rem';
+            messageDiv.style.animation = 'fadeIn 0.2s ease-out';
+            
+            if (isUser) {
+                messageDiv.style.background = '#40414f';
+                messageDiv.style.borderRadius = '8px';
+                messageDiv.style.padding = '1rem';
+                messageDiv.style.maxWidth = '100%';
+            }
+            
+            // Avatar
+            const avatar = document.createElement('div');
+            avatar.className = 'avatar';
+            avatar.style.width = '32px';
+            avatar.style.height = '32px';
+            avatar.style.borderRadius = '4px';
+            avatar.style.display = 'flex';
+            avatar.style.alignItems = 'center';
+            avatar.style.justifyContent = 'center';
+            avatar.style.fontSize = '0.85rem';
+            avatar.style.flexShrink = '0';
+            avatar.style.marginTop = '4px';
+            
+            if (isUser) {
+                avatar.style.background = 'linear-gradient(135deg, #10a37f 0%, #0d8c6d 100%)';
+                avatar.innerHTML = '<i class="fas fa-user"></i>';
+            } else {
+                avatar.style.background = 'linear-gradient(135deg, #7e57c2 0%, #5e35b1 100%)';
+                avatar.innerHTML = '<i class="fas fa-scale-balanced"></i>';
+            }
+            
+            // Message content
+            const messageContent = document.createElement('div');
+            messageContent.className = 'message-content';
+            messageContent.style.flex = '1';
+            messageContent.style.position = 'relative';
+            messageContent.style.width = '100%';
+            messageContent.style.minWidth = '0';
+            
+            const messageText = document.createElement('div');
+            messageText.className = 'message-text';
+            messageText.style.padding = '0';
+            messageText.style.borderRadius = '0';
+            messageText.style.fontSize = '0.9375rem';
+            messageText.style.lineHeight = '1.6';
+            messageText.style.wordWrap = 'break-word';
+            messageText.style.overflowWrap = 'break-word';
+            messageText.style.overflow = 'hidden';
+            messageText.style.color = '#ececf1';
+            
+            if (isUser) {
+                messageText.style.color = 'white';
+            }
+            
+            messageText.innerHTML = content.replace(/\n/g, '<br>');
+            
+            messageContent.appendChild(messageText);
+            
+            // Add action buttons for AI messages
+            if (!isUser) {
+                const messageActions = document.createElement('div');
+                messageActions.className = 'message-actions';
+                messageActions.style.display = 'flex';
+                messageActions.style.gap = '8px';
+                messageActions.style.marginTop = '0.75rem';
+                messageActions.style.flexWrap = 'wrap';
+                messageActions.style.opacity = '0';
+                messageActions.style.transition = 'opacity 0.2s ease';
+                
+                messageActions.innerHTML = `
+                    <button class="action-btn copy" title="Copy response" style="background: #444654; color: #8e8ea0; border: 1px solid #565869; border-radius: 6px; padding: 0.375rem 0.75rem; cursor: pointer; font-size: 0.8125rem; transition: all 0.2s; display: flex; align-items: center; gap: 6px; min-height: 32px; font-weight: 500; white-space: nowrap;">
+                        <i class="fas fa-copy"></i> Copy
+                    </button>
+                    <button class="action-btn like" title="Mark as helpful" style="background: #444654; color: #8e8ea0; border: 1px solid #565869; border-radius: 6px; padding: 0.375rem 0.75rem; cursor: pointer; font-size: 0.8125rem; transition: all 0.2s; display: flex; align-items: center; gap: 6px; min-height: 32px; font-weight: 500; white-space: nowrap;">
+                        <i class="far fa-thumbs-up"></i> Helpful
+                    </button>
+                `;
+                
+                messageContent.appendChild(messageActions);
+                
+                // Add hover effect to show actions
+                messageDiv.addEventListener('mouseenter', function() {
+                    messageActions.style.opacity = '1';
+                });
+                
+                messageDiv.addEventListener('mouseleave', function() {
+                    messageActions.style.opacity = '0';
+                });
+                
+                // Add copy functionality
+                const copyBtn = messageActions.querySelector('.copy');
+                copyBtn.addEventListener('click', function() {
+                    navigator.clipboard.writeText(content).then(function() {
+                        showChatToast('Response copied to clipboard! 📋', 'success');
+                    });
+                });
+                
+                // Add like functionality
+                const likeBtn = messageActions.querySelector('.like');
+                likeBtn.addEventListener('click', function() {
+                    this.innerHTML = '<i class="fas fa-thumbs-up"></i> Thank you!';
+                    this.style.background = '#10b981';
+                    this.style.borderColor = '#10b981';
+                    this.style.color = 'white';
+                    this.disabled = true;
+                    showChatToast('Thank you for your feedback! 👍', 'success');
+                });
+            }
+            
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(messageContent);
+            chatMessages.appendChild(messageDiv);
+            
+            // Scroll to show new message
+            setTimeout(() => {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                checkChatScrollPosition();
+            }, 100);
+        }
+        
+        // Create streaming ChatGPT message
+        function createStreamingChatGPTMessage() {
+            const chatMessages = document.getElementById('chatGPTMessages');
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = 'message ai-message';
+            messageDiv.style.display = 'flex';
+            messageDiv.style.gap = '0.75rem';
+            messageDiv.style.padding = '0 0.75rem';
+            const messageId = 'msg_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+            messageDiv.id = messageId;
+            
+            // Avatar
+            const avatar = document.createElement('div');
+            avatar.className = 'avatar';
+            avatar.style.width = '32px';
+            avatar.style.height = '32px';
+            avatar.style.borderRadius = '4px';
+            avatar.style.display = 'flex';
+            avatar.style.alignItems = 'center';
+            avatar.style.justifyContent = 'center';
+            avatar.style.fontSize = '0.85rem';
+            avatar.style.flexShrink = '0';
+            avatar.style.marginTop = '4px';
+            avatar.style.background = 'linear-gradient(135deg, #7e57c2 0%, #5e35b1 100%)';
+            avatar.innerHTML = '<i class="fas fa-scale-balanced"></i>';
+            
+            // Message content
+            const messageContent = document.createElement('div');
+            messageContent.className = 'message-content';
+            messageContent.style.flex = '1';
+            messageContent.style.position = 'relative';
+            messageContent.style.width = '100%';
+            messageContent.style.minWidth = '0';
+            
+            const messageText = document.createElement('div');
+            messageText.className = 'message-text streaming-content';
+            messageText.style.padding = '0';
+            messageText.style.borderRadius = '0';
+            messageText.style.fontSize = '0.9375rem';
+            messageText.style.lineHeight = '1.6';
+            messageText.style.wordWrap = 'break-word';
+            messageText.style.overflowWrap = 'break-word';
+            messageText.style.overflow = 'hidden';
+            messageText.style.color = '#ececf1';
+            messageText.innerHTML = '<span class="streaming-cursor" style="display: inline-block; width: 8px; height: 20px; background-color: #10a37f; margin-left: 4px; vertical-align: middle; animation: cursorBlink 1s infinite;"></span>';
+            
+            messageContent.appendChild(messageText);
+            messageDiv.appendChild(avatar);
+            messageDiv.appendChild(messageContent);
+            chatMessages.appendChild(messageDiv);
+            
+            // Set as current streaming message
+            currentStreamingMessageId = messageId;
+            currentStreamingContent = '';
+            streamingTextChunks = [];
+            streamingTextIndex = 0;
+            
+            // Scroll to show new message
+            setTimeout(() => {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+                checkChatScrollPosition();
+            }, 100);
+            
+            return messageId;
+        }
+        
+        // Start streaming ChatGPT response
+        function startStreamingChatGPTResponse(messageId, response) {
+            const messageDiv = document.getElementById(messageId);
+            if (!messageDiv) return;
+            
+            let textToStream = response;
+            streamingTextChunks = splitTextIntoChunks(textToStream);
+            streamingTextIndex = 0;
+            
+            streamNextChatGPTChunk(messageId);
+        }
+        
+        // Split text into chunks for streaming
+        function splitTextIntoChunks(text) {
+            const chunks = [];
+            const regex = /[\s.,;!?।।॥]+|\S+/g;
+            let match;
+            
+            while ((match = regex.exec(text)) !== null) {
+                chunks.push(match[0]);
+            }
+            
+            return chunks;
+        }
+        
+        // Stream next chunk
+        function streamNextChatGPTChunk(messageId) {
+            if (stopStreamingRequested || streamingTextIndex >= streamingTextChunks.length) {
+                if (stopStreamingRequested) {
+                    console.log('Streaming stopped by user');
+                } else {
+                    finalizeStreamingChatGPTMessage(messageId);
+                }
+                return;
+            }
+            
+            const chunk = streamingTextChunks[streamingTextIndex];
+            streamingTextIndex++;
+            
+            updateStreamingChatGPTMessage(messageId, chunk);
+            
+            let delay = 50; // Adjust speed of streaming
+            
+            if (chunk.match(/[.,;!?।।॥]/)) {
+                delay += 100;
+            }
+            
+            setTimeout(() => {
+                if (!stopStreamingRequested) {
+                    streamNextChatGPTChunk(messageId);
+                }
+            }, delay);
+        }
+        
+        // Update streaming message
+        function updateStreamingChatGPTMessage(messageId, newContent) {
+            const messageDiv = document.getElementById(messageId);
+            if (!messageDiv) return;
+            
+            const messageText = messageDiv.querySelector('.message-text');
+            
+            currentStreamingContent += newContent;
+            
+            // Format the content
+            let formattedContent = currentStreamingContent
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n/g, '<br>');
+            
+            // Add cursor
+            messageText.innerHTML = formattedContent + '<span class="streaming-cursor" style="display: inline-block; width: 8px; height: 20px; background-color: #10a37f; margin-left: 4px; vertical-align: middle; animation: cursorBlink 1s infinite;"></span>';
+            
+            checkChatScrollPosition();
+        }
+        
+        // Finalize streaming message
+        function finalizeStreamingChatGPTMessage(messageId) {
+            const messageDiv = document.getElementById(messageId);
+            if (!messageDiv) return;
+            
+            const messageText = messageDiv.querySelector('.message-text');
+            
+            // Remove cursor
+            const cursor = messageText.querySelector('.streaming-cursor');
+            if (cursor) cursor.remove();
+            
+            // Format final content
+            let formattedContent = currentStreamingContent
+                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                .replace(/\n/g, '<br>');
+            
+            messageText.innerHTML = formattedContent;
+            
+            // Add action buttons
+            const messageActions = document.createElement('div');
+            messageActions.className = 'message-actions';
+            messageActions.style.display = 'flex';
+            messageActions.style.gap = '8px';
+            messageActions.style.marginTop = '0.75rem';
+            messageActions.style.flexWrap = 'wrap';
+            messageActions.style.opacity = '0';
+            messageActions.style.transition = 'opacity 0.2s ease';
+            
+            messageActions.innerHTML = `
+                <button class="action-btn copy" title="Copy response" style="background: #444654; color: #8e8ea0; border: 1px solid #565869; border-radius: 6px; padding: 0.375rem 0.75rem; cursor: pointer; font-size: 0.8125rem; transition: all 0.2s; display: flex; align-items: center; gap: 6px; min-height: 32px; font-weight: 500; white-space: nowrap;">
+                    <i class="fas fa-copy"></i> Copy
+                </button>
+                <button class="action-btn like" title="Mark as helpful" style="background: #444654; color: #8e8ea0; border: 1px solid #565869; border-radius: 6px; padding: 0.375rem 0.75rem; cursor: pointer; font-size: 0.8125rem; transition: all 0.2s; display: flex; align-items: center; gap: 6px; min-height: 32px; font-weight: 500; white-space: nowrap;">
+                    <i class="far fa-thumbs-up"></i> Helpful
+                </button>
+            `;
+            
+            messageText.parentElement.appendChild(messageActions);
+            
+            // Add hover effect to show actions
+            messageDiv.addEventListener('mouseenter', function() {
+                messageActions.style.opacity = '1';
+            });
+            
+            messageDiv.addEventListener('mouseleave', function() {
+                messageActions.style.opacity = '0';
+            });
+            
+            // Add copy functionality
+            const copyBtn = messageActions.querySelector('.copy');
+            copyBtn.addEventListener('click', function() {
+                navigator.clipboard.writeText(currentStreamingContent).then(function() {
+                    showChatToast('Response copied to clipboard! 📋', 'success');
+                });
+            });
+            
+            // Add like functionality
+            const likeBtn = messageActions.querySelector('.like');
+            likeBtn.addEventListener('click', function() {
+                this.innerHTML = '<i class="fas fa-thumbs-up"></i> Thank you!';
+                this.style.background = '#10b981';
+                this.style.borderColor = '#10b981';
+                this.style.color = 'white';
+                this.disabled = true;
+                showChatToast('Thank you for your feedback! 👍', 'success');
+            });
+            
+            // Store in conversation history
+            const aiMessage = {
+                role: 'assistant',
+                content: currentStreamingContent,
+                language: selectedLanguage,
+                timestamp: new Date().toISOString()
+            };
+            
+            conversationHistory.push(aiMessage);
+            
+            // Save chat history
+            saveChatHistory();
+            
+            // Reset streaming variables
+            currentStreamingMessageId = null;
+            currentStreamingContent = '';
+            streamingTextChunks = [];
+            streamingTextIndex = 0;
+            isStreamingActive = false;
+            stopStreamingRequested = false;
+            
+            // Reset send button
+            const sendButton = document.getElementById('chatSendButton');
+            sendButton.disabled = document.getElementById('chatMessageInput').value.trim() === '';
+            sendButton.innerHTML = '<i class="fas fa-paper-plane"></i> <span>Send</span>';
+            sendButton.style.background = 'linear-gradient(135deg, #10a37f 0%, #0d8c6d 100%)';
+        }
+        
+        // Stop streaming
+        function stopStreaming() {
+            stopStreamingRequested = true;
+            isStreamingActive = false;
+            
+            // Reset send button
+            const sendButton = document.getElementById('chatSendButton');
+            sendButton.disabled = document.getElementById('chatMessageInput').value.trim() === '';
+            sendButton.innerHTML = '<i class="fas fa-paper-plane"></i> <span>Send</span>';
+            sendButton.style.background = 'linear-gradient(135deg, #10a37f 0%, #0d8c6d 100%)';
+            
+            // Finalize current streaming message
+            if (currentStreamingMessageId) {
+                finalizeStreamingChatGPTMessage(currentStreamingMessageId);
+            }
+            
+            showChatToast('Response stopped ⏹️', 'info');
+        }
+        
+        // Clear ChatGPT chat
+        function clearChatGPTChat() {
+            if (conversationHistory.length === 0) {
+                showChatToast('Chat is already empty 🗑️', 'warning');
+                return;
+            }
+            
+            if (confirm('Are you sure you want to clear the chat?')) {
+                const chatMessages = document.getElementById('chatGPTMessages');
+                chatMessages.innerHTML = '';
+                conversationHistory = [];
+                
+                // Add welcome message
+                const welcomeMessage = document.createElement('div');
+                welcomeMessage.className = 'welcome-message';
+                welcomeMessage.style.textAlign = 'center';
+                welcomeMessage.style.maxWidth = '600px';
+                welcomeMessage.style.margin = '1.5rem auto';
+                welcomeMessage.style.padding = '1.25rem';
+                welcomeMessage.style.background = 'linear-gradient(135deg, rgba(16, 163, 127, 0.1) 0%, rgba(30, 64, 175, 0.1) 100%)';
+                welcomeMessage.style.border = '1px solid #565869';
+                welcomeMessage.style.borderRadius = '12px';
+                welcomeMessage.style.width = '90%';
+                
+                welcomeMessage.innerHTML = `
+                    <h2 style="font-size: 1.5rem; margin-bottom: 0.75rem; background: linear-gradient(135deg, #10a37f 0%, #7e57c2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; word-wrap: break-word; font-weight: 600;">
+                        Welcome to LegalSwami! ⚖️
+                    </h2>
+                    <p style="color: #8e8ea0; font-size: 0.9375rem; margin-bottom: 1rem; line-height: 1.5; word-wrap: break-word;">
+                        I'm your AI legal assistant. I can help you with legal questions, document generation, and legal research.
+                    </p>
+                    
+                    <div class="welcome-features" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 0.875rem; margin-top: 1.25rem;">
+                        <div class="feature" style="background: #40414f; padding: 0.875rem; border-radius: 8px; border: 1px solid #565869; display: flex; flex-direction: column; align-items: center; text-align: center; word-wrap: break-word;">
+                            <i class="fas fa-comments" style="font-size: 1.375rem; color: #10a37f; margin-bottom: 0.5rem;"></i>
+                            <h4 style="font-size: 0.875rem; margin-bottom: 0.25rem; color: #ececf1; font-weight: 600;">Legal Advice</h4>
+                            <p style="font-size: 0.8125rem; color: #8e8ea0;">Get instant answers to your legal questions</p>
+                        </div>
+                        <div class="feature" style="background: #40414f; padding: 0.875rem; border-radius: 8px; border: 1px solid #565869; display: flex; flex-direction: column; align-items: center; text-align: center; word-wrap: break-word;">
+                            <i class="fas fa-file-contract" style="font-size: 1.375rem; color: #10a37f; margin-bottom: 0.5rem;"></i>
+                            <h4 style="font-size: 0.875rem; margin-bottom: 0.25rem; color: #ececf1; font-weight: 600;">Document Generation</h4>
+                            <p style="font-size: 0.8125rem; color: #8e8ea0;">Generate legal documents instantly</p>
+                        </div>
+                        <div class="feature" style="background: #40414f; padding: 0.875rem; border-radius: 8px; border: 1px solid #565869; display: flex; flex-direction: column; align-items: center; text-align: center; word-wrap: break-word;">
+                            <i class="fas fa-search" style="font-size: 1.375rem; color: #10a37f; margin-bottom: 0.5rem;"></i>
+                            <h4 style="font-size: 0.875rem; margin-bottom: 0.25rem; color: #ececf1; font-weight: 600;">Legal Research</h4>
+                            <p style="font-size: 0.8125rem; color: #8e8ea0;">Research laws and regulations</p>
+                        </div>
+                        <div class="feature" style="background: #40414f; padding: 0.875rem; border-radius: 8px; border: 1px solid #565869; display: flex; flex-direction: column; align-items: center; text-align: center; word-wrap: break-word;">
+                            <i class="fas fa-gavel" style="font-size: 1.375rem; color: #10a37f; margin-bottom: 0.5rem;"></i>
+                            <h4 style="font-size: 0.875rem; margin-bottom: 0.25rem; color: #ececf1; font-weight: 600;">Case Law Search</h4>
+                            <p style="font-size: 0.8125rem; color: #8e8ea0;">Find relevant case laws</p>
+                        </div>
+                    </div>
+                    
+                    <div class="language-selector" style="margin-top: 1.5rem;">
+                        <h5 style="color: #10a37f; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 8px; font-size: 0.875rem;">
+                            <i class="fas fa-language"></i> Select Language:
+                        </h5>
+                        <div class="language-buttons" style="display: flex; gap: 8px; justify-content: center;">
+                            <button class="lang-btn" data-lang="en" style="background: #40414f; color: #ececf1; border: 1px solid #565869; border-radius: 6px; padding: 0.5rem 1rem; cursor: pointer; font-size: 0.875rem; transition: all 0.2s;">English</button>
+                            <button class="lang-btn" data-lang="hi" style="background: #40414f; color: #ececf1; border: 1px solid #565869; border-radius: 6px; padding: 0.5rem 1rem; cursor: pointer; font-size: 0.875rem; transition: all 0.2s;">हिंदी</button>
+                            <button class="lang-btn" data-lang="mr" style="background: #40414f; color: #ececf1; border: 1px solid #565869; border-radius: 6px; padding: 0.5rem 1rem; cursor: pointer; font-size: 0.875rem; transition: all 0.2s;">मराठी</button>
+                            <button class="lang-btn" data-lang="gu" style="background: #40414f; color: #ececf1; border: 1px solid #565869; border-radius: 6px; padding: 0.5rem 1rem; cursor: pointer; font-size: 0.875rem; transition: all 0.2s;">ગુજરાતી</button>
+                        </div>
+                    </div>
+                `;
+                
+                chatMessages.appendChild(welcomeMessage);
+                
+                // Setup language buttons in welcome message
+                const langButtons = welcomeMessage.querySelectorAll('.lang-btn');
+                langButtons.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const lang = this.getAttribute('data-lang');
+                        selectedLanguage = lang;
+                        langButtons.forEach(b => b.style.background = '#40414f');
+                        this.style.background = '#10a37f';
+                        showChatToast(`Language changed to ${getLanguageName(lang)}`, 'info');
+                    });
+                });
+                
+                showChatToast('Chat cleared 🗑️', 'success');
+            }
+        }
+        
+        // Download ChatGPT conversation
+        function downloadChatGPTConversation(format) {
+            const indicator = document.getElementById('chatProgressIndicator');
+            indicator.style.display = 'flex';
+            
+            setTimeout(() => {
+                let content = 'LegalSwami Chat Conversation\n';
+                content += `Date: ${new Date().toLocaleString()}\n`;
+                content += '='.repeat(50) + '\n\n';
+                
+                conversationHistory.forEach((msg, index) => {
+                    const role = msg.role === 'user' ? 'You' : 'LegalSwami AI';
+                    const time = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString() : new Date().toLocaleTimeString();
+                    content += `${role} (${time}):\n`;
+                    content += msg.content + '\n\n';
+                    content += '-'.repeat(30) + '\n\n';
+                });
+                
+                const fileName = `LegalSwami-Chat-${formatDateForFilename(new Date())}`;
+                
+                switch(format) {
+                    case 'pdf':
+                        downloadAsPDF(content, fileName);
+                        break;
+                    case 'doc':
+                        downloadAsDOC(content, fileName);
+                        break;
+                    case 'txt':
+                        downloadAsTXT(content, fileName);
+                        break;
+                }
+                
+                indicator.style.display = 'none';
+                document.getElementById('chatDownloadModal').style.display = 'none';
+            }, 500);
+        }
+        
+        // Format date for filename
+        function formatDateForFilename(date) {
+            return date.toISOString()
+                .replace(/[:\-]/g, '')
+                .replace('T', '_')
+                .split('.')[0];
+        }
+        
+        // Download as PDF
+        function downloadAsPDF(content, filename) {
+            // For now, fall back to text download since we don't have jsPDF in scope
+            downloadAsTXT(content, filename);
+            showChatToast('PDF download not available. Text file downloaded instead.', 'info');
+        }
+        
+        // Download as DOC
+        function downloadAsDOC(content, filename) {
+            const htmlContent = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>${filename}</title>
+                    <style>
+                        body { font-family: Arial, sans-serif; line-height: 1.6; margin: 40px; }
+                        h1 { color: #10a37f; }
+                        .timestamp { color: #666; font-size: 0.9em; }
+                        .user { color: #10a37f; font-weight: bold; }
+                        .ai { color: #7e57c2; font-weight: bold; }
+                        .disclaimer { 
+                            background-color: #f8f9fa; 
+                            border-left: 4px solid #f59e0b;
+                            padding: 10px;
+                            margin-top: 20px;
+                            font-size: 0.9em;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <h1>${filename} ⚖️</h1>
+                    <p class="timestamp">Generated on: ${new Date().toLocaleString()}</p>
+                    <hr>
+                    <pre style="white-space: pre-wrap; font-family: inherit;">${content}</pre>
+                    <div class="disclaimer">
+                        <strong>Disclaimer:</strong> This document is generated by LegalSwami AI Assistant for informational purposes only and does not constitute legal advice. ⚖️
+                    </div>
+                </body>
+                </html>
+            `;
+            
+            const blob = new Blob([htmlContent], { type: 'application/msword' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${filename}.doc`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showChatToast('Word document downloaded 📥', 'success');
+        }
+        
+        // Download as TXT
+        function downloadAsTXT(content, filename) {
+            const blob = new Blob([content], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `${filename}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showChatToast('Text file downloaded 📥', 'success');
+        }
+        
+        // Show chat toast
+        function showChatToast(message, type = 'success') {
+            const toast = document.getElementById('chatToast');
+            const toastMessage = document.getElementById('chatToastMessage');
+            
+            if (!toast || !toastMessage) return;
+            
+            toastMessage.textContent = message;
+            toast.className = 'toast show';
+            toast.style.borderLeft = '4px solid ' + 
+                (type === 'success' ? '#10b981' : 
+                 type === 'error' ? '#ef4444' : 
+                 type === 'warning' ? '#f59e0b' : '#10a37f');
+            
+            // Set icon based on type
+            const icon = toast.querySelector('i');
+            if (icon) {
+                icon.className = 
+                    type === 'success' ? 'fas fa-check-circle' :
+                    type === 'error' ? 'fas fa-exclamation-circle' :
+                    type === 'warning' ? 'fas fa-exclamation-triangle' : 'fas fa-info-circle';
+            }
+            
+            toast.style.transform = 'translateY(0)';
+            toast.style.opacity = '1';
+            
+            setTimeout(() => {
+                toast.style.transform = 'translateY(100px)';
+                toast.style.opacity = '0';
+            }, 3000);
+        }
+        
+        // Load chat history
+        function loadChatHistory() {
+            try {
+                const savedHistory = localStorage.getItem('legalSwamiChatHistory');
+                if (savedHistory) {
+                    chatHistory = JSON.parse(savedHistory);
+                }
+            } catch (error) {
+                console.error('Error loading chat history:', error);
+                chatHistory = [];
+            }
+        }
+        
+        // Save chat history
+        function saveChatHistory() {
+            try {
+                // Add current conversation to history if not empty
+                if (conversationHistory.length > 0) {
+                    const chatTitle = conversationHistory[0]?.content?.substring(0, 30) || 'New Chat';
+                    const chatPreview = conversationHistory[conversationHistory.length - 1]?.content?.substring(0, 50) || '';
+                    
+                    const chatData = {
+                        id: 'chat_' + Date.now(),
+                        title: chatTitle,
+                        preview: chatPreview,
+                        date: new Date().toISOString(),
+                        messages: [...conversationHistory]
+                    };
+                    
+                    chatHistory.unshift(chatData);
+                    
+                    // Keep only last 20 chats
+                    if (chatHistory.length > 20) {
+                        chatHistory = chatHistory.slice(0, 20);
+                    }
+                    
+                    localStorage.setItem('legalSwamiChatHistory', JSON.stringify(chatHistory));
+                    
+                    // Update history list
+                    loadChatHistoryList();
+                }
+            } catch (error) {
+                console.error('Error saving chat history:', error);
+            }
+        }
+        
+        // Load chat history list
+        function loadChatHistoryList() {
+            const historyList = document.getElementById('chatHistoryList');
+            if (!historyList) return;
+            
+            if (chatHistory.length === 0) {
+                historyList.innerHTML = `
+                    <div class="empty-history" style="text-align: center; padding: 2.5rem 1rem; color: #8e8ea0;">
+                        <i class="fas fa-comments" style="font-size: 1.75rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+                        <p style="font-size: 0.875rem;">No chat history yet</p>
+                        <p style="font-size: 0.8125rem; margin-top: 0.5rem;">Start a conversation to see it here</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            let html = '';
+            chatHistory.forEach(chat => {
+                const date = new Date(chat.date);
+                const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                
+                html += `
+                    <div class="history-item" data-chat-id="${chat.id}" style="padding: 0.75rem; background: transparent; border-radius: 6px; cursor: pointer; transition: all 0.2s; border: none; display: flex; flex-direction: column; gap: 4px; color: #ececf1; margin-bottom: 4px; position: relative; text-align: left; width: 100%;">
+                        <div class="history-title" style="font-size: 0.875rem; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 60px;">${chat.title}</div>
+                        <div class="history-preview" style="font-size: 0.8rem; color: #8e8ea0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 60px;">${chat.preview}</div>
+                        <div class="history-date" style="font-size: 0.75rem; color: #8e8ea0;">${formattedDate}</div>
+                    </div>
+                `;
+            });
+            
+            historyList.innerHTML = html;
+            
+            // Add click handlers to load chat history
+            document.querySelectorAll('.history-item').forEach(item => {
+                item.addEventListener('click', function() {
+                    const chatId = this.dataset.chatId;
+                    loadChatFromHistory(chatId);
+                });
+            });
+        }
+        
+        // Load chat from history
+        function loadChatFromHistory(chatId) {
+            const chat = chatHistory.find(c => c.id === chatId);
+            if (!chat) return;
+            
+            conversationHistory = [...chat.messages];
+            
+            const chatMessages = document.getElementById('chatGPTMessages');
+            chatMessages.innerHTML = '';
+            
+            chat.messages.forEach(msg => {
+                addChatGPTMessage(msg.content, msg.role === 'user');
+            });
+            
+            // Close sidebar on mobile
+            if (window.innerWidth < 1024) {
+                document.getElementById('chatSidebar').style.transform = 'translateX(-100%)';
+                document.getElementById('chatSidebarOverlay').style.display = 'none';
+            }
+            
+            showChatToast('Chat loaded from history 📚', 'success');
+        }
+        
+        // Start ChatGPT-like chat
+        function startChatGPTLikeChat() {
+            const chatInterface = document.getElementById('chatInterface');
+            if (chatInterface) {
+                chatInterface.style.display = 'flex';
+                isChatOpen = true;
+                
+                // Hide main content
+                document.querySelector('.main-container').style.display = 'none';
+                
+                // Focus input after a delay
+                setTimeout(function() {
+                    const messageInput = document.getElementById('chatMessageInput');
+                    if (messageInput) {
+                        messageInput.focus();
+                    }
+                }, 500);
+                
+                console.log('✅ ChatGPT-like chat interface shown');
+            }
+        }
+        
+        // Go back to home from chat
+        function goBackToHome() {
+            const chatInterface = document.getElementById('chatInterface');
+            if (chatInterface) {
+                chatInterface.style.display = 'none';
+                isChatOpen = false;
+                
+                // Show main content
+                document.querySelector('.main-container').style.display = 'block';
+                
+                console.log('✅ Returned to home from chat');
+            }
+        }
+        
+        // The rest of your existing functions remain the same...
         // Setup Language Buttons
         function setupLanguageButtons() {
             document.querySelectorAll('.lang-btn').forEach(btn => {
