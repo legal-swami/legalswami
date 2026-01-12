@@ -237,36 +237,6 @@
             border-color: #3b82f6;
         }
         
-        .sidebar-icons {
-            display: flex;
-            padding: 0 15px 15px;
-            gap: 10px;
-        }
-        
-        .sidebar-icon {
-            flex: 1;
-            background: #334155;
-            border: 1px solid #475569;
-            border-radius: 8px;
-            padding: 10px;
-            color: #cbd5e1;
-            font-size: 12px;
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        
-        .sidebar-icon:hover {
-            background: #3b82f6;
-            color: white;
-        }
-        
-        .sidebar-icon i {
-            display: block;
-            font-size: 16px;
-            margin-bottom: 5px;
-        }
-        
         .chat-history-title {
             padding: 15px 20px 10px;
             color: #94a3b8;
@@ -308,6 +278,29 @@
         }
         
         .chat-history-item i {
+            font-size: 12px;
+            opacity: 0.7;
+        }
+        
+        .history-empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #94a3b8;
+        }
+        
+        .history-empty-state i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+        
+        .history-empty-state p {
+            margin: 10px 0 5px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        
+        .history-empty-state small {
             font-size: 12px;
             opacity: 0.7;
         }
@@ -428,6 +421,145 @@
             background: #3b82f6;
             color: white;
             border-color: #3b82f6;
+        }
+        
+        /* Document Generation Message Styles */
+        .document-generation-response {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 15px 0;
+        }
+        
+        .document-response-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+        
+        .document-response-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: white;
+        }
+        
+        .document-response-title {
+            color: #fff;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 0;
+        }
+        
+        .document-response-subtitle {
+            color: #94a3b8;
+            font-size: 14px;
+            margin: 5px 0 0 0;
+        }
+        
+        .document-types-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+        
+        .document-type-card {
+            background: #0f172a;
+            border: 1px solid #334155;
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .document-type-card:hover {
+            background: #1e293b;
+            border-color: #3b82f6;
+            transform: translateY(-2px);
+        }
+        
+        .document-type-icon {
+            width: 32px;
+            height: 32px;
+            background: rgba(59, 130, 246, 0.1);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 10px;
+        }
+        
+        .document-type-icon i {
+            color: #3b82f6;
+            font-size: 16px;
+        }
+        
+        .document-type-name {
+            color: #fff;
+            font-size: 14px;
+            font-weight: 500;
+            margin: 0 0 5px 0;
+        }
+        
+        .document-type-desc {
+            color: #94a3b8;
+            font-size: 12px;
+            margin: 0;
+            line-height: 1.4;
+        }
+        
+        .document-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .btn-generate-doc {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+        
+        .btn-generate-doc:hover {
+            background: #2563eb;
+        }
+        
+        .btn-view-templates {
+            background: transparent;
+            color: #cbd5e1;
+            border: 1px solid #475569;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+        
+        .btn-view-templates:hover {
+            background: #334155;
+            border-color: #64748b;
         }
         
         /* Input Area */
@@ -766,6 +898,10 @@
             .welcome-subtitle {
                 font-size: 16px;
             }
+            
+            .document-types-grid {
+                grid-template-columns: 1fr;
+            }
         }
         
         @media (max-width: 480px) {
@@ -789,6 +925,15 @@
             
             .quick-buttons-grid {
                 grid-template-columns: 1fr;
+            }
+            
+            .document-actions {
+                flex-direction: column;
+            }
+            
+            .btn-generate-doc, .btn-view-templates {
+                width: 100%;
+                justify-content: center;
             }
         }
 
@@ -1939,69 +2084,14 @@
                         </div>
                     </div>
 
-                    <!-- Icons (like in the image) -->
-                    <div class="sidebar-icons">
-                        <button class="sidebar-icon" title="Images">
-                            <i class="fas fa-images"></i>
-                            Images
-                        </button>
-                        <button class="sidebar-icon" title="Apps">
-                            <i class="fas fa-th-large"></i>
-                            Apps
-                        </button>
-                        <button class="sidebar-icon" title="GPTs">
-                            <i class="fas fa-robot"></i>
-                            GPTs
-                        </button>
-                        <button class="sidebar-icon" title="Projects">
-                            <i class="fas fa-project-diagram"></i>
-                            Projects
-                        </button>
-                    </div>
-
                     <!-- Chat History -->
                     <div class="chat-history-title">Your chats</div>
                     <div class="chat-history-list" id="chatgptHistoryList">
-                        <!-- History items will be loaded here -->
-                        <div class="chat-history-item">
+                        <!-- History items will be dynamically loaded -->
+                        <div class="history-empty-state" id="emptyHistoryState">
                             <i class="fas fa-comments"></i>
-                            <span>Cinematic 3D Indian Scene</span>
-                        </div>
-                        <div class="chat-history-item">
-                            <i class="fas fa-dove"></i>
-                            <span>Kabutar ka wada</span>
-                        </div>
-                        <div class="chat-history-item">
-                            <i class="fas fa-image"></i>
-                            <span>Free Image Generation Tools</span>
-                        </div>
-                        <div class="chat-history-item active">
-                            <i class="fas fa-balance-scale"></i>
-                            <span>Legal Document Drafting</span>
-                        </div>
-                        <div class="chat-history-item">
-                            <i class="fas fa-envelope"></i>
-                            <span>Contract Review Request</span>
-                        </div>
-                        <div class="chat-history-item">
-                            <i class="fas fa-gavel"></i>
-                            <span>Court Case Analysis</span>
-                        </div>
-                        <div class="chat-history-item">
-                            <i class="fas fa-file-contract"></i>
-                            <span>Rental Agreement Draft</span>
-                        </div>
-                        <div class="chat-history-item">
-                            <i class="fas fa-user-tie"></i>
-                            <span>Lawyer Consultation</span>
-                        </div>
-                        <div class="chat-history-item">
-                            <i class="fas fa-search"></i>
-                            <span>Legal Research Query</span>
-                        </div>
-                        <div class="chat-history-item">
-                            <i class="fas fa-book"></i>
-                            <span>Indian Constitution Study</span>
+                            <p>No chat history yet</p>
+                            <small>Start chatting to see your history here</small>
                         </div>
                     </div>
                 </div>
@@ -2047,25 +2137,7 @@
 
                         <!-- Messages will be loaded here -->
                         <div id="chatgptMessages">
-                            <!-- Example message structure -->
-                            <!--
-                            <div class="chatgpt-message">
-                                <div class="message-avatar">
-                                    <i class="fas fa-robot"></i>
-                                </div>
-                                <div class="message-content">
-                                    <h4>LegalSwami Assistant</h4>
-                                    <div class="message-text">
-                                        Hello! I'm your AI legal assistant. How can I help you today?
-                                    </div>
-                                    <div class="message-actions">
-                                        <button class="message-action-btn"><i class="fas fa-copy"></i> Copy</button>
-                                        <button class="message-action-btn"><i class="fas fa-thumbs-up"></i> Like</button>
-                                        <button class="message-action-btn"><i class="fas fa-thumbs-down"></i> Dislike</button>
-                                    </div>
-                                </div>
-                            </div>
-                            -->
+                            <!-- Messages will be dynamically added -->
                         </div>
 
                         <!-- Typing Indicator -->
@@ -2357,6 +2429,9 @@
         let isLoginModalOpen = false;
         let selectedLanguage = 'en';
         let isChatGPTSidebarOpen = true;
+        let chatHistoryData = [];
+        let currentChatSession = null;
+        let chatSessions = [];
         
         // Check if device is mobile
         const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
@@ -2384,18 +2459,50 @@
             { id: 6, name: "Adv. Anjali Singh", specialization: "consumer", experience: 7, location: "Chennai", rating: 4.5, fee: "₹1500/consultation" }
         ];
 
-        // Chat History Data
-        const chatHistory = [
-            { id: 1, title: "Cinematic 3D Indian Scene", icon: "fa-comments", date: "2 hours ago" },
-            { id: 2, title: "Kabutar ka wada", icon: "fa-dove", date: "5 hours ago" },
-            { id: 3, title: "Free Image Generation Tools", icon: "fa-image", date: "1 day ago" },
-            { id: 4, title: "Legal Document Drafting", icon: "fa-balance-scale", date: "2 days ago" },
-            { id: 5, title: "Contract Review Request", icon: "fa-envelope", date: "3 days ago" },
-            { id: 6, title: "Court Case Analysis", icon: "fa-gavel", date: "1 week ago" },
-            { id: 7, title: "Rental Agreement Draft", icon: "fa-file-contract", date: "1 week ago" },
-            { id: 8, title: "Lawyer Consultation", icon: "fa-user-tie", date: "2 weeks ago" },
-            { id: 9, title: "Legal Research Query", icon: "fa-search", date: "2 weeks ago" },
-            { id: 10, title: "Indian Constitution Study", icon: "fa-book", date: "3 weeks ago" }
+        // Document Types
+        const documentTypes = [
+            {
+                id: 1,
+                name: "Rental Agreement",
+                description: "Standard rental/lease agreement between landlord and tenant",
+                icon: "fa-home",
+                category: "agreements"
+            },
+            {
+                id: 2,
+                name: "Non-Disclosure Agreement",
+                description: "Confidentiality agreement to protect sensitive information",
+                icon: "fa-file-signature",
+                category: "agreements"
+            },
+            {
+                id: 3,
+                name: "Employment Contract",
+                description: "Employment terms and conditions agreement",
+                icon: "fa-briefcase",
+                category: "agreements"
+            },
+            {
+                id: 4,
+                name: "Will & Testament",
+                description: "Legal document for estate planning and asset distribution",
+                icon: "fa-scroll",
+                category: "personal"
+            },
+            {
+                id: 5,
+                name: "Power of Attorney",
+                description: "Authorization for someone to act on your behalf",
+                icon: "fa-user-tie",
+                category: "personal"
+            },
+            {
+                id: 6,
+                name: "Legal Notice",
+                description: "Formal legal communication before filing a case",
+                icon: "fa-gavel",
+                category: "notices"
+            }
         ];
 
         // DOM Content Loaded
@@ -2453,8 +2560,208 @@
             // Initialize ChatGPT style chat
             initializeChatGPTChat();
             
+            // Load chat history from localStorage
+            loadChatHistoryFromStorage();
+            
             console.log('✅ All initialization complete');
         });
+        
+        // Load Chat History from LocalStorage
+        function loadChatHistoryFromStorage() {
+            try {
+                const savedHistory = localStorage.getItem('legalSwamiChatHistory');
+                if (savedHistory) {
+                    chatHistoryData = JSON.parse(savedHistory);
+                    updateChatHistoryUI();
+                }
+            } catch (error) {
+                console.error('Error loading chat history:', error);
+                chatHistoryData = [];
+            }
+        }
+        
+        // Save Chat History to LocalStorage
+        function saveChatHistoryToStorage() {
+            try {
+                localStorage.setItem('legalSwamiChatHistory', JSON.stringify(chatHistoryData));
+            } catch (error) {
+                console.error('Error saving chat history:', error);
+            }
+        }
+        
+        // Update Chat History UI
+        function updateChatHistoryUI() {
+            const historyList = document.getElementById('chatgptHistoryList');
+            const emptyState = document.getElementById('emptyHistoryState');
+            
+            if (!historyList) return;
+            
+            historyList.innerHTML = '';
+            
+            if (chatHistoryData.length === 0) {
+                if (emptyState) {
+                    historyList.appendChild(emptyState);
+                    emptyState.style.display = 'block';
+                }
+                return;
+            }
+            
+            if (emptyState) {
+                emptyState.style.display = 'none';
+            }
+            
+            // Sort by date (newest first)
+            const sortedHistory = [...chatHistoryData].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            
+            sortedHistory.forEach((chat, index) => {
+                const historyItem = document.createElement('div');
+                historyItem.className = 'chat-history-item';
+                if (currentChatSession && currentChatSession.id === chat.id) {
+                    historyItem.classList.add('active');
+                }
+                
+                // Get first message for title
+                const firstMessage = chat.messages && chat.messages.length > 0 
+                    ? chat.messages[0].content 
+                    : 'New Chat';
+                
+                const title = firstMessage.length > 30 
+                    ? firstMessage.substring(0, 30) + '...' 
+                    : firstMessage;
+                
+                // Format date
+                const date = new Date(chat.timestamp);
+                const now = new Date();
+                const diffTime = Math.abs(now - date);
+                const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
+                
+                let timeText = '';
+                if (diffDays === 0) {
+                    timeText = 'Today';
+                } else if (diffDays === 1) {
+                    timeText = 'Yesterday';
+                } else if (diffDays < 7) {
+                    timeText = `${diffDays} days ago`;
+                } else {
+                    timeText = date.toLocaleDateString();
+                }
+                
+                historyItem.innerHTML = `
+                    <i class="fas fa-comments"></i>
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${title}</div>
+                        <div style="font-size: 11px; color: #94a3b8; margin-top: 2px;">${timeText}</div>
+                    </div>
+                `;
+                
+                historyItem.addEventListener('click', function() {
+                    loadChatSession(chat.id);
+                });
+                
+                historyList.appendChild(historyItem);
+            });
+        }
+        
+        // Create New Chat Session
+        function createNewChatSession() {
+            const newSession = {
+                id: 'chat_' + Date.now(),
+                title: 'New Chat',
+                timestamp: new Date().toISOString(),
+                messages: []
+            };
+            
+            currentChatSession = newSession;
+            chatHistoryData.push(newSession);
+            saveChatHistoryToStorage();
+            updateChatHistoryUI();
+            
+            // Clear chat messages
+            const messagesContainer = document.getElementById('chatgptMessages');
+            if (messagesContainer) {
+                messagesContainer.innerHTML = '';
+            }
+            
+            // Show welcome screen
+            const welcomeScreen = document.getElementById('chatgptWelcome');
+            const quickQuestions = document.getElementById('chatgptQuickQuestions');
+            
+            if (welcomeScreen) welcomeScreen.style.display = 'block';
+            if (quickQuestions) quickQuestions.style.display = 'block';
+            
+            return newSession;
+        }
+        
+        // Load Chat Session
+        function loadChatSession(sessionId) {
+            const session = chatHistoryData.find(chat => chat.id === sessionId);
+            if (!session) return;
+            
+            currentChatSession = session;
+            updateChatHistoryUI();
+            
+            // Clear current messages
+            const messagesContainer = document.getElementById('chatgptMessages');
+            if (messagesContainer) {
+                messagesContainer.innerHTML = '';
+            }
+            
+            // Hide welcome screen
+            const welcomeScreen = document.getElementById('chatgptWelcome');
+            const quickQuestions = document.getElementById('chatgptQuickQuestions');
+            
+            if (welcomeScreen) welcomeScreen.style.display = 'none';
+            if (quickQuestions) quickQuestions.style.display = 'none';
+            
+            // Load messages
+            if (session.messages && session.messages.length > 0) {
+                session.messages.forEach(msg => {
+                    addChatGPTMessage(msg.content, msg.isUser);
+                });
+                
+                // Scroll to bottom
+                setTimeout(() => {
+                    const container = document.getElementById('chatgptMessagesContainer');
+                    if (container) {
+                        container.scrollTop = container.scrollHeight;
+                    }
+                }, 100);
+            } else {
+                // Add default welcome message
+                addChatGPTMessage("Hello! I'm your AI legal assistant. How can I help you today?", false);
+            }
+            
+            showToast('Chat loaded', 'success');
+        }
+        
+        // Add Message to Current Session
+        function addMessageToCurrentSession(content, isUser) {
+            if (!currentChatSession) {
+                currentChatSession = createNewChatSession();
+            }
+            
+            if (!currentChatSession.messages) {
+                currentChatSession.messages = [];
+            }
+            
+            currentChatSession.messages.push({
+                content: content,
+                isUser: isUser,
+                timestamp: new Date().toISOString()
+            });
+            
+            // Update session timestamp
+            currentChatSession.timestamp = new Date().toISOString();
+            
+            // Update title from first message if needed
+            if (currentChatSession.messages.length === 1 && isUser) {
+                const title = content.length > 30 ? content.substring(0, 30) + '...' : content;
+                currentChatSession.title = title;
+            }
+            
+            saveChatHistoryToStorage();
+            updateChatHistoryUI();
+        }
         
         // Initialize ChatGPT Style Chat
         function initializeChatGPTChat() {
@@ -2477,44 +2784,10 @@
                 });
             }
             
-            // Load chat history
-            loadChatGPTHistory();
-            
-            // Add welcome message
-            addChatGPTMessage("Hello! I'm your AI legal assistant. I can help you with legal advice, document generation, legal research, and answering any legal questions you may have. How can I assist you today?", false);
+            // Load chat history UI
+            updateChatHistoryUI();
             
             console.log('✅ ChatGPT style chat initialized');
-        }
-        
-        // Load ChatGPT History
-        function loadChatGPTHistory() {
-            const historyList = document.getElementById('chatgptHistoryList');
-            if (!historyList) return;
-            
-            historyList.innerHTML = '';
-            
-            chatHistory.forEach(item => {
-                const historyItem = document.createElement('div');
-                historyItem.className = 'chat-history-item';
-                if (item.id === 4) historyItem.classList.add('active');
-                
-                historyItem.innerHTML = `
-                    <i class="fas ${item.icon}"></i>
-                    <span>${item.title}</span>
-                `;
-                
-                historyItem.addEventListener('click', function() {
-                    document.querySelectorAll('.chat-history-item').forEach(el => {
-                        el.classList.remove('active');
-                    });
-                    this.classList.add('active');
-                    
-                    // Load chat history (simulated)
-                    showToast(`Loading "${item.title}"...`, 'info');
-                });
-                
-                historyList.appendChild(historyItem);
-            });
         }
         
         // Toggle ChatGPT Sidebar
@@ -2547,17 +2820,21 @@
         }
         
         // Add ChatGPT Message
-        function addChatGPTMessage(content, isUser = false) {
+        function addChatGPTMessage(content, isUser = false, isDocumentResponse = false) {
             const messagesContainer = document.getElementById('chatgptMessages');
             if (!messagesContainer) return;
             
-            // Hide welcome screen on first message
-            const welcomeScreen = document.getElementById('chatgptWelcome');
-            const quickQuestions = document.getElementById('chatgptQuickQuestions');
-            
-            if (isUser && welcomeScreen && welcomeScreen.style.display !== 'none') {
-                welcomeScreen.style.display = 'none';
-                if (quickQuestions) quickQuestions.style.display = 'none';
+            // Hide welcome screen on first user message
+            if (isUser) {
+                const welcomeScreen = document.getElementById('chatgptWelcome');
+                const quickQuestions = document.getElementById('chatgptQuickQuestions');
+                
+                if (welcomeScreen && welcomeScreen.style.display !== 'none') {
+                    welcomeScreen.style.display = 'none';
+                }
+                if (quickQuestions && quickQuestions.style.display !== 'none') {
+                    quickQuestions.style.display = 'none';
+                }
             }
             
             const messageDiv = document.createElement('div');
@@ -2565,26 +2842,51 @@
             
             const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
             
-            messageDiv.innerHTML = `
-                <div class="message-avatar ${isUser ? 'user-avatar' : ''}">
-                    <i class="fas ${isUser ? 'fa-user' : 'fa-robot'}"></i>
-                </div>
-                <div class="message-content">
-                    <h4>${isUser ? 'You' : 'LegalSwami Assistant'}</h4>
-                    <div class="message-text">${formatChatGPTMessage(content)}</div>
-                    <div class="message-actions">
-                        <button class="message-action-btn" title="Copy">
-                            <i class="fas fa-copy"></i> Copy
-                        </button>
-                        <button class="message-action-btn" title="Like">
-                            <i class="fas fa-thumbs-up"></i> Like
-                        </button>
-                        <button class="message-action-btn" title="Dislike">
-                            <i class="fas fa-thumbs-down"></i> Dislike
-                        </button>
+            if (isDocumentResponse) {
+                // Handle document generation response
+                messageDiv.innerHTML = `
+                    <div class="message-avatar">
+                        <i class="fas fa-robot"></i>
                     </div>
-                </div>
-            `;
+                    <div class="message-content">
+                        <h4>LegalSwami Assistant</h4>
+                        ${content}
+                        <div class="message-actions">
+                            <button class="message-action-btn" title="Copy">
+                                <i class="fas fa-copy"></i> Copy
+                            </button>
+                            <button class="message-action-btn" title="Like">
+                                <i class="fas fa-thumbs-up"></i> Like
+                            </button>
+                            <button class="message-action-btn" title="Dislike">
+                                <i class="fas fa-thumbs-down"></i> Dislike
+                            </button>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // Regular message
+                messageDiv.innerHTML = `
+                    <div class="message-avatar ${isUser ? 'user-avatar' : ''}">
+                        <i class="fas ${isUser ? 'fa-user' : 'fa-robot'}"></i>
+                    </div>
+                    <div class="message-content">
+                        <h4>${isUser ? 'You' : 'LegalSwami Assistant'}</h4>
+                        <div class="message-text">${formatChatGPTMessage(content)}</div>
+                        <div class="message-actions">
+                            <button class="message-action-btn" title="Copy">
+                                <i class="fas fa-copy"></i> Copy
+                            </button>
+                            <button class="message-action-btn" title="Like">
+                                <i class="fas fa-thumbs-up"></i> Like
+                            </button>
+                            <button class="message-action-btn" title="Dislike">
+                                <i class="fas fa-thumbs-down"></i> Dislike
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
             
             messagesContainer.appendChild(messageDiv);
             
@@ -2592,10 +2894,12 @@
             const copyBtn = messageDiv.querySelector('.message-action-btn');
             if (copyBtn) {
                 copyBtn.addEventListener('click', function() {
-                    const text = messageDiv.querySelector('.message-text').textContent;
-                    navigator.clipboard.writeText(text).then(function() {
-                        showToast('Message copied to clipboard!', 'success');
-                    });
+                    const text = messageDiv.querySelector('.message-text') ? messageDiv.querySelector('.message-text').textContent : '';
+                    if (text) {
+                        navigator.clipboard.writeText(text).then(function() {
+                            showToast('Message copied to clipboard!', 'success');
+                        });
+                    }
                 });
             }
             
@@ -2606,6 +2910,11 @@
                     container.scrollTop = container.scrollHeight;
                 }
             }, 100);
+            
+            // Add to session
+            if (!isDocumentResponse) {
+                addMessageToCurrentSession(content, isUser);
+            }
             
             return messageDiv;
         }
@@ -2647,6 +2956,9 @@
                 return;
             }
             
+            const generateDocument = document.getElementById('chatgptGenerateDocument') ? 
+                document.getElementById('chatgptGenerateDocument').checked : false;
+            
             isProcessing = true;
             
             try {
@@ -2675,7 +2987,7 @@
                 await new Promise(resolve => setTimeout(resolve, 1000));
                 
                 // Generate AI response based on message
-                const response = generateAIResponse(message);
+                const response = generateAIResponse(message, generateDocument);
                 
                 // Hide typing indicator
                 if (typingIndicator) {
@@ -2683,10 +2995,11 @@
                 }
                 
                 // Add AI response
-                addChatGPTMessage(response, false);
-                
-                // Update chat history
-                updateChatGPTHistory(message);
+                if (generateDocument || message.toLowerCase().includes('document') || message.toLowerCase().includes('generate')) {
+                    addChatGPTMessage(response, false, true);
+                } else {
+                    addChatGPTMessage(response, false);
+                }
                 
             } catch (error) {
                 console.error('❌ Failed to send message:', error);
@@ -2702,9 +3015,16 @@
             }
         }
         
-        // Generate AI Response
-        function generateAIResponse(message) {
+        // Generate AI Response with Document Generation
+        function generateAIResponse(message, generateDocument = false) {
             const lowerMessage = message.toLowerCase();
+            
+            // Check if document generation is requested
+            if (generateDocument || lowerMessage.includes('document') || lowerMessage.includes('generate') || 
+                lowerMessage.includes('draft') || lowerMessage.includes('create') || lowerMessage.includes('make')) {
+                
+                return generateDocumentResponse(message);
+            }
             
             // Legal responses based on query
             if (lowerMessage.includes('contract') || lowerMessage.includes('agreement')) {
@@ -2811,47 +3131,6 @@ A legal notice is a formal communication sent before filing a lawsuit. Here's th
 
 I can help you draft a legal notice. What type of issue are you facing?`;
                 
-            } else if (lowerMessage.includes('document') || lowerMessage.includes('generate')) {
-                return `**Document Generation Service:**
-
-I can help you generate various legal documents instantly. Available documents include:
-
-**1. Agreements & Contracts:**
-   - Rental/Lease Agreement
-   - Employment Contract
-   - Non-Disclosure Agreement (NDA)
-   - Service Agreement
-   - Partnership Agreement
-   - Sale Agreement
-
-**2. Legal Notices:**
-   - Demand Notice
-   - Cease and Desist Notice
-   - Recovery Notice
-   - Eviction Notice
-   - Consumer Complaint Notice
-
-**3. Personal Documents:**
-   - Will and Testament
-   - Power of Attorney
-   - Affidavit
-   - Gift Deed
-   - Nomination Form
-
-**4. Business Documents:**
-   - Memorandum of Understanding (MOU)
-   - Terms and Conditions
-   - Privacy Policy
-   - Company Incorporation Documents
-
-**Features:**
-- Customizable templates
-- Multiple formats (PDF, DOC, TXT)
-- Legal compliance checked
-- Easy editing options
-
-To generate a document, please select the document type and provide the required details. What document would you like to create?`;
-                
             } else {
                 // Generic legal response
                 return `Thank you for your legal question. As your AI legal assistant, I can help you with:
@@ -2880,49 +3159,387 @@ Could you please provide more details about your specific legal concern so I can
             }
         }
         
-        // Update ChatGPT History
-        function updateChatGPTHistory(message) {
-            // In a real app, this would update the backend
-            // For demo, we'll just show a toast
-            console.log('💾 Chat history updated with:', message.substring(0, 50));
+        // Generate Document Response
+        function generateDocumentResponse(message) {
+            const lowerMessage = message.toLowerCase();
+            
+            // Check which document type is being requested
+            let requestedDocument = null;
+            
+            if (lowerMessage.includes('rental') || lowerMessage.includes('lease')) {
+                requestedDocument = documentTypes.find(doc => doc.name.toLowerCase().includes('rental'));
+            } else if (lowerMessage.includes('nda') || lowerMessage.includes('non-disclosure')) {
+                requestedDocument = documentTypes.find(doc => doc.name.toLowerCase().includes('non-disclosure'));
+            } else if (lowerMessage.includes('employment') || lowerMessage.includes('job')) {
+                requestedDocument = documentTypes.find(doc => doc.name.toLowerCase().includes('employment'));
+            } else if (lowerMessage.includes('will') || lowerMessage.includes('testament')) {
+                requestedDocument = documentTypes.find(doc => doc.name.toLowerCase().includes('will'));
+            } else if (lowerMessage.includes('power of attorney') || lowerMessage.includes('poa')) {
+                requestedDocument = documentTypes.find(doc => doc.name.toLowerCase().includes('power'));
+            } else if (lowerMessage.includes('legal notice') || lowerMessage.includes('notice')) {
+                requestedDocument = documentTypes.find(doc => doc.name.toLowerCase().includes('legal notice'));
+            }
+            
+            if (requestedDocument) {
+                // Specific document requested
+                return `
+                    <div class="document-generation-response">
+                        <div class="document-response-header">
+                            <div class="document-response-icon">
+                                <i class="fas ${requestedDocument.icon}"></i>
+                            </div>
+                            <div>
+                                <h3 class="document-response-title">${requestedDocument.name}</h3>
+                                <p class="document-response-subtitle">${requestedDocument.description}</p>
+                            </div>
+                        </div>
+                        
+                        <div class="message-text">
+                            <p>I can help you generate a <strong>${requestedDocument.name}</strong> with the following features:</p>
+                            
+                            <ul>
+                                <li><strong>Customizable Fields:</strong> All parties' information, dates, terms, and conditions</li>
+                                <li><strong>Legal Compliance:</strong> Drafted as per Indian laws and regulations</li>
+                                <li><strong>Multiple Formats:</strong> Available in PDF, DOC, and TXT formats</li>
+                                <li><strong>Step-by-Step Guidance:</strong> I'll guide you through each section</li>
+                                <li><strong>Review & Edit:</strong> You can review and edit before finalizing</li>
+                            </ul>
+                            
+                            <p><strong>Information Needed:</strong></p>
+                            <ol>
+                                <li>Names and addresses of all parties involved</li>
+                                <li>Important dates and durations</li>
+                                <li>Specific terms and conditions</li>
+                                <li>Any special clauses or requirements</li>
+                            </ol>
+                        </div>
+                        
+                        <div class="document-actions">
+                            <button class="btn-generate-doc" onclick="startDocumentGeneration('${requestedDocument.id}')">
+                                <i class="fas fa-magic"></i>
+                                Generate ${requestedDocument.name}
+                            </button>
+                            <button class="btn-view-templates" onclick="viewDocumentTemplates()">
+                                <i class="fas fa-eye"></i>
+                                View Sample Template
+                            </button>
+                        </div>
+                    </div>
+                `;
+            } else {
+                // General document generation response
+                return `
+                    <div class="document-generation-response">
+                        <div class="document-response-header">
+                            <div class="document-response-icon">
+                                <i class="fas fa-file-contract"></i>
+                            </div>
+                            <div>
+                                <h3 class="document-response-title">Document Generation Service</h3>
+                                <p class="document-response-subtitle">I can help you generate various legal documents instantly</p>
+                            </div>
+                        </div>
+                        
+                        <div class="message-text">
+                            <p>Based on your query, I can help you generate legal documents. Here are the most commonly requested documents:</p>
+                        </div>
+                        
+                        <div class="document-types-grid">
+                            ${documentTypes.map(doc => `
+                                <div class="document-type-card" onclick="selectDocumentType(${doc.id})">
+                                    <div class="document-type-icon">
+                                        <i class="fas ${doc.icon}"></i>
+                                    </div>
+                                    <h4 class="document-type-name">${doc.name}</h4>
+                                    <p class="document-type-desc">${doc.description}</p>
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <div class="message-text">
+                            <p><strong>How it works:</strong></p>
+                            <ol>
+                                <li>Select the document type you need</li>
+                                <li>I'll ask you specific questions to gather necessary information</li>
+                                <li>The document will be generated with all required legal clauses</li>
+                                <li>You can review, edit, and download in your preferred format</li>
+                            </ol>
+                            
+                            <p><strong>All documents include:</strong></p>
+                            <ul>
+                                <li>✓ Proper formatting and structure</li>
+                                <li>✓ Required legal clauses</li>
+                                <li>✓ Customizable fields</li>
+                                <li>✓ Multiple format options (PDF, DOC, TXT)</li>
+                                <li>✓ Legal compliance checked</li>
+                            </ul>
+                        </div>
+                        
+                        <div class="document-actions">
+                            <button class="btn-generate-doc" onclick="showDocumentCategories()">
+                                <i class="fas fa-folder-open"></i>
+                                Browse All Documents
+                            </button>
+                            <button class="btn-view-templates" onclick="viewDocumentTemplates()">
+                                <i class="fas fa-eye"></i>
+                                View Sample Templates
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+        
+        // Start Document Generation
+        function startDocumentGeneration(documentId) {
+            const doc = documentTypes.find(d => d.id === documentId);
+            if (!doc) return;
+            
+            showToast(`Starting ${doc.name} generation...`, 'info');
+            
+            // Simulate document generation process
+            setTimeout(() => {
+                const modal = document.createElement('div');
+                modal.className = 'modal';
+                modal.id = 'documentGenerationModal';
+                modal.innerHTML = `
+                    <div class="modal-overlay" onclick="closeModal('documentGenerationModal')"></div>
+                    <div class="modal-content">
+                        <button class="modal-close" onclick="closeModal('documentGenerationModal')">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <div class="modal-header">
+                            <div class="modal-icon legal-seal">
+                                <i class="fas ${doc.icon}"></i>
+                            </div>
+                            <h3>Generate ${doc.name}</h3>
+                            <p>Fill in the details below</p>
+                        </div>
+                        <div class="modal-body">
+                            <div class="form-group">
+                                <label>Parties Information</label>
+                                <input type="text" id="party1" placeholder="First Party Name" class="form-input">
+                                <input type="text" id="party2" placeholder="Second Party Name" class="form-input">
+                            </div>
+                            <div class="form-group">
+                                <label>Date</label>
+                                <input type="date" id="agreementDate" class="form-input" value="${new Date().toISOString().split('T')[0]}">
+                            </div>
+                            <div class="form-group">
+                                <label>Additional Details</label>
+                                <textarea id="additionalDetails" placeholder="Any specific terms or conditions..." class="form-textarea" rows="3"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Document Format</label>
+                                <select id="docFormat" class="form-select">
+                                    <option value="PDF">PDF Document</option>
+                                    <option value="DOC">Word Document</option>
+                                    <option value="TXT">Text File</option>
+                                </select>
+                            </div>
+                            <button class="btn-generate-final" onclick="generateFinalDocument('${doc.id}')">
+                                <i class="fas fa-magic"></i>
+                                Generate Document
+                            </button>
+                        </div>
+                    </div>
+                `;
+                
+                document.body.appendChild(modal);
+                modal.style.display = 'flex';
+                document.body.classList.add('modal-open');
+            }, 500);
+        }
+        
+        // Select Document Type
+        function selectDocumentType(documentId) {
+            startDocumentGeneration(documentId);
+        }
+        
+        // Show Document Categories
+        function showDocumentCategories() {
+            showToast('Opening document categories...', 'info');
+            // In a complete implementation, this would show a modal with all document categories
+        }
+        
+        // View Document Templates
+        function viewDocumentTemplates() {
+            showToast('Opening sample templates...', 'info');
+            // In a complete implementation, this would show a modal with sample templates
+        }
+        
+        // Generate Final Document
+        function generateFinalDocument(documentId) {
+            const doc = documentTypes.find(d => d.id === documentId);
+            if (!doc) return;
+            
+            const party1 = document.getElementById('party1')?.value || 'Party A';
+            const party2 = document.getElementById('party2')?.value || 'Party B';
+            const date = document.getElementById('agreementDate')?.value || new Date().toISOString().split('T')[0];
+            const format = document.getElementById('docFormat')?.value || 'PDF';
+            
+            showToast(`Generating ${format} document...`, 'success');
+            
+            setTimeout(() => {
+                closeModal('documentGenerationModal');
+                showToast(`${doc.name} generated successfully!`, 'success');
+                
+                // Add message about document generation
+                addChatGPTMessage(`
+                    <div class="document-generation-response">
+                        <div class="document-response-header">
+                            <div class="document-response-icon">
+                                <i class="fas ${doc.icon}"></i>
+                            </div>
+                            <div>
+                                <h3 class="document-response-title">${doc.name} Generated!</h3>
+                                <p class="document-response-subtitle">Your document is ready for download</p>
+                            </div>
+                        </div>
+                        
+                        <div class="message-text">
+                            <p>I have successfully generated your <strong>${doc.name}</strong> with the following details:</p>
+                            
+                            <ul>
+                                <li><strong>Parties:</strong> ${party1} and ${party2}</li>
+                                <li><strong>Date:</strong> ${date}</li>
+                                <li><strong>Format:</strong> ${format}</li>
+                                <li><strong>Document ID:</strong> DOC-${Date.now().toString().substring(7)}</li>
+                            </ul>
+                            
+                            <p><strong>Next Steps:</strong></p>
+                            <ol>
+                                <li>Review the document carefully</li>
+                                <li>Make sure all details are correct</li>
+                                <li>Share with the other party for review</li>
+                                <li>Sign the document with witnesses if required</li>
+                                <li>Register if necessary (for property documents)</li>
+                            </ol>
+                        </div>
+                        
+                        <div class="document-actions">
+                            <button class="btn-generate-doc" onclick="downloadGeneratedDocument('${doc.id}', '${format}')">
+                                <i class="fas fa-download"></i>
+                                Download ${format} Document
+                            </button>
+                            <button class="btn-view-templates" onclick="showToast('Edit feature coming soon!', 'info')">
+                                <i class="fas fa-edit"></i>
+                                Edit Document
+                            </button>
+                        </div>
+                    </div>
+                `, false, true);
+                
+                // Download the document
+                downloadGeneratedDocument(doc.id, format, party1, party2, date);
+                
+            }, 1500);
+        }
+        
+        // Download Generated Document
+        function downloadGeneratedDocument(documentId, format = 'PDF', party1 = 'Party A', party2 = 'Party B', date = null) {
+            const doc = documentTypes.find(d => d.id === documentId);
+            if (!doc) return;
+            
+            const downloadDate = date || new Date().toISOString().split('T')[0];
+            const fileName = `${doc.name.replace(/\s+/g, '_')}_${downloadDate}.${format.toLowerCase()}`;
+            
+            // Create document content
+            let documentContent = '';
+            
+            if (format === 'TXT') {
+                documentContent = `
+LEGAL DOCUMENT
+==============
+
+Document: ${doc.name}
+Generated: ${new Date().toLocaleDateString()}
+Document ID: DOC-${Date.now().toString().substring(7)}
+
+PARTIES:
+1. ${party1}
+2. ${party2}
+
+DATE: ${downloadDate}
+
+${doc.description}
+
+This document has been generated by LegalSwami AI Legal Assistant.
+Please review all details carefully and consult with a legal professional if needed.
+
+IMPORTANT: This is a sample generated document. For official use, please ensure
+all details are accurate and the document is properly executed.
+
+---
+LegalSwami AI Legal Assistant
+Generated on: ${new Date().toLocaleString()}
+`;
+            } else {
+                // For PDF/DOC, we would use a more sophisticated generation
+                // For demo, we'll create a simple text file
+                documentContent = `
+                    ${doc.name} - Generated by LegalSwami
+                    ======================================
+                    
+                    This is a sample ${doc.name} document.
+                    
+                    Parties:
+                    - ${party1}
+                    - ${party2}
+                    
+                    Date: ${downloadDate}
+                    
+                    Note: In the complete version, this would be a fully formatted
+                    ${format} document with proper legal formatting and clauses.
+                    
+                    For the complete document generation feature, please contact
+                    support@legalswami.com
+                `;
+            }
+            
+            const blob = new Blob([documentContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = fileName;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast(`${doc.name} downloaded successfully!`, 'success');
         }
         
         // Clear ChatGPT Chat
         function clearChatGPTChat() {
-            if (confirm('Are you sure you want to clear the chat? This action cannot be undone.')) {
-                const messagesContainer = document.getElementById('chatgptMessages');
-                if (messagesContainer) {
-                    messagesContainer.innerHTML = '';
-                }
+            if (confirm('Are you sure you want to clear the chat? This will start a new conversation.')) {
+                // Create new chat session
+                createNewChatSession();
                 
-                // Show welcome screen again
-                const welcomeScreen = document.getElementById('chatgptWelcome');
-                const quickQuestions = document.getElementById('chatgptQuickQuestions');
-                
-                if (welcomeScreen) welcomeScreen.style.display = 'block';
-                if (quickQuestions) quickQuestions.style.display = 'block';
-                
-                showToast('Chat cleared successfully', 'success');
+                showToast('New chat started', 'success');
                 console.log('🗑️ ChatGPT chat cleared');
             }
         }
         
         // Export ChatGPT Chat
         function exportChatGPTChat() {
-            const messages = document.querySelectorAll('#chatgptMessages .chatgpt-message');
+            if (!currentChatSession || !currentChatSession.messages || currentChatSession.messages.length === 0) {
+                showToast('No chat messages to export', 'warning');
+                return;
+            }
             
             let exportText = '================================\n';
             exportText += 'LEGALSWAMI CHAT EXPORT\n';
             exportText += 'Generated on: ' + new Date().toLocaleString() + '\n';
+            exportText += 'Chat ID: ' + currentChatSession.id + '\n';
             exportText += '================================\n\n';
             
-            messages.forEach(function(message) {
-                const isUser = message.querySelector('.user-avatar');
-                const text = message.querySelector('.message-text') ? message.querySelector('.message-text').textContent : '';
-                const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+            currentChatSession.messages.forEach(function(message) {
+                const sender = message.isUser ? '👤 You' : '🤖 LegalSwami';
+                const time = new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
                 
-                exportText += (isUser ? '👤 You' : '🤖 LegalSwami') + ' (' + time + '):\n';
-                exportText += text + '\n\n';
+                exportText += sender + ' (' + time + '):\n';
+                exportText += message.content + '\n\n';
                 exportText += '─'.repeat(50) + '\n\n';
             });
             
@@ -2936,7 +3553,7 @@ Could you please provide more details about your specific legal concern so I can
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'LegalSwami_Chat_' + new Date().toISOString().split('T')[0] + '.txt';
+            a.download = 'LegalSwami_Chat_' + currentChatSession.id + '.txt';
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
@@ -2954,6 +3571,11 @@ Could you please provide more details about your specific legal concern so I can
             if (chatInterface) {
                 chatInterface.classList.add('active');
                 isChatOpen = true;
+                
+                // Create new session if none exists
+                if (!currentChatSession) {
+                    createNewChatSession();
+                }
                 
                 // Prevent background scrolling
                 document.body.style.overflow = 'hidden';
@@ -3002,7 +3624,40 @@ Could you please provide more details about your specific legal concern so I can
         
         // Setup Language Buttons
         function setupLanguageButtons() {
-            // Existing language setup...
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const lang = this.getAttribute('data-lang');
+                    selectedLanguage = lang;
+                    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    // Update chat placeholder based on language
+                    const messageInput = document.getElementById('chatgptMessageInput');
+                    if (messageInput) {
+                        if (lang === 'hi') {
+                            messageInput.placeholder = "अपना कानूनी प्रश्न यहां टाइप करें...";
+                        } else if (lang === 'mr') {
+                            messageInput.placeholder = "तुमचा कायदेशीर प्रश्न येथे टाइप करा...";
+                        } else if (lang === 'gu') {
+                            messageInput.placeholder = "તમારો કાનૂની પ્રશ્ન અહીં ટાઈપ કરો...";
+                        } else {
+                            messageInput.placeholder = "Type your legal question here...";
+                        }
+                    }
+                    
+                    showToast(`Language changed to ${getLanguageName(lang)}`, 'info');
+                });
+            });
+        }
+        
+        function getLanguageName(code) {
+            const languages = {
+                'en': 'English',
+                'hi': 'Hindi',
+                'mr': 'Marathi',
+                'gu': 'Gujarati'
+            };
+            return languages[code] || 'English';
         }
         
         // Apply mobile optimizations
@@ -3087,7 +3742,14 @@ Could you please provide more details about your specific legal concern so I can
         
         // Close Modal
         function closeModal(modalId) {
-            // Existing close modal...
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'none';
+                document.body.classList.remove('modal-open');
+                setTimeout(() => {
+                    modal.remove();
+                }, 300);
+            }
         }
         
         // Calculate Court Fee
@@ -3105,7 +3767,7 @@ Could you please provide more details about your specific legal concern so I can
             // Existing compensation...
         }
         
-        // Generate Document
+        // Generate Document (from main page)
         function generateDocument(type) {
             // Existing document generation...
         }
@@ -3165,7 +3827,7 @@ Could you please provide more details about your specific legal concern so I can
                 chatGPTClearBtn.addEventListener('click', clearChatGPTChat);
             }
             
-            const chatGPTExportBtn = document.getElementById('chatGPTExportBtn');
+            const chatGPTExportBtn = document.getElementById('chatgptExportBtn');
             if (chatGPTExportBtn) {
                 chatGPTExportBtn.addEventListener('click', exportChatGPTChat);
             }
@@ -3182,7 +3844,14 @@ Could you please provide more details about your specific legal concern so I can
             
             const chatGPTNewChatBtn = document.getElementById('chatgptNewChatBtn');
             if (chatGPTNewChatBtn) {
-                chatGPTNewChatBtn.addEventListener('click', clearChatGPTChat);
+                chatGPTNewChatBtn.addEventListener('click', function() {
+                    clearChatGPTChat();
+                    // Focus input
+                    const messageInput = document.getElementById('chatgptMessageInput');
+                    if (messageInput) {
+                        messageInput.focus();
+                    }
+                });
             }
             
             const chatGPTSendBtn = document.getElementById('chatgptSendBtn');
@@ -3562,6 +4231,12 @@ Could you please provide more details about your specific legal concern so I can
         window.calculateStampDuty = calculateStampDuty;
         window.calculateCompensation = calculateCompensation;
         window.closeModal = closeModal;
+        window.startDocumentGeneration = startDocumentGeneration;
+        window.selectDocumentType = selectDocumentType;
+        window.showDocumentCategories = showDocumentCategories;
+        window.viewDocumentTemplates = viewDocumentTemplates;
+        window.generateFinalDocument = generateFinalDocument;
+        window.downloadGeneratedDocument = downloadGeneratedDocument;
         
         console.log('✅ LegalSwami Premium App Initialization Complete!');
     </script>
