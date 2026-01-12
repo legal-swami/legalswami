@@ -1717,6 +1717,204 @@
                 justify-content: center;
             }
         }
+
+
+		/* ChatGPT-like Chat Container */
+.chat-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    background: var(--dark-bg);
+    width: 100%;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+}
+        
+.light-mode .chat-container {
+    background: var(--light-bg);
+}
+        
+.chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1.25rem 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    min-height: 0;
+    width: 100%;
+}
+        
+.message {
+    display: flex;
+    gap: 0.75rem;
+    max-width: 100%;
+    padding: 0 0.75rem;
+    animation: fadeIn 0.2s ease-out;
+}
+        
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+        
+.user-message {
+    background: var(--dark-surface);
+    border-radius: 8px;
+    padding: 1rem;
+    max-width: 100%;
+}
+        
+.light-mode .user-message {
+    background: var(--light-surface);
+}
+        
+.ai-message {
+    background: transparent;
+}
+        
+.avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    flex-shrink: 0;
+    margin-top: 4px;
+}
+        
+.user-message .avatar {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+}
+        
+.ai-message .avatar {
+    background: linear-gradient(135deg, var(--secondary) 0%, #5e35b1 100%);
+}
+        
+.message-content {
+    flex: 1;
+    position: relative;
+    width: 100%;
+    min-width: 0;
+}
+        
+.message-text {
+    padding: 0;
+    border-radius: 0;
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    overflow: hidden;
+    color: var(--dark-text);
+}
+        
+.light-mode .message-text {
+    color: var(--light-text);
+}
+        
+.user-message .message-text {
+    color: white;
+}
+        
+/* ChatGPT-like Input Area */
+.input-container {
+    padding: 0.875rem;
+    background: var(--dark-bg);
+    border-top: 1px solid var(--dark-border);
+    position: sticky;
+    bottom: 0;
+    z-index: 10;
+    transition: all 0.2s ease;
+    width: 100%;
+    flex-shrink: 0;
+}
+        
+.light-mode .input-container {
+    background: var(--light-bg);
+    border-top-color: var(--light-border);
+}
+        
+.input-area {
+    max-width: 800px;
+    margin: 0 auto;
+    position: relative;
+    width: 100%;
+}
+        
+.input-area textarea {
+    width: 100%;
+    padding: 0.875rem 6.5rem 0.875rem 1rem;
+    background: var(--dark-surface);
+    border: 1px solid var(--dark-border);
+    border-radius: 12px;
+    color: var(--dark-text);
+    font-size: 0.9375rem;
+    resize: none;
+    min-height: 52px;
+    max-height: 150px;
+    transition: all 0.2s;
+    line-height: 1.5;
+    font-family: inherit;
+    outline: none;
+}
+        
+.light-mode .input-area textarea {
+    background: var(--light-surface);
+    border-color: var(--light-border);
+    color: var(--light-text);
+}
+        
+.input-area textarea:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 2px rgba(16, 163, 127, 0.1);
+}
+        
+.input-buttons {
+    position: absolute;
+    right: 0.75rem;
+    bottom: 0.75rem;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+        
+.send-button {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem 0.875rem;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 40px;
+    font-size: 0.875rem;
+}
+        
+.send-button:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(16, 163, 127, 0.3);
+}
+        
+.send-button:disabled {
+    background: var(--dark-border);
+    cursor: not-allowed;
+    opacity: 0.5;
+}
+        
+.light-mode .send-button:disabled {
+    background: var(--light-border);
+}
     </style>
 </head>
 <body>
