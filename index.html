@@ -11,11 +11,6 @@
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     
-    <!-- CSS Files -->
-    <link rel="stylesheet" href="css/styles.css">
-    <link rel="stylesheet" href="css/chat.css">
-    <link rel="stylesheet" href="css/responsive.css">
-    
     <!-- Google Client ID -->
     <meta name="google-client-id" 
           content="166511615962-bohur5q8d4i5hud6icr4185kcte9enk8.apps.googleusercontent.com">
@@ -35,207 +30,1694 @@
     <meta property="og:description" content="Get instant legal advice, generate documents, and understand laws with AI">
     <meta property="og:image" content="https://legalswami.com/og-image.jpg">
     <meta property="og:url" content="https://legalswami.com">
-	
-	<style>
-/* ChatGPT-like Chat Container */
-.chat-container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    background: var(--dark-bg);
-    width: 100%;
-    height: 100%;
-    min-height: 0;
-    overflow: hidden;
-}
-        
-.light-mode .chat-container {
-    background: var(--light-bg);
-}
-        
-.chat-messages {
-    flex: 1;
-    overflow-y: auto;
-    padding: 1.25rem 1rem;
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-    scroll-behavior: smooth;
-    -webkit-overflow-scrolling: touch;
-    min-height: 0;
-    width: 100%;
-}
-        
-.message {
-    display: flex;
-    gap: 0.75rem;
-    max-width: 100%;
-    padding: 0 0.75rem;
-    animation: fadeIn 0.2s ease-out;
-}
-        
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-        
-.user-message {
-    background: var(--dark-surface);
-    border-radius: 8px;
-    padding: 1rem;
-    max-width: 100%;
-}
-        
-.light-mode .user-message {
-    background: var(--light-surface);
-}
-        
-.ai-message {
-    background: transparent;
-}
-        
-.avatar {
-    width: 32px;
-    height: 32px;
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 0.85rem;
-    flex-shrink: 0;
-    margin-top: 4px;
-}
-        
-.user-message .avatar {
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-}
-        
-.ai-message .avatar {
-    background: linear-gradient(135deg, var(--secondary) 0%, #5e35b1 100%);
-}
-        
-.message-content {
-    flex: 1;
-    position: relative;
-    width: 100%;
-    min-width: 0;
-}
-        
-.message-text {
-    padding: 0;
-    border-radius: 0;
-    font-size: 0.9375rem;
-    line-height: 1.6;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
-    overflow: hidden;
-    color: var(--dark-text);
-}
-        
-.light-mode .message-text {
-    color: var(--light-text);
-}
-        
-.user-message .message-text {
-    color: white;
-}
-        
-/* ChatGPT-like Input Area */
-.input-container {
-    padding: 0.875rem;
-    background: var(--dark-bg);
-    border-top: 1px solid var(--dark-border);
-    position: sticky;
-    bottom: 0;
-    z-index: 10;
-    transition: all 0.2s ease;
-    width: 100%;
-    flex-shrink: 0;
-}
-        
-.light-mode .input-container {
-    background: var(--light-bg);
-    border-top-color: var(--light-border);
-}
-        
-.input-area {
-    max-width: 800px;
-    margin: 0 auto;
-    position: relative;
-    width: 100%;
-}
-        
-.input-area textarea {
-    width: 100%;
-    padding: 0.875rem 6.5rem 0.875rem 1rem;
-    background: var(--dark-surface);
-    border: 1px solid var(--dark-border);
-    border-radius: 12px;
-    color: var(--dark-text);
-    font-size: 0.9375rem;
-    resize: none;
-    min-height: 52px;
-    max-height: 150px;
-    transition: all 0.2s;
-    line-height: 1.5;
-    font-family: inherit;
-    outline: none;
-}
-        
-.light-mode .input-area textarea {
-    background: var(--light-surface);
-    border-color: var(--light-border);
-    color: var(--light-text);
-}
-        
-.input-area textarea:focus {
-    outline: none;
-    border-color: var(--primary);
-    box-shadow: 0 0 0 2px rgba(16, 163, 127, 0.1);
-}
-        
-.input-buttons {
-    position: absolute;
-    right: 0.75rem;
-    bottom: 0.75rem;
-    display: flex;
-    gap: 6px;
-    align-items: center;
-}
-        
-.send-button {
-    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 0.5rem 0.875rem;
-    cursor: pointer;
-    font-weight: 500;
-    transition: all 0.2s;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    min-height: 40px;
-    font-size: 0.875rem;
-}
-        
-.send-button:hover:not(:disabled) {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(16, 163, 127, 0.3);
-}
-        
-.send-button:disabled {
-    background: var(--dark-border);
-    cursor: not-allowed;
-    opacity: 0.5;
-}
-        
-.light-mode .send-button:disabled {
-    background: var(--light-border);
-}
-
-    </style>
     
+	    <!-- CSS Files -->
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/chat.css">
+    <link rel="stylesheet" href="css/responsive.css">
+	
+    <style>
+        :root {
+            /* Dark Theme Colors */
+            --dark-bg: #0f172a;
+            --dark-surface: #1e293b;
+            --dark-surface-light: #334155;
+            --dark-text: #f1f5f9;
+            --dark-text-secondary: #94a3b8;
+            --dark-border: #475569;
+            
+            /* Light Theme Colors */
+            --light-bg: #ffffff;
+            --light-surface: #f8fafc;
+            --light-surface-light: #e2e8f0;
+            --light-text: #1e293b;
+            --light-text-secondary: #64748b;
+            --light-border: #cbd5e1;
+            
+            /* Primary Colors */
+            --primary: #10a37f;
+            --primary-dark: #0d8769;
+            --secondary: #7e57c2;
+            --secondary-dark: #6d45b0;
+            
+            /* Status Colors */
+            --success: #22c55e;
+            --warning: #f59e0b;
+            --error: #ef4444;
+            --info: #3b82f6;
+            
+            /* Gradients */
+            --gradient-primary: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            --gradient-secondary: linear-gradient(135deg, var(--secondary) 0%, var(--secondary-dark) 100%);
+            --gradient-dark: linear-gradient(135deg, var(--dark-surface) 0%, var(--dark-bg) 100%);
+            
+            /* Shadows */
+            --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.1);
+            --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.15);
+            --shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.2);
+            --shadow-xl: 0 12px 32px rgba(0, 0, 0, 0.25);
+            
+            /* Border Radius */
+            --radius-sm: 6px;
+            --radius-md: 12px;
+            --radius-lg: 18px;
+            --radius-xl: 24px;
+            --radius-full: 9999px;
+        }
+        
+        /* Reset & Base Styles */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--dark-bg);
+            color: var(--dark-text);
+            line-height: 1.6;
+            overflow-x: hidden;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        
+        body.light-mode {
+            background: var(--light-bg);
+            color: var(--light-text);
+        }
+        
+        /* Loading Screen */
+        .loading-screen {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--dark-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 9999;
+            transition: opacity 0.3s ease;
+        }
+        
+        .light-mode .loading-screen {
+            background: var(--light-bg);
+        }
+        
+        .loading-content {
+            text-align: center;
+            max-width: 400px;
+            padding: 2rem;
+        }
+        
+        .loading-spinner {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .legal-seal {
+            background: var(--gradient-primary);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            width: 80px;
+            height: 80px;
+            margin: 0 auto;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+        
+        .shimmer-text {
+            background: linear-gradient(90deg, #10a37f, #22c55e, #10a37f);
+            background-size: 200% 100%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: shimmer 3s infinite linear;
+        }
+        
+        @keyframes shimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+        }
+        
+        .progress-bar {
+            width: 100%;
+            height: 4px;
+            background: var(--dark-surface);
+            border-radius: 2px;
+            overflow: hidden;
+            margin-top: 1rem;
+        }
+        
+        .light-mode .progress-bar {
+            background: var(--light-surface);
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient-primary);
+            animation: loading 2s ease-in-out infinite;
+        }
+        
+        @keyframes loading {
+            0%, 100% { transform: translateX(-100%); }
+            50% { transform: translateX(100%); }
+        }
+        
+        /* Main Container */
+        .main-container {
+            min-height: 100vh;
+        }
+        
+        /* Navigation */
+        .premium-navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            padding: 0.75rem 0;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .light-mode .premium-navbar {
+            background: rgba(255, 255, 255, 0.95);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .premium-navbar.scrolled {
+            padding: 0.5rem 0;
+            background: rgba(15, 23, 42, 0.98);
+        }
+        
+        .light-mode .premium-navbar.scrolled {
+            background: rgba(255, 255, 255, 0.98);
+        }
+        
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        
+        .nav-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+        }
+        
+        .logo-text {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .logo-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #10a37f, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+        }
+        
+        .logo-subtitle {
+            font-size: 0.7rem;
+            color: var(--dark-text-secondary);
+            font-weight: 500;
+        }
+        
+        .light-mode .logo-subtitle {
+            color: var(--light-text-secondary);
+        }
+        
+        .nav-menu {
+            display: flex;
+            gap: 1.5rem;
+            align-items: center;
+        }
+        
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            text-decoration: none;
+            color: var(--dark-text-secondary);
+            font-weight: 500;
+            font-size: 0.875rem;
+            padding: 0.5rem 0.75rem;
+            border-radius: var(--radius-md);
+            transition: all 0.3s ease;
+        }
+        
+        .light-mode .nav-link {
+            color: var(--light-text-secondary);
+        }
+        
+        .nav-link:hover,
+        .nav-link.active {
+            color: var(--primary);
+            background: rgba(16, 163, 127, 0.1);
+        }
+        
+        .light-mode .nav-link:hover,
+        .light-mode .nav-link.active {
+            background: rgba(16, 163, 127, 0.1);
+        }
+        
+        .nav-actions {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .btn-login {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 0.625rem 1.25rem;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 0.875rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.375rem;
+            border-radius: var(--radius-md);
+            background: var(--dark-surface);
+            cursor: pointer;
+        }
+        
+        .light-mode .user-profile {
+            background: var(--light-surface);
+        }
+        
+        .profile-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            overflow: hidden;
+            background: var(--gradient-primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.875rem;
+        }
+        
+        .profile-info {
+            display: flex;
+            flex-direction: column;
+            gap: 0.125rem;
+        }
+        
+        .profile-name {
+            font-size: 0.8125rem;
+            font-weight: 600;
+        }
+        
+        .profile-email {
+            font-size: 0.6875rem;
+            color: var(--dark-text-secondary);
+        }
+        
+        .light-mode .profile-email {
+            color: var(--light-text-secondary);
+        }
+        
+        .btn-logout {
+            background: none;
+            border: none;
+            color: var(--dark-text-secondary);
+            cursor: pointer;
+            padding: 0.375rem;
+            border-radius: var(--radius-sm);
+            transition: all 0.3s ease;
+        }
+        
+        .btn-logout:hover {
+            color: var(--error);
+            background: rgba(239, 68, 68, 0.1);
+        }
+        
+        .mobile-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--dark-text);
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+        
+        .light-mode .mobile-toggle {
+            color: var(--light-text);
+        }
+        
+        /* Mobile Menu */
+        .mobile-menu-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            backdrop-filter: blur(5px);
+            z-index: 999;
+            display: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .mobile-menu-container {
+            width: 100%;
+            max-width: 320px;
+            height: 100%;
+            background: var(--dark-bg);
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .light-mode .mobile-menu-container {
+            background: var(--light-bg);
+        }
+        
+        .mobile-menu-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 2rem;
+        }
+        
+        .mobile-close {
+            background: none;
+            border: none;
+            color: var(--dark-text);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .light-mode .mobile-close {
+            color: var(--light-text);
+        }
+        
+        .mobile-menu-links {
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+        
+        .mobile-link {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.875rem 1rem;
+            color: var(--dark-text);
+            text-decoration: none;
+            border-radius: var(--radius-md);
+            transition: all 0.3s ease;
+        }
+        
+        .light-mode .mobile-link {
+            color: var(--light-text);
+        }
+        
+        .mobile-link:hover,
+        .mobile-link.active {
+            background: var(--dark-surface);
+            color: var(--primary);
+        }
+        
+        .light-mode .mobile-link:hover,
+        .light-mode .mobile-link.active {
+            background: var(--light-surface);
+        }
+        
+        /* Hero Section */
+        .hero-section {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 120px 2rem 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .hero-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+        
+        .hero-content {
+            z-index: 2;
+        }
+        
+        .hero-badge {
+            margin-bottom: 1.5rem;
+        }
+        
+        .badge-text {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: rgba(16, 163, 127, 0.1);
+            color: var(--primary);
+            padding: 0.5rem 1rem;
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+        }
+        
+        .hero-subtitle {
+            font-size: 1.125rem;
+            color: var(--dark-text-secondary);
+            margin-bottom: 2rem;
+            line-height: 1.7;
+        }
+        
+        .light-mode .hero-subtitle {
+            color: var(--light-text-secondary);
+        }
+        
+        .hero-stats {
+            display: flex;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+        
+        .stat-label {
+            font-size: 0.875rem;
+            color: var(--dark-text-secondary);
+            margin-top: 0.25rem;
+        }
+        
+        .light-mode .stat-label {
+            color: var(--light-text-secondary);
+        }
+        
+        .hero-actions {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        
+        .btn-hero-primary {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            padding: 1rem 2rem;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .btn-hero-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        .btn-hero-secondary {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--dark-surface);
+            color: var(--dark-text);
+            border: 1px solid var(--dark-border);
+            padding: 1rem 2rem;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .light-mode .btn-hero-secondary {
+            background: var(--light-surface);
+            color: var(--light-text);
+            border-color: var(--light-border);
+        }
+        
+        .btn-hero-secondary:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        .hero-trust {
+            margin-top: 3rem;
+        }
+        
+        .trust-label {
+            font-size: 0.875rem;
+            color: var(--dark-text-secondary);
+            margin-bottom: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        
+        .light-mode .trust-label {
+            color: var(--light-text-secondary);
+        }
+        
+        .trust-badges {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        
+        .trust-badge {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 0.5rem 1rem;
+            background: var(--dark-surface);
+            border-radius: var(--radius-md);
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+        
+        .light-mode .trust-badge {
+            background: var(--light-surface);
+        }
+        
+        .hero-illustration {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .ai-assistant-card {
+            background: var(--dark-surface);
+            border-radius: var(--radius-xl);
+            padding: 2rem;
+            box-shadow: var(--shadow-xl);
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .light-mode .ai-assistant-card {
+            background: var(--light-bg);
+        }
+        
+        .assistant-avatar {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto 1.5rem;
+        }
+        
+        .assistant-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 0.5rem;
+        }
+        
+        .assistant-subtitle {
+            text-align: center;
+            color: var(--dark-text-secondary);
+            margin-bottom: 1.5rem;
+        }
+        
+        .light-mode .assistant-subtitle {
+            color: var(--light-text-secondary);
+        }
+        
+        .assistant-features {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 2rem;
+        }
+        
+        .feature {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            color: var(--dark-text);
+        }
+        
+        .light-mode .feature {
+            color: var(--light-text);
+        }
+        
+        .feature i {
+            color: var(--primary);
+        }
+        
+        .btn-assistant {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--dark-surface-light);
+            color: var(--dark-text);
+            border: none;
+            padding: 0.875rem 1.5rem;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            width: 100%;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .light-mode .btn-assistant {
+            background: var(--light-surface);
+            color: var(--light-text);
+        }
+        
+        .btn-assistant:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+        
+        .mouse {
+            width: 30px;
+            height: 50px;
+            border: 2px solid var(--dark-text);
+            border-radius: 20px;
+            position: relative;
+        }
+        
+        .light-mode .mouse {
+            border-color: var(--light-text);
+        }
+        
+        .wheel {
+            width: 4px;
+            height: 8px;
+            background: var(--dark-text);
+            border-radius: 2px;
+            position: absolute;
+            top: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: scroll 2s infinite;
+        }
+        
+        .light-mode .wheel {
+            background: var(--light-text);
+        }
+        
+        @keyframes scroll {
+            0% { transform: translateX(-50%) translateY(0); opacity: 1; }
+            100% { transform: translateX(-50%) translateY(20px); opacity: 0; }
+        }
+        
+        .arrow {
+            color: var(--dark-text);
+            animation: bounce 2s infinite;
+        }
+        
+        .light-mode .arrow {
+            color: var(--light-text);
+        }
+        
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(10px); }
+        }
+        
+        /* Section Common Styles */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 2rem;
+        }
+        
+        .section-header {
+            text-align: center;
+            margin-bottom: 4rem;
+        }
+        
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1rem;
+        }
+        
+        .section-subtitle {
+            font-size: 1.125rem;
+            color: var(--dark-text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .light-mode .section-subtitle {
+            color: var(--light-text-secondary);
+        }
+        
+        /* Features Section */
+        .features-section {
+            padding: 6rem 0;
+            background: linear-gradient(180deg, var(--dark-bg) 0%, rgba(15, 23, 42, 0.8) 100%);
+        }
+        
+        .light-mode .features-section {
+            background: linear-gradient(180deg, var(--light-bg) 0%, rgba(248, 250, 252, 0.8) 100%);
+        }
+        
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2rem;
+        }
+        
+        .feature-card {
+            background: var(--dark-surface);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            transition: all 0.3s ease;
+        }
+        
+        .light-mode .feature-card {
+            background: var(--light-bg);
+            box-shadow: var(--shadow-md);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-xl);
+        }
+        
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            margin-bottom: 1.5rem;
+        }
+        
+        .feature-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+        
+        .feature-description {
+            color: var(--dark-text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        .light-mode .feature-description {
+            color: var(--light-text-secondary);
+        }
+        
+        .feature-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .tag {
+            background: rgba(16, 163, 127, 0.1);
+            color: var(--primary);
+            padding: 0.25rem 0.75rem;
+            border-radius: var(--radius-full);
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        /* Premium Card Styles */
+        .premium-card {
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+        }
+        
+        .light-mode .premium-card {
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+        
+        .premium-card:hover {
+            border-color: var(--primary);
+        }
+        
+        /* Chat Container - HIDDEN BY DEFAULT */
+        #appContainer {
+            display: none !important;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--dark-bg);
+            z-index: 2000;
+            flex-direction: column;
+        }
+        
+        .light-mode #appContainer {
+            background: var(--light-bg);
+        }
+        
+        #appContainer.active {
+            display: flex !important;
+        }
+        
+        /* ChatGPT-like Chat Container */
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: var(--dark-bg);
+            width: 100%;
+            height: 100%;
+            min-height: 0;
+            overflow: hidden;
+        }
+        
+        .light-mode .chat-container {
+            background: var(--light-bg);
+        }
+        
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.25rem 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+            min-height: 0;
+            width: 100%;
+        }
+        
+        .message {
+            display: flex;
+            gap: 0.75rem;
+            max-width: 100%;
+            padding: 0 0.75rem;
+            animation: fadeIn 0.2s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .user-message {
+            background: var(--dark-surface);
+            border-radius: 8px;
+            padding: 1rem;
+            max-width: 100%;
+        }
+        
+        .light-mode .user-message {
+            background: var(--light-surface);
+        }
+        
+        .ai-message {
+            background: transparent;
+        }
+        
+        .avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+            margin-top: 4px;
+        }
+        
+        .user-message .avatar {
+            background: var(--gradient-primary);
+        }
+        
+        .ai-message .avatar {
+            background: var(--gradient-secondary);
+        }
+        
+        .message-content {
+            flex: 1;
+            position: relative;
+            width: 100%;
+            min-width: 0;
+        }
+        
+        .message-text {
+            padding: 0;
+            border-radius: 0;
+            font-size: 0.9375rem;
+            line-height: 1.6;
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            overflow: hidden;
+            color: var(--dark-text);
+        }
+        
+        .light-mode .message-text {
+            color: var(--light-text);
+        }
+        
+        .user-message .message-text {
+            color: white;
+        }
+        
+        /* ChatGPT-like Input Area */
+        .input-container {
+            padding: 0.875rem;
+            background: var(--dark-bg);
+            border-top: 1px solid var(--dark-border);
+            position: sticky;
+            bottom: 0;
+            z-index: 10;
+            transition: all 0.2s ease;
+            width: 100%;
+            flex-shrink: 0;
+        }
+        
+        .light-mode .input-container {
+            background: var(--light-bg);
+            border-top-color: var(--light-border);
+        }
+        
+        .input-area {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            width: 100%;
+        }
+        
+        .input-area textarea {
+            width: 100%;
+            padding: 0.875rem 6.5rem 0.875rem 1rem;
+            background: var(--dark-surface);
+            border: 1px solid var(--dark-border);
+            border-radius: 12px;
+            color: var(--dark-text);
+            font-size: 0.9375rem;
+            resize: none;
+            min-height: 52px;
+            max-height: 150px;
+            transition: all 0.2s;
+            line-height: 1.5;
+            font-family: inherit;
+            outline: none;
+        }
+        
+        .light-mode .input-area textarea {
+            background: var(--light-surface);
+            border-color: var(--light-border);
+            color: var(--light-text);
+        }
+        
+        .input-area textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 2px rgba(16, 163, 127, 0.1);
+        }
+        
+        .input-buttons {
+            position: absolute;
+            right: 0.75rem;
+            bottom: 0.75rem;
+            display: flex;
+            gap: 6px;
+            align-items: center;
+        }
+        
+        .send-button {
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 0.5rem 0.875rem;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            min-height: 40px;
+            font-size: 0.875rem;
+        }
+        
+        .send-button:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(16, 163, 127, 0.3);
+        }
+        
+        .send-button:disabled {
+            background: var(--dark-border);
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+        
+        .light-mode .send-button:disabled {
+            background: var(--light-border);
+        }
+        
+        /* Back to Top Button */
+        .back-to-top {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 50px;
+            height: 50px;
+            background: var(--gradient-primary);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.25rem;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(10px);
+            transition: all 0.3s ease;
+            z-index: 999;
+        }
+        
+        .back-to-top.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+        
+        .back-to-top:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-lg);
+        }
+        
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .hero-container {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 3rem;
+            }
+            
+            .hero-title {
+                font-size: 2.75rem;
+            }
+            
+            .hero-stats {
+                justify-content: center;
+            }
+            
+            .hero-actions {
+                justify-content: center;
+            }
+            
+            .trust-badges {
+                justify-content: center;
+            }
+            
+            .features-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .nav-menu {
+                display: none;
+            }
+            
+            .mobile-toggle {
+                display: block;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .hero-section {
+                padding: 100px 1rem 4rem;
+            }
+            
+            .hero-title {
+                font-size: 2.25rem;
+            }
+            
+            .features-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .hero-stats {
+                flex-direction: column;
+                gap: 1rem;
+                align-items: center;
+            }
+            
+            .stat-item {
+                align-items: center;
+            }
+            
+            .hero-actions {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .trust-badges {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .nav-container {
+                padding: 0 1rem;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .hero-title {
+                font-size: 1.875rem;
+            }
+            
+            .section-title {
+                font-size: 1.75rem;
+            }
+            
+            .hero-subtitle {
+                font-size: 1rem;
+            }
+            
+            .section-subtitle {
+                font-size: 1rem;
+            }
+            
+            .btn-hero-primary,
+            .btn-hero-secondary {
+                padding: 0.875rem 1.5rem;
+                font-size: 0.9375rem;
+            }
+            
+            .feature-card,
+            .ai-assistant-card {
+                padding: 1.5rem;
+            }
+        }
+        
+        /* Toast Notifications */
+        .toast-container {
+            position: fixed;
+            top: 1rem;
+            right: 1rem;
+            z-index: 9999;
+        }
+        
+        .toast {
+            background: var(--dark-surface);
+            color: var(--dark-text);
+            padding: 1rem 1.5rem;
+            border-radius: var(--radius-md);
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            box-shadow: var(--shadow-lg);
+            transform: translateX(100%);
+            opacity: 0;
+            transition: all 0.3s ease;
+        }
+        
+        .light-mode .toast {
+            background: var(--light-bg);
+            color: var(--light-text);
+        }
+        
+        .toast.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        
+        .toast.success {
+            border-left: 4px solid var(--success);
+        }
+        
+        .toast.error {
+            border-left: 4px solid var(--error);
+        }
+        
+        .toast.warning {
+            border-left: 4px solid var(--warning);
+        }
+        
+        .toast.info {
+            border-left: 4px solid var(--info);
+        }
+        
+        /* Modal Styles */
+        .modal {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            background: var(--dark-surface);
+            border-radius: var(--radius-lg);
+            padding: 2rem;
+            max-width: 500px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            z-index: 1001;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .light-mode .modal {
+            background: var(--light-bg);
+        }
+        
+        .modal.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translate(-50%, -50%) scale(1);
+        }
+        
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        
+        .modal-header {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+        }
+        
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            color: var(--dark-text-secondary);
+            font-size: 1.25rem;
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: var(--radius-sm);
+        }
+        
+        .light-mode .modal-close {
+            color: var(--light-text-secondary);
+        }
+        
+        .modal-close:hover {
+            background: var(--dark-surface-light);
+        }
+        
+        .light-mode .modal-close:hover {
+            background: var(--light-surface);
+        }
+        
+        /* Login Modal Specific */
+        .google-signin-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            width: 100%;
+            padding: 1rem;
+            background: white;
+            color: #333;
+            border: 1px solid #ddd;
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 1rem;
+        }
+        
+        .google-signin-btn:hover {
+            box-shadow: var(--shadow-md);
+            transform: translateY(-2px);
+        }
+        
+        .demo-login-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.75rem;
+            width: 100%;
+            padding: 1rem;
+            background: var(--dark-surface);
+            color: var(--dark-text);
+            border: 1px solid var(--dark-border);
+            border-radius: var(--radius-md);
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .light-mode .demo-login-btn {
+            background: var(--light-surface);
+            color: var(--light-text);
+            border-color: var(--light-border);
+        }
+        
+        .demo-login-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 1.5rem 0;
+            color: var(--dark-text-secondary);
+        }
+        
+        .light-mode .divider {
+            color: var(--light-text-secondary);
+        }
+        
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--dark-border);
+        }
+        
+        .light-mode .divider::before,
+        .light-mode .divider::after {
+            background: var(--light-border);
+        }
+        
+        .divider span {
+            padding: 0 1rem;
+        }
+        
+        .login-info {
+            margin-top: 1.5rem;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--dark-border);
+        }
+        
+        .light-mode .login-info {
+            border-top-color: var(--light-border);
+        }
+        
+        .login-info p {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 0.875rem;
+            color: var(--dark-text-secondary);
+        }
+        
+        .light-mode .login-info p {
+            color: var(--light-text-secondary);
+        }
+        
+        .login-info i {
+            color: var(--primary);
+        }
+        
+        /* Footer */
+        .premium-footer {
+            background: var(--dark-bg);
+            padding: 4rem 0 2rem;
+            border-top: 1px solid var(--dark-border);
+        }
+        
+        .light-mode .premium-footer {
+            background: var(--light-bg);
+            border-top-color: var(--light-border);
+        }
+        
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 3rem;
+            margin-bottom: 3rem;
+        }
+        
+        .footer-section {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+        
+        .footer-description {
+            color: var(--dark-text-secondary);
+            margin-bottom: 1.5rem;
+            line-height: 1.6;
+        }
+        
+        .light-mode .footer-description {
+            color: var(--light-text-secondary);
+        }
+        
+        .social-links {
+            display: flex;
+            gap: 0.75rem;
+        }
+        
+        .social-link {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 36px;
+            height: 36px;
+            background: var(--dark-surface);
+            color: var(--dark-text);
+            border-radius: var(--radius-md);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        
+        .light-mode .social-link {
+            background: var(--light-surface);
+            color: var(--light-text);
+        }
+        
+        .social-link:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-3px);
+        }
+        
+        .footer-heading {
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            color: var(--dark-text);
+        }
+        
+        .light-mode .footer-heading {
+            color: var(--light-text);
+        }
+        
+        .footer-links {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+        
+        .footer-links li a {
+            color: var(--dark-text-secondary);
+            text-decoration: none;
+            font-size: 0.875rem;
+            transition: all 0.3s ease;
+        }
+        
+        .light-mode .footer-links li a {
+            color: var(--light-text-secondary);
+        }
+        
+        .footer-links li a:hover {
+            color: var(--primary);
+        }
+        
+        .footer-contact {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+        
+        .footer-contact li {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+            color: var(--dark-text-secondary);
+            font-size: 0.875rem;
+        }
+        
+        .light-mode .footer-contact li {
+            color: var(--light-text-secondary);
+        }
+        
+        .footer-contact i {
+            color: var(--primary);
+            margin-top: 0.125rem;
+        }
+        
+        .footer-bottom {
+            padding-top: 2rem;
+            border-top: 1px solid var(--dark-border);
+            text-align: center;
+        }
+        
+        .light-mode .footer-bottom {
+            border-top-color: var(--light-border);
+        }
+        
+        .copyright {
+            color: var(--dark-text-secondary);
+            font-size: 0.875rem;
+            margin-bottom: 1rem;
+        }
+        
+        .light-mode .copyright {
+            color: var(--light-text-secondary);
+        }
+        
+        .disclaimer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
+            color: var(--dark-text-secondary);
+            font-size: 0.75rem;
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        
+        .light-mode .disclaimer {
+            color: var(--light-text-secondary);
+        }
+        
+        .disclaimer i {
+            color: var(--warning);
+        }
+        
+        @media (max-width: 1024px) {
+            .footer-content {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+            }
+            
+            .footer-section {
+                text-align: center;
+            }
+            
+            .social-links {
+                justify-content: center;
+            }
+        }
+    </style>
 </head>
 <body>
     <!-- Premium Loading Screen -->
@@ -619,65 +2101,6 @@
                         Access comprehensive legal resources and research materials
                     </p>
                 </div>
-                
-                <div class="database-grid">
-                    <!-- Legal Acts Database -->
-                    <div class="database-card premium-card">
-                        <div class="database-icon">
-                            <i class="fas fa-book"></i>
-                        </div>
-                        <h3 class="database-title">Acts & Statutes</h3>
-                        <ul class="database-list">
-                            <li><i class="fas fa-search"></i> IPC (Indian Penal Code)</li>
-                            <li><i class="fas fa-search"></i> CrPC (Criminal Procedure Code)</li>
-                            <li><i class="fas fa-search"></i> CPC (Civil Procedure Code)</li>
-                            <li><i class="fas fa-search"></i> Constitution of India</li>
-                            <li><i class="fas fa-search"></i> Consumer Protection Act</li>
-                        </ul>
-                        <button class="btn-database" onclick="searchActs()">
-                            <i class="fas fa-search"></i>
-                            Search Acts
-                        </button>
-                    </div>
-                    
-                    <!-- Case Laws Database -->
-                    <div class="database-card premium-card">
-                        <div class="database-icon">
-                            <i class="fas fa-gavel"></i>
-                        </div>
-                        <h3 class="database-title">Case Laws Database</h3>
-                        <ul class="database-list">
-                            <li><i class="fas fa-balance-scale"></i> Supreme Court Judgments</li>
-                            <li><i class="fas fa-balance-scale"></i> High Court Judgments</li>
-                            <li><i class="fas fa-balance-scale"></i> Landmark Cases</li>
-                            <li><i class="fas fa-balance-scale"></i> Recent Judgments</li>
-                            <li><i class="fas fa-balance-scale"></i> Case Citations</li>
-                        </ul>
-                        <button class="btn-database" onclick="searchCaseLaws()">
-                            <i class="fas fa-gavel"></i>
-                            Search Case Laws
-                        </button>
-                    </div>
-                    
-                    <!-- Legal Calculator -->
-                    <div class="database-card premium-card">
-                        <div class="database-icon">
-                            <i class="fas fa-calculator"></i>
-                        </div>
-                        <h3 class="database-title">Legal Calculators</h3>
-                        <ul class="database-list">
-                            <li><i class="fas fa-calculator"></i> Court Fee Calculator</li>
-                            <li><i class="fas fa-calculator"></i> Stamp Duty Calculator</li>
-                            <li><i class="fas fa-calculator"></i> Compensation Calculator</li>
-                            <li><i class="fas fa-calculator"></i> Interest Calculator</li>
-                            <li><i class="fas fa-calculator"></i> Tax Calculator</li>
-                        </ul>
-                        <button class="btn-database" onclick="openLegalCalculator()">
-                            <i class="fas fa-calculator"></i>
-                            Open Calculator
-                        </button>
-                    </div>
-                </div>
             </div>
         </section>
 
@@ -691,65 +2114,6 @@
                     <p class="section-subtitle">
                         Professional legal documents at your fingertips
                     </p>
-                </div>
-                
-                <div class="documents-grid">
-                    <!-- Document Category 1 -->
-                    <div class="document-category premium-card">
-                        <div class="category-icon">
-                            <i class="fas fa-handshake"></i>
-                        </div>
-                        <h3 class="category-title">Agreements & Contracts</h3>
-                        <ul class="document-list">
-                            <li><i class="fas fa-check-circle"></i> Rental Agreement</li>
-                            <li><i class="fas fa-check-circle"></i> Non-Disclosure Agreement</li>
-                            <li><i class="fas fa-check-circle"></i> Employment Contract</li>
-                            <li><i class="fas fa-check-circle"></i> Service Agreement</li>
-                            <li><i class="fas fa-check-circle"></i> Partnership Agreement</li>
-                        </ul>
-                        <button class="btn-generate" onclick="generateDocument('rental-agreement')">
-                            <i class="fas fa-magic"></i>
-                            Generate Now
-                        </button>
-                    </div>
-                    
-                    <!-- Document Category 2 -->
-                    <div class="document-category premium-card">
-                        <div class="category-icon">
-                            <i class="fas fa-balance-scale"></i>
-                        </div>
-                        <h3 class="category-title">Legal Notices & Letters</h3>
-                        <ul class="document-list">
-                            <li><i class="fas fa-check-circle"></i> Legal Notice</li>
-                            <li><i class="fas fa-check-circle"></i> Cease & Desist Notice</li>
-                            <li><i class="fas fa-check-circle"></i> Demand Letter</li>
-                            <li><i class="fas fa-check-circle"></i> Notice to Quit</li>
-                            <li><i class="fas fa-check-circle"></i> Consumer Complaint</li>
-                        </ul>
-                        <button class="btn-generate" onclick="generateDocument('legal-notice')">
-                            <i class="fas fa-magic"></i>
-                            Generate Now
-                        </button>
-                    </div>
-                    
-                    <!-- Document Category 3 -->
-                    <div class="document-category premium-card">
-                        <div class="category-icon">
-                            <i class="fas fa-user-tie"></i>
-                        </div>
-                        <h3 class="category-title">Personal & Family</h3>
-                        <ul class="document-list">
-                            <li><i class="fas fa-check-circle"></i> Will & Testament</li>
-                            <li><i class="fas fa-check-circle"></i> Power of Attorney</li>
-                            <li><i class="fas fa-check-circle"></i> Affidavit</li>
-                            <li><i class="fas fa-check-circle"></i> Gift Deed</li>
-                            <li><i class="fas fa-check-circle"></i> Divorce Papers</li>
-                        </ul>
-                        <button class="btn-generate" onclick="generateDocument('will-testament')">
-                            <i class="fas fa-magic"></i>
-                            Generate Now
-                        </button>
-                    </div>
                 </div>
             </div>
         </section>
@@ -765,30 +2129,6 @@
                         Connect with experienced legal professionals
                     </p>
                 </div>
-                
-                <div class="lawyer-search">
-                    <div class="search-container">
-                        <i class="fas fa-search"></i>
-                        <input type="text" id="lawyerSearch" placeholder="Search by specialization, location, or name...">
-                        <button class="btn-search" onclick="searchLawyers()">
-                            <i class="fas fa-search"></i>
-                            Search
-                        </button>
-                    </div>
-                    
-                    <div class="specialization-filters">
-                        <button class="filter-btn active" data-specialization="all">All</button>
-                        <button class="filter-btn" data-specialization="criminal">Criminal</button>
-                        <button class="filter-btn" data-specialization="civil">Civil</button>
-                        <button class="filter-btn" data-specialization="corporate">Corporate</button>
-                        <button class="filter-btn" data-specialization="family">Family</button>
-                        <button class="filter-btn" data-specialization="property">Property</button>
-                    </div>
-                </div>
-                
-                <div class="lawyers-grid" id="lawyersGrid">
-                    <!-- Lawyers will be dynamically loaded here -->
-                </div>
             </div>
         </section>
 
@@ -802,68 +2142,6 @@
                     <p class="section-subtitle">
                         Understand legal procedures with easy-to-follow guides
                     </p>
-                </div>
-                
-                <div class="guides-grid">
-                    <div class="guide-card premium-card">
-                        <div class="guide-icon">
-                            <i class="fas fa-user-plus"></i>
-                        </div>
-                        <h3 class="guide-title">How to File a Case</h3>
-                        <p class="guide-description">
-                            Complete step-by-step guide for filing different types of cases in Indian courts.
-                        </p>
-                        <div class="guide-steps">
-                            <span class="step">1. Document Preparation</span>
-                            <span class="step">2. Court Selection</span>
-                            <span class="step">3. Fee Payment</span>
-                            <span class="step">4. Case Number</span>
-                        </div>
-                        <button class="btn-guide" onclick="openGuide('file-case')">
-                            <i class="fas fa-book-open"></i>
-                            View Guide
-                        </button>
-                    </div>
-                    
-                    <div class="guide-card premium-card">
-                        <div class="guide-icon">
-                            <i class="fas fa-file-contract"></i>
-                        </div>
-                        <h3 class="guide-title">Document Registration Process</h3>
-                        <p class="guide-description">
-                            Learn how to register legal documents with proper procedures and fees.
-                        </p>
-                        <div class="guide-steps">
-                            <span class="step">1. Stamp Duty</span>
-                            <span class="step">2. Witness Arrangement</span>
-                            <span class="step">3. Registration Office</span>
-                            <span class="step">4. Final Registration</span>
-                        </div>
-                        <button class="btn-guide" onclick="openGuide('registration')">
-                            <i class="fas fa-book-open"></i>
-                            View Guide
-                        </button>
-                    </div>
-                    
-                    <div class="guide-card premium-card">
-                        <div class="guide-icon">
-                            <i class="fas fa-balance-scale"></i>
-                        </div>
-                        <h3 class="guide-title">Consumer Complaint Process</h3>
-                        <p class="guide-description">
-                            Guide to filing consumer complaints with proper documentation and procedures.
-                        </p>
-                        <div class="guide-steps">
-                            <span class="step">1. Complaint Drafting</span>
-                            <span class="step">2. Evidence Collection</span>
-                            <span class="step">3. Forum Selection</span>
-                            <span class="step">4. Hearing Process</span>
-                        </div>
-                        <button class="btn-guide" onclick="openGuide('consumer-complaint')">
-                            <i class="fas fa-book-open"></i>
-                            View Guide
-                        </button>
-                    </div>
                 </div>
             </div>
         </section>
@@ -879,77 +2157,6 @@
                         See what our users have to say about LegalSwami
                     </p>
                 </div>
-                
-                <div class="testimonials-carousel">
-                    <!-- Testimonial 1 -->
-                    <div class="testimonial-card premium-card">
-                        <div class="testimonial-rating">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                        </div>
-                        <p class="testimonial-text">
-                            "LegalSwami helped me draft a professional rental agreement in minutes. The AI understood exactly what I needed and generated a perfect document. Saved me ₹5000 in lawyer fees!"
-                        </p>
-                        <div class="testimonial-author">
-                            <div class="author-avatar">
-                                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Rahul Sharma">
-                            </div>
-                            <div class="author-info">
-                                <h4 class="author-name">Rahul Sharma</h4>
-                                <p class="author-title">Small Business Owner</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Testimonial 2 -->
-                    <div class="testimonial-card premium-card">
-                        <div class="testimonial-rating">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star-half-alt"></i>
-                        </div>
-                        <p class="testimonial-text">
-                            "As a law student, LegalSwami is a game-changer! It helps me understand complex legal concepts and provides excellent research assistance. Like having a personal tutor 24/7."
-                        </p>
-                        <div class="testimonial-author">
-                            <div class="author-avatar">
-                                <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Priya Patel">
-                            </div>
-                            <div class="author-info">
-                                <h4 class="author-name">Priya Patel</h4>
-                                <p class="author-title">Law Student, NLU Delhi</p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Testimonial 3 -->
-                    <div class="testimonial-card premium-card">
-                        <div class="testimonial-rating">
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                            <i class="fas fa-star"></i>
-                        </div>
-                        <p class="testimonial-text">
-                            "The document generation feature saved our startup thousands! We needed multiple NDAs and service agreements. LegalSwami generated perfect documents in minutes. Incredible tool!"
-                        </p>
-                        <div class="testimonial-author">
-                            <div class="author-avatar">
-                                <img src="https://randomuser.me/api/portraits/men/67.jpg" alt="Ankit Verma">
-                            </div>
-                            <div class="author-info">
-                                <h4 class="author-name">Ankit Verma</h4>
-                                <p class="author-title">Tech Entrepreneur</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </section>
 
@@ -963,81 +2170,6 @@
                     <p class="section-subtitle">
                         Choose the perfect plan for your legal needs
                     </p>
-                </div>
-                
-                <div class="pricing-cards">
-                    <!-- Free Plan -->
-                    <div class="pricing-card premium-card">
-                        <div class="pricing-badge">FREE</div>
-                        <h3 class="pricing-title">Basic</h3>
-                        <div class="pricing-price">
-                            <span class="currency">₹</span>
-                            <span class="amount">0</span>
-                            <span class="period">/month</span>
-                        </div>
-                        <p class="pricing-description">Perfect for trying out LegalSwami</p>
-                        
-                        <ul class="pricing-features">
-                            <li><i class="fas fa-check-circle"></i> 10 AI Chat Messages/Day</li>
-                            <li><i class="fas fa-check-circle"></i> 3 Document Generations/Month</li>
-                            <li><i class="fas fa-check-circle"></i> Basic Legal Questions</li>
-                            <li><i class="fas fa-times-circle"></i> No Priority Support</li>
-                            <li><i class="fas fa-times-circle"></i> No Document History</li>
-                        </ul>
-                        
-                        <button class="btn-pricing" id="freePlanBtn">
-                            Get Started Free
-                        </button>
-                    </div>
-                    
-                    <!-- Pro Plan -->
-                    <div class="pricing-card premium-card premium-plan">
-                        <div class="pricing-badge popular">POPULAR</div>
-                        <h3 class="pricing-title">Professional</h3>
-                        <div class="pricing-price">
-                            <span class="currency">₹</span>
-                            <span class="amount">499</span>
-                            <span class="period">/month</span>
-                        </div>
-                        <p class="pricing-description">Perfect for professionals & businesses</p>
-                        
-                        <ul class="pricing-features">
-                            <li><i class="fas fa-check-circle"></i> Unlimited AI Chat Messages</li>
-                            <li><i class="fas fa-check-circle"></i> 50 Document Generations/Month</li>
-                            <li><i class="fas fa-check-circle"></i> All Document Templates</li>
-                            <li><i class="fas fa-check-circle"></i> Priority Support</li>
-                            <li><i class="fas fa-check-circle"></i> Complete Chat History</li>
-                        </ul>
-                        
-                        <button class="btn-pricing btn-premium" id="proPlanBtn">
-                            <i class="fas fa-crown"></i>
-                            Get Professional
-                        </button>
-                    </div>
-                    
-                    <!-- Business Plan -->
-                    <div class="pricing-card premium-card">
-                        <div class="pricing-badge">BUSINESS</div>
-                        <h3 class="pricing-title">Enterprise</h3>
-                        <div class="pricing-price">
-                            <span class="currency">₹</span>
-                            <span class="amount">1,499</span>
-                            <span class="period">/month</span>
-                        </div>
-                        <p class="pricing-description">For law firms & large organizations</p>
-                        
-                        <ul class="pricing-features">
-                            <li><i class="fas fa-check-circle"></i> Everything in Professional</li>
-                            <li><i class="fas fa-check-circle"></i> Unlimited Document Generation</li>
-                            <li><i class="fas fa-check-circle"></i> Team Collaboration</li>
-                            <li><i class="fas fa-check-circle"></i> Custom Templates</li>
-                            <li><i class="fas fa-check-circle"></i> Dedicated Account Manager</li>
-                        </ul>
-                        
-                        <button class="btn-pricing" id="businessPlanBtn">
-                            Contact Sales
-                        </button>
-                    </div>
                 </div>
             </div>
         </section>
@@ -1085,493 +2217,38 @@
             </div>
         </section>
 
-        <!-- CHATGPT-LIKE CHAT INTERFACE -->
-<div class="container" id="appContainer" style="display: none;">
-        <header>
-            <div class="logo">
-                <button class="sidebar-toggle" id="sidebarToggle">
-                    <i class="fas fa-bars"></i>
-                </button>
-                <div class="logo-icon">
-                    <i class="fas fa-scale-balanced"></i>
-                </div>
-                <h1>LegalSwami</h1>
-            </div>
-            
-            <div class="header-actions">
-                <div class="status-indicator">
-                    <div class="status-dot"></div>
-                    <span class="hide-on-mobile">AI Assistant Ready</span>
-                </div>
-                
-                <!-- Search Counter Display -->
-                <div class="search-counter" id="searchCounter">
-                    <i class="fas fa-search"></i>
-                    <span class="hide-on-mobile">Free searches: 500/500</span>
-                </div>
-                
-                <!-- Login Button -->
-                <button class="login-btn" id="headerLoginBtn">
-                    <i class="fas fa-sign-in-alt"></i>
-                    <span class="hide-on-mobile">Login</span>
-                </button>
-                
-                <button class="header-btn voice-search-btn" id="voiceSearchBtn" title="Voice Search">
-                    <i class="fas fa-microphone"></i>
-                </button>
-                <button class="header-btn theme-toggle" id="themeToggle" title="Toggle Theme">
-                    <i class="fas fa-sun"></i>
-                </button>
-                <button class="header-btn" id="clearChatBtn">
-                    <i class="fas fa-broom"></i>
-                    <span class="hide-on-mobile">Clear Chat</span>
-                </button>
-                <button class="header-btn" id="downloadCurrentBtn">
-                    <i class="fas fa-download"></i>
-                    <span class="hide-on-mobile">Download Chat</span>
-                </button>
-                <button class="header-btn" id="suggestionsBtn">
-                    <i class="fas fa-lightbulb"></i>
-                    <span class="hide-on-mobile">Suggestions</span>
-                </button>
-                
-                <!-- User Profile -->
-                <div class="user-profile" id="userProfile" style="display: none;">
-                    <div class="user-avatar" id="userAvatar">
-                        <i class="fas fa-user"></i>
-                    </div>
-                    <div class="user-info">
-                        <div class="user-name" id="userName">Guest User</div>
-                        <div class="user-email" id="userEmail">Local Browser Mode</div>
-                    </div>
-                    <i class="fas fa-chevron-down" style="font-size: 0.75rem;"></i>
-                </div>
-            </div>
-        </header>
-        
-        <!-- User Dropdown Menu -->
-        <div class="user-dropdown" id="userDropdown">
-            <div class="dropdown-header">
-                <div class="user-avatar" id="dropdownAvatar">
-                    <i class="fas fa-user"></i>
-                </div>
-                <div class="user-info">
-                    <div class="user-name" id="dropdownName">Guest User</div>
-                    <div class="user-email" id="dropdownEmail">Local Browser Mode</div>
-                </div>
-            </div>
-            
-            <div class="dropdown-items">
-                <button class="dropdown-item" id="profileBtn">
-                    <i class="fas fa-user-circle"></i>
-                    <span>My Profile</span>
-                </button>
-                <button class="dropdown-item" id="settingsBtn">
-                    <i class="fas fa-cog"></i>
-                    <span>Settings</span>
-                </button>
-                <button class="dropdown-item" id="historyBtn">
-                    <i class="fas fa-history"></i>
-                    <span>Chat History</span>
-                </button>
-                <button class="dropdown-item" id="helpBtn">
-                    <i class="fas fa-question-circle"></i>
-                    <span>Help & Support</span>
-                </button>
-                <div class="dropdown-footer">
-                    <button class="dropdown-item logout" id="logoutBtn">
-                        <i class="fas fa-sign-out-alt"></i>
-                        <span>Clear Local Data</span>
-                    </button>
-                </div>
-            </div>
-        </div>
-        
-        <div class="main-content">
-            <!-- Down Arrow Button (Scroll to Bottom) -->
-            <button class="scroll-to-bottom-btn" id="scrollToBottomBtn" title="Scroll to bottom">
-                <i class="fas fa-chevron-down"></i>
-            </button>
-            
-            <div class="sidebar-overlay" id="sidebarOverlay"></div>
-            
-            <aside class="sidebar" id="sidebar">
-                <!-- Sidebar Close Button -->
-                <button class="sidebar-close" id="sidebarClose">
-                    <i class="fas fa-times"></i>
-                </button>
-                
-                <!-- Sidebar Tabs -->
-                <div class="sidebar-tabs">
-                    <button class="sidebar-tab active" data-tab="legal-topics">
-                        <i class="fas fa-book"></i>
-                        <span class="hide-on-mobile">Legal Topics</span>
-                    </button>
-                    <button class="sidebar-tab" data-tab="chat-history">
-                        <i class="fas fa-history"></i>
-                        <span class="hide-on-mobile">Chat History</span>
-                    </button>
-                </div>
-                
-                <!-- Legal Topics Tab Content -->
-                <div class="tab-content active" id="legal-topics-content">
-                    <div class="sidebar-header">
-                        <h2><i class="fas fa-book"></i> Legal Topics</h2>
-                    </div>
-                    
-                    <div class="sidebar-section">
-                        <h3><i class="fas fa-gavel"></i> Common Legal Areas</h3>
-                        <div class="topic-list">
-                            <button class="topic-item" data-topic="contract">
-                                <i class="fas fa-file-contract"></i>
-                                <span>Contract Law</span>
-                            </button>
-                            <button class="topic-item" data-topic="employment">
-                                <i class="fas fa-briefcase"></i>
-                                <span>Employment Law</span>
-                            </button>
-                            <button class="topic-item" data-topic="intellectual">
-                                <i class="fas fa-lightbulb"></i>
-                                <span>Intellectual Property</span>
-                            </button>
-                            <button class="topic-item" data-topic="realestate">
-                                <i class="fas fa-house"></i>
-                                <span>Real Estate Law</span>
-                            </button>
-                            <button class="topic-item" data-topic="family">
-                                <i class="fas fa-heart"></i>
-                                <span>Family Law</span>
-                            </button>
-                            <button class="topic-item" data-topic="criminal">
-                                <i class="fas fa-gavel"></i>
-                                <span>Criminal Law</span>
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <!-- Active Topics Tabs Section -->
-                    <div class="sidebar-section" id="activeTopicsSection" style="display: none;">
-                        <h3><i class="fas fa-folder-open"></i> Active Topics</h3>
-                        <div class="topic-list" id="activeTopicsList">
-                            <!-- Active topics will be added here dynamically -->
-                        </div>
-                    </div>
-                    
-                    <div class="sidebar-section">
-                        <h3><i class="fas fa-bolt"></i> Quick Actions</h3>
-                        <div class="quick-actions">
-                            <button class="action-item" data-action="document-drafts">
-                                <i class="fas fa-file-alt"></i>
-                                <span>Document Drafts</span>
-                            </button>
-                            <button class="action-item" data-action="legal-research">
-                                <i class="fas fa-search"></i>
-                                <span>Legal Research</span>
-                            </button>
-                            <button class="action-item" data-action="case-analysis">
-                                <i class="fas fa-chart-bar"></i>
-                                <span>Case Analysis</span>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Chat History Tab Content -->
-                <div class="tab-content" id="chat-history-content">
-                    <div class="history-header">
-                        <h2><i class="fas fa-history"></i> Chat History</h2>
-                        <button class="new-chat-btn" id="newChatBtn">
-                            <i class="fas fa-plus"></i>
-                            <span class="hide-on-mobile">New Chat</span>
-                        </button>
-                    </div>
-                    
-                    <div class="history-list" id="historyList">
-                        <!-- History items will be loaded here -->
-                        <div class="empty-history">
-                            <i class="fas fa-comments"></i>
-                            <p>No chat history yet</p>
-                            <p style="font-size: 0.8125rem; margin-top: 0.5rem;">Start a conversation to see it here</p>
-                        </div>
-                    </div>
-                </div>
-            </aside>
-            
-            <main class="chat-container" id="chatContainer">
+        <!-- CHATGPT-LIKE CHAT INTERFACE - HIDDEN BY DEFAULT -->
+        <div class="container" id="appContainer">
+            <div class="chat-container" id="chatContainer">
                 <div class="chat-messages" id="chatMessages">
                     <!-- Welcome Message will be added dynamically -->
                 </div>
                 
-                <!-- Scroll Position Indicator -->
-                <div class="scroll-position-indicator" id="scrollPositionIndicator">
-                    Scroll to see more messages
-                </div>
-                
                 <div class="input-container">
                     <div class="input-area">
-                        <!-- Attachments Preview -->
-                        <div class="attachments-preview" id="attachmentsPreview" style="display: none;"></div>
-                        
-                        <div class="voice-input-status" id="voiceInputStatus">
-                            <div class="voice-animation">
-                                <div class="voice-bar"></div>
-                                <div class="voice-bar"></div>
-                                <div class="voice-bar"></div>
-                                <div class="voice-bar"></div>
-                                <div class="voice-bar"></div>
-                            </div>
-                            <span>Listening... Speak now</span>
-                        </div>
-                        
                         <textarea 
                             id="userInput" 
-                            placeholder="Ask any legal question or attach files (images, PDF, TXT)... (Press Enter for new line, Ctrl+Enter to send)"
+                            placeholder="Ask any legal question... (Press Enter for new line, Ctrl+Enter to send)"
                             rows="1"
                         ></textarea>
                         
-                        <div class="voice-input-text" id="voiceInputText"></div>
-                        
                         <div class="input-buttons">
-                            <!-- Emoji Picker Button -->
-                            <button class="emoji-picker-btn" id="emojiPickerBtn" title="Insert emoji">
-                                <i class="far fa-smile"></i>
-                            </button>
-                            
-                            <!-- Attachment Button -->
-                            <button class="attachment-btn" id="attachmentBtn" title="Attach files (images, PDF, TXT)">
-                                <i class="fas fa-paperclip"></i>
-                            </button>
-                            
-                            <!-- Voice Input Button -->
-                            <button class="input-microphone-btn" id="inputMicrophoneBtn" title="Voice input">
-                                <i class="fas fa-microphone"></i>
-                            </button>
-                            
-                            <!-- Send/Stop Button -->
                             <button class="send-button" id="sendButton">
-                                <i class="fas fa-paper-plane"></i> <span class="hide-on-mobile">Send</span>
+                                <i class="fas fa-paper-plane"></i> Send
                             </button>
                         </div>
                     </div>
                 </div>
-            </main>
-        </div>
-        
-        <!-- Download Modal (for full chat) -->
-        <div class="modal-overlay" id="downloadModal">
-            <div class="modal">
-                <div class="modal-header">
-                    <h2><i class="fas fa-download"></i> Download Chat</h2>
-                    <button class="modal-close" id="closeDownloadModal">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <div class="modal-content">
-                    <p>Select the format you want to download your chat in:</p>
-                    
-                    <div class="download-options">
-                        <div class="download-option" data-format="doc">
-                            <i class="fas fa-file-word"></i>
-                            <h3>Word Document</h3>
-                            <p>.doc format</p>
-                        </div>
-                        <div class="download-option" data-format="pdf">
-                            <i class="fas fa-file-pdf"></i>
-                            <h3>PDF Document</h3>
-                            <p>.pdf format</p>
-                        </div>
-                        <div class="download-option" data-format="txt">
-                            <i class="fas fa-file-alt"></i>
-                            <h3>Text File</h3>
-                            <p>.txt format</p>
-                        </div>
-                    </div>
-                    
-                    <div class="progress-indicator" id="progressIndicator">
-                        <div class="progress-spinner"></div>
-                        <p>Preparing your document...</p>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <p>The document will include the complete chat conversation with timestamps.</p>
-                </div>
             </div>
-        </div>
-        
-        <!-- Delete Confirmation Modal -->
-        <div class="modal-overlay" id="deleteModal">
-            <div class="modal confirmation-modal">
-                <div class="modal-header">
-                    <h2><i class="fas fa-trash"></i> Delete Chat</h2>
-                    <button class="modal-close" id="closeDeleteModal">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <div class="modal-content">
-                    <div class="confirmation-text">
-                        <i class="fas fa-exclamation-triangle"></i>
-                        <h3>Are you sure you want to delete this chat?</h3>
-                        <p id="deleteChatTitle">This action cannot be undone and the chat will be permanently deleted.</p>
-                    </div>
-                    
-                    <div class="confirmation-buttons">
-                        <button class="confirmation-btn cancel" id="cancelDelete">Cancel</button>
-                        <button class="confirmation-btn delete" id="confirmDelete">Delete Permanently</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Individual Message Download Modal -->
-        <div class="modal-overlay" id="messageDownloadModal">
-            <div class="modal">
-                <div class="modal-header">
-                    <h2><i class="fas fa-file-download"></i> Download Document</h2>
-                    <button class="modal-close" id="closeMessageDownloadModal">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <div class="modal-content">
-                    <p>Select the format for this specific response:</p>
-                    
-                    <div class="download-options">
-                        <div class="download-option" data-format="doc">
-                            <i class="fas fa-file-word"></i>
-                            <h3>Word Document</h3>
-                            <p>.doc format</p>
-                        </div>
-                        <div class="download-option" data-format="pdf">
-                            <i class="fas fa-file-pdf"></i>
-                            <h3>PDF Document</h3>
-                            <p>.pdf format</p>
-                        </div>
-                        <div class="download-option" data-format="txt">
-                            <i class="fas fa-file-alt"></i>
-                            <h3>Text File</h3>
-                            <p>.txt format</p>
-                        </div>
-                    </div>
-                    
-                    <div class="progress-indicator" id="messageProgressIndicator">
-                        <div class="progress-spinner"></div>
-                        <p>Preparing your document...</p>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <p>The document will include only this specific AI response.</p>
-                </div>
-            </div>
-        </div>
-        
-        <!-- File Upload Modal -->
-        <div class="modal-overlay image-upload-modal" id="fileUploadModal">
-            <div class="image-upload-content">
-                <div class="modal-header">
-                    <h2><i class="fas fa-paperclip"></i> Attach Files</h2>
-                    <button class="modal-close" id="closeFileUploadModal">
-                        <i class="fas fa-times"></i>
-                    </button>
-                </div>
-                <div class="modal-content">
-                    <div class="upload-area" id="uploadArea">
-                        <div class="upload-icon">
-                            <i class="fas fa-cloud-upload-alt"></i>
-                        </div>
-                        <div class="upload-text">
-                            <h3>Drag & Drop Files Here</h3>
-                            <p>or click to browse files</p>
-                            <p style="font-size: 0.8125rem; color: var(--dark-text-secondary);">
-                                Supported formats: Images (JPG, PNG, GIF), PDF, TXT, DOC
-                            </p>
-                            <button class="upload-btn" id="browseFilesBtn">
-                                <i class="fas fa-folder-open"></i> Browse Files
-                            </button>
-                        </div>
-                    </div>
-                    
-                    <div class="uploaded-images" id="uploadedFiles">
-                        <!-- Uploaded files will appear here -->
-                    </div>
-                    
-                    <div class="confirmation-buttons" style="margin-top: 1.25rem;">
-                        <button class="confirmation-btn cancel" id="cancelFileUpload">
-                            Cancel
-                        </button>
-                        <button class="confirmation-btn" id="confirmFileUpload" style="background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white;">
-                            <i class="fas fa-paperclip"></i> Attach Selected Files
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Download Notification -->
-        <div class="download-notification" id="downloadNotification">
-            <i class="fas fa-file-download"></i>
-            <div class="download-notification-content">
-                <div class="download-notification-title" id="downloadNotificationTitle">Document Downloaded</div>
-                <div class="download-notification-message" id="downloadNotificationMessage">Click to open the file</div>
-            </div>
-            <button class="download-notification-close" id="closeDownloadNotification">
+            
+            <!-- Close Chat Button -->
+            <button id="closeChatBtn" class="back-to-top" style="bottom: 6rem; right: 2rem;">
                 <i class="fas fa-times"></i>
             </button>
         </div>
-        
-        <div class="toast" id="toast">
-            <i class="fas fa-check-circle"></i>
-            <span id="toast-message">Message sent successfully</span>
-        </div>
-    </div>
 
-        <!-- Legal Tools Modal -->
-        <div id="legalToolsModal" class="modal">
-            <div class="modal-overlay"></div>
-            <div class="modal-content">
-                <button id="closeLegalTools" class="modal-close">
-                    <i class="fas fa-times"></i>
-                </button>
-                
-                <div class="modal-header">
-                    <div class="modal-icon legal-seal">
-                        <i class="fas fa-tools"></i>
-                    </div>
-                    <h3>Legal Tools & Calculators</h3>
-                    <p>Access various legal utilities</p>
-                </div>
-                
-                <div class="modal-body">
-                    <div class="tools-grid">
-                        <button class="tool-card" onclick="openCalculator('court-fee')">
-                            <i class="fas fa-calculator"></i>
-                            <h4>Court Fee Calculator</h4>
-                            <p>Calculate court fees for different cases</p>
-                        </button>
-                        
-                        <button class="tool-card" onclick="openCalculator('stamp-duty')">
-                            <i class="fas fa-file-invoice-dollar"></i>
-                            <h4>Stamp Duty Calculator</h4>
-                            <p>Calculate stamp duty for documents</p>
-                        </button>
-                        
-                        <button class="tool-card" onclick="openCalculator('compensation')">
-                            <i class="fas fa-money-check-alt"></i>
-                            <h4>Compensation Calculator</h4>
-                            <p>Calculate compensation amounts</p>
-                        </button>
-                        
-                        <button class="tool-card" onclick="openLegalActSearch()">
-                            <i class="fas fa-search"></i>
-                            <h4>Act & Statute Search</h4>
-                            <p>Search legal acts and statutes</p>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Modern Login Modal -->
+        <!-- Login Modal -->
         <div id="loginModal" class="modal">
-            <div class="modal-overlay"></div>
             <div class="modal-content">
                 <button id="closeLoginModal" class="modal-close">
                     <i class="fas fa-times"></i>
@@ -1612,6 +2289,7 @@
                 </div>
             </div>
         </div>
+        <div class="modal-overlay" id="loginModalOverlay"></div>
 
         <!-- Footer -->
         <footer class="premium-footer">
@@ -1711,7 +2389,7 @@
         </button>
     </div>
 
-    <!-- Toast Notifications -->
+     <!-- Toast Notifications -->
     <div id="toastContainer" class="toast-container"></div>
     
     <!-- Google Identity Services -->
