@@ -2031,199 +2031,8 @@
         </section>
 
         <!-- ChatGPT/DeepSeek Style Chat Interface -->
-        <div id="chatgptChatInterface" class="chatgpt-style-chat">
-            <!-- Header -->
-            <div class="chatgpt-header">
-                <div class="chatgpt-header-left">
-                    <button id="chatgptBackBtn" class="chatgpt-back-btn">
-                        <i class="fas fa-arrow-left"></i>
-                    </button>
-                    <div class="chatgpt-title">
-                        <div class="chatgpt-title-icon">
-                            <i class="fas fa-gavel"></i>
-                        </div>
-                        <div class="chatgpt-title-text">
-                            <h3>LegalSwami Assistant</h3>
-                            <p>AI Legal Assistant</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="chatgpt-header-right">
-                    <button id="chatgptClearBtn" class="chatgpt-header-action" title="Clear Chat">
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
-                    <button id="chatgptExportBtn" class="chatgpt-header-action" title="Export Chat">
-                        <i class="fas fa-download"></i>
-                    </button>
-                    <button id="chatgptHistoryBtn" class="chatgpt-header-action" title="Toggle Sidebar">
-                        <i class="fas fa-bars"></i>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Main Container -->
-            <div class="chatgpt-main-container">
-                <!-- Sidebar Toggle Button -->
-                <button id="sidebarToggleBtn" class="sidebar-toggle">
-                    <i class="fas fa-bars"></i>
-                </button>
-
-                <!-- Sidebar -->
-                <div id="chatgptSidebar" class="chatgpt-sidebar">
-                    <!-- New Chat Button -->
-                    <button id="chatgptNewChatBtn" class="new-chat-btn">
-                        <i class="fas fa-plus"></i>
-                        New Chat
-                    </button>
-
-                    <!-- Search -->
-                    <div class="sidebar-search">
-                        <div class="search-container">
-                            <i class="fas fa-search"></i>
-                            <input type="text" id="chatgptSearchInput" placeholder="Search chats...">
-                        </div>
-                    </div>
-
-                    <!-- Chat History -->
-                    <div class="chat-history-title">Your chats</div>
-                    <div class="chat-history-list" id="chatgptHistoryList">
-                        <!-- History items will be dynamically loaded -->
-                        <div class="history-empty-state" id="emptyHistoryState">
-                            <i class="fas fa-comments"></i>
-                            <p>No chat history yet</p>
-                            <small>Start chatting to see your history here</small>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Chat Area -->
-                <div class="chatgpt-chat-area">
-                    <!-- Messages Container -->
-                    <div class="chatgpt-messages-container" id="chatgptMessagesContainer">
-                        <!-- Welcome Screen -->
-                        <div id="chatgptWelcome" class="chatgpt-welcome">
-                            <div class="welcome-icon">
-                                <i class="fas fa-gavel"></i>
-                            </div>
-                            <h1 class="welcome-title">LegalSwami Assistant</h1>
-                            <p class="welcome-subtitle">
-                                Your AI-powered legal assistant ready to help with legal advice, 
-                                document generation, and legal research 24/7.
-                            </p>
-                            
-                            <div class="welcome-features">
-                                <div class="welcome-feature-card">
-                                    <i class="fas fa-comments"></i>
-                                    <h4>Legal Consultation</h4>
-                                    <p>Get instant answers to your legal questions with detailed explanations.</p>
-                                </div>
-                                <div class="welcome-feature-card">
-                                    <i class="fas fa-file-contract"></i>
-                                    <h4>Document Generation</h4>
-                                    <p>Create legal documents instantly with customizable templates.</p>
-                                </div>
-                                <div class="welcome-feature-card">
-                                    <i class="fas fa-search"></i>
-                                    <h4>Legal Research</h4>
-                                    <p>Access comprehensive legal database and case laws.</p>
-                                </div>
-                                <div class="welcome-feature-card">
-                                    <i class="fas fa-language"></i>
-                                    <h4>Multi-Language</h4>
-                                    <p>Get assistance in Hindi, English, Marathi, Gujarati and more.</p>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Messages will be loaded here -->
-                        <div id="chatgptMessages">
-                            <!-- Messages will be dynamically added -->
-                        </div>
-
-                        <!-- Typing Indicator -->
-                        <div id="chatgptTypingIndicator" class="typing-indicator" style="display: none;">
-                            <div class="typing-dots">
-                                <span></span>
-                                <span></span>
-                                <span></span>
-                            </div>
-                            <span>LegalSwami is thinking...</span>
-                        </div>
-
-                        <!-- Quick Questions -->
-                        <div id="chatgptQuickQuestions" class="quick-questions-section">
-                            <div class="quick-questions-title">Try asking:</div>
-                            <div class="quick-buttons-grid">
-                                <button class="quick-question-btn" data-question="What are the requirements for a valid contract in India?">
-                                    Contract Requirements
-                                </button>
-                                <button class="quick-question-btn" data-question="How to draft a rental agreement?">
-                                    Rental Agreement
-                                </button>
-                                <button class="quick-question-btn" data-question="What are my consumer rights?">
-                                    Consumer Rights
-                                </button>
-                                <button class="quick-question-btn" data-question="How to file a legal notice?">
-                                    Legal Notice
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-
-                    <!-- Input Area -->
-                    <div class="chatgpt-input-area">
-                        <div class="input-wrapper">
-                            <textarea 
-                                id="chatgptMessageInput" 
-                                class="chatgpt-textarea" 
-                                placeholder="Type your legal question here... (Press Shift+Enter for new line, Enter to send)"
-                                rows="1"
-                            ></textarea>
-                            <button id="chatgptSendBtn" class="send-button">
-                                <i class="fas fa-paper-plane"></i>
-                            </button>
-                        </div>
-                        
-                        <div class="input-options">
-                            <div class="input-tools">
-                                <button class="tool-btn" title="Attach File">
-                                    <i class="fas fa-paperclip"></i> Attach
-                                </button>
-                                <button class="tool-btn" title="Voice Input">
-                                    <i class="fas fa-microphone"></i> Voice
-                                </button>
-                                <button class="tool-btn" title="Legal Tools">
-                                    <i class="fas fa-tools"></i> Tools
-                                </button>
-                            </div>
-                            
-                            <div class="document-options">
-                                <label class="checkbox-label">
-                                    <input type="checkbox" id="chatgptGenerateDocument">
-                                    <span>Generate as Document</span>
-                                </label>
-                                <select id="chatgptDocumentType" disabled>
-                                    <option value="PDF">PDF</option>
-                                    <option value="DOC">DOC</option>
-                                    <option value="TXT">TXT</option>
-                                </select>
-                            </div>
-                        </div>
-                        
-                        <div class="disclaimer-text">
-                            <i class="fas fa-exclamation-triangle"></i>
-                            LegalSwami provides AI-powered legal assistance. For official legal advice, please consult a qualified attorney.
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Original Chat Interface (Hidden) -->
-        <div id="chatInterface" class="chat-interface" style="display: none;">
-            <!-- Your original chat interface remains here but hidden -->
-        </div>
-
+        <!-- This will be loaded dynamically -->
+        
         <!-- Legal Tools Modal -->
         <div id="legalToolsModal" class="modal">
             <div class="modal-overlay"></div>
@@ -2545,9 +2354,6 @@
             // Setup mobile menu
             setupMobileMenu();
             
-            // Initialize chat interface
-            initializeChat();
-            
             // Setup device-specific optimizations
             setupDeviceSpecificOptimizations();
             
@@ -2556,9 +2362,6 @@
             
             // Setup language buttons
             setupLanguageButtons();
-            
-            // Initialize ChatGPT style chat
-            initializeChatGPTChat();
             
             // Load chat history from localStorage
             loadChatHistoryFromStorage();
@@ -2572,7 +2375,6 @@
                 const savedHistory = localStorage.getItem('legalSwamiChatHistory');
                 if (savedHistory) {
                     chatHistoryData = JSON.parse(savedHistory);
-                    updateChatHistoryUI();
                 }
             } catch (error) {
                 console.error('Error loading chat history:', error);
@@ -2589,10 +2391,315 @@
             }
         }
         
-        // Update Chat History UI
-        function updateChatHistoryUI() {
-            const historyList = document.getElementById('chatgptHistoryList');
-            const emptyState = document.getElementById('emptyHistoryState');
+        // Create New Chat Session
+        function createNewChatSession() {
+            const newSession = {
+                id: 'chat_' + Date.now(),
+                title: 'New Chat',
+                timestamp: new Date().toISOString(),
+                messages: []
+            };
+            
+            currentChatSession = newSession;
+            chatHistoryData.push(newSession);
+            saveChatHistoryToStorage();
+            
+            return newSession;
+        }
+        
+        // Open Advanced ChatGPT Style Chat Interface
+        function openAdvancedChatGPTChat() {
+            console.log('💬 Opening Advanced ChatGPT style chat...');
+            
+            // Create the advanced chat interface dynamically
+            const chatInterfaceHTML = `
+            <div id="chatgptAdvancedInterface" class="chatgpt-style-chat active">
+                <!-- Header -->
+                <div class="chatgpt-header">
+                    <div class="chatgpt-header-left">
+                        <button id="chatgptAdvancedBackBtn" class="chatgpt-back-btn">
+                            <i class="fas fa-arrow-left"></i>
+                        </button>
+                        <div class="chatgpt-title">
+                            <div class="chatgpt-title-icon">
+                                <i class="fas fa-gavel"></i>
+                            </div>
+                            <div class="chatgpt-title-text">
+                                <h3>LegalSwami Assistant</h3>
+                                <p>AI Legal Assistant</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="chatgpt-header-right">
+                        <button id="chatgptAdvancedClearBtn" class="chatgpt-header-action" title="Clear Chat">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                        <button id="chatgptAdvancedExportBtn" class="chatgpt-header-action" title="Export Chat">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <button id="chatgptAdvancedHistoryBtn" class="chatgpt-header-action" title="Toggle Sidebar">
+                            <i class="fas fa-bars"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Main Container -->
+                <div class="chatgpt-main-container">
+                    <!-- Sidebar Toggle Button -->
+                    <button id="sidebarAdvancedToggleBtn" class="sidebar-toggle">
+                        <i class="fas fa-bars"></i>
+                    </button>
+
+                    <!-- Sidebar -->
+                    <div id="chatgptAdvancedSidebar" class="chatgpt-sidebar">
+                        <!-- New Chat Button -->
+                        <button id="chatgptAdvancedNewChatBtn" class="new-chat-btn">
+                            <i class="fas fa-plus"></i>
+                            New Chat
+                        </button>
+
+                        <!-- Search -->
+                        <div class="sidebar-search">
+                            <div class="search-container">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="chatgptAdvancedSearchInput" placeholder="Search chats...">
+                            </div>
+                        </div>
+
+                        <!-- Chat History -->
+                        <div class="chat-history-title">Your chats</div>
+                        <div class="chat-history-list" id="chatgptAdvancedHistoryList">
+                            <!-- History items will be dynamically loaded -->
+                            <div class="history-empty-state" id="advancedEmptyHistoryState">
+                                <i class="fas fa-comments"></i>
+                                <p>No chat history yet</p>
+                                <small>Start chatting to see your history here</small>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Chat Area -->
+                    <div class="chatgpt-chat-area">
+                        <!-- Messages Container -->
+                        <div class="chatgpt-messages-container" id="chatgptAdvancedMessagesContainer">
+                            <!-- Welcome Screen -->
+                            <div id="chatgptAdvancedWelcome" class="chatgpt-welcome">
+                                <div class="welcome-icon">
+                                    <i class="fas fa-gavel"></i>
+                                </div>
+                                <h1 class="welcome-title">LegalSwami Assistant</h1>
+                                <p class="welcome-subtitle">
+                                    Your AI-powered legal assistant ready to help with legal advice, 
+                                    document generation, and legal research 24/7.
+                                </p>
+                                
+                                <div class="welcome-features">
+                                    <div class="welcome-feature-card">
+                                        <i class="fas fa-comments"></i>
+                                        <h4>Legal Consultation</h4>
+                                        <p>Get instant answers to your legal questions with detailed explanations.</p>
+                                    </div>
+                                    <div class="welcome-feature-card">
+                                        <i class="fas fa-file-contract"></i>
+                                        <h4>Document Generation</h4>
+                                        <p>Create legal documents instantly with customizable templates.</p>
+                                    </div>
+                                    <div class="welcome-feature-card">
+                                        <i class="fas fa-search"></i>
+                                        <h4>Legal Research</h4>
+                                        <p>Access comprehensive legal database and case laws.</p>
+                                    </div>
+                                    <div class="welcome-feature-card">
+                                        <i class="fas fa-language"></i>
+                                        <h4>Multi-Language</h4>
+                                        <p>Get assistance in Hindi, English, Marathi, Gujarati and more.</p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Messages will be loaded here -->
+                            <div id="chatgptAdvancedMessages">
+                                <!-- Messages will be dynamically added -->
+                            </div>
+
+                            <!-- Typing Indicator -->
+                            <div id="chatgptAdvancedTypingIndicator" class="typing-indicator" style="display: none;">
+                                <div class="typing-dots">
+                                    <span></span>
+                                    <span></span>
+                                    <span></span>
+                                </div>
+                                <span>LegalSwami is thinking...</span>
+                            </div>
+
+                            <!-- Quick Questions -->
+                            <div id="chatgptAdvancedQuickQuestions" class="quick-questions-section">
+                                <div class="quick-questions-title">Try asking:</div>
+                                <div class="quick-buttons-grid">
+                                    <button class="quick-question-btn" data-question="What are the requirements for a valid contract in India?">
+                                        Contract Requirements
+                                    </button>
+                                    <button class="quick-question-btn" data-question="How to draft a rental agreement?">
+                                        Rental Agreement
+                                    </button>
+                                    <button class="quick-question-btn" data-question="What are my consumer rights?">
+                                        Consumer Rights
+                                    </button>
+                                    <button class="quick-question-btn" data-question="How to file a legal notice?">
+                                        Legal Notice
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Input Area -->
+                        <div class="chatgpt-input-area">
+                            <div class="input-wrapper">
+                                <textarea 
+                                    id="chatgptAdvancedMessageInput" 
+                                    class="chatgpt-textarea" 
+                                    placeholder="Type your legal question here... (Press Shift+Enter for new line, Enter to send)"
+                                    rows="1"
+                                ></textarea>
+                                <button id="chatgptAdvancedSendBtn" class="send-button">
+                                    <i class="fas fa-paper-plane"></i>
+                                </button>
+                            </div>
+                            
+                            <div class="input-options">
+                                <div class="input-tools">
+                                    <button class="tool-btn" title="Attach File">
+                                        <i class="fas fa-paperclip"></i> Attach
+                                    </button>
+                                    <button class="tool-btn" title="Voice Input">
+                                        <i class="fas fa-microphone"></i> Voice
+                                    </button>
+                                    <button class="tool-btn" title="Legal Tools">
+                                        <i class="fas fa-tools"></i> Tools
+                                    </button>
+                                </div>
+                                
+                                <div class="document-options">
+                                    <label class="checkbox-label">
+                                        <input type="checkbox" id="chatgptAdvancedGenerateDocument">
+                                        <span>Generate as Document</span>
+                                    </label>
+                                    <select id="chatgptAdvancedDocumentType" disabled>
+                                        <option value="PDF">PDF</option>
+                                        <option value="DOC">DOC</option>
+                                        <option value="TXT">TXT</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="disclaimer-text">
+                                <i class="fas fa-exclamation-triangle"></i>
+                                LegalSwami provides AI-powered legal assistance. For official legal advice, please consult a qualified attorney.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            `;
+            
+            // Remove existing interface if any
+            const existingInterface = document.getElementById('chatgptAdvancedInterface');
+            if (existingInterface) {
+                existingInterface.remove();
+            }
+            
+            // Add the interface to the body
+            document.body.insertAdjacentHTML('beforeend', chatInterfaceHTML);
+            
+            // Initialize the interface
+            initializeAdvancedChatInterface();
+            
+            // Prevent background scrolling
+            document.body.style.overflow = 'hidden';
+            
+            console.log('✅ Advanced ChatGPT chat opened');
+        }
+        
+        // Initialize Advanced Chat Interface
+        function initializeAdvancedChatInterface() {
+            // Auto-resize textarea
+            const textarea = document.getElementById('chatgptAdvancedMessageInput');
+            if (textarea) {
+                textarea.addEventListener('input', function() {
+                    this.style.height = 'auto';
+                    this.style.height = (this.scrollHeight) + 'px';
+                });
+                
+                // Handle Enter key
+                textarea.addEventListener('keydown', function(e) {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        sendAdvancedChatGPTMessage();
+                    }
+                });
+            }
+            
+            // Back button
+            document.getElementById('chatgptAdvancedBackBtn').addEventListener('click', closeAdvancedChatInterface);
+            
+            // Clear chat button
+            document.getElementById('chatgptAdvancedClearBtn').addEventListener('click', clearAdvancedChat);
+            
+            // Export chat button
+            document.getElementById('chatgptAdvancedExportBtn').addEventListener('click', exportAdvancedChat);
+            
+            // History toggle button
+            document.getElementById('chatgptAdvancedHistoryBtn').addEventListener('click', toggleAdvancedSidebar);
+            
+            // Sidebar toggle
+            document.getElementById('sidebarAdvancedToggleBtn').addEventListener('click', toggleAdvancedSidebar);
+            
+            // New chat button
+            document.getElementById('chatgptAdvancedNewChatBtn').addEventListener('click', createNewAdvancedChat);
+            
+            // Send button
+            document.getElementById('chatgptAdvancedSendBtn').addEventListener('click', sendAdvancedChatGPTMessage);
+            
+            // Quick question buttons
+            document.querySelectorAll('#chatgptAdvancedInterface .quick-question-btn').forEach(function(btn) {
+                btn.addEventListener('click', function() {
+                    const question = this.getAttribute('data-question');
+                    const messageInput = document.getElementById('chatgptAdvancedMessageInput');
+                    if (messageInput) {
+                        messageInput.value = question;
+                        messageInput.focus();
+                        // Auto-send after 500ms
+                        setTimeout(sendAdvancedChatGPTMessage, 500);
+                    }
+                });
+            });
+            
+            // Document generation checkbox
+            const chatGPTGenerateDocument = document.getElementById('chatgptAdvancedGenerateDocument');
+            if (chatGPTGenerateDocument) {
+                chatGPTGenerateDocument.addEventListener('change', function() {
+                    const documentType = document.getElementById('chatgptAdvancedDocumentType');
+                    if (documentType) {
+                        documentType.disabled = !this.checked;
+                    }
+                });
+            }
+            
+            // Load chat history
+            loadAdvancedChatHistory();
+            
+            // Focus input
+            setTimeout(() => {
+                if (textarea) {
+                    textarea.focus();
+                }
+            }, 300);
+        }
+        
+        // Load Advanced Chat History
+        function loadAdvancedChatHistory() {
+            const historyList = document.getElementById('chatgptAdvancedHistoryList');
+            const emptyState = document.getElementById('advancedEmptyHistoryState');
             
             if (!historyList) return;
             
@@ -2655,60 +2762,53 @@
                 `;
                 
                 historyItem.addEventListener('click', function() {
-                    loadChatSession(chat.id);
+                    loadAdvancedChatSession(chat.id);
                 });
                 
                 historyList.appendChild(historyItem);
             });
         }
         
-        // Create New Chat Session
-        function createNewChatSession() {
-            const newSession = {
-                id: 'chat_' + Date.now(),
-                title: 'New Chat',
-                timestamp: new Date().toISOString(),
-                messages: []
-            };
-            
-            currentChatSession = newSession;
-            chatHistoryData.push(newSession);
-            saveChatHistoryToStorage();
-            updateChatHistoryUI();
+        // Create New Advanced Chat
+        function createNewAdvancedChat() {
+            currentChatSession = createNewChatSession();
             
             // Clear chat messages
-            const messagesContainer = document.getElementById('chatgptMessages');
+            const messagesContainer = document.getElementById('chatgptAdvancedMessages');
             if (messagesContainer) {
                 messagesContainer.innerHTML = '';
             }
             
             // Show welcome screen
-            const welcomeScreen = document.getElementById('chatgptWelcome');
-            const quickQuestions = document.getElementById('chatgptQuickQuestions');
+            const welcomeScreen = document.getElementById('chatgptAdvancedWelcome');
+            const quickQuestions = document.getElementById('chatgptAdvancedQuickQuestions');
             
             if (welcomeScreen) welcomeScreen.style.display = 'block';
             if (quickQuestions) quickQuestions.style.display = 'block';
             
-            return newSession;
+            // Update history list
+            loadAdvancedChatHistory();
+            
+            showToast('New chat started', 'success');
         }
         
-        // Load Chat Session
-        function loadChatSession(sessionId) {
+        // Load Advanced Chat Session
+        function loadAdvancedChatSession(sessionId) {
             const session = chatHistoryData.find(chat => chat.id === sessionId);
             if (!session) return;
             
             currentChatSession = session;
-            updateChatHistoryUI();
+            loadAdvancedChatHistory();
             
             // Clear current messages
-            const messagesContainer = document.getElementById('chatgptMessages');
+            const messagesContainer = document.getElementById('chatgptAdvancedMessages');
             if (messagesContainer) {
                 messagesContainer.innerHTML = '';
             }
             
             // Hide welcome screen
-            const welcomeScreen = document.getElementById('chatgptWelcome');
-            const quickQuestions = document.getElementById('chatgptQuickQuestions');
+            const welcomeScreen = document.getElementById('chatgptAdvancedWelcome');
+            const quickQuestions = document.getElementById('chatgptAdvancedQuickQuestions');
             
             if (welcomeScreen) welcomeScreen.style.display = 'none';
             if (quickQuestions) quickQuestions.style.display = 'none';
@@ -2716,118 +2816,33 @@
             // Load messages
             if (session.messages && session.messages.length > 0) {
                 session.messages.forEach(msg => {
-                    addChatGPTMessage(msg.content, msg.isUser);
+                    addAdvancedChatGPTMessage(msg.content, msg.isUser);
                 });
                 
                 // Scroll to bottom
                 setTimeout(() => {
-                    const container = document.getElementById('chatgptMessagesContainer');
+                    const container = document.getElementById('chatgptAdvancedMessagesContainer');
                     if (container) {
                         container.scrollTop = container.scrollHeight;
                     }
                 }, 100);
             } else {
                 // Add default welcome message
-                addChatGPTMessage("Hello! I'm your AI legal assistant. How can I help you today?", false);
+                addAdvancedChatGPTMessage("Hello! I'm your AI legal assistant. How can I help you today?", false);
             }
             
             showToast('Chat loaded', 'success');
         }
         
-        // Add Message to Current Session
-        function addMessageToCurrentSession(content, isUser) {
-            if (!currentChatSession) {
-                currentChatSession = createNewChatSession();
-            }
-            
-            if (!currentChatSession.messages) {
-                currentChatSession.messages = [];
-            }
-            
-            currentChatSession.messages.push({
-                content: content,
-                isUser: isUser,
-                timestamp: new Date().toISOString()
-            });
-            
-            // Update session timestamp
-            currentChatSession.timestamp = new Date().toISOString();
-            
-            // Update title from first message if needed
-            if (currentChatSession.messages.length === 1 && isUser) {
-                const title = content.length > 30 ? content.substring(0, 30) + '...' : content;
-                currentChatSession.title = title;
-            }
-            
-            saveChatHistoryToStorage();
-            updateChatHistoryUI();
-        }
-        
-        // Initialize ChatGPT Style Chat
-        function initializeChatGPTChat() {
-            console.log('💬 Initializing ChatGPT style chat...');
-            
-            // Auto-resize textarea
-            const textarea = document.getElementById('chatgptMessageInput');
-            if (textarea) {
-                textarea.addEventListener('input', function() {
-                    this.style.height = 'auto';
-                    this.style.height = (this.scrollHeight) + 'px';
-                });
-                
-                // Handle Enter key
-                textarea.addEventListener('keydown', function(e) {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault();
-                        sendChatGPTMessage();
-                    }
-                });
-            }
-            
-            // Load chat history UI
-            updateChatHistoryUI();
-            
-            console.log('✅ ChatGPT style chat initialized');
-        }
-        
-        // Toggle ChatGPT Sidebar
-        function toggleChatGPTSidebar() {
-            const sidebar = document.getElementById('chatgptSidebar');
-            const toggleBtn = document.getElementById('sidebarToggleBtn');
-            
-            if (sidebar) {
-                if (isMobile) {
-                    sidebar.classList.toggle('active');
-                    if (sidebar.classList.contains('active')) {
-                        toggleBtn.innerHTML = '<i class="fas fa-times"></i>';
-                        toggleBtn.style.left = '250px';
-                    } else {
-                        toggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
-                        toggleBtn.style.left = '10px';
-                    }
-                } else {
-                    sidebar.classList.toggle('collapsed');
-                    if (sidebar.classList.contains('collapsed')) {
-                        toggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
-                        toggleBtn.style.left = '10px';
-                    } else {
-                        toggleBtn.innerHTML = '<i class="fas fa-times"></i>';
-                        toggleBtn.style.left = '260px';
-                    }
-                }
-                isChatGPTSidebarOpen = !sidebar.classList.contains('collapsed') && !sidebar.classList.contains('active');
-            }
-        }
-        
-        // Add ChatGPT Message
-        function addChatGPTMessage(content, isUser = false, isDocumentResponse = false) {
-            const messagesContainer = document.getElementById('chatgptMessages');
+        // Add Advanced ChatGPT Message
+        function addAdvancedChatGPTMessage(content, isUser = false, isDocumentResponse = false) {
+            const messagesContainer = document.getElementById('chatgptAdvancedMessages');
             if (!messagesContainer) return;
             
             // Hide welcome screen on first user message
             if (isUser) {
-                const welcomeScreen = document.getElementById('chatgptWelcome');
-                const quickQuestions = document.getElementById('chatgptQuickQuestions');
+                const welcomeScreen = document.getElementById('chatgptAdvancedWelcome');
+                const quickQuestions = document.getElementById('chatgptAdvancedQuickQuestions');
                 
                 if (welcomeScreen && welcomeScreen.style.display !== 'none') {
                     welcomeScreen.style.display = 'none';
@@ -2872,7 +2887,7 @@
                     </div>
                     <div class="message-content">
                         <h4>${isUser ? 'You' : 'LegalSwami Assistant'}</h4>
-                        <div class="message-text">${formatChatGPTMessage(content)}</div>
+                        <div class="message-text">${formatAdvancedChatGPTMessage(content)}</div>
                         <div class="message-actions">
                             <button class="message-action-btn" title="Copy">
                                 <i class="fas fa-copy"></i> Copy
@@ -2905,7 +2920,7 @@
             
             // Scroll to bottom
             setTimeout(() => {
-                const container = document.getElementById('chatgptMessagesContainer');
+                const container = document.getElementById('chatgptAdvancedMessagesContainer');
                 if (container) {
                     container.scrollTop = container.scrollHeight;
                 }
@@ -2919,8 +2934,8 @@
             return messageDiv;
         }
         
-        // Format ChatGPT Message
-        function formatChatGPTMessage(text) {
+        // Format Advanced ChatGPT Message
+        function formatAdvancedChatGPTMessage(text) {
             // Convert markdown-like formatting to HTML
             text = text.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
             text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
@@ -2939,14 +2954,14 @@
             return text;
         }
         
-        // Send ChatGPT Message
-        async function sendChatGPTMessage() {
+        // Send Advanced ChatGPT Message
+        async function sendAdvancedChatGPTMessage() {
             if (isProcessing) {
                 console.warn('⚠️ Message already being processed');
                 return;
             }
             
-            const input = document.getElementById('chatgptMessageInput');
+            const input = document.getElementById('chatgptAdvancedMessageInput');
             if (!input) return;
             
             const message = input.value.trim();
@@ -2956,27 +2971,27 @@
                 return;
             }
             
-            const generateDocument = document.getElementById('chatgptGenerateDocument') ? 
-                document.getElementById('chatgptGenerateDocument').checked : false;
+            const generateDocument = document.getElementById('chatgptAdvancedGenerateDocument') ? 
+                document.getElementById('chatgptAdvancedGenerateDocument').checked : false;
             
             isProcessing = true;
             
             try {
-                console.log('💬 Sending ChatGPT message:', message.substring(0, 100));
+                console.log('💬 Sending Advanced ChatGPT message:', message.substring(0, 100));
                 
                 // Add user message
-                addChatGPTMessage(message, true);
+                addAdvancedChatGPTMessage(message, true);
                 input.value = '';
                 input.style.height = 'auto';
                 
                 // Show typing indicator
-                const typingIndicator = document.getElementById('chatgptTypingIndicator');
+                const typingIndicator = document.getElementById('chatgptAdvancedTypingIndicator');
                 if (typingIndicator) {
                     typingIndicator.style.display = 'flex';
                     
                     // Scroll to show typing indicator
                     setTimeout(() => {
-                        const container = document.getElementById('chatgptMessagesContainer');
+                        const container = document.getElementById('chatgptAdvancedMessagesContainer');
                         if (container) {
                             container.scrollTop = container.scrollHeight;
                         }
@@ -2996,14 +3011,14 @@
                 
                 // Add AI response
                 if (generateDocument || message.toLowerCase().includes('document') || message.toLowerCase().includes('generate')) {
-                    addChatGPTMessage(response, false, true);
+                    addAdvancedChatGPTMessage(response, false, true);
                 } else {
-                    addChatGPTMessage(response, false);
+                    addAdvancedChatGPTMessage(response, false);
                 }
                 
             } catch (error) {
                 console.error('❌ Failed to send message:', error);
-                addChatGPTMessage('Sorry, I encountered an error while processing your request. Please try again in a moment.', false);
+                addAdvancedChatGPTMessage('Sorry, I encountered an error while processing your request. Please try again in a moment.', false);
                 showToast('Failed to send message: ' + error.message, 'error');
             } finally {
                 isProcessing = false;
@@ -3015,514 +3030,48 @@
             }
         }
         
-        // Generate AI Response with Document Generation
-        function generateAIResponse(message, generateDocument = false) {
-            const lowerMessage = message.toLowerCase();
+        // Toggle Advanced Sidebar
+        function toggleAdvancedSidebar() {
+            const sidebar = document.getElementById('chatgptAdvancedSidebar');
+            const toggleBtn = document.getElementById('sidebarAdvancedToggleBtn');
             
-            // Check if document generation is requested
-            if (generateDocument || lowerMessage.includes('document') || lowerMessage.includes('generate') || 
-                lowerMessage.includes('draft') || lowerMessage.includes('create') || lowerMessage.includes('make')) {
-                
-                return generateDocumentResponse(message);
-            }
-            
-            // Legal responses based on query
-            if (lowerMessage.includes('contract') || lowerMessage.includes('agreement')) {
-                return `**Contract Requirements in India:**
-
-For a contract to be legally valid in India, it must satisfy the following essential elements under the Indian Contract Act, 1872:
-
-1. **Offer and Acceptance** - There must be a lawful offer by one party and a lawful acceptance by the other party.
-2. **Intention to Create Legal Relations** - Parties must intend to create legal obligations.
-3. **Lawful Consideration** - There must be something of value exchanged between parties.
-4. **Capacity of Parties** - Parties must be competent to contract (age of majority, sound mind, not disqualified by law).
-5. **Free Consent** - Consent must be free from coercion, undue influence, fraud, misrepresentation, or mistake.
-6. **Lawful Object** - The object of the contract must be lawful.
-7. **Certainty and Possibility of Performance** - Terms must be clear and performance must be possible.
-
-**Important Notes:**
-- Written contracts are advisable for important transactions
-- Registration may be required for certain contracts (property transactions above ₹100)
-- Stamp duty must be paid as per state laws
-
-Would you like me to help you draft a specific type of contract?`;
-                
-            } else if (lowerMessage.includes('rental') || lowerMessage.includes('lease')) {
-                return `**Rental Agreement Requirements:**
-
-A valid rental/lease agreement in India should include:
-
-**Essential Clauses:**
-1. **Parties Information** - Names, addresses, and contact details of landlord and tenant
-2. **Property Details** - Complete address, area, amenities
-3. **Term of Tenancy** - Start and end dates, renewal terms
-4. **Rent Amount** - Monthly rent, due date, payment method
-5. **Security Deposit** - Amount (usually 2-3 months rent), refund conditions
-6. **Maintenance Responsibilities** - Who pays for repairs, utilities
-7. **Restrictions** - Subletting, commercial use, pets
-8. **Termination Clause** - Notice period, breach conditions
-9. **Dispute Resolution** - Jurisdiction, arbitration
-
-**Legal Requirements:**
-- Must be stamped as per state stamp duty laws
-- Registration required if term exceeds 11 months
-- Both parties should keep signed copies
-- Witnesses recommended
-
-I can help you generate a complete rental agreement. Would you like to proceed?`;
-                
-            } else if (lowerMessage.includes('consumer') || lowerMessage.includes('right')) {
-                return `**Consumer Rights in India (Consumer Protection Act, 2019):**
-
-Under Indian law, consumers have the following fundamental rights:
-
-1. **Right to Safety** - Protection against hazardous goods and services
-2. **Right to Information** - Complete information about quality, quantity, price, etc.
-3. **Right to Choose** - Access to variety of goods and services at competitive prices
-4. **Right to be Heard** - Consumer interests to be considered in policy making
-5. **Right to Redressal** - Seek compensation for unfair trade practices
-6. **Right to Consumer Education** - Knowledge about rights and responsibilities
-7. **Right to Healthy Environment** - Protection against environmental degradation
-
-**How to File a Complaint:**
-1. **Online** - Through the National Consumer Helpline (NCH) or e-daakhil portal
-2. **Consumer Forum** - District (up to ₹1 crore), State (₹1-10 crore), National (above ₹10 crore)
-3. **Documents Required** - Bills, receipts, correspondence, evidence of deficiency
-4. **Time Limit** - Within 2 years from cause of action
-
-**Compensation:** You can claim compensation for loss/injury plus costs.
-
-Need help drafting a consumer complaint?`;
-                
-            } else if (lowerMessage.includes('notice') || lowerMessage.includes('legal notice')) {
-                return `**How to Send a Legal Notice in India:**
-
-A legal notice is a formal communication sent before filing a lawsuit. Here's the process:
-
-**Steps to Send Legal Notice:**
-1. **Draft the Notice** - Should include:
-   - Names and addresses of sender and recipient
-   - Facts of the case
-   - Legal grounds and provisions
-   - Relief/demand (what you want)
-   - Time limit for compliance (usually 15-30 days)
-   - Consequences of non-compliance
-
-2. **Essential Elements:**
-   - Clear subject line
-   - Chronological facts
-   - Specific demands
-   - Legal basis
-   - Time limit
-   - Signature
-
-3. **Sending the Notice:**
-   - Registered AD post with acknowledgment due
-   - Courier with tracking
-   - Keep proof of delivery
-   - Email as additional copy
-
-4. **After Sending:**
-   - Wait for reply (15-30 days)
-   - If no satisfactory reply, you can file a case
-   - The notice can be used as evidence in court
-
-**Important:** Legal notices should be drafted carefully as they form the basis of your case.
-
-I can help you draft a legal notice. What type of issue are you facing?`;
-                
-            } else {
-                // Generic legal response
-                return `Thank you for your legal question. As your AI legal assistant, I can help you with:
-
-**Legal Areas I Cover:**
-1. **Civil Law** - Property disputes, contracts, torts, family matters
-2. **Criminal Law** - Offenses, procedures, bail, rights
-3. **Corporate Law** - Company formation, compliance, contracts
-4. **Property Law** - Buying/selling, registration, tenancy
-5. **Family Law** - Marriage, divorce, inheritance, adoption
-6. **Consumer Law** - Rights, complaints, compensation
-7. **Constitutional Law** - Fundamental rights, writs
-8. **Labor Law** - Employment rights, disputes
-
-**What I Can Do:**
-- Answer legal questions
-- Explain laws and procedures
-- Help draft legal documents
-- Guide through legal processes
-- Provide legal research
-- Connect with lawyers (if needed)
-
-**Please Note:** I provide legal information and guidance. For specific legal advice, please consult a qualified attorney.
-
-Could you please provide more details about your specific legal concern so I can give you more precise assistance?`;
+            if (sidebar) {
+                if (isMobile) {
+                    sidebar.classList.toggle('active');
+                    if (sidebar.classList.contains('active')) {
+                        toggleBtn.innerHTML = '<i class="fas fa-times"></i>';
+                        toggleBtn.style.left = '250px';
+                    } else {
+                        toggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
+                        toggleBtn.style.left = '10px';
+                    }
+                } else {
+                    sidebar.classList.toggle('collapsed');
+                    if (sidebar.classList.contains('collapsed')) {
+                        toggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
+                        toggleBtn.style.left = '10px';
+                    } else {
+                        toggleBtn.innerHTML = '<i class="fas fa-times"></i>';
+                        toggleBtn.style.left = '260px';
+                    }
+                }
+                isChatGPTSidebarOpen = !sidebar.classList.contains('collapsed') && !sidebar.classList.contains('active');
             }
         }
         
-        // Generate Document Response
-        function generateDocumentResponse(message) {
-            const lowerMessage = message.toLowerCase();
-            
-            // Check which document type is being requested
-            let requestedDocument = null;
-            
-            if (lowerMessage.includes('rental') || lowerMessage.includes('lease')) {
-                requestedDocument = documentTypes.find(doc => doc.name.toLowerCase().includes('rental'));
-            } else if (lowerMessage.includes('nda') || lowerMessage.includes('non-disclosure')) {
-                requestedDocument = documentTypes.find(doc => doc.name.toLowerCase().includes('non-disclosure'));
-            } else if (lowerMessage.includes('employment') || lowerMessage.includes('job')) {
-                requestedDocument = documentTypes.find(doc => doc.name.toLowerCase().includes('employment'));
-            } else if (lowerMessage.includes('will') || lowerMessage.includes('testament')) {
-                requestedDocument = documentTypes.find(doc => doc.name.toLowerCase().includes('will'));
-            } else if (lowerMessage.includes('power of attorney') || lowerMessage.includes('poa')) {
-                requestedDocument = documentTypes.find(doc => doc.name.toLowerCase().includes('power'));
-            } else if (lowerMessage.includes('legal notice') || lowerMessage.includes('notice')) {
-                requestedDocument = documentTypes.find(doc => doc.name.toLowerCase().includes('legal notice'));
-            }
-            
-            if (requestedDocument) {
-                // Specific document requested
-                return `
-                    <div class="document-generation-response">
-                        <div class="document-response-header">
-                            <div class="document-response-icon">
-                                <i class="fas ${requestedDocument.icon}"></i>
-                            </div>
-                            <div>
-                                <h3 class="document-response-title">${requestedDocument.name}</h3>
-                                <p class="document-response-subtitle">${requestedDocument.description}</p>
-                            </div>
-                        </div>
-                        
-                        <div class="message-text">
-                            <p>I can help you generate a <strong>${requestedDocument.name}</strong> with the following features:</p>
-                            
-                            <ul>
-                                <li><strong>Customizable Fields:</strong> All parties' information, dates, terms, and conditions</li>
-                                <li><strong>Legal Compliance:</strong> Drafted as per Indian laws and regulations</li>
-                                <li><strong>Multiple Formats:</strong> Available in PDF, DOC, and TXT formats</li>
-                                <li><strong>Step-by-Step Guidance:</strong> I'll guide you through each section</li>
-                                <li><strong>Review & Edit:</strong> You can review and edit before finalizing</li>
-                            </ul>
-                            
-                            <p><strong>Information Needed:</strong></p>
-                            <ol>
-                                <li>Names and addresses of all parties involved</li>
-                                <li>Important dates and durations</li>
-                                <li>Specific terms and conditions</li>
-                                <li>Any special clauses or requirements</li>
-                            </ol>
-                        </div>
-                        
-                        <div class="document-actions">
-                            <button class="btn-generate-doc" onclick="startDocumentGeneration('${requestedDocument.id}')">
-                                <i class="fas fa-magic"></i>
-                                Generate ${requestedDocument.name}
-                            </button>
-                            <button class="btn-view-templates" onclick="viewDocumentTemplates()">
-                                <i class="fas fa-eye"></i>
-                                View Sample Template
-                            </button>
-                        </div>
-                    </div>
-                `;
-            } else {
-                // General document generation response
-                return `
-                    <div class="document-generation-response">
-                        <div class="document-response-header">
-                            <div class="document-response-icon">
-                                <i class="fas fa-file-contract"></i>
-                            </div>
-                            <div>
-                                <h3 class="document-response-title">Document Generation Service</h3>
-                                <p class="document-response-subtitle">I can help you generate various legal documents instantly</p>
-                            </div>
-                        </div>
-                        
-                        <div class="message-text">
-                            <p>Based on your query, I can help you generate legal documents. Here are the most commonly requested documents:</p>
-                        </div>
-                        
-                        <div class="document-types-grid">
-                            ${documentTypes.map(doc => `
-                                <div class="document-type-card" onclick="selectDocumentType(${doc.id})">
-                                    <div class="document-type-icon">
-                                        <i class="fas ${doc.icon}"></i>
-                                    </div>
-                                    <h4 class="document-type-name">${doc.name}</h4>
-                                    <p class="document-type-desc">${doc.description}</p>
-                                </div>
-                            `).join('')}
-                        </div>
-                        
-                        <div class="message-text">
-                            <p><strong>How it works:</strong></p>
-                            <ol>
-                                <li>Select the document type you need</li>
-                                <li>I'll ask you specific questions to gather necessary information</li>
-                                <li>The document will be generated with all required legal clauses</li>
-                                <li>You can review, edit, and download in your preferred format</li>
-                            </ol>
-                            
-                            <p><strong>All documents include:</strong></p>
-                            <ul>
-                                <li>✓ Proper formatting and structure</li>
-                                <li>✓ Required legal clauses</li>
-                                <li>✓ Customizable fields</li>
-                                <li>✓ Multiple format options (PDF, DOC, TXT)</li>
-                                <li>✓ Legal compliance checked</li>
-                            </ul>
-                        </div>
-                        
-                        <div class="document-actions">
-                            <button class="btn-generate-doc" onclick="showDocumentCategories()">
-                                <i class="fas fa-folder-open"></i>
-                                Browse All Documents
-                            </button>
-                            <button class="btn-view-templates" onclick="viewDocumentTemplates()">
-                                <i class="fas fa-eye"></i>
-                                View Sample Templates
-                            </button>
-                        </div>
-                    </div>
-                `;
-            }
-        }
-        
-        // Start Document Generation
-        function startDocumentGeneration(documentId) {
-            const doc = documentTypes.find(d => d.id === documentId);
-            if (!doc) return;
-            
-            showToast(`Starting ${doc.name} generation...`, 'info');
-            
-            // Simulate document generation process
-            setTimeout(() => {
-                const modal = document.createElement('div');
-                modal.className = 'modal';
-                modal.id = 'documentGenerationModal';
-                modal.innerHTML = `
-                    <div class="modal-overlay" onclick="closeModal('documentGenerationModal')"></div>
-                    <div class="modal-content">
-                        <button class="modal-close" onclick="closeModal('documentGenerationModal')">
-                            <i class="fas fa-times"></i>
-                        </button>
-                        <div class="modal-header">
-                            <div class="modal-icon legal-seal">
-                                <i class="fas ${doc.icon}"></i>
-                            </div>
-                            <h3>Generate ${doc.name}</h3>
-                            <p>Fill in the details below</p>
-                        </div>
-                        <div class="modal-body">
-                            <div class="form-group">
-                                <label>Parties Information</label>
-                                <input type="text" id="party1" placeholder="First Party Name" class="form-input">
-                                <input type="text" id="party2" placeholder="Second Party Name" class="form-input">
-                            </div>
-                            <div class="form-group">
-                                <label>Date</label>
-                                <input type="date" id="agreementDate" class="form-input" value="${new Date().toISOString().split('T')[0]}">
-                            </div>
-                            <div class="form-group">
-                                <label>Additional Details</label>
-                                <textarea id="additionalDetails" placeholder="Any specific terms or conditions..." class="form-textarea" rows="3"></textarea>
-                            </div>
-                            <div class="form-group">
-                                <label>Document Format</label>
-                                <select id="docFormat" class="form-select">
-                                    <option value="PDF">PDF Document</option>
-                                    <option value="DOC">Word Document</option>
-                                    <option value="TXT">Text File</option>
-                                </select>
-                            </div>
-                            <button class="btn-generate-final" onclick="generateFinalDocument('${doc.id}')">
-                                <i class="fas fa-magic"></i>
-                                Generate Document
-                            </button>
-                        </div>
-                    </div>
-                `;
-                
-                document.body.appendChild(modal);
-                modal.style.display = 'flex';
-                document.body.classList.add('modal-open');
-            }, 500);
-        }
-        
-        // Select Document Type
-        function selectDocumentType(documentId) {
-            startDocumentGeneration(documentId);
-        }
-        
-        // Show Document Categories
-        function showDocumentCategories() {
-            showToast('Opening document categories...', 'info');
-            // In a complete implementation, this would show a modal with all document categories
-        }
-        
-        // View Document Templates
-        function viewDocumentTemplates() {
-            showToast('Opening sample templates...', 'info');
-            // In a complete implementation, this would show a modal with sample templates
-        }
-        
-        // Generate Final Document
-        function generateFinalDocument(documentId) {
-            const doc = documentTypes.find(d => d.id === documentId);
-            if (!doc) return;
-            
-            const party1 = document.getElementById('party1')?.value || 'Party A';
-            const party2 = document.getElementById('party2')?.value || 'Party B';
-            const date = document.getElementById('agreementDate')?.value || new Date().toISOString().split('T')[0];
-            const format = document.getElementById('docFormat')?.value || 'PDF';
-            
-            showToast(`Generating ${format} document...`, 'success');
-            
-            setTimeout(() => {
-                closeModal('documentGenerationModal');
-                showToast(`${doc.name} generated successfully!`, 'success');
-                
-                // Add message about document generation
-                addChatGPTMessage(`
-                    <div class="document-generation-response">
-                        <div class="document-response-header">
-                            <div class="document-response-icon">
-                                <i class="fas ${doc.icon}"></i>
-                            </div>
-                            <div>
-                                <h3 class="document-response-title">${doc.name} Generated!</h3>
-                                <p class="document-response-subtitle">Your document is ready for download</p>
-                            </div>
-                        </div>
-                        
-                        <div class="message-text">
-                            <p>I have successfully generated your <strong>${doc.name}</strong> with the following details:</p>
-                            
-                            <ul>
-                                <li><strong>Parties:</strong> ${party1} and ${party2}</li>
-                                <li><strong>Date:</strong> ${date}</li>
-                                <li><strong>Format:</strong> ${format}</li>
-                                <li><strong>Document ID:</strong> DOC-${Date.now().toString().substring(7)}</li>
-                            </ul>
-                            
-                            <p><strong>Next Steps:</strong></p>
-                            <ol>
-                                <li>Review the document carefully</li>
-                                <li>Make sure all details are correct</li>
-                                <li>Share with the other party for review</li>
-                                <li>Sign the document with witnesses if required</li>
-                                <li>Register if necessary (for property documents)</li>
-                            </ol>
-                        </div>
-                        
-                        <div class="document-actions">
-                            <button class="btn-generate-doc" onclick="downloadGeneratedDocument('${doc.id}', '${format}')">
-                                <i class="fas fa-download"></i>
-                                Download ${format} Document
-                            </button>
-                            <button class="btn-view-templates" onclick="showToast('Edit feature coming soon!', 'info')">
-                                <i class="fas fa-edit"></i>
-                                Edit Document
-                            </button>
-                        </div>
-                    </div>
-                `, false, true);
-                
-                // Download the document
-                downloadGeneratedDocument(doc.id, format, party1, party2, date);
-                
-            }, 1500);
-        }
-        
-        // Download Generated Document
-        function downloadGeneratedDocument(documentId, format = 'PDF', party1 = 'Party A', party2 = 'Party B', date = null) {
-            const doc = documentTypes.find(d => d.id === documentId);
-            if (!doc) return;
-            
-            const downloadDate = date || new Date().toISOString().split('T')[0];
-            const fileName = `${doc.name.replace(/\s+/g, '_')}_${downloadDate}.${format.toLowerCase()}`;
-            
-            // Create document content
-            let documentContent = '';
-            
-            if (format === 'TXT') {
-                documentContent = `
-LEGAL DOCUMENT
-==============
-
-Document: ${doc.name}
-Generated: ${new Date().toLocaleDateString()}
-Document ID: DOC-${Date.now().toString().substring(7)}
-
-PARTIES:
-1. ${party1}
-2. ${party2}
-
-DATE: ${downloadDate}
-
-${doc.description}
-
-This document has been generated by LegalSwami AI Legal Assistant.
-Please review all details carefully and consult with a legal professional if needed.
-
-IMPORTANT: This is a sample generated document. For official use, please ensure
-all details are accurate and the document is properly executed.
-
----
-LegalSwami AI Legal Assistant
-Generated on: ${new Date().toLocaleString()}
-`;
-            } else {
-                // For PDF/DOC, we would use a more sophisticated generation
-                // For demo, we'll create a simple text file
-                documentContent = `
-                    ${doc.name} - Generated by LegalSwami
-                    ======================================
-                    
-                    This is a sample ${doc.name} document.
-                    
-                    Parties:
-                    - ${party1}
-                    - ${party2}
-                    
-                    Date: ${downloadDate}
-                    
-                    Note: In the complete version, this would be a fully formatted
-                    ${format} document with proper legal formatting and clauses.
-                    
-                    For the complete document generation feature, please contact
-                    support@legalswami.com
-                `;
-            }
-            
-            const blob = new Blob([documentContent], { type: 'text/plain' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = fileName;
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-            URL.revokeObjectURL(url);
-            
-            showToast(`${doc.name} downloaded successfully!`, 'success');
-        }
-        
-        // Clear ChatGPT Chat
-        function clearChatGPTChat() {
+        // Clear Advanced Chat
+        function clearAdvancedChat() {
             if (confirm('Are you sure you want to clear the chat? This will start a new conversation.')) {
                 // Create new chat session
-                createNewChatSession();
+                createNewAdvancedChat();
                 
                 showToast('New chat started', 'success');
-                console.log('🗑️ ChatGPT chat cleared');
+                console.log('🗑️ Advanced ChatGPT chat cleared');
             }
         }
         
-        // Export ChatGPT Chat
-        function exportChatGPTChat() {
+        // Export Advanced Chat
+        function exportAdvancedChat() {
             if (!currentChatSession || !currentChatSession.messages || currentChatSession.messages.length === 0) {
                 showToast('No chat messages to export', 'warning');
                 return;
@@ -3560,104 +3109,23 @@ Generated on: ${new Date().toLocaleString()}
             URL.revokeObjectURL(url);
             
             showToast('Chat exported successfully!', 'success');
-            console.log('📥 ChatGPT chat exported');
+            console.log('📥 Advanced ChatGPT chat exported');
         }
         
-        // Open ChatGPT Style Chat
-        function openChatGPTChat() {
-            console.log('💬 Opening ChatGPT style chat...');
+        // Close Advanced Chat Interface
+        function closeAdvancedChatInterface() {
+            console.log('💬 Closing Advanced ChatGPT style chat...');
             
-            const chatInterface = document.getElementById('chatgptChatInterface');
+            const chatInterface = document.getElementById('chatgptAdvancedInterface');
             if (chatInterface) {
-                chatInterface.classList.add('active');
-                isChatOpen = true;
-                
-                // Create new session if none exists
-                if (!currentChatSession) {
-                    createNewChatSession();
-                }
-                
-                // Prevent background scrolling
-                document.body.style.overflow = 'hidden';
-                
-                // Focus input after a delay
-                setTimeout(function() {
-                    const messageInput = document.getElementById('chatgptMessageInput');
-                    if (messageInput) {
-                        messageInput.focus();
-                    }
-                }, 300);
-                
-                // Adjust sidebar for mobile
-                if (isMobile) {
-                    const sidebar = document.getElementById('chatgptSidebar');
-                    const toggleBtn = document.getElementById('sidebarToggleBtn');
-                    
-                    if (sidebar) {
-                        sidebar.classList.remove('active');
-                    }
-                    if (toggleBtn) {
-                        toggleBtn.style.left = '10px';
-                        toggleBtn.innerHTML = '<i class="fas fa-bars"></i>';
-                    }
-                }
-                
-                console.log('✅ ChatGPT chat opened');
-            }
-        }
-        
-        // Close ChatGPT Style Chat
-        function closeChatGPTChat() {
-            console.log('💬 Closing ChatGPT style chat...');
-            
-            const chatInterface = document.getElementById('chatgptChatInterface');
-            if (chatInterface) {
-                chatInterface.classList.remove('active');
+                chatInterface.remove();
                 isChatOpen = false;
                 
                 // Restore scrolling
                 document.body.style.overflow = '';
                 
-                console.log('✅ ChatGPT chat closed');
+                console.log('✅ Advanced ChatGPT chat closed');
             }
-        }
-        
-        // Setup Language Buttons
-        function setupLanguageButtons() {
-            document.querySelectorAll('.lang-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    const lang = this.getAttribute('data-lang');
-                    selectedLanguage = lang;
-                    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    // Update chat placeholder based on language
-                    const messageInput = document.getElementById('chatgptMessageInput');
-                    if (messageInput) {
-                        if (lang === 'hi') {
-                            messageInput.placeholder = "अपना कानूनी प्रश्न यहां टाइप करें...";
-                        } else if (lang === 'mr') {
-                            messageInput.placeholder = "तुमचा कायदेशीर प्रश्न येथे टाइप करा...";
-                        } else if (lang === 'gu') {
-                            messageInput.placeholder = "તમારો કાનૂની પ્રશ્ન અહીં ટાઈપ કરો...";
-                        } else {
-                            messageInput.placeholder = "Type your legal question here...";
-                        }
-                    }
-                    
-                    showToast(`Language changed to ${getLanguageName(lang)}`, 'info');
-                });
-            });
-        }
-        
-        function getLanguageName(code) {
-            const languages = {
-                'en': 'English',
-                'hi': 'Hindi',
-                'mr': 'Marathi',
-                'gu': 'Gujarati'
-            };
-            return languages[code] || 'English';
         }
         
         // Apply mobile optimizations
@@ -3816,75 +3284,7 @@ Generated on: ${new Date().toLocaleString()}
         function setupEventListeners() {
             console.log('🔧 Setting up event listeners');
             
-            // ChatGPT Style Chat Events
-            const chatGPTBackBtn = document.getElementById('chatgptBackBtn');
-            if (chatGPTBackBtn) {
-                chatGPTBackBtn.addEventListener('click', closeChatGPTChat);
-            }
-            
-            const chatGPTClearBtn = document.getElementById('chatgptClearBtn');
-            if (chatGPTClearBtn) {
-                chatGPTClearBtn.addEventListener('click', clearChatGPTChat);
-            }
-            
-            const chatGPTExportBtn = document.getElementById('chatgptExportBtn');
-            if (chatGPTExportBtn) {
-                chatGPTExportBtn.addEventListener('click', exportChatGPTChat);
-            }
-            
-            const chatGPTHistoryBtn = document.getElementById('chatgptHistoryBtn');
-            if (chatGPTHistoryBtn) {
-                chatGPTHistoryBtn.addEventListener('click', toggleChatGPTSidebar);
-            }
-            
-            const sidebarToggleBtn = document.getElementById('sidebarToggleBtn');
-            if (sidebarToggleBtn) {
-                sidebarToggleBtn.addEventListener('click', toggleChatGPTSidebar);
-            }
-            
-            const chatGPTNewChatBtn = document.getElementById('chatgptNewChatBtn');
-            if (chatGPTNewChatBtn) {
-                chatGPTNewChatBtn.addEventListener('click', function() {
-                    clearChatGPTChat();
-                    // Focus input
-                    const messageInput = document.getElementById('chatgptMessageInput');
-                    if (messageInput) {
-                        messageInput.focus();
-                    }
-                });
-            }
-            
-            const chatGPTSendBtn = document.getElementById('chatgptSendBtn');
-            if (chatGPTSendBtn) {
-                chatGPTSendBtn.addEventListener('click', sendChatGPTMessage);
-            }
-            
-            // Quick question buttons
-            document.querySelectorAll('.quick-question-btn').forEach(function(btn) {
-                btn.addEventListener('click', function() {
-                    const question = this.getAttribute('data-question');
-                    const messageInput = document.getElementById('chatgptMessageInput');
-                    if (messageInput) {
-                        messageInput.value = question;
-                        messageInput.focus();
-                        // Auto-send after 500ms
-                        setTimeout(sendChatGPTMessage, 500);
-                    }
-                });
-            });
-            
-            // Document generation checkbox
-            const chatGPTGenerateDocument = document.getElementById('chatgptGenerateDocument');
-            if (chatGPTGenerateDocument) {
-                chatGPTGenerateDocument.addEventListener('change', function() {
-                    const documentType = document.getElementById('chatgptDocumentType');
-                    if (documentType) {
-                        documentType.disabled = !this.checked;
-                    }
-                });
-            }
-            
-            // Redirect all chat buttons to ChatGPT interface
+            // Redirect all chat buttons to Advanced ChatGPT interface
             const chatButtons = [
                 'startChatBtn', 'heroAssistantBtn', 'ctaStartChat', 
                 'freePlanBtn', 'mobileStartChat'
@@ -3895,7 +3295,7 @@ Generated on: ${new Date().toLocaleString()}
                 if (btn) {
                     btn.addEventListener('click', function(e) {
                         e.preventDefault();
-                        openChatGPTChat();
+                        openAdvancedChatGPTChat();
                     });
                 }
             });
@@ -4025,19 +3425,30 @@ Generated on: ${new Date().toLocaleString()}
             console.log('✅ All event listeners set up');
         }
         
-        // INITIALIZE CHAT
-        function initializeChat() {
-            // Original chat initialization...
+        // INITIALIZE APP WITH BACKEND
+        async function initializeAppWithBackend() {
+            // Original backend initialization...
         }
         
-        // AUTO RESIZE TEXTAREA
-        function autoResizeTextarea() {
-            // Original textarea resize...
+        // START CHAT
+        function startChat() {
+            // Redirect to Advanced ChatGPT interface
+            openAdvancedChatGPTChat();
         }
         
-        // HANDLE INPUT KEYDOWN
-        function handleInputKeydown(event) {
-            // Original keydown handling...
+        // GO BACK TO HOME
+        function goBackToHome() {
+            // Original go back to home...
+        }
+        
+        // CLEAR CHAT HANDLER
+        function clearChatHandler() {
+            // Original clear chat...
+        }
+        
+        // EXPORT CHAT HANDLER
+        function exportChatHandler() {
+            // Original export chat...
         }
         
         // SHOW LOGIN MODAL
@@ -4063,87 +3474,6 @@ Generated on: ${new Date().toLocaleString()}
         // HANDLE LOGOUT
         function handleLogout() {
             // Original logout handling...
-        }
-        
-        // INITIALIZE APP WITH BACKEND
-        async function initializeAppWithBackend() {
-            // Original backend initialization...
-        }
-        
-        // START CHAT
-        function startChat() {
-            // Redirect to ChatGPT interface
-            openChatGPTChat();
-        }
-        
-        // GO BACK TO HOME
-        function goBackToHome() {
-            // Original go back to home...
-        }
-        
-        // CLEAR CHAT HANDLER
-        function clearChatHandler() {
-            // Original clear chat...
-        }
-        
-        // EXPORT CHAT HANDLER
-        function exportChatHandler() {
-            // Original export chat...
-        }
-        
-        // TOGGLE HISTORY SIDEBAR
-        function toggleHistory() {
-            // Original toggle history...
-        }
-        
-        // LOAD CHAT HISTORY
-        async function loadChatHistory() {
-            // Original load history...
-        }
-        
-        // UPDATE HISTORY LIST UI
-        function updateHistoryList(history) {
-            // Original update history list...
-        }
-        
-        // LOAD CHAT FROM HISTORY
-        async function loadChatFromHistory(chatId) {
-            // Original load from history...
-        }
-        
-        // DELETE CHAT HISTORY
-        function deleteChatHistory(chatId) {
-            // Original delete history...
-        }
-        
-        // SEND MESSAGE HANDLER
-        async function sendMessageHandler() {
-            // Original send message...
-        }
-        
-        // ADD MESSAGE TO CHAT UI
-        function addMessageToChat(content, isUser, isDocument, documentType) {
-            // Original add message...
-        }
-        
-        // FORMAT MESSAGE TEXT
-        function formatMessageText(text) {
-            // Original format text...
-        }
-        
-        // SHOW TYPING INDICATOR
-        function showTypingIndicator(show) {
-            // Original typing indicator...
-        }
-        
-        // ATTACH FILE HANDLER
-        function attachFileHandler() {
-            // Original attach file...
-        }
-        
-        // START VOICE INPUT
-        function startVoiceInput() {
-            // Original voice input...
         }
         
         // SHOW DEMO
@@ -4231,12 +3561,6 @@ Generated on: ${new Date().toLocaleString()}
         window.calculateStampDuty = calculateStampDuty;
         window.calculateCompensation = calculateCompensation;
         window.closeModal = closeModal;
-        window.startDocumentGeneration = startDocumentGeneration;
-        window.selectDocumentType = selectDocumentType;
-        window.showDocumentCategories = showDocumentCategories;
-        window.viewDocumentTemplates = viewDocumentTemplates;
-        window.generateFinalDocument = generateFinalDocument;
-        window.downloadGeneratedDocument = downloadGeneratedDocument;
         
         console.log('✅ LegalSwami Premium App Initialization Complete!');
     </script>
