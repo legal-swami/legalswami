@@ -14,22 +14,28 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/v1")
-@CrossOrigin(origins = {
-    "https://legal-swami.github.io",
-    "http://localhost:3000", 
-    "https://legal-swami.github.io/legalswami",
-    "http://localhost:8080",
-    "http://127.0.0.1:3000"
-}, allowedHeaders = "*", exposedHeaders = "*", methods = {
-    RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, 
-    RequestMethod.DELETE, RequestMethod.OPTIONS, RequestMethod.PATCH
-})
+@CrossOrigin(
+    origins = {
+        "https://legal-swami.github.io",
+        "http://localhost:3000", 
+        "https://legal-swami.github.io/legalswami",
+        "http://localhost:8080",
+        "http://127.0.0.1:3000",
+        "https://legalswami.vercel.app"
+    }, 
+    allowedHeaders = "*", 
+    exposedHeaders = "*", 
+    methods = {
+        RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, 
+        RequestMethod.DELETE, RequestMethod.OPTIONS, RequestMethod.PATCH
+    },
+    maxAge = 3600  // Cache preflight response for 1 hour
+)
 public class ChatController {
     
     @Autowired
     private ChatService chatService;
     
-    // ✅ ADD PUBLIC HEALTH ENDPOINT (frontend /api/v1/public/health access kar raha hai)
     @GetMapping("/public/health")
     public ResponseEntity<Map<String, Object>> publicHealth() {
         Map<String, Object> response = new HashMap<>();
@@ -43,25 +49,25 @@ public class ChatController {
         return ResponseEntity.ok(response);
     }
     
-    // ✅ Chat endpoints under /chat path
     @PostMapping("/chat/send")
     public ResponseEntity<ChatResponse> sendMessage(
             @Valid @RequestBody ChatRequest request,
             @RequestHeader Map<String, String> headers) {
         
-        // Extract user ID from headers (case-insensitive)
         String userId = "guest";
         if (headers.containsKey("x-user-id")) {
             userId = headers.get("x-user-id");
         } else if (headers.containsKey("X-User-Id")) {
             userId = headers.get("X-User-Id");
         } else if (headers.containsKey("x-request-id")) {
-            // Optional: Extract from x-request-id if needed
             String requestId = headers.get("x-request-id");
             userId = "user_" + requestId.hashCode();
         }
         
         System.out.println("📱 Received chat request from user: " + userId);
+        if (headers.containsKey("x-language")) {
+            System.out.println("   Language: " + headers.get("x-language"));
+        }
         if (headers.containsKey("x-request-id")) {
             System.out.println("   Request ID: " + headers.get("x-request-id"));
         }
@@ -77,7 +83,6 @@ public class ChatController {
             @RequestParam(defaultValue = "20") int size,
             @RequestHeader Map<String, String> headers) {
         
-        // Log x-request-id if present
         if (headers.containsKey("x-request-id")) {
             System.out.println("📜 Loading history with Request ID: " + headers.get("x-request-id"));
         }
@@ -110,29 +115,6 @@ public class ChatController {
         return ResponseEntity.ok("LegalSwami Chat API is running");
     }
     
-    // ✅ ADD GLOBAL OPTIONS HANDLER FOR ALL ENDPOINTS
-    @RequestMapping(value = {"/**", "/chat/**", "/public/**"}, method = RequestMethod.OPTIONS)
-    public ResponseEntity<?> handleOptions() {
-        System.out.println("🔄 Handling OPTIONS request for CORS preflight");
-        return ResponseEntity.ok()
-                .header("Access-Control-Allow-Origin", "*")
-                .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS, PATCH, HEAD")
-                .header("Access-Control-Allow-Headers", "*")
-                .header("Access-Control-Max-Age", "3600")
-                .build();
-    }
-    
-    // ✅ ADD OPTIONS HANDLER SPECIFICALLY FOR HISTORY ENDPOINT
-    @RequestMapping(value = "/chat/history", method = RequestMethod.OPTIONS)
-    public ResponseEntity<?> handleHistoryOptions() {
-        System.out.println("🔄 Handling OPTIONS request specifically for /chat/history");
-        return ResponseEntity.ok().build();
-    }
-    
-    // ✅ ADD OPTIONS HANDLER FOR PUBLIC HEALTH
-    @RequestMapping(value = "/public/health", method = RequestMethod.OPTIONS)
-    public ResponseEntity<?> handlePublicHealthOptions() {
-        System.out.println("🔄 Handling OPTIONS request for /public/health");
-        return ResponseEntity.ok().build();
-    }
+    // ✅ FIXED: Remove conflicting OPTIONS handlers and let Spring handle them
+    // The @CrossOrigin annotation handles OPTIONS automatically
 }
