@@ -4281,7 +4281,8 @@ header::-webkit-scrollbar {
         </section>
 
         <!-- CHATGPT-LIKE CHAT INTERFACE -->
-<div class="container" id="appContainer" style="display: none;">
+<div id="chatInterface" class="chat-interface" style="display: none;">		
+<div class="container" id="appContainer" >
 <div class="chat-container" style="background: #343541; height: 100vh; display: flex; flex-direction: column;">
         <header>
             <div class="logo">
@@ -4718,6 +4719,7 @@ header::-webkit-scrollbar {
             <span id="toast-message">Message sent successfully</span>
         </div>
     </div>
+	</div>
 	</div>
 
         <!-- Legal Tools Modal -->
@@ -8249,6 +8251,162 @@ header::-webkit-scrollbar {
         
         console.log('✅ All initialization complete');
     });
+	
+	// Start ChatGPT-like chat
+        function startChatGPTLikeChat() {
+            const chatInterface = document.getElementById('chatInterface');
+            if (chatInterface) {
+                chatInterface.style.display = 'flex';
+                isChatOpen = true;
+                
+                // Hide main content
+                document.querySelector('.main-container').style.display = 'none';
+                
+                // Focus input after a delay
+                setTimeout(function() {
+                    const messageInput = document.getElementById('chatMessageInput');
+                    if (messageInput) {
+                        messageInput.focus();
+                    }
+                }, 500);
+                
+                console.log('✅ ChatGPT-like chat interface shown');
+            }
+        }
+		
+		// Go back to home from chat
+        function goBackToHome() {
+            const chatInterface = document.getElementById('chatInterface');
+            if (chatInterface) {
+                chatInterface.style.display = 'none';
+                isChatOpen = false;
+                
+                // Show main content
+                document.querySelector('.main-container').style.display = 'block';
+                
+                console.log('✅ Returned to home from chat');
+            }
+        }
+		
+		// START CHAT
+        function startChat() {
+            console.log('💬 Starting chat...');
+            
+            const user = window.legalSwamiAPI ? window.legalSwamiAPI.user : null;
+            const token = localStorage.getItem('legal_swami_token');
+            const guestId = localStorage.getItem('legalSwamiGuestId');
+            
+            if (!user && !guestId && !token) {
+                showLoginModal();
+                showToast('Please login to start chatting', 'warning');
+                return;
+            }
+            
+            const chatInterface = document.getElementById('chatInterface');
+            const mainContainer = document.querySelector('.main-container');
+            
+            if (chatInterface) {
+                chatInterface.style.display = 'flex';
+                isChatOpen = true;
+                
+                // Mobile specific chat optimizations
+                if (isMobile) {
+                    chatInterface.style.position = 'fixed';
+                    chatInterface.style.top = '0';
+                    chatInterface.style.left = '0';
+                    chatInterface.style.right = '0';
+                    chatInterface.style.bottom = '0';
+                    chatInterface.style.zIndex = '2000';
+                    document.body.style.overflow = 'hidden';
+                    
+                    // Focus input after a delay
+                    setTimeout(function() {
+                        const messageInput = document.getElementById('messageInput');
+                        if (messageInput) {
+                            messageInput.focus();
+                        }
+                    }, 500);
+                }
+                
+                console.log('✅ Chat interface shown');
+            }
+            
+            if (mainContainer && !isMobile) {
+                mainContainer.style.background = '#0f172a';
+            }
+            
+            if (!isMobile) {
+                document.body.style.overflow = 'hidden';
+            }
+            
+            // Hide welcome screen, show messages
+            const chatWelcome = document.getElementById('chatWelcome');
+            const chatMessagesContainer = document.getElementById('chatMessagesContainer');
+            
+            if (chatWelcome) {
+                chatWelcome.style.display = 'none';
+            }
+            
+            if (chatMessagesContainer) {
+                chatMessagesContainer.style.display = 'flex';
+            }
+            
+            setTimeout(function() {
+                const messageInput = document.getElementById('messageInput');
+                if (messageInput) {
+                    messageInput.focus();
+                    console.log('✅ Message input focused');
+                }
+            }, 300);
+        }
+		
+		// GO BACK TO HOME
+        function goBackToHome() {
+            const chatInterface = document.getElementById('chatInterface');
+            const mainContainer = document.querySelector('.main-container');
+            
+            if (chatInterface) {
+                chatInterface.style.display = 'none';
+                isChatOpen = false;
+                console.log('✅ Chat interface hidden');
+            }
+            
+            if (mainContainer) {
+                mainContainer.style.background = '';
+            }
+            
+            // Restore scrolling
+            document.body.style.overflow = '';
+            
+            // Show welcome screen again
+            const chatWelcome = document.getElementById('chatWelcome');
+            const chatMessagesContainer = document.getElementById('chatMessagesContainer');
+            
+            if (chatWelcome) {
+                chatWelcome.style.display = 'flex';
+            }
+            
+            if (chatMessagesContainer) {
+                chatMessagesContainer.style.display = 'none';
+            }
+            
+            // Clear messages
+            const chatMessages = document.getElementById('chatMessages');
+            if (chatMessages) {
+                chatMessages.innerHTML = '';
+            }
+            
+            // Reset message input
+            const messageInput = document.getElementById('messageInput');
+            if (messageInput) {
+                messageInput.value = '';
+                messageInput.style.height = 'auto';
+            }
+            
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            console.log('🏠 Returned to home');
+        }
+        
 </script>
 </body>
 </html>
