@@ -3497,8 +3497,16 @@ header::-webkit-scrollbar {
     z-index: 9999;
 }
 		/* Add this at end of CSS */
+/* नया कोड - इसे जोड़ें */
 #chatInterface {
-    display: none; /* Keep this */
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    z-index: 9998;
+    background: var(--dark-bg);
 }
 </style>
     
@@ -5597,51 +5605,63 @@ header::-webkit-scrollbar {
 
         // Show ChatGPT interface
         function showChatGPTInterface() {
-            const chatInterface = document.getElementById('chatInterface');
-            const mainContainer = document.querySelector('.main-container');
-            
-            if (chatInterface) {
-                // Show chat interface
-                chatInterface.style.display = 'flex';
-                document.body.style.overflow = 'hidden';
-                
-                // Hide main landing page
-                if (mainContainer) {
-                    mainContainer.style.display = 'none';
-                }
-                
-                // Initialize chat if not already done
-                if (!chatInitialized) {
-                    initializeChatApp();
-                    chatInitialized = true;
-                }
-                
-                // Focus on input
-                setTimeout(() => {
-                    const userInput = document.getElementById('userInput');
-                    if (userInput) {
-                        userInput.focus();
-                    }
-                }, 300);
-            }
+    console.log("Showing ChatGPT Interface");
+    
+    const chatInterface = document.getElementById('chatInterface');
+    const mainContainer = document.querySelector('.main-container');
+    
+    if (chatInterface) {
+        // Show chat interface
+        chatInterface.style.display = 'flex';
+        chatInterface.style.opacity = '1';
+        chatInterface.style.visibility = 'visible';
+        document.body.style.overflow = 'hidden';
+        
+        // Hide main landing page
+        if (mainContainer) {
+            mainContainer.style.display = 'none';
         }
+        
+        // Initialize chat if not already done
+        if (!chatInitialized) {
+            initializeChatApp();
+            chatInitialized = true;
+        }
+        
+        // Focus on input
+        setTimeout(() => {
+            const userInput = document.getElementById('userInput');
+            if (userInput) {
+                userInput.focus();
+            }
+        }, 300);
+        
+        console.log("Chat interface shown successfully");
+    }
+}
 
         // Go back to home from chat
-        function goBackToHome() {
-            const chatInterface = document.getElementById('chatInterface');
-            const mainContainer = document.querySelector('.main-container');
-            
-            if (chatInterface) {
-                chatInterface.style.display = 'none';
-                document.body.style.overflow = '';
-            }
-            
-            if (mainContainer) {
-                mainContainer.style.display = 'block';
-                // Scroll to top
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-        }
+       function goBackToHome() {
+    console.log("Going back to home");
+    
+    const chatInterface = document.getElementById('chatInterface');
+    const mainContainer = document.querySelector('.main-container');
+    
+    if (chatInterface) {
+        chatInterface.style.display = 'none';
+        chatInterface.style.opacity = '0';
+        chatInterface.style.visibility = 'hidden';
+        document.body.style.overflow = '';
+    }
+    
+    if (mainContainer) {
+        mainContainer.style.display = 'block';
+        // Scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    
+    console.log("Back to home successful");
+}
 
         // Show download notification
         function showDownloadNotification(fileName, fileType) {
