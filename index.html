@@ -3496,7 +3496,7 @@ header::-webkit-scrollbar {
     height: 100vh;
     background: var(--dark-bg);
     z-index: 9999;
-    overflow-y: auto;
+    overflow: hidden;
 }
 
 #chatInterface.active {
@@ -5697,103 +5697,98 @@ button:disabled {
         }
 
         // ✅ FIXED: Show ChatGPT interface - SIMPLIFIED VERSION
-        function showChatGPTInterface() {
-            console.log("Showing ChatGPT Interface");
-            
-            // Get references
-            const chatInterface = document.getElementById('chatInterface');
-            const mainContainer = document.querySelector('.main-container');
-            
-            if (!chatInterface || !mainContainer) {
-                console.error("Required elements not found!");
-                return;
+        // ✅ FIXED: Show ChatGPT interface - SIMPLIFIED VERSION
+function showChatGPTInterface() {
+    console.log("Showing ChatGPT Interface");
+    
+    // Get references
+    const chatInterface = document.getElementById('chatInterface');
+    const mainContainer = document.querySelector('.main-container');
+    
+    if (!chatInterface || !mainContainer) {
+        console.error("Required elements not found!");
+        return;
+    }
+    
+    // 1. Hide homepage
+    mainContainer.style.display = 'none';
+    
+    // 2. Show chat interface with proper styling
+    chatInterface.style.display = 'block';
+    chatInterface.style.position = 'fixed';
+    chatInterface.style.top = '0';
+    chatInterface.style.left = '0';
+    chatInterface.style.width = '100%';
+    chatInterface.style.height = '100vh';
+    chatInterface.style.backgroundColor = 'var(--dark-bg)';
+    chatInterface.style.zIndex = '9999';
+    chatInterface.style.overflow = 'hidden';
+    
+    // 3. Initialize chat if needed
+    if (!chatInitialized) {
+        console.log("Initializing chat...");
+        setTimeout(() => {
+            try {
+                initializeChatApp();
+                chatInitialized = true;
+                
+                // Add welcome message
+                const chatMessages = document.getElementById('chatMessages');
+                if (chatMessages && chatMessages.innerHTML.trim() === '') {
+                    chatMessages.innerHTML = WELCOME_MESSAGE_HTML;
+                    addDraftTemplateListeners();
+                }
+            } catch (error) {
+                console.error("Chat initialization error:", error);
             }
-            
-            // 1. Hide homepage
-            mainContainer.style.display = 'none';
-            
-            // 2. Show chat interface with proper styling
-            chatInterface.style.cssText = `
-                display: block !important;
-                position: fixed !important;
-                top: 0 !important;
-                left: 0 !important;
-                width: 100% !important;
-                height: 100vh !important;
-                background: var(--dark-bg) !important;
-                z-index: 9999 !important;
-                overflow-y: auto !important;
-            `;
-            
-            // 3. Prevent body scrolling
-            document.body.style.overflow = 'hidden';
-            document.body.classList.add('chat-active');
-            
-            // 4. Initialize chat if needed
-            if (!chatInitialized) {
-                console.log("Initializing chat...");
-                setTimeout(() => {
-                    try {
-                        initializeChatApp();
-                        chatInitialized = true;
-                        
-                        // Add welcome message
-                        const chatMessages = document.getElementById('chatMessages');
-                        if (chatMessages && !chatMessages.innerHTML.includes('Welcome')) {
-                            chatMessages.innerHTML = WELCOME_MESSAGE_HTML;
-                            addDraftTemplateListeners();
-                        }
-                    } catch (error) {
-                        console.error("Chat initialization error:", error);
-                    }
-                }, 100);
-            }
-            
-            // 5. Update UI for current user
-            updateUserUI();
-            
-            // 6. Focus input
-            setTimeout(() => {
-                const input = document.getElementById('userInput');
-                if (input) input.focus();
-            }, 200);
-            
-            console.log("Chat interface shown successfully");
+        }, 100);
+    }
+    
+    // 4. Update UI for current user
+    updateUserUI();
+    
+    // 5. Focus input
+    setTimeout(() => {
+        const input = document.getElementById('userInput');
+        if (input) {
+            input.focus();
+            input.style.height = 'auto';
+            input.style.height = Math.min(input.scrollHeight, 150) + 'px';
         }
+    }, 200);
+    
+    console.log("Chat interface shown successfully");
+}
 
         // ✅ FIXED: Go back to home from chat
-        function goBackToHome() {
-            console.log("Going back to home");
-            
-            const chatInterface = document.getElementById('chatInterface');
-            const mainContainer = document.querySelector('.main-container');
-            
-            if (!chatInterface || !mainContainer) return;
-            
-            // 1. Hide chat interface
-            chatInterface.style.display = 'none';
-            chatInterface.style.position = '';
-            chatInterface.style.top = '';
-            chatInterface.style.left = '';
-            chatInterface.style.width = '';
-            chatInterface.style.height = '';
-            chatInterface.style.zIndex = '';
-            
-            // 2. Show homepage
-            mainContainer.style.display = 'block';
-            
-            // 3. Restore body scrolling
-            document.body.style.overflow = '';
-            document.body.classList.remove('chat-active');
-            
-            // 4. Update UI for current user
-            updateUserUI();
-            
-            // 5. Scroll to top
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-            
-            console.log("Back to home successful");
-        }
+        // ✅ FIXED: Go back to home from chat
+function goBackToHome() {
+    console.log("Going back to home");
+    
+    const chatInterface = document.getElementById('chatInterface');
+    const mainContainer = document.querySelector('.main-container');
+    
+    if (!chatInterface || !mainContainer) return;
+    
+    // 1. Hide chat interface
+    chatInterface.style.display = 'none';
+    chatInterface.style.position = '';
+    chatInterface.style.top = '';
+    chatInterface.style.left = '';
+    chatInterface.style.width = '';
+    chatInterface.style.height = '';
+    chatInterface.style.backgroundColor = '';
+    chatInterface.style.zIndex = '';
+    chatInterface.style.overflow = '';
+    
+    // 2. Show homepage
+    mainContainer.style.display = 'block';
+    
+    // 3. Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+    
+    console.log("Back to home successful");
+}
 
         // Show download notification
         function showDownloadNotification(fileName, fileType) {
