@@ -3492,15 +3492,22 @@ header::-webkit-scrollbar {
     position: fixed;
     top: 0;
     left: 0;
+    right: 0;
+    bottom: 0;
     width: 100%;
-    height: 100vh;
+    height: 100%;
     background: var(--dark-bg);
     z-index: 9999;
-    overflow: hidden;
+    overflow: auto;
 }
 
 #chatInterface.active {
     display: block;
+}
+
+.chat-interface {
+    width: 100%;
+    height: 100%;
 }
 
 /* When chat is active, hide homepage */
@@ -3563,7 +3570,30 @@ button:disabled {
 .toast {
     z-index: 10001;
 }
-	
+
+/* Ensure chat container fills screen */
+.chat-interface .container {
+    height: 100vh !important;
+    max-height: 100vh !important;
+    min-height: 100vh !important;
+    overflow: hidden !important;
+}
+
+/* Ensure chat container inside fills available space */
+.chat-interface .chat-container {
+    height: 100% !important;
+    max-height: 100% !important;
+    min-height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+/* Ensure chat messages area scrolls properly */
+.chat-interface .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    height: 0; /* This makes flex:1 work properly */
+}		
 </style>
     
 </head>
@@ -5697,11 +5727,9 @@ button:disabled {
         }
 
         // ✅ FIXED: Show ChatGPT interface - SIMPLIFIED VERSION
-        // ✅ FIXED: Show ChatGPT interface - SIMPLIFIED VERSION
-function showChatGPTInterface() {
+        function showChatGPTInterface() {
     console.log("Showing ChatGPT Interface");
     
-    // Get references
     const chatInterface = document.getElementById('chatInterface');
     const mainContainer = document.querySelector('.main-container');
     
@@ -5710,21 +5738,23 @@ function showChatGPTInterface() {
         return;
     }
     
-    // 1. Hide homepage
+    // Hide homepage completely
     mainContainer.style.display = 'none';
     
-    // 2. Show chat interface with proper styling
+    // Show chat interface
     chatInterface.style.display = 'block';
+    
+    // Ensure chat interface takes full viewport
     chatInterface.style.position = 'fixed';
     chatInterface.style.top = '0';
     chatInterface.style.left = '0';
-    chatInterface.style.width = '100%';
+    chatInterface.style.width = '100vw';
     chatInterface.style.height = '100vh';
     chatInterface.style.backgroundColor = 'var(--dark-bg)';
     chatInterface.style.zIndex = '9999';
     chatInterface.style.overflow = 'hidden';
     
-    // 3. Initialize chat if needed
+    // Initialize chat if needed
     if (!chatInitialized) {
         console.log("Initializing chat...");
         setTimeout(() => {
@@ -5744,10 +5774,10 @@ function showChatGPTInterface() {
         }, 100);
     }
     
-    // 4. Update UI for current user
+    // Update UI for current user
     updateUserUI();
     
-    // 5. Focus input
+    // Focus input
     setTimeout(() => {
         const input = document.getElementById('userInput');
         if (input) {
@@ -5761,8 +5791,7 @@ function showChatGPTInterface() {
 }
 
         // ✅ FIXED: Go back to home from chat
-        // ✅ FIXED: Go back to home from chat
-function goBackToHome() {
+        function goBackToHome() {
     console.log("Going back to home");
     
     const chatInterface = document.getElementById('chatInterface');
@@ -5770,8 +5799,10 @@ function goBackToHome() {
     
     if (!chatInterface || !mainContainer) return;
     
-    // 1. Hide chat interface
+    // Hide chat interface
     chatInterface.style.display = 'none';
+    
+    // Reset chat interface styles
     chatInterface.style.position = '';
     chatInterface.style.top = '';
     chatInterface.style.left = '';
@@ -5781,10 +5812,10 @@ function goBackToHome() {
     chatInterface.style.zIndex = '';
     chatInterface.style.overflow = '';
     
-    // 2. Show homepage
+    // Show homepage
     mainContainer.style.display = 'block';
     
-    // 3. Scroll to top
+    // Scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
     
     console.log("Back to home successful");
