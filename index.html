@@ -5965,22 +5965,36 @@ button:disabled {
         }
 
         // Show ChatGPT interface
-       function showChatGPTInterface() {
+      function showChatGPTInterface() {
     console.log("Showing ChatGPT Interface");
     
     const chatInterface = document.getElementById('chatInterface');
     const mainContainer = document.querySelector('.main-container');
+    const header = document.querySelector('.premium-navbar');
     
     if (!chatInterface) return;
     
-    // Ensure chat interface is visible
+    // IMPORTANT: Ensure chat interface fills the entire screen
     chatInterface.style.display = 'block';
     chatInterface.style.visibility = 'visible';
     chatInterface.style.opacity = '1';
+    chatInterface.style.position = 'fixed';
+    chatInterface.style.top = '0';
+    chatInterface.style.left = '0';
+    chatInterface.style.width = '100%';
+    chatInterface.style.height = '100%';
     chatInterface.style.zIndex = '99999';
+    chatInterface.style.background = 'var(--dark-bg)';
+    chatInterface.style.overflow = 'hidden';
     
+    // Hide main container completely
     if (mainContainer) {
         mainContainer.style.display = 'none';
+    }
+    
+    // Hide header if exists
+    if (header) {
+        header.style.display = 'none';
     }
     
     // Initialize chat if not already initialized
@@ -6007,6 +6021,8 @@ button:disabled {
             userInput.focus();
         }
     }, 200);
+    
+    console.log("Chat interface shown successfully");
 }
 
         // Go back to home from chat
