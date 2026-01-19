@@ -3029,6 +3029,41 @@ header::-webkit-scrollbar {
     overflow: hidden;
 }
 
+/* EMERGENCY FIX: Force chat interface to show */
+#chatInterface.active {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    z-index: 99999 !important;
+    background: var(--dark-bg) !important;
+}
+
+#chatInterface .container {
+    height: 100vh !important;
+    max-height: 100vh !important;
+    min-height: 100vh !important;
+    overflow: hidden !important;
+}
+
+#chatInterface .chat-container {
+    height: 100% !important;
+    max-height: 100% !important;
+    min-height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+#chatInterface .chat-messages {
+    flex: 1 !important;
+    overflow-y: auto !important;
+    min-height: 200px !important;
+}		
+
 #chatInterface.active {
     display: block;
 }
@@ -7634,32 +7669,38 @@ function initializeChatApp() {
 function showChatGPTInterface() {
     console.log("🚀 Showing ChatGPT Interface");
     
-    // Hide homepage
-    document.querySelector('.main-container').style.display = 'none';
-    
-    // Show chat interface
-    const chatInterface = document.getElementById('chatInterface');
-    chatInterface.classList.add('active');
-    chatInterface.style.display = 'block';
-    
-    // Add chat-active class to body
-    document.body.classList.add('chat-active');
-    
-    // Reset chat messages to show welcome message
-    const chatMessages = document.getElementById('chatMessages');
-    if (chatMessages && chatMessages.innerHTML.trim() === '') {
-        chatMessages.innerHTML = WELCOME_MESSAGE_HTML;
-        addDraftTemplateListeners();
+    // 1. Hide homepage
+    const mainContainer = document.querySelector('.main-container');
+    if (mainContainer) {
+        mainContainer.style.display = 'none';
     }
     
-    // Initialize chat if not already
+    // 2. Show chat interface
+    const chatInterface = document.getElementById('chatInterface');
+    if (chatInterface) {
+        chatInterface.classList.add('active');
+        chatInterface.style.display = 'block';
+        chatInterface.style.opacity = '1';
+        chatInterface.style.visibility = 'visible';
+        chatInterface.style.position = 'fixed';
+        chatInterface.style.top = '0';
+        chatInterface.style.left = '0';
+        chatInterface.style.width = '100vw';
+        chatInterface.style.height = '100vh';
+        chatInterface.style.zIndex = '99999';
+    }
+    
+    // 3. Add chat-active class to body
+    document.body.classList.add('chat-active');
+    
+    // 4. Initialize chat if not already
     if (!chatInitialized) {
         console.log("🔄 Initializing chat app...");
         initializeChatApp();
         chatInitialized = true;
     }
     
-    // Focus input field
+    // 5. Focus input field
     setTimeout(() => {
         const input = document.getElementById('userInput');
         if (input) {
