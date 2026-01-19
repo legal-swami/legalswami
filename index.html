@@ -3019,6 +3019,123 @@ header::-webkit-scrollbar {
     background: var(--light-surface-light);
 }
 
+/* ✅ FIXED: Chat interface styling - simplified */
+#chatInterface {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--dark-bg);
+    z-index: 9999;
+    overflow: auto;
+}
+
+#chatInterface.active {
+    display: block;
+}
+
+.chat-interface {
+    width: 100%;
+    height: 100%;
+}
+
+/* When chat is active, hide homepage */
+body.chat-active .main-container {
+    display: none !important;
+}
+
+body.chat-active {
+    overflow: hidden;
+}
+
+/* Ensure chat container fills screen */
+.chat-interface .container {
+    background: var(--dark-bg) !important;
+    min-height: 100vh !important;
+    height: 100% !important;
+}
+
+/* ✅ FIXED: Textarea resizing fix */
+.input-area textarea {
+    resize: none;
+    min-height: 52px;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
+/* ✅ FIXED: Mobile touch improvements */
+@media (max-width: 768px) {
+    button, .btn-premium, .header-btn, .action-btn {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    #chatInterface {
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    #chatInterface .chat-container {
+        height: 100vh !important;
+        max-height: 100vh !important;
+    }
+    
+    #chatInterface .chat-messages {
+        padding-bottom: 80px !important;
+    }
+}
+
+/* ✅ FIXED: Ensure proper button states */
+button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed !important;
+}
+
+/* ✅ FIXED: Modal z-index fix */
+.modal-overlay {
+    z-index: 10000;
+}
+
+/* ✅ FIXED: Toast notification z-index */
+.toast {
+    z-index: 10001;
+}
+
+/* Ensure chat container fills screen */
+.chat-interface .container {
+    height: 100vh !important;
+    max-height: 100vh !important;
+    min-height: 100vh !important;
+    overflow: hidden !important;
+}
+
+/* Ensure chat container inside fills available space */
+.chat-interface .chat-container {
+    height: 100% !important;
+    max-height: 100% !important;
+    min-height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+/* Ensure chat messages area scrolls properly */
+.chat-interface .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    height: 0;
+}
+
+/* ✅ FIXED: Textarea resizing fix */
+.input-area textarea {
+    resize: none;
+    min-height: 52px;
+    max-height: 150px;
+    overflow-y: auto;
+}
+
 /* Mobile Optimization */
 @media (max-width: 768px) {
     header {
@@ -3486,131 +3603,74 @@ header::-webkit-scrollbar {
     z-index: 9999;
 }
 
-/* ✅ FIXED: Chat interface styling - simplified */
-#chatInterface {
-    display: none;
+/* Additional styles for homepage */
+.main-container {
+    display: block;
+}
+
+/* Homepage specific styles */
+.premium-navbar {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
-    bottom: 0;
-    width: 100%;
-    height: 100%;
-    background: var(--dark-bg);
-    z-index: 9999;
-    overflow: auto;
+    z-index: 1000;
+    background: rgba(52, 53, 65, 0.95);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--dark-border);
 }
 
-#chatInterface.active {
-    display: block;
-}
-
-.chat-interface {
-    width: 100%;
-    height: 100%;
-}
-
-/* When chat is active, hide homepage */
-body.chat-active .main-container {
-    display: none !important;
-}
-
-body.chat-active {
+.hero-section {
+    padding-top: 100px;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    position: relative;
     overflow: hidden;
 }
 
-/* Ensure chat container fills screen */
+.features-section,
+.database-section,
+.documents-section,
+.lawyer-section,
+.guides-section,
+.testimonials-section,
+.pricing-section,
+.cta-section {
+    padding: 80px 0;
+}
+
+.section-header {
+    text-align: center;
+    margin-bottom: 60px;
+}
+
+.section-title {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+}
+
+.section-subtitle {
+    color: var(--dark-text-secondary);
+    font-size: 1.1rem;
+}
+
+/* Hide debug borders */
+#chatInterface {
+    border: none !important;
+}
+
 .chat-interface .container {
+    border: none !important;
+}
+
+.chat-interface .chat-container {
+    border: none !important;
+}
+
+/* Remove emergency debug styles */
+#chatInterface {
     background: var(--dark-bg) !important;
-    min-height: 100vh !important;
-    height: 100% !important;
-}
-
-/* ✅ FIXED: Textarea resizing fix */
-.input-area textarea {
-    resize: none;
-    min-height: 52px;
-    max-height: 150px;
-    overflow-y: auto;
-}
-
-/* ✅ FIXED: Mobile touch improvements */
-@media (max-width: 768px) {
-    button, .btn-premium, .header-btn, .action-btn {
-        min-height: 44px;
-        min-width: 44px;
-    }
-    
-    #chatInterface {
-        -webkit-overflow-scrolling: touch;
-    }
-    
-    #chatInterface .chat-container {
-        height: 100vh !important;
-        max-height: 100vh !important;
-    }
-    
-    #chatInterface .chat-messages {
-        padding-bottom: 80px !important;
-    }
-}
-
-/* ✅ FIXED: Ensure proper button states */
-button:disabled {
-    opacity: 0.5;
-    cursor: not-allowed !important;
-}
-
-/* ✅ FIXED: Modal z-index fix */
-.modal-overlay {
-    z-index: 10000;
-}
-
-/* ✅ FIXED: Toast notification z-index */
-.toast {
-    z-index: 10001;
-}
-
-/* Ensure chat container fills screen */
-.chat-interface .container {
-    height: 100vh !important;
-    max-height: 100vh !important;
-    min-height: 100vh !important;
-    overflow: hidden !important;
-}
-
-/* Ensure chat container inside fills available space */
-.chat-interface .chat-container {
-    height: 100% !important;
-    max-height: 100% !important;
-    min-height: 100% !important;
-    display: flex !important;
-    flex-direction: column !important;
-}
-
-/* Ensure chat messages area scrolls properly */
-.chat-interface .chat-messages {
-    flex: 1;
-    overflow-y: auto;
-    height: 0; /* This makes flex:1 work properly */
-}
-
-#chatInterface {
-    border: 3px solid red !important;
-}
-
-.chat-interface .container {
-    border: 2px solid blue !important;
-}
-
-.chat-interface .chat-container {
-    border: 2px solid green !important;
-}	
-
-/* EMERGENCY DEBUG - Remove after fixing */
-#chatInterface {
-    display: block !important;
-    background: red !important;
     opacity: 1 !important;
     visibility: visible !important;
 }
@@ -3639,7 +3699,81 @@ button:disabled {
 /* Hide any overlay that might be blocking */
 .sidebar-overlay {
     display: none !important;
-}		
+}
+
+/* Draft template styles in welcome message */
+.draft-templates {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin-top: 20px;
+}
+
+.draft-template {
+    background: var(--dark-surface);
+    border: 1px solid var(--dark-border);
+    border-radius: 10px;
+    padding: 15px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+.draft-template:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary);
+    box-shadow: 0 10px 25px rgba(16, 163, 127, 0.2);
+}
+
+.draft-template i {
+    font-size: 2rem;
+    color: var(--primary);
+    margin-bottom: 10px;
+}
+
+.draft-template h4 {
+    font-size: 1rem;
+    margin-bottom: 5px;
+    color: var(--dark-text);
+}
+
+.draft-template p {
+    font-size: 0.8rem;
+    color: var(--dark-text-secondary);
+}
+
+.section-divider {
+    height: 1px;
+    background: var(--dark-border);
+    margin: 25px 0;
+    width: 100%;
+}
+
+.legal-note {
+    background: rgba(245, 158, 11, 0.1);
+    border-left: 4px solid var(--warning);
+    padding: 12px;
+    margin-top: 20px;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    color: var(--dark-text);
+}
+
+/* Language hint */
+.language-hint {
+    position: absolute;
+    left: 12px;
+    top: -30px;
+    background: var(--dark-surface);
+    color: var(--primary);
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    border: 1px solid var(--primary-light);
+    display: none;
+    z-index: 10;
+    font-weight: 500;
+}
 </style>
     
 </head>
