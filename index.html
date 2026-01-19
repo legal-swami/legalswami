@@ -3015,32 +3015,45 @@ header::-webkit-scrollbar {
 }
 
 /* FIXED: Chat interface styling - corrected */
+/* ChatGPT Interface Styling */
 #chatInterface {
     display: none;
     position: fixed;
     top: 0;
     left: 0;
-    right: 0;
-    bottom: 0;
-    width: 100vw;
-    height: 100vh;
+    width: 100%;
+    height: 100%;
     background: var(--dark-bg);
     z-index: 99999;
+}
+
+#chatInterface.active {
+    display: flex;
+    flex-direction: column;
+}
+
+#chatInterface .container {
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+#chatInterface .chat-container {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
     overflow: hidden;
 }
 
-/* EMERGENCY FIX: Force chat interface to show */
-#chatInterface.active {
-    display: block !important;
-    opacity: 1 !important;
-    visibility: visible !important;
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100vw !important;
-    height: 100vh !important;
-    z-index: 99999 !important;
-    background: var(--dark-bg) !important;
+#chatInterface .chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
+}
+
+/* When chat is active, hide homepage */
+body.chat-active .main-container {
+    display: none !important;
 }
 
 #chatInterface .container {
@@ -6361,7 +6374,7 @@ button:disabled {
 
         <!-- CHATGPT-LIKE CHAT INTERFACE -->
         <div id="chatInterface" class="chat-interface">
-            <div class="container" id="appContainer">
+            <div class="container" >
                 <div class="chat-container">
                     <header>
                         <div class="logo">
@@ -7666,10 +7679,11 @@ function initializeChatApp() {
 }
 
 // FIXED: Show ChatGPT interface - UPDATED VERSION
+// FIXED: Show ChatGPT interface - SIMPLIFIED VERSION
 function showChatGPTInterface() {
     console.log("🚀 Showing ChatGPT Interface");
     
-    // 1. Hide homepage
+    // 1. Hide homepage completely
     const mainContainer = document.querySelector('.main-container');
     if (mainContainer) {
         mainContainer.style.display = 'none';
@@ -7678,20 +7692,25 @@ function showChatGPTInterface() {
     // 2. Show chat interface
     const chatInterface = document.getElementById('chatInterface');
     if (chatInterface) {
+        // Add active class
         chatInterface.classList.add('active');
-        chatInterface.style.display = 'block';
-        chatInterface.style.opacity = '1';
+        chatInterface.style.display = 'flex';
+        
+        // Force visible
         chatInterface.style.visibility = 'visible';
+        chatInterface.style.opacity = '1';
         chatInterface.style.position = 'fixed';
         chatInterface.style.top = '0';
         chatInterface.style.left = '0';
         chatInterface.style.width = '100vw';
         chatInterface.style.height = '100vh';
         chatInterface.style.zIndex = '99999';
+        chatInterface.style.background = 'var(--dark-bg)';
     }
     
     // 3. Add chat-active class to body
     document.body.classList.add('chat-active');
+    document.body.style.overflow = 'hidden';
     
     // 4. Initialize chat if not already
     if (!chatInitialized) {
@@ -7712,19 +7731,26 @@ function showChatGPTInterface() {
 }
 
 // FIXED: Go back to home from chat
+// FIXED: Go back to home from chat
 function goBackToHome() {
     console.log("🏠 Going back to home");
     
     // Hide chat interface
     const chatInterface = document.getElementById('chatInterface');
-    chatInterface.classList.remove('active');
-    chatInterface.style.display = 'none';
+    if (chatInterface) {
+        chatInterface.classList.remove('active');
+        chatInterface.style.display = 'none';
+    }
     
     // Remove chat-active class from body
     document.body.classList.remove('chat-active');
+    document.body.style.overflow = '';
     
     // Show homepage
-    document.querySelector('.main-container').style.display = 'block';
+    const mainContainer = document.querySelector('.main-container');
+    if (mainContainer) {
+        mainContainer.style.display = 'block';
+    }
     
     // Scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
