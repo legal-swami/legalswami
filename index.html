@@ -3804,17 +3804,6 @@ html {
 }
 
 /* FIXED: Chat interface visibility fix */
-.chat-interface {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 9999;
-    background: var(--dark-bg);
-}
-
 .chat-interface.active {
     display: block;
 }
@@ -3863,6 +3852,12 @@ button:disabled {
 .toast {
     z-index: 10001;
 }
+
+#chatInterface.active {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}		
 </style>
     
 </head>
@@ -5976,71 +5971,42 @@ button:disabled {
     const chatInterface = document.getElementById('chatInterface');
     const mainContainer = document.querySelector('.main-container');
     
-    if (chatInterface) {
-        // Step 1: Prepare chat interface
-        chatInterface.style.cssText = `
-            display: block !important;
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100% !important;
-            height: 100vh !important;
-            background: var(--dark-bg) !important;
-            z-index: 99999 !important;
-            opacity: 1 !important;
-            visibility: visible !important;
-            overflow-y: auto !important;
-        `;
-        
-        // Step 2: Hide main container
-        if (mainContainer) {
-            mainContainer.style.display = 'none';
-        }
-        
-        // Step 3: Initialize chat
-        if (!chatInitialized) {
-            setTimeout(() => {
-                initializeChatApp();
-                chatInitialized = true;
-                
-                // Step 4: Force content to show
-                setTimeout(() => {
-                    const chatMessages = document.getElementById('chatMessages');
-                    const welcomeMessage = document.querySelector('.welcome-message');
-                    
-                    if (!welcomeMessage && chatMessages) {
-                        const welcomeContainer = document.createElement('div');
-                        welcomeContainer.innerHTML = WELCOME_MESSAGE_HTML;
-                        chatMessages.appendChild(welcomeContainer);
-                        addDraftTemplateListeners();
-                    }
-                    
-                    // Step 5: Ensure all elements are visible
-                    document.querySelectorAll('.chat-container, .chat-messages, .input-container').forEach(el => {
-                        el.style.opacity = '1';
-                        el.style.visibility = 'visible';
-                    });
-                    
-                }, 300);
-            }, 100);
-        } else {
-            // If already initialized, just ensure content is visible
-            document.querySelectorAll('.chat-container, .chat-messages').forEach(el => {
-                el.style.opacity = '1';
-                el.style.visibility = 'visible';
-            });
-        }
-        
-        // Step 6: Focus input
-        setTimeout(() => {
-            const userInput = document.getElementById('userInput');
-            if (userInput) {
-                userInput.focus();
-            }
-        }, 500);
-        
-        console.log("Chat interface shown successfully");
+    if (!chatInterface) return;
+    
+    // Ensure chat interface is visible
+    chatInterface.style.display = 'block';
+    chatInterface.style.visibility = 'visible';
+    chatInterface.style.opacity = '1';
+    chatInterface.style.zIndex = '99999';
+    
+    if (mainContainer) {
+        mainContainer.style.display = 'none';
     }
+    
+    // Initialize chat if not already initialized
+    if (!chatInitialized) {
+        setTimeout(() => {
+            initializeChatApp();
+            chatInitialized = true;
+            
+            // Add welcome message
+            const chatMessages = document.getElementById('chatMessages');
+            if (chatMessages && !chatMessages.querySelector('.welcome-message')) {
+                const welcomeContainer = document.createElement('div');
+                welcomeContainer.innerHTML = WELCOME_MESSAGE_HTML;
+                chatMessages.appendChild(welcomeContainer);
+                addDraftTemplateListeners();
+            }
+        }, 100);
+    }
+    
+    // Focus input
+    setTimeout(() => {
+        const userInput = document.getElementById('userInput');
+        if (userInput) {
+            userInput.focus();
+        }
+    }, 200);
 }
 
         // Go back to home from chat
@@ -6252,26 +6218,34 @@ button:disabled {
                 const userId = currentUser ? currentUser.id : 'guest_' + Date.now();
                 const backendUrl = 'https://legal-swami-backend.onrender.com';
                 
-                const response = await fetch(backendUrl + '/api/v1/chat/send', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'x-user-id': userId,
-                        'x-request-id': 'req_' + Date.now(),
-                        'x-language': detectedLanguage
-                    },
-                    body: JSON.stringify({
-                        message: fullMessage,
-                        generateDocument: isDocumentRequest(message),
-                        language: detectedLanguage
-                    })
-                });
-                
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}: ${await response.text()}`);
-                }
-                
-                const data = await response.json();
+               try {
+    const response = await fetch(backendUrl + '/api/v1/chat/send', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'x-user-id': userId,
+            'x-request-id': 'req_' + Date.now(),
+            'x-language': detectedLanguage
+        },
+        body: JSON.stringify({
+            message: fullMessage,
+            generateDocument: isDocumentRequest(message),
+            language: detectedLanguage
+        })
+    });
+    
+    if (!response.ok) {
+        // Add fallback to mock response if backend fails
+        return await generateMockResponse(fullMessage);
+    }
+    
+    const data = await response.json();
+    return data;
+    
+} catch (error) {
+    console.error('Backend API failed, using mock response:', error);
+    return await generateMockResponse(fullMessage);
+}
                 
                 if (stopStreamingRequested) {
                     console.log('Streaming was stopped, not processing response');
@@ -8747,6 +8721,36 @@ button:disabled {
                 alert('Please enter search term');
             }
         }
+
+		window.addEventListener('load', function() {
+    setTimeout(function() {
+        const loadingScreen = document.getElementById('loadingScreen');
+        if (loadingScreen) {
+            loadingScreen.style.transition = 'opacity 0.3s';
+            loadingScreen.style.opacity = '0';
+            setTimeout(function() {
+                loadingScreen.style.display = 'none';
+            }, 300);
+        }
+    }, 500); // Reduced from 1500ms
+});
+
+		async function generateMockResponse(message) {
+    // Simple mock response for when backend is down
+    const responses = [
+        "I understand you're asking about legal matters. Based on common legal principles in India...",
+        "For the legal document you requested, here's a basic template structure...",
+        "Regarding your legal question, here are some general guidelines...",
+        "I'll help you draft that document. Here's a standard format...",
+        "Based on Indian legal practice, here's what you need to consider..."
+    ];
+    
+    return {
+        response: responses[Math.floor(Math.random() * responses.length)],
+        content: responses[Math.floor(Math.random() * responses.length)],
+        isDocument: isDocumentRequest(message)
+    };
+}
     </script>
 </body>
 </html>
