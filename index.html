@@ -7014,7 +7014,9 @@ button:disabled {
 	
     <!-- Main App Script -->
     <script>
-// Global variables
+// ============================================
+// GLOBAL VARIABLES
+// ============================================
 let chatHistory = [];
 let currentChatId = null;
 let conversationHistory = [];
@@ -7041,7 +7043,6 @@ let isLoggedIn = false;
 let userToken = null;
 let searchCount = 0;
 const MAX_FREE_SEARCHES = 500;
-const MAX_PREMIUM_SEARCHES = 1000;
 let scrollPosition = 0;
 let lastDownloadedFileUrl = null;
 let lastDownloadedFileName = '';
@@ -7121,12 +7122,16 @@ const WELCOME_MESSAGE_HTML = `
     </div>
 `;
 
-// FIXED: Show ChatGPT interface - COMPLETELY FIXED VERSION
+// ============================================
+// CORE FUNCTIONS
+// ============================================
+
+// FIXED: Show ChatGPT interface - WORKING VERSION
 function showChatGPTInterface() {
     console.log("🚀 Showing ChatGPT Interface");
     
     try {
-        // First hide homepage
+        // Hide homepage
         const mainContainer = document.querySelector('.main-container');
         if (mainContainer) {
             mainContainer.style.display = 'none';
@@ -7136,30 +7141,29 @@ function showChatGPTInterface() {
         const chatInterface = document.getElementById('chatInterface');
         if (!chatInterface) {
             console.error("Chat interface element not found!");
+            showToast('Chat interface cannot be loaded. Please refresh the page.', 'error');
             return;
         }
         
+        // Apply styles
+        chatInterface.style.cssText = `
+            display: block !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100vw !important;
+            height: 100vh !important;
+            z-index: 99999 !important;
+            background: var(--dark-bg) !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+        `;
+        
         chatInterface.classList.add('active');
-        chatInterface.style.display = 'flex';
-        chatInterface.style.position = 'fixed';
-        chatInterface.style.top = '0';
-        chatInterface.style.left = '0';
-        chatInterface.style.width = '100%';
-        chatInterface.style.height = '100%';
-        chatInterface.style.zIndex = '99999';
         
         // Add chat-active class to body
         document.body.classList.add('chat-active');
         document.body.style.overflow = 'hidden';
-        
-        // Reset chat messages to show welcome message
-        const chatMessages = document.getElementById('chatMessages');
-        if (chatMessages && chatMessages.innerHTML.trim() === '') {
-            chatMessages.innerHTML = WELCOME_MESSAGE_HTML;
-            setTimeout(() => {
-                addDraftTemplateListeners();
-            }, 100);
-        }
         
         // Initialize chat if not already
         if (!chatInitialized) {
@@ -7172,7 +7176,16 @@ function showChatGPTInterface() {
             }
         }
         
-        // Force layout refresh
+        // Set up welcome message if empty
+        const chatMessages = document.getElementById('chatMessages');
+        if (chatMessages && chatMessages.innerHTML.trim() === '') {
+            chatMessages.innerHTML = WELCOME_MESSAGE_HTML;
+            setTimeout(() => {
+                addDraftTemplateListeners();
+            }, 100);
+        }
+        
+        // Scroll to bottom
         setTimeout(() => {
             if (chatMessages) {
                 chatMessages.scrollTop = chatMessages.scrollHeight;
@@ -7205,11 +7218,7 @@ function goBackToHome() {
         if (chatInterface) {
             chatInterface.classList.remove('active');
             chatInterface.style.display = 'none';
-            chatInterface.style.position = '';
-            chatInterface.style.top = '';
-            chatInterface.style.left = '';
-            chatInterface.style.width = '';
-            chatInterface.style.height = '';
+            chatInterface.removeAttribute('style');
         }
         
         // Remove chat-active class from body
@@ -7249,24 +7258,28 @@ function initializeAppForGuest() {
     showToast('Welcome to LegalSwami! You have 500 free searches per day.', 'info');
 }
 
-// FIXED: Update User UI - handles both homepage and chat
+// FIXED: Update User UI
 function updateUserUI() {
     // Update homepage UI
     if (isLoggedIn && currentUser) {
         document.getElementById('headerLoginBtn').style.display = 'none';
-        document.getElementById('homeUserProfile').style.display = 'flex';
-        document.getElementById('homeUserName').textContent = currentUser.name;
-        document.getElementById('homeUserEmail').textContent = currentUser.email;
-        
-        const avatar = document.getElementById('homeUserAvatar');
-        if (currentUser.picture) {
-            avatar.innerHTML = `<img src="${currentUser.picture}" alt="${currentUser.name}" style="width: 100%; height: 100%; border-radius: 8px;">`;
-        } else {
-            avatar.innerHTML = '<i class="fas fa-user"></i>';
+        const homeUserProfile = document.getElementById('homeUserProfile');
+        if (homeUserProfile) {
+            homeUserProfile.style.display = 'flex';
+            document.getElementById('homeUserName').textContent = currentUser.name;
+            document.getElementById('homeUserEmail').textContent = currentUser.email;
+            
+            const avatar = document.getElementById('homeUserAvatar');
+            if (currentUser.picture) {
+                avatar.innerHTML = `<img src="${currentUser.picture}" alt="${currentUser.name}" style="width: 100%; height: 100%; border-radius: 8px;">`;
+            } else {
+                avatar.innerHTML = '<i class="fas fa-user"></i>';
+            }
         }
     } else {
         document.getElementById('headerLoginBtn').style.display = 'flex';
-        document.getElementById('homeUserProfile').style.display = 'none';
+        const homeUserProfile = document.getElementById('homeUserProfile');
+        if (homeUserProfile) homeUserProfile.style.display = 'none';
     }
     
     // Update chat UI if chat interface is visible
@@ -7297,7 +7310,7 @@ function updateUserUI() {
     updateSearchCounterDisplay();
 }
 
-// FIXED: Toggle User Dropdown for chat
+// FIXED: Toggle User Dropdown
 function toggleUserDropdown() {
     const dropdown = document.getElementById('chatUserDropdown');
     dropdown.classList.toggle('active');
@@ -7314,7 +7327,8 @@ function handleLogout() {
             searchCount = 0;
             currentUser = null;
             isLoggedIn = false;
-            document.getElementById('loginModal').classList.add('active');
+            const loginModal = document.getElementById('loginModal');
+            if (loginModal) loginModal.classList.add('active');
             updateUserUI();
             showToast('Local data cleared', 'success');
         }
@@ -7325,7 +7339,8 @@ function handleLogout() {
             currentUser = null;
             userToken = null;
             isLoggedIn = false;
-            document.getElementById('loginModal').classList.add('active');
+            const loginModal = document.getElementById('loginModal');
+            if (loginModal) loginModal.classList.add('active');
             updateUserUI();
             showToast('Logged out successfully', 'success');
         }
@@ -7401,7 +7416,7 @@ function saveSearchCounter() {
     }
 }
 
-// Update search counter display in header
+// Update search counter display
 function updateSearchCounterDisplay() {
     const searchCounterElement = document.getElementById('searchCounter');
     if (searchCounterElement) {
@@ -7418,15 +7433,19 @@ function updateSearchCounterDisplay() {
     }
 }
 
+// ============================================
+// CHAT FUNCTIONS
+// ============================================
+
 // FIXED: Initialize Chat App
 function initializeChatApp() {
     console.log("Initializing chat app...");
     
     try {
+        // Get DOM elements
         const chatMessages = document.getElementById('chatMessages');
         const userInput = document.getElementById('userInput');
         const sendButton = document.getElementById('sendButton');
-        const sidebar = document.getElementById('sidebar');
         const sidebarToggle = document.getElementById('sidebarToggle');
         const sidebarClose = document.getElementById('sidebarClose');
         const sidebarOverlay = document.getElementById('sidebarOverlay');
@@ -7436,83 +7455,63 @@ function initializeChatApp() {
         const voiceSearchBtn = document.getElementById('voiceSearchBtn');
         const inputMicrophoneBtn = document.getElementById('inputMicrophoneBtn');
         const themeToggle = document.getElementById('themeToggle');
-        const topicItems = document.querySelectorAll('.topic-item');
-        const actionItems = document.querySelectorAll('.action-item');
-        const sidebarTabs = document.querySelectorAll('.sidebar-tab');
         const newChatBtn = document.getElementById('newChatBtn');
         const attachmentBtn = document.getElementById('attachmentBtn');
         const headerLoginBtn = document.getElementById('chatHeaderLoginBtn');
         const logoutBtn = document.getElementById('chatLogoutBtn');
         const userProfile = document.getElementById('chatUserProfile');
-        const emojiPickerBtn = document.getElementById('emojiPickerBtn');
         const backToHomeBtn = document.getElementById('backToHomeBtn');
 
-        const isDesktop = window.innerWidth >= 1025;
-        if (isDesktop && sidebar) {
-            sidebar.classList.add('active');
-        }
+        // Initialize default state
         loadThemePreference();
         initializeSearchCounter();
+        
         if (!currentChatId || conversationHistory.length === 0) {
             createNewChat();
         } else {
             loadCurrentChatMessages();
         }
 
-        // Event listeners for chat functionality
-        sendButton.addEventListener('click', function() {
-            if (isStreamingActive) {
-                stopStreaming();
-            } else {
-                sendMessage();
-            }
-        });
-        
-        userInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && e.ctrlKey) {
-                e.preventDefault();
+        // Event listeners
+        if (sendButton) {
+            sendButton.addEventListener('click', function() {
                 if (isStreamingActive) {
                     stopStreaming();
                 } else {
                     sendMessage();
                 }
-            }
-            if (e.key === 'Enter' && !e.ctrlKey) {
-                setTimeout(() => {
-                    this.style.height = 'auto';
-                    this.style.height = Math.min(this.scrollHeight, 150) + 'px';
-                }, 10);
-            }
-        });
+            });
+        }
         
-        userInput.addEventListener('input', function() {
-            this.style.height = 'auto';
-            this.style.height = Math.min(this.scrollHeight, 150) + 'px';
-            if (isStreamingActive) {
-                sendButton.disabled = false;
-                sendButton.classList.add('stop-button');
-                sendButton.innerHTML = '<i class="fas fa-stop"></i> <span class="hide-on-mobile">Stop</span>';
-            } else {
-                sendButton.disabled = this.value.trim() === '' && attachedFiles.length === 0;
-                sendButton.classList.remove('stop-button');
-                sendButton.innerHTML = '<i class="fas fa-paper-plane"></i> <span class="hide-on-mobile">Send</span>';
-            }
-            const text = this.value.trim();
-            if (text.length > 0) {
-                const lang = detectLanguage(text);
-                showLanguageHint(lang);
-            } else {
-                hideLanguageHint();
-            }
-        });
+        if (userInput) {
+            userInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && e.ctrlKey) {
+                    e.preventDefault();
+                    if (isStreamingActive) {
+                        stopStreaming();
+                    } else {
+                        sendMessage();
+                    }
+                }
+            });
+            
+            userInput.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = Math.min(this.scrollHeight, 150) + 'px';
+                
+                if (sendButton) {
+                    sendButton.disabled = this.value.trim() === '' && attachedFiles.length === 0;
+                }
+            });
+        }
 
-        // Voice search functionality
-        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
+        // Voice recognition
+        if (voiceSearchBtn && ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window)) {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             recognition = new SpeechRecognition();
             recognition.continuous = false;
             recognition.interimResults = true;
-            recognition.lang = 'en-IN,hi-IN,mr-IN,ta-IN,te-IN';
+            recognition.lang = 'en-IN,hi-IN,mr-IN';
             
             recognition.onstart = function() {
                 isListening = true;
@@ -7527,22 +7526,9 @@ function initializeChatApp() {
             
             recognition.onresult = function(event) {
                 const transcript = event.results[0][0].transcript;
-                const voiceInputText = document.getElementById('voiceInputText');
                 if (event.results[0].isFinal) {
                     userInput.value = transcript;
-                    userInput.style.height = Math.min(userInput.scrollHeight, 180) + 'px';
-                    voiceInputText.style.display = 'none';
-                    const lang = detectLanguage(transcript);
-                    showLanguageHint(lang);
                     sendButton.disabled = false;
-                    if (transcript.split(' ').length <= 10) {
-                        setTimeout(() => {
-                            sendMessage();
-                        }, 1000);
-                    }
-                } else {
-                    voiceInputText.textContent = transcript;
-                    voiceInputText.style.display = 'block';
                 }
             };
             
@@ -7553,11 +7539,6 @@ function initializeChatApp() {
                 inputMicrophoneBtn.classList.remove('listening');
                 voiceSearchBtn.classList.remove('listening');
                 document.getElementById('voiceInputStatus').classList.remove('active');
-                if (event.error === 'not-allowed') {
-                    showToast('Microphone access denied. Please allow microphone access. 🎤', 'error');
-                } else {
-                    showToast('Voice recognition failed. Please try again. ❌', 'error');
-                }
             };
             
             recognition.onend = function() {
@@ -7566,21 +7547,21 @@ function initializeChatApp() {
                 inputMicrophoneBtn.classList.remove('listening');
                 voiceSearchBtn.classList.remove('listening');
                 document.getElementById('voiceInputStatus').classList.remove('active');
-                document.getElementById('voiceInputText').style.display = 'none';
             };
             
             voiceSearchBtn.addEventListener('click', toggleVoiceRecognition);
-            inputMicrophoneBtn.addEventListener('click', toggleInputVoiceRecognition);
-        } else {
+            if (inputMicrophoneBtn) {
+                inputMicrophoneBtn.addEventListener('click', toggleInputVoiceRecognition);
+            }
+        } else if (voiceSearchBtn) {
             voiceSearchBtn.style.display = 'none';
-            inputMicrophoneBtn.style.display = 'none';
-            showToast('Voice search not supported in your browser 🎤', 'warning');
         }
 
         // Theme toggle
-        themeToggle.addEventListener('click', toggleTheme);
+        if (themeToggle) themeToggle.addEventListener('click', toggleTheme);
         
-        // Sidebar toggle buttons
+        // Sidebar
+        const sidebar = document.getElementById('sidebar');
         if (sidebarToggle && sidebar && sidebarOverlay) {
             sidebarToggle.addEventListener('click', function() {
                 sidebar.classList.add('active');
@@ -7601,7 +7582,8 @@ function initializeChatApp() {
             });
         }
         
-        // Sidebar tab switching
+        // Sidebar tabs
+        const sidebarTabs = document.querySelectorAll('.sidebar-tab');
         sidebarTabs.forEach(tab => {
             tab.addEventListener('click', function() {
                 const tabId = this.dataset.tab;
@@ -7617,7 +7599,7 @@ function initializeChatApp() {
             });
         });
         
-        // New chat button
+        // New chat
         if (newChatBtn) newChatBtn.addEventListener('click', createNewChat);
         if (clearChatBtn) clearChatBtn.addEventListener('click', clearCurrentChat);
         
@@ -7633,7 +7615,8 @@ function initializeChatApp() {
         
         if (suggestionsBtn) suggestionsBtn.addEventListener('click', showSuggestions);
         
-        // Topic click handlers
+        // Topic items
+        const topicItems = document.querySelectorAll('.topic-item');
         topicItems.forEach(item => {
             item.addEventListener('click', function() {
                 const topic = this.dataset.topic;
@@ -7661,15 +7644,16 @@ function initializeChatApp() {
                     sendButton.disabled = false;
                     showToast(`${topicName} tab opened 📂`, 'success');
                 }
-                if (window.innerWidth < 1024) {
+                if (window.innerWidth < 1024 && sidebar) {
                     sidebar.classList.remove('active');
-                    sidebarOverlay.classList.remove('active');
+                    if (sidebarOverlay) sidebarOverlay.classList.remove('active');
                     document.body.style.overflow = '';
                 }
             });
         });
         
-        // Action click handlers
+        // Action items
+        const actionItems = document.querySelectorAll('.action-item');
         actionItems.forEach(item => {
             item.addEventListener('click', function() {
                 const action = this.dataset.action;
@@ -7685,25 +7669,26 @@ function initializeChatApp() {
                 }
                 userInput.style.height = Math.min(userInput.scrollHeight, 180) + 'px';
                 sendButton.disabled = false;
-                if (window.innerWidth < 1024) {
+                if (window.innerWidth < 1024 && sidebar) {
                     sidebar.classList.remove('active');
-                    sidebarOverlay.classList.remove('active');
+                    if (sidebarOverlay) sidebarOverlay.classList.remove('active');
                     document.body.style.overflow = '';
                 }
             });
         });
         
-        // Header login button click
+        // Header login button
         if (headerLoginBtn) {
             headerLoginBtn.addEventListener('click', function() {
-                document.getElementById('loginModal').classList.add('active');
+                const loginModal = document.getElementById('loginModal');
+                if (loginModal) loginModal.classList.add('active');
             });
         }
         
         // Back to home button
         if (backToHomeBtn) backToHomeBtn.addEventListener('click', goBackToHome);
         
-        // User profile click
+        // User profile
         if (userProfile) userProfile.addEventListener('click', toggleUserDropdown);
         
         // Logout button
@@ -7718,35 +7703,12 @@ function initializeChatApp() {
                 profile && !profile.contains(event.target)) {
                 dropdown.classList.remove('active');
             }
-            const isMobile = window.innerWidth < 1024;
-            if (isMobile && sidebar && sidebar.classList.contains('active') && 
-                !sidebar.contains(event.target) && 
-                sidebarToggle && !sidebarToggle.contains(event.target)) {
-                sidebar.classList.remove('active');
-                if (sidebarOverlay) sidebarOverlay.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-            const emojiPicker = document.getElementById('emojiPicker');
-            const emojiBtn = document.getElementById('emojiPickerBtn');
-            if (emojiPicker && emojiPicker.style.display === 'block' &&
-                !emojiPicker.contains(event.target) && 
-                emojiBtn && !emojiBtn.contains(event.target)) {
-                emojiPicker.style.display = 'none';
-            }
         });
         
-        // Focus input on load
+        // Focus input
         setTimeout(() => {
             if (userInput) userInput.focus();
         }, 300);
-        
-        // Adjust textarea height on page load
-        setTimeout(() => {
-            if (userInput) {
-                userInput.style.height = 'auto';
-                userInput.style.height = Math.min(userInput.scrollHeight, 180) + 'px';
-            }
-        }, 100);
         
         // Initialize scroll to bottom button
         const scrollToBottomBtn = document.getElementById('scrollToBottomBtn');
@@ -7758,8 +7720,6 @@ function initializeChatApp() {
         if (chatMessages) {
             chatMessages.addEventListener('scroll', checkScrollPosition);
             setTimeout(checkScrollPosition, 500);
-            const observer = new MutationObserver(checkScrollPosition);
-            observer.observe(chatMessages, { childList: true, subtree: true });
         }
         
         // Initialize send button state
@@ -7767,13 +7727,10 @@ function initializeChatApp() {
             sendButton.disabled = userInput.value.trim() === '' && attachedFiles.length === 0;
         }
         
-        // Adjust chat layout
-        setTimeout(adjustChatLayout, 100);
-        
-        // File upload functionality
+        // File upload
         if (attachmentBtn) attachmentBtn.addEventListener('click', openFileUploadModal);
         
-        // Download notification close
+        // Download notification
         const closeDownloadNotification = document.getElementById('closeDownloadNotification');
         if (closeDownloadNotification) {
             closeDownloadNotification.addEventListener('click', function() {
@@ -7781,7 +7738,6 @@ function initializeChatApp() {
             });
         }
         
-        // Download notification click to open file
         const downloadNotification = document.getElementById('downloadNotification');
         if (downloadNotification) {
             downloadNotification.addEventListener('click', function() {
@@ -7800,24 +7756,222 @@ function initializeChatApp() {
     }
 }
 
-// Show download notification
-function showDownloadNotification(fileName, fileType) {
-    const notification = document.getElementById('downloadNotification');
-    if (!notification) return;
+// FIXED: Send message function
+async function sendMessage() {
+    const userInput = document.getElementById('userInput');
+    const sendButton = document.getElementById('sendButton');
     
-    const title = document.getElementById('downloadNotificationTitle');
-    const message = document.getElementById('downloadNotificationMessage');
+    if (!userInput || !sendButton) return;
     
-    if (title) title.textContent = `${fileType} Downloaded 📥`;
-    if (message) message.textContent = `Click to open ${fileName}`;
+    const message = userInput.value.trim();
     
-    notification.classList.add('show');
-    setTimeout(() => {
-        notification.classList.remove('show');
-    }, 5000);
+    if (!message && attachedFiles.length === 0) {
+        showToast('Please enter a message or attach a file 📝', 'warning');
+        return;
+    }
+    
+    if (!isLoggedIn && searchCount >= MAX_FREE_SEARCHES) {
+        showToast(`You've used ${MAX_FREE_SEARCHES} free searches today. Please wait until tomorrow. ⏰`, 'warning');
+        return;
+    }
+    
+    if (isListening && recognition) {
+        recognition.stop();
+    }
+    
+    let detectedLanguage = 'english';
+    if (message) {
+        detectedLanguage = detectLanguage(message);
+    }
+    
+    const messageId = addMessageToChat(message, true, false, false, attachedFiles);
+    userInput.value = '';
+    userInput.style.height = '52px';
+    
+    sendButton.disabled = true;
+    isStreamingActive = true;
+    stopStreamingRequested = false;
+    clearAttachments();
+    
+    try {
+        const userMessage = {
+            role: 'user',
+            content: message,
+            language: detectedLanguage,
+            attachments: [...attachedFiles],
+            timestamp: new Date().toISOString()
+        };
+        
+        conversationHistory.push(userMessage);
+        
+        if (!isLoggedIn) {
+            searchCount++;
+            saveSearchCounter();
+            updateSearchCounterDisplay();
+        }
+        
+        // Generate mock response for now
+        const mockResponse = await generateMockResponse(message);
+        const sourcesData = extractSourcesFromResponse(mockResponse.response || mockResponse.content || '');
+        const aiMessage = {
+            role: 'assistant',
+            content: mockResponse.response || mockResponse.content || '',
+            language: detectedLanguage,
+            isDocument: mockResponse.isDocument,
+            sources: sourcesData.sources,
+            timestamp: new Date().toISOString()
+        };
+        
+        conversationHistory.push(aiMessage);
+        const aiMessageId = createStreamingMessage();
+        startStreamingResponse(aiMessageId, aiMessage.content, mockResponse.isDocument);
+        
+        setTimeout(() => {
+            if (sourcesData && sourcesData.hasSources) {
+                addResponseSources(aiMessageId, sourcesData);
+            }
+        }, 500);
+        
+    } catch (error) {
+        console.error('AI Service Error:', error);
+        const errorMessage = "I apologize for the inconvenience. I'm currently experiencing technical difficulties. Please try again in a moment. ⚠️";
+        addMessageToChat(errorMessage, false);
+        conversationHistory.push({
+            role: 'assistant',
+            content: errorMessage,
+            language: 'english',
+            timestamp: new Date().toISOString()
+        });
+        showToast('Service temporarily unavailable ⚠️', 'warning');
+    } finally {
+        if (sendButton) {
+            sendButton.disabled = userInput.value.trim() === '' && attachedFiles.length === 0;
+        }
+        
+        isStreamingActive = false;
+        
+        if (userInput) {
+            userInput.focus();
+        }
+        
+        saveCurrentChat();
+    }
 }
 
-// Add active topic to sidebar
+// Stop streaming
+function stopStreaming() {
+    stopStreamingRequested = true;
+    isStreamingActive = false;
+    isStreamingPaused = false;
+    
+    const sendButton = document.getElementById('sendButton');
+    const userInput = document.getElementById('userInput');
+    
+    if (sendButton && userInput) {
+        sendButton.disabled = userInput.value.trim() === '' && attachedFiles.length === 0;
+    }
+    
+    if (currentStreamingMessageId) {
+        const messageDiv = document.getElementById(currentStreamingMessageId);
+        if (messageDiv) {
+            const messageText = messageDiv.querySelector('.message-text');
+            const streamControls = messageDiv.querySelector('.stream-controls');
+            
+            if (streamControls) {
+                streamControls.remove();
+            }
+            
+            const messageActions = document.createElement('div');
+            messageActions.className = 'message-actions';
+            messageActions.innerHTML = `
+                <button class="action-btn copy" onclick="copyMessage(this)" title="Copy response">
+                    <i class="fas fa-copy"></i> Copy
+                </button>
+                <button class="action-btn regenerate" onclick="regenerateResponse('${currentStreamingMessageId}')" title="Regenerate response">
+                    <i class="fas fa-sync-alt"></i> Regenerate
+                </button>
+            `;
+            
+            if (messageText && messageText.parentElement) {
+                messageText.parentElement.appendChild(messageActions);
+            }
+            
+            const cursor = messageText ? messageText.querySelector('.streaming-cursor') : null;
+            if (cursor) cursor.remove();
+        }
+        
+        currentStreamingMessageId = null;
+        currentStreamingContent = '';
+        currentStreamingBuffer = '';
+        streamingTextChunks = [];
+        streamingTextIndex = 0;
+    }
+    
+    showToast('Response stopped ⏹️', 'info');
+}
+
+// ============================================
+// UTILITY FUNCTIONS
+// ============================================
+
+function loadCurrentChatMessages() {
+    const chatMessages = document.getElementById('chatMessages');
+    if (!chatMessages) return;
+    
+    chatMessages.innerHTML = '';
+    
+    if (conversationHistory.length === 0) {
+        const welcomeContainer = document.createElement('div');
+        welcomeContainer.innerHTML = WELCOME_MESSAGE_HTML;
+        chatMessages.appendChild(welcomeContainer);
+        addDraftTemplateListeners();
+        return;
+    }
+    
+    conversationHistory.forEach(msg => {
+        const isDocument = msg.isDocument || false;
+        const hasSources = msg.sources && msg.sources.length > 0;
+        addMessageToChat(msg.content, msg.role === 'user', true, isDocument, msg.attachments || [], hasSources ? msg.sources : null);
+    });
+}
+
+function addDraftTemplateListeners() {
+    const draftTemplates = document.querySelectorAll('.draft-template');
+    draftTemplates.forEach(template => {
+        template.addEventListener('click', function() {
+            const templateType = this.dataset.template;
+            let requestText = '';
+            
+            switch(templateType) {
+                case 'nda':
+                    requestText = 'Create a comprehensive non-disclosure agreement for Indian business use 🤝';
+                    break;
+                case 'employment':
+                    requestText = 'Draft an employment contract template for Indian companies 💼';
+                    break;
+                case 'rental':
+                    requestText = 'Create a rental/tenancy agreement for residential property in India 🏠';
+                    break;
+                case 'loan':
+                    requestText = 'Draft a loan agreement template for personal lending in India 💰';
+                    break;
+            }
+            
+            const userInput = document.getElementById('userInput');
+            if (userInput) {
+                userInput.value = requestText;
+                userInput.focus();
+                userInput.style.height = Math.min(userInput.scrollHeight, 180) + 'px';
+                
+                const sendButton = document.getElementById('sendButton');
+                if (sendButton) {
+                    sendButton.disabled = false;
+                }
+            }
+        });
+    });
+}
+
 function addActiveTopic(topicId, topicName) {
     const existingIndex = activeLegalTopics.findIndex(t => t.id === topicId);
     if (existingIndex !== -1) return;
@@ -7831,13 +7985,11 @@ function addActiveTopic(topicId, topicName) {
     updateActiveTopicsUI();
 }
 
-// Remove active topic from sidebar
 function removeActiveTopic(topicId) {
     activeLegalTopics = activeLegalTopics.filter(t => t.id !== topicId);
     updateActiveTopicsUI();
 }
 
-// Update active topics UI in sidebar
 function updateActiveTopicsUI() {
     const activeTopicsSection = document.getElementById('activeTopicsSection');
     const activeTopicsList = document.getElementById('activeTopicsList');
@@ -7872,7 +8024,6 @@ function updateActiveTopicsUI() {
     });
 }
 
-// Clear file content display for a specific topic
 function clearTopicFileContent(topicId) {
     const fileContents = document.querySelectorAll(`.file-content-display[data-topic="${topicId}"]`);
     fileContents.forEach(content => {
@@ -7880,532 +8031,116 @@ function clearTopicFileContent(topicId) {
     });
 }
 
-// Load current chat messages
-function loadCurrentChatMessages() {
+function addMessageToChat(content, isUser, fromHistory = false, isDocument = false, attachments = [], sources = null) {
     const chatMessages = document.getElementById('chatMessages');
-    if (!chatMessages) return;
-    
-    chatMessages.innerHTML = '';
-    
-    if (conversationHistory.length === 0) {
-        const welcomeContainer = document.createElement('div');
-        welcomeContainer.innerHTML = WELCOME_MESSAGE_HTML;
-        chatMessages.appendChild(welcomeContainer);
-        addDraftTemplateListeners();
-        return;
-    }
-    
-    conversationHistory.forEach(msg => {
-        const isDocument = msg.isDocument || false;
-        const hasSources = msg.sources && msg.sources.length > 0;
-        addMessageToChat(msg.content, msg.role === 'user', true, isDocument, msg.attachments || [], hasSources ? msg.sources : null);
-    });
-    
-    setTimeout(addCopyEditButtonsToUserMessages, 100);
-}
-
-// Add draft template listeners
-function addDraftTemplateListeners() {
-    const draftTemplates = document.querySelectorAll('.draft-template');
-    draftTemplates.forEach(template => {
-        template.addEventListener('click', function() {
-            const templateType = this.dataset.template;
-            let requestText = '';
-            
-            switch(templateType) {
-                case 'nda':
-                    requestText = 'Create a comprehensive non-disclosure agreement for Indian business use 🤝';
-                    break;
-                case 'employment':
-                    requestText = 'Draft an employment contract template for Indian companies 💼';
-                    break;
-                case 'rental':
-                    requestText = 'Create a rental/tenancy agreement for residential property in India 🏠';
-                    break;
-                case 'loan':
-                    requestText = 'Draft a loan agreement template for personal lending in India 💰';
-                    break;
-            }
-            
-            const userInput = document.getElementById('userInput');
-            if (userInput) {
-                userInput.value = requestText;
-                userInput.focus();
-                userInput.style.height = Math.min(userInput.scrollHeight, 180) + 'px';
-                
-                const sendButton = document.getElementById('sendButton');
-                if (sendButton) {
-                    sendButton.disabled = false;
-                }
-                
-                setTimeout(() => {
-                    sendMessage();
-                }, 1000);
-            }
-        });
-    });
-}
-
-// FIXED: Send message function
-async function sendMessage() {
-    const userInput = document.getElementById('userInput');
-    const sendButton = document.getElementById('sendButton');
-    
-    if (!userInput || !sendButton) return;
-    
-    const message = userInput.value.trim();
-    
-    if (!message && attachedFiles.length === 0) {
-        showToast('Please enter a message or attach a file 📝', 'warning');
-        return;
-    }
-    
-    if (!isLoggedIn && searchCount >= MAX_FREE_SEARCHES) {
-        showToast(`You've used ${MAX_FREE_SEARCHES} free searches today. Please wait until tomorrow or clear local data to reset counter. ⏰`, 'warning');
-        return;
-    }
-    
-    if (isListening && recognition) {
-        recognition.stop();
-    }
-    
-    let detectedLanguage = 'english';
-    if (message) {
-        detectedLanguage = detectLanguage(message);
-        hideLanguageHint();
-    }
-    
-    const messageId = addMessageToChat(message, true, false, false, attachedFiles);
-    userInput.value = '';
-    userInput.style.height = '52px';
-    
-    sendButton.disabled = false;
-    sendButton.classList.add('stop-button');
-    sendButton.innerHTML = '<i class="fas fa-stop"></i> <span class="hide-on-mobile">Stop</span>';
-    
-    isStreamingActive = true;
-    stopStreamingRequested = false;
-    clearAttachments();
-    
-    try {
-        const userMessage = {
-            role: 'user',
-            content: message,
-            language: detectedLanguage,
-            attachments: [...attachedFiles],
-            timestamp: new Date().toISOString()
-        };
-        
-        conversationHistory.push(userMessage);
-        
-        if (!isLoggedIn) {
-            searchCount++;
-            saveSearchCounter();
-            updateSearchCounterDisplay();
-            
-            const remaining = MAX_FREE_SEARCHES - searchCount;
-            if (remaining === 50) {
-                showToast(`You have ${remaining} free searches remaining. ⚠️`, 'warning');
-            } else if (remaining === 10) {
-                showToast(`Only ${remaining} free searches left! ⚠️`, 'warning');
-            } else if (remaining === 0) {
-                showToast(`Daily limit reached! You've used ${MAX_FREE_SEARCHES} searches today. ⏰`, 'warning');
-            }
+    if (!fromHistory && isUser) {
+        const welcomeMessage = document.querySelector('.welcome-message');
+        if (welcomeMessage) {
+            welcomeMessage.remove();
         }
-        
-        let fileContents = '';
-        if (attachedFiles.length > 0) {
-            for (const file of attachedFiles) {
-                const content = await readFileContent(file);
-                if (content) {
-                    fileContents += `\n\n[Content from ${file.name}]:\n${content.substring(0, 2000)}${content.length > 2000 ? '... (truncated)' : ''}`;
-                }
-            }
-        }
-        
-        const fullMessage = message + fileContents;
-        
-        // Backend API call
-        const backendUrl = 'https://legal-swami-backend.onrender.com';
-        const userId = currentUser ? currentUser.id : 'guest_' + Date.now();
-        
-        try {
-            const controller = new AbortController();
-            const timeoutId = setTimeout(() => controller.abort(), 10000);
-            
-            const response = await fetch(backendUrl + '/api/v1/chat/send', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'x-user-id': userId,
-                    'x-request-id': 'req_' + Date.now(),
-                    'x-language': detectedLanguage
-                },
-                body: JSON.stringify({
-                    message: fullMessage,
-                    generateDocument: isDocumentRequest(message),
-                    language: detectedLanguage
-                }),
-                signal: controller.signal
-            }).finally(() => clearTimeout(timeoutId));
-            
-            if (!response.ok) {
-                throw new Error(`HTTP ${response.status}: ${await response.text()}`);
-            }
-            
-            const data = await response.json();
-            
-            if (stopStreamingRequested) {
-                console.log('Streaming was stopped, not processing response');
-                return;
-            }
-            
-            const sourcesData = extractSourcesFromResponse(data.response || data.content || '');
-            const aiMessage = {
-                role: 'assistant',
-                content: data.response || data.content || '',
-                language: detectedLanguage,
-                isDocument: isDocumentRequest(message),
-                sources: sourcesData.sources,
-                timestamp: new Date().toISOString()
-            };
-            
-            conversationHistory.push(aiMessage);
-            const aiMessageId = createStreamingMessage();
-            startStreamingResponse(aiMessageId, aiMessage.content, isDocumentRequest(message));
-            
-            setTimeout(() => {
-                if (sourcesData && sourcesData.hasSources) {
-                    addResponseSources(aiMessageId, sourcesData);
-                }
-            }, 500);
-            
-        } catch (error) {
-            console.error('Backend API failed, using mock response:', error);
-            // Use mock response
-            const mockResponse = await generateMockResponse(fullMessage);
-            const sourcesData = extractSourcesFromResponse(mockResponse.response || mockResponse.content || '');
-            const aiMessage = {
-                role: 'assistant',
-                content: mockResponse.response || mockResponse.content || '',
-                language: detectedLanguage,
-                isDocument: mockResponse.isDocument,
-                sources: sourcesData.sources,
-                timestamp: new Date().toISOString()
-            };
-            
-            conversationHistory.push(aiMessage);
-            const aiMessageId = createStreamingMessage();
-            startStreamingResponse(aiMessageId, aiMessage.content, mockResponse.isDocument);
-        }
-        
-        // Save chat to backend if logged in
-        if (isLoggedIn && currentUser) {
-            try {
-                await fetch(backendUrl + '/api/v1/chat/save', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'x-user-id': currentUser.id,
-                        'x-token': userToken || ''
-                    },
-                    body: JSON.stringify({
-                        chatId: currentChatId,
-                        messages: conversationHistory,
-                        title: conversationHistory[0]?.content?.substring(0, 30) || 'New Chat'
-                    })
-                });
-            } catch (error) {
-                console.error('Failed to save chat to backend:', error);
-            }
-        }
-        
-    } catch (error) {
-        console.error('AI Service Error:', error);
-        const errorMessage = "I apologize for the inconvenience. I'm currently experiencing technical difficulties. Please try again in a moment. ⚠️";
-        addMessageToChat(errorMessage, false);
-        conversationHistory.push({
-            role: 'assistant',
-            content: errorMessage,
-            language: 'english',
-            timestamp: new Date().toISOString()
-        });
-        showToast('Service temporarily unavailable ⚠️', 'warning');
-    } finally {
-        if (sendButton) {
-            sendButton.disabled = userInput.value.trim() === '' && attachedFiles.length === 0;
-            sendButton.classList.remove('stop-button');
-            sendButton.innerHTML = '<i class="fas fa-paper-plane"></i> <span class="hide-on-mobile">Send</span>';
-        }
-        
-        isStreamingActive = false;
-        
-        if (userInput) {
-            userInput.focus();
-        }
-        
-        setTimeout(adjustChatLayout, 100);
-        setTimeout(addCopyEditButtonsToUserMessages, 100);
-        saveCurrentChat();
-    }
-}
-
-// Stop streaming function
-function stopStreaming() {
-    stopStreamingRequested = true;
-    isStreamingActive = false;
-    isStreamingPaused = false;
-    
-    const sendButton = document.getElementById('sendButton');
-    const userInput = document.getElementById('userInput');
-    
-    if (sendButton && userInput) {
-        sendButton.disabled = userInput.value.trim() === '' && attachedFiles.length === 0;
-        sendButton.classList.remove('stop-button');
-        sendButton.innerHTML = '<i class="fas fa-paper-plane"></i> <span class="hide-on-mobile">Send</span>';
     }
     
-    if (currentStreamingMessageId) {
-        const messageDiv = document.getElementById(currentStreamingMessageId);
-        if (messageDiv) {
-            const messageText = messageDiv.querySelector('.message-text');
-            const streamControls = messageDiv.querySelector('.stream-controls');
-            
-            if (streamControls) {
-                streamControls.remove();
-            }
-            
-            const messageActions = document.createElement('div');
-            messageActions.className = 'message-actions';
-            messageActions.innerHTML = `
-                <button class="action-btn copy" onclick="copyMessage(this)" title="Copy response">
-                    <i class="fas fa-copy"></i> Copy
-                </button>
-                <button class="action-btn regenerate" onclick="regenerateResponse('${currentStreamingMessageId}')" title="Regenerate response">
-                    <i class="fas fa-sync-alt"></i> Regenerate
-                </button>
-                <button class="action-btn like" onclick="likeMessage(this)" title="Mark as helpful">
-                    <i class="far fa-thumbs-up"></i> Helpful
-                </button>
-                <button class="action-btn dislike" onclick="dislikeMessage(this)" title="Mark as not helpful">
-                    <i class="far fa-thumbs-down"></i> Not Helpful
-                </button>
-                <button class="action-btn share" onclick="shareResponse('${currentStreamingMessageId}')" title="Share response">
-                    <i class="fas fa-share"></i> Share
-                </button>
-                <button class="action-btn document" onclick="downloadThisMessage('${currentStreamingMessageId}')" title="Download document">
-                    <i class="fas fa-file-download"></i> Download
-                </button>
-            `;
-            
-            if (messageText && messageText.parentElement) {
-                messageText.parentElement.appendChild(messageActions);
-            }
-            
-            const cursor = messageText ? messageText.querySelector('.streaming-cursor') : null;
-            if (cursor) cursor.remove();
-            
-            const pausedIndicator = messageText ? messageText.querySelector('.paused-indicator') : null;
-            if (pausedIndicator) pausedIndicator.remove();
-            
-            if (messageText) {
-                if (isDocumentRequest(currentStreamingContent)) {
-                    messageText.innerHTML = formatDocumentResponse(currentStreamingContent);
-                    addDocumentDownloadButton(currentStreamingMessageId, currentStreamingContent);
-                } else {
-                    messageText.innerHTML = formatLegalResponse(currentStreamingContent);
-                }
-            }
-        }
-        
-        currentStreamingMessageId = null;
-        currentStreamingContent = '';
-        currentStreamingBuffer = '';
-        streamingTextChunks = [];
-        streamingTextIndex = 0;
-    }
+    const messageDiv = document.createElement('div');
+    messageDiv.className = `message ${isUser ? 'user-message' : 'ai-message'}`;
+    const messageId = 'msg_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    messageDiv.id = messageId;
     
-    showToast('Response stopped ⏹️', 'info');
-}
-
-// Read file content
-async function readFileContent(file) {
-    return new Promise((resolve, reject) => {
-        if (file.type.startsWith('image/')) {
-            resolve(`[Image file: ${file.name}. Size: ${(file.size / 1024).toFixed(2)} KB]`);
-        } else if (file.type === 'application/pdf') {
-            resolve(`[PDF file: ${file.name}. Size: ${(file.size / 1024).toFixed(2)} KB. Content preview not available in browser.]`);
-        } else if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                resolve(e.target.result);
-            };
-            reader.onerror = reject;
-            reader.readAsText(file.file);
-        } else if (file.type.includes('document') || file.name.endsWith('.doc') || file.name.endsWith('.docx')) {
-            resolve(`[Document file: ${file.name}. Size: ${(file.size / 1024).toFixed(2)} KB. Content preview not available in browser.]`);
+    const avatar = document.createElement('div');
+    avatar.className = 'avatar';
+    if (isUser) {
+        if (currentUser && currentUser.picture) {
+            avatar.innerHTML = `<img src="${currentUser.picture}" alt="${currentUser.name}" style="width: 100%; height: 100%; border-radius: 8px;">`;
         } else {
-            resolve(`[File: ${file.name}. Type: ${file.type}. Size: ${(file.size / 1024).toFixed(2)} KB]`);
+            avatar.innerHTML = '<i class="fas fa-user"></i>';
         }
-    });
-}
-
-// Extract ONLY sources from AI response (NO SUMMARY)
-function extractSourcesFromResponse(response) {
-    const sources = [];
-    const indianActsPatterns = [
-        /(Indian Contract Act,?\s*1872)/gi,
-        /(Indian Penal Code,?\s*1860)/gi,
-        /(Code of Civil Procedure,?\s*1908)/gi,
-        /(Code of Criminal Procedure,?\s*1973)/gi,
-        /(Constitution of India)/gi,
-        /(Evidence Act,?\s*1872)/gi,
-        /(Specific Relief Act,?\s*1963)/gi,
-        /(Transfer of Property Act,?\s*1882)/gi,
-        /(Hindu Marriage Act,?\s*1955)/gi,
-        /(Hindu Succession Act,?\s*1956)/gi,
-        /(Companies Act,?\s*2013)/gi,
-        /(Consumer Protection Act,?\s*2019)/gi,
-        /(Information Technology Act,?\s*2000)/gi,
-        /(Right to Information Act,?\s*2005)/gi,
-        /(Arbitration and Conciliation Act,?\s*1996)/gi,
-        /(Protection of Children from Sexual Offences Act,?\s*2012)/gi,
-        /(Motor Vehicles Act,?\s*1988)/gi,
-        /(Negotiable Instruments Act,?\s*1881)/gi,
-        /(Sale of Goods Act,?\s*1930)/gi,
-        /(Partnership Act,?\s*1932)/gi
-    ];
+    } else {
+        avatar.innerHTML = '<i class="fas fa-scale-balanced"></i>';
+        avatar.style.background = 'linear-gradient(135deg, var(--secondary) 0%, #5e35b1 100%)';
+    }
     
-    const caseLawPatterns = [
-        /([A-Z][a-z]+\s+v\.\s+[A-Z][a-z]+)/g,
-        /(AIR\s+\d{4}\s+(?:SC|Bom|Del|Cal|Mad|Ker|Guj|Raj|All|Pat|Ori|MP|AP|HP|P&H|J&K|Kar)\s+\d+)/gi,
-        /(SCC\s+\d+)/gi,
-        /((\d+)\s+SCC\s+\d+)/gi,
-        /(SCR\s+\d+)/gi,
-        /((\d+)\s+SCR\s+\d+)/gi,
-        /(JT\s+\d+)/gi,
-        /((\d+)\s+JT\s+\d+)/gi
-    ];
+    const messageContent = document.createElement('div');
+    messageContent.className = 'message-content';
     
-    const sectionPatterns = [
-        /(Section\s+\d+[A-Z]?)/gi,
-        /(Article\s+\d+)/gi,
-        /(Rule\s+\d+)/gi,
-        /(Regulation\s+\d+)/gi,
-        /(Clause\s+\d+)/gi,
-        /(Schedule\s+[IVXLCDM]+)/gi
-    ];
+    const messageText = document.createElement('div');
+    messageText.className = 'message-text';
     
-    indianActsPatterns.forEach(pattern => {
-        const matches = response.match(pattern);
-        if (matches) {
-            matches.forEach(match => {
-                const formatted = match.replace(/,?\s*(\d{4})/, ', $1');
-                if (!sources.some(s => s.toLowerCase() === formatted.toLowerCase())) {
-                    sources.push(formatted);
-                }
-            });
+    if (isUser) {
+        if (content) {
+            messageText.innerHTML = content.replace(/\n/g, '<br>');
         }
-    });
-    
-    caseLawPatterns.forEach(pattern => {
-        const matches = response.match(pattern);
-        if (matches) {
-            matches.forEach(match => {
-                if (!sources.some(s => s.toLowerCase() === match.toLowerCase())) {
-                    sources.push(match);
-                }
-            });
+    } else {
+        if (isDocument) {
+            messageText.innerHTML = formatDocumentResponse(content);
+        } else {
+            messageText.innerHTML = formatLegalResponse(content);
         }
-    });
+    }
     
-    sectionPatterns.forEach(pattern => {
-        const matches = response.match(pattern);
-        if (matches) {
-            matches.forEach(match => {
-                if (!sources.some(s => s.toLowerCase() === match.toLowerCase())) {
-                    sources.push(match);
-                }
-            });
-        }
-    });
+    messageContent.appendChild(messageText);
     
-    const uniqueSources = [];
-    const seen = new Set();
-    sources.forEach(source => {
-        const lower = source.toLowerCase();
-        if (!seen.has(lower)) {
-            seen.add(lower);
-            uniqueSources.push(source);
-        }
-    });
+    if (!isUser && !fromHistory) {
+        const messageActions = document.createElement('div');
+        messageActions.className = 'message-actions';
+        messageActions.innerHTML = `
+            <button class="action-btn copy" onclick="copyMessage(this)" title="Copy response">
+                <i class="fas fa-copy"></i> Copy
+            </button>
+            <button class="action-btn regenerate" onclick="regenerateResponse('${messageId}')" title="Regenerate response">
+                <i class="fas fa-sync-alt"></i> Regenerate
+            </button>
+        `;
+        messageContent.appendChild(messageActions);
+    }
     
-    return {
-        sources: uniqueSources.slice(0, 8),
-        hasSources: uniqueSources.length > 0
-    };
-}
-
-// Show ONLY sources after response
-function addResponseSources(messageId, sourcesData) {
-    const messageDiv = document.getElementById(messageId);
-    if (!messageDiv || !sourcesData || !sourcesData.hasSources) return;
+    messageDiv.appendChild(avatar);
+    messageDiv.appendChild(messageContent);
+    chatMessages.appendChild(messageDiv);
     
-    const checkStreaming = setInterval(() => {
-        const isStillStreaming = currentStreamingMessageId === messageId;
-        const messageText = messageDiv.querySelector('.message-text');
-        const hasStreamingCursor = messageText && messageText.querySelector('.streaming-cursor');
-        
-        if (!isStillStreaming && !hasStreamingCursor) {
-            clearInterval(checkStreaming);
-            
-            const sourcesContainer = document.createElement('div');
-            sourcesContainer.className = 'sources-container';
-            
-            let sourcesHTML = '';
-            if (sourcesData.sources && sourcesData.sources.length > 0) {
-                sourcesHTML = `
-                    <div class="sources-header">
-                        <i class="fas fa-gavel"></i>
-                        <span>Legal Sources & References ⚖️</span>
-                    </div>
-                    <div class="sources-list">
-                        ${sourcesData.sources.map(source => `
-                            <div class="source-tag" title="${source}">
-                                <i class="fas fa-bookmark"></i>
-                                <span>${source.length > 40 ? source.substring(0, 40) + '...' : source}</span>
-                            </div>
-                        `).join('')}
-                    </div>
-                    <div class="sources-info">
-                        <i class="fas fa-info-circle"></i>
-                        Sources extracted from the AI response above 📚
-                    </div>
-                `;
-                sourcesContainer.innerHTML = sourcesHTML;
-                messageDiv.parentNode.insertBefore(sourcesContainer, messageDiv.nextSibling);
-                setTimeout(() => {
-                    sourcesContainer.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-                }, 300);
-                const aiMessageIndex = conversationHistory.findIndex(msg => 
-                    msg.role === 'assistant' && msg.content && msg.content.includes(messageDiv.querySelector('.message-text').textContent.substring(0, 100))
-                );
-                if (aiMessageIndex !== -1) {
-                    conversationHistory[aiMessageIndex].sources = sourcesData.sources;
-                    saveCurrentChat();
-                }
-            }
+    setTimeout(() => {
+        const chatContainer = document.getElementById('chatMessages');
+        if (chatContainer) {
+            chatContainer.scrollTop = chatContainer.scrollHeight;
         }
     }, 100);
-    setTimeout(() => clearInterval(checkStreaming), 10000);
+    
+    return messageId;
 }
 
-// Save current chat to history
+function createNewChat() {
+    currentChatId = 'chat_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    conversationHistory = [];
+    const chatMessages = document.getElementById('chatMessages');
+    const welcomeContainer = document.createElement('div');
+    welcomeContainer.innerHTML = WELCOME_MESSAGE_HTML;
+    chatMessages.innerHTML = '';
+    chatMessages.appendChild(welcomeContainer);
+    addDraftTemplateListeners();
+    clearAttachments();
+    loadHistoryList();
+    showToast('New chat started 💬', 'success');
+}
+
+function clearCurrentChat() {
+    if (conversationHistory.length === 0 && attachedFiles.length === 0) {
+        showToast('Chat is already empty 🗑️', 'warning');
+        return;
+    }
+    if (confirm('Are you sure you want to clear the current chat?')) {
+        const chatMessages = document.getElementById('chatMessages');
+        chatMessages.innerHTML = '';
+        conversationHistory = [];
+        clearAttachments();
+        createNewChat();
+        showToast('Current chat cleared 🗑️', 'success');
+    }
+}
+
 function saveCurrentChat() {
     if (!currentChatId || conversationHistory.length === 0) return;
-    const chatIndex = chatHistory.findIndex(chat => chat.id === currentChatId);
+    
     let title = 'New Chat';
     let preview = 'No messages yet';
+    
     if (conversationHistory.length > 0) {
         const firstUserMessage = conversationHistory.find(msg => msg.role === 'user');
         if (firstUserMessage) {
@@ -8422,637 +8157,128 @@ function saveCurrentChat() {
             }
         }
     }
+    
     const chatData = {
         id: currentChatId,
         title: title,
         preview: preview,
         date: new Date().toISOString(),
         messages: [...conversationHistory],
-        userId: 'guest'
+        userId: currentUser ? currentUser.id : 'guest'
     };
+    
+    const chatIndex = chatHistory.findIndex(chat => chat.id === currentChatId);
     if (chatIndex !== -1) {
         chatHistory[chatIndex] = chatData;
     } else {
         chatHistory.unshift(chatData);
     }
+    
     saveUserChatHistory();
 }
 
-// Check if user is asking for document
-function isDocumentRequest(message) {
-    if (!message) return false;
-    const docKeywords = [
-        'draft', 'template', 'format', 'document', 'agreement', 
-        'contract', 'nda', 'non disclosure', 'employment', 
-        'rental', 'loan', 'will', 'testament', 'legal document',
-        'ready made', 'sample', 'example', 'form', 'प्रारूप',
-        'मसौदा', 'दस्तावेज़', 'समझौता', 'अनुबंध', 'करार',
-        'ड्राफ्ट', 'टेम्पलेट', 'फॉर्मेट', 'सैंपल', 'create',
-        'generate', 'make', 'prepare', 'write'
-    ];
-    const lowerMessage = message.toLowerCase();
-    return docKeywords.some(keyword => lowerMessage.includes(keyword));
-}
+// ============================================
+// HELPER FUNCTIONS
+// ============================================
 
-// Enhanced language detection
 function detectLanguage(text) {
     if (!text) return 'english';
-    const hasNonEnglishScript = /[\u0900-\u097F\u0B80-\u0BFF\u0C00-\u0C7F\u0C80-\u0CFF\u0A00-\u0A7F\u0A80-\u0AFF\u0980-\u09FF]/.test(text);
-    if (!hasNonEnglishScript) {
-        const hindiMarathiWords = [
-            /\bmujhe\b/i, /\btumhe\b/i, /\bhindi\b/i, /\bmarathi\b/i,
-            /\bkya\b/i, /\bkyu\b/i, /\bkaise\b/i, /\bkab\b/i,
-            /\bmala\b/i, /\bmahiti\b/i, /\bsahayata\b/i, /\bkich\b/i
-        ];
-        let hindiMarathiScore = 0;
-        hindiMarathiWords.forEach(pattern => {
-            if (pattern.test(text)) hindiMarathiScore++;
-        });
-        if (hindiMarathiScore >= 2) {
-            if (/\bmala\b/i.test(text) || /\bmahiti\b/i.test(text) || /\bsahayata\b/i.test(text)) {
-                return 'marathi';
-            }
-            if (/\bmujhe\b/i.test(text) || /\bkya\b/i.test(text) || /\bkyu\b/i.test(text)) {
-                return 'hindi';
-            }
-        }
-        return 'english';
-    }
+    
+    // Simple language detection
     if (/[\u0900-\u097F]/.test(text)) {
-        let marathiScore = 0;
-        let hindiScore = 0;
-        const marathiWords = ['आहे', 'मी', 'तू', 'आपण', 'होय', 'नाही', 'मला', 'पाहिजे', 'कृपया', 'धन्यवाद', 'महाराष्ट्र', 'मराठी'];
-        marathiWords.forEach(word => {
-            if (text.includes(word)) marathiScore++;
-        });
-        const hindiWords = ['क्या', 'क्यों', 'कैसे', 'मुझे', 'तुम्हें', 'आप', 'है', 'हैं', 'हिन्दी', 'भारत'];
-        hindiWords.forEach(word => {
-            if (text.includes(word)) hindiScore++;
-        });
-        if (marathiScore > hindiScore) {
-            return 'marathi';
-        } else if (hindiScore > 0) {
-            return 'hindi';
-        }
         return 'hindi';
     }
-    if (/[\u0B80-\u0BFF]/.test(text)) return 'tamil';
-    if (/[\u0C00-\u0C7F]/.test(text)) return 'telugu';
-    if (/[\u0C80-\u0CFF]/.test(text)) return 'kannada';
-    if (/[\u0A00-\u0A7F]/.test(text)) return 'punjabi';
-    if (/[\u0A80-\u0AFF]/.test(text)) return 'gujarati';
-    if (/[\u0980-\u09FF]/.test(text)) return 'bengali';
     return 'english';
 }
 
-// Add message to chat with sources parameter
-function addMessageToChat(content, isUser, fromHistory = false, isDocument = false, attachments = [], sources = null) {
-    const chatMessages = document.getElementById('chatMessages');
-    if (!fromHistory && isUser) {
-        const welcomeMessage = document.querySelector('.welcome-message');
-        if (welcomeMessage) {
-            welcomeMessage.remove();
-        }
-    }
-    const messageDiv = document.createElement('div');
-    messageDiv.className = `message ${isUser ? 'user-message' : 'ai-message'}`;
-    const messageId = 'msg_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-    messageDiv.id = messageId;
-    const avatar = document.createElement('div');
-    avatar.className = 'avatar';
-    if (isUser) {
-        if (currentUser && currentUser.picture) {
-            avatar.innerHTML = `<img src="${currentUser.picture}" alt="${currentUser.name}" style="width: 100%; height: 100%; border-radius: 8px;">`;
-        } else {
-            avatar.innerHTML = '<i class="fas fa-user"></i>';
-        }
-    } else {
-        avatar.innerHTML = '<i class="fas fa-scale-balanced"></i>';
-        avatar.style.background = 'linear-gradient(135deg, var(--secondary) 0%, #5e35b1 100%)';
-    }
-    const messageContent = document.createElement('div');
-    messageContent.className = 'message-content';
-    const messageText = document.createElement('div');
-    messageText.className = 'message-text';
-    if (isUser) {
-        if (content) {
-            messageText.innerHTML = content.replace(/\n/g, '<br>');
-        }
-        if (attachments && attachments.length > 0) {
-            messageDiv.dataset.attachments = JSON.stringify(attachments.map(file => ({
-                name: file.name,
-                data: file.data,
-                type: file.type
-            })));
-        }
-        if (!fromHistory) {
-            const controlsContainer = document.createElement('div');
-            controlsContainer.className = 'user-message-controls';
-            controlsContainer.innerHTML = `
-                <button class="user-message-btn copy-btn" onclick="copyUserMessage('${messageId}')" title="Copy question">
-                    <i class="fas fa-copy"></i>
-                    <span class="hide-on-mobile">Copy</span>
-                </button>
-                <button class="user-message-btn edit-btn" onclick="editUserMessage('${messageId}')" title="Edit question">
-                    <i class="fas fa-pencil-alt"></i>
-                    <span class="hide-on-mobile">Edit</span>
-                </button>
-            `;
-            messageContent.appendChild(controlsContainer);
-        }
-    } else {
-        if (isDocument) {
-            messageText.innerHTML = formatDocumentResponse(content);
-        } else {
-            messageText.innerHTML = formatLegalResponse(content);
-        }
-        if (sources && sources.length > 0 && !fromHistory) {
-            setTimeout(() => {
-                addResponseSources(messageId, { sources: sources, hasSources: true });
-            }, 100);
-        }
-    }
-    messageContent.appendChild(messageText);
-    if (!isUser && !fromHistory) {
-        const messageActions = document.createElement('div');
-        messageActions.className = 'message-actions';
-        messageActions.innerHTML = `
-            <button class="action-btn copy" onclick="copyMessage(this)" title="Copy response">
-                <i class="fas fa-copy"></i> Copy
-            </button>
-            <button class="action-btn regenerate" onclick="regenerateResponse('${messageId}')" title="Regenerate response">
-                <i class="fas fa-sync-alt"></i> Regenerate
-            </button>
-            <button class="action-btn like" onclick="likeMessage(this)" title="Mark as helpful">
-                <i class="far fa-thumbs-up"></i> Helpful
-            </button>
-            <button class="action-btn dislike" onclick="dislikeMessage(this)" title="Mark as not helpful">
-                <i class="far fa-thumbs-down"></i> Not Helpful
-            </button>
-            <button class="action-btn share" onclick="shareResponse('${messageId}')" title="Share response">
-                <i class="fas fa-share"></i> Share
-            </button>
-            <button class="action-btn document" onclick="downloadThisMessage('${messageId}')" title="Download document">
-                <i class="fas fa-file-download"></i> Download
-            </button>
-        `;
-        messageContent.appendChild(messageActions);
-    }
-    messageDiv.appendChild(avatar);
-    messageDiv.appendChild(messageContent);
-    chatMessages.appendChild(messageDiv);
-    if (isUser && attachments && attachments.length > 0) {
-        showAttachedFilesBelowUserMessage(messageId, attachments);
-    }
-    setTimeout(checkScrollPosition, 100);
-    return messageId;
+function isDocumentRequest(message) {
+    if (!message) return false;
+    const lowerMessage = message.toLowerCase();
+    const docKeywords = ['draft', 'template', 'document', 'agreement', 'contract'];
+    return docKeywords.some(keyword => lowerMessage.includes(keyword));
 }
 
-// Show attached files with content preview
-function showAttachedFilesBelowUserMessage(messageId, attachments) {
-    const messageDiv = document.getElementById(messageId);
-    if (!messageDiv || !attachments || attachments.length === 0) return;
-    const messageContent = messageDiv.querySelector('.message-content');
-    attachments.forEach((attachment, index) => {
-        const fileContainer = document.createElement('div');
-        fileContainer.className = 'attachment-item';
-        fileContainer.style.maxWidth = '280px';
-        fileContainer.style.marginTop = '8px';
-        if (attachment.type.startsWith('image/')) {
-            fileContainer.innerHTML = `
-                <img src="${attachment.data}" alt="${attachment.name}" class="attachment-image" style="max-height: 130px;">
-                <div class="attachment-name">${attachment.name}</div>
-            `;
-        } else if (attachment.type === 'application/pdf' || attachment.name.endsWith('.pdf')) {
-            fileContainer.innerHTML = `
-                <div style="padding: 15px; text-align: center; background: var(--dark-surface-light);">
-                    <i class="fas fa-file-pdf" style="font-size: 1.8rem; color: var(--error);"></i>
-                    <div class="attachment-name">${attachment.name}</div>
-                    <div style="font-size: 0.65rem; color: var(--dark-text-secondary);">PDF Document</div>
-                </div>
-            `;
-        } else if (attachment.type === 'text/plain' || attachment.name.endsWith('.txt')) {
-            fileContainer.innerHTML = `
-                <div style="padding: 12px; background: var(--dark-surface-light); border-radius: 8px;">
-                    <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
-                        <i class="fas fa-file-alt" style="font-size: 1.3rem; color: var(--primary);"></i>
-                        <div style="flex: 1;">
-                            <div class="attachment-name">${attachment.name}</div>
-                            <div style="font-size: 0.65rem; color: var(--dark-text-secondary);">Text Document</div>
-                        </div>
-                    </div>
-                    <button class="action-btn" style="width: 100%; padding: 6px;" onclick="showFileContent('${attachment.data}', '${attachment.name.replace(/'/g, "\\'")}')">
-                        <i class="fas fa-eye"></i> Preview Content
-                    </button>
-                </div>
-            `;
-        } else {
-            fileContainer.innerHTML = `
-                <div style="padding: 15px; text-align: center; background: var(--dark-surface-light);">
-                    <i class="fas fa-file" style="font-size: 1.8rem; color: var(--dark-text-secondary);"></i>
-                    <div class="attachment-name">${attachment.name}</div>
-                    <div style="font-size: 0.65rem; color: var(--dark-text-secondary);">${attachment.type || 'File'}</div>
-                </div>
-            `;
-        }
-        const messageText = messageContent.querySelector('.message-text');
-        messageContent.insertBefore(fileContainer, messageText.nextSibling);
-    });
+function extractSourcesFromResponse(response) {
+    return {
+        sources: [],
+        hasSources: false
+    };
 }
 
-window.showFileContent = async function(dataUrl, fileName) {
-    try {
-        const response = await fetch(dataUrl);
-        const text = await response.text();
-        const contentDiv = document.createElement('div');
-        contentDiv.className = 'file-content-display';
-        contentDiv.innerHTML = `
-            <div class="file-content-header">
-                <div class="file-content-title">
-                    <i class="fas fa-file-alt"></i>
-                    <span>${fileName}</span>
-                </div>
-                <button class="file-content-close" onclick="this.parentElement.parentElement.remove()">
-                    <i class="fas fa-times"></i>
-                </button>
-            </div>
-            <div style="max-height: 180px; overflow-y: auto; font-family: monospace; font-size: 0.75rem;">
-                ${text.substring(0, 4000)}
-                ${text.length > 4000 ? '<div style="color: var(--dark-text-secondary); margin-top: 8px;">... (content truncated)</div>' : ''}
-            </div>
-        `;
-        const chatMessages = document.getElementById('chatMessages');
-        chatMessages.appendChild(contentDiv);
-        setTimeout(() => {
-            contentDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }, 100);
-    } catch (error) {
-        console.error('Error reading file content:', error);
-        showToast('Could not read file content 📄', 'error');
-    }
-};
-
-// Regenerate response function
-window.regenerateResponse = function(messageId) {
-    const messageDiv = document.getElementById(messageId);
-    if (!messageDiv) return;
-    const allMessages = document.querySelectorAll('.message');
-    let userMessageContent = '';
-    let userMessageId = '';
-    for (let i = 0; i < allMessages.length; i++) {
-        if (allMessages[i].id === messageId) {
-            for (let j = i - 1; j >= 0; j--) {
-                if (allMessages[j].classList.contains('user-message')) {
-                    const userMessageText = allMessages[j].querySelector('.message-text');
-                    if (userMessageText) {
-                        userMessageContent = userMessageText.textContent;
-                        userMessageId = allMessages[j].id;
-                    }
-                    break;
-                }
-            }
-            break;
-        }
-    }
-    if (userMessageContent) {
-        const aiMessageIndex = conversationHistory.findIndex((msg, idx) => 
-            msg.role === 'assistant' && idx > 0 && conversationHistory[idx-1].content === userMessageContent
-        );
-        if (aiMessageIndex !== -1) {
-            conversationHistory.splice(aiMessageIndex, 1);
-        }
-        messageDiv.remove();
-        const userInput = document.getElementById('userInput');
-        userInput.value = userMessageContent;
-        userInput.focus();
-        userInput.style.height = Math.min(userInput.scrollHeight, 180) + 'px';
-        setTimeout(() => {
-            sendMessage();
-        }, 500);
-        showToast('Regenerating response... 🔄', 'info');
-    }
-};
-
-// Dislike message function
-window.dislikeMessage = function(button) {
-    button.innerHTML = '<i class="fas fa-thumbs-down"></i> Feedback Sent';
-    button.style.background = 'var(--error)';
-    button.style.borderColor = 'var(--error)';
-    button.style.color = 'white';
-    button.disabled = true;
-    showToast('Thank you for your feedback! 👍', 'info');
-};
-
-// Share response function
-window.shareResponse = function(messageId) {
-    const messageDiv = document.getElementById(messageId);
-    if (!messageDiv) return;
-    const messageText = messageDiv.querySelector('.message-text');
-    const textToShare = messageText.textContent;
-    if (navigator.share) {
-        navigator.share({
-            title: 'LegalSwami AI Response ⚖️',
-            text: textToShare.substring(0, 100) + '...',
-            url: window.location.href
-        }).then(() => {
-            showToast('Response shared successfully! 📤', 'success');
-        }).catch(err => {
-            console.error('Share failed:', err);
-            copyToClipboard(textToShare);
-        });
-    } else {
-        copyToClipboard(textToShare);
-    }
-};
-
-// Helper function to copy to clipboard
-function copyToClipboard(text) {
-    navigator.clipboard.writeText(text).then(() => {
-        showToast('Response copied to clipboard! 📋', 'success');
-    }).catch(err => {
-        console.error('Copy failed:', err);
-        showToast('Failed to copy response ❌', 'error');
-    });
+function addResponseSources(messageId, sourcesData) {
+    // Implementation for adding sources
 }
 
-// Copy user message
-window.copyUserMessage = function(messageId) {
-    const messageDiv = document.getElementById(messageId);
-    if (!messageDiv) return;
-    const messageText = messageDiv.querySelector('.message-text');
-    const textToCopy = messageText.textContent;
-    navigator.clipboard.writeText(textToCopy).then(() => {
-        showToast('Question copied to clipboard! 📋', 'success');
-    }).catch(err => {
-        console.error('Copy failed:', err);
-        showToast('Failed to copy question ❌', 'error');
-    });
-};
-
-// Edit user message
-window.editUserMessage = function(messageId) {
-    const messageDiv = document.getElementById(messageId);
-    if (!messageDiv) return;
-    const messageText = messageDiv.querySelector('.message-text');
-    const content = messageText.textContent;
-    const userInput = document.getElementById('userInput');
-    userInput.value = content;
-    userInput.focus();
-    userInput.style.height = 'auto';
-    userInput.style.height = Math.min(userInput.scrollHeight, 180) + 'px';
-    document.getElementById('sendButton').disabled = false;
-    showToast('Question loaded for editing. Press Ctrl+Enter to send. ✏️', 'info');
-};
-
-// Format document response
-function formatDocumentResponse(text) {
-    const documentContainer = document.createElement('div');
-    documentContainer.className = 'document-template';
-    const lines = text.split('\n');
-    let htmlContent = '';
-    lines.forEach(line => {
-        if (line.trim() === '') return;
-        if (line.toUpperCase() === line && line.length > 10 && !line.includes(':')) {
-            htmlContent += `<div class="document-header">
-                <h2 class="document-title">${line}</h2>
-                <div class="document-subtitle">Legal Document Template ⚖️</div>
-            </div>`;
-        }
-        else if (line.match(/^\d+\.\s+.+/) || line.match(/^[A-Z\s]+:$/)) {
-            htmlContent += `<div class="document-section">
-                <h3 class="document-section-title">${line}</h3>`;
-        }
-        else if (line.match(/^[a-z]\)\s+.+/)) {
-            htmlContent += `<div class="document-clause">
-                <div class="clause-title">${line}</div>`;
-        }
-        else {
-            if (line.includes('___________________') || line.includes('________________')) {
-                htmlContent += `<div class="clause-content" style="border-bottom: 1px solid var(--dark-border); padding-bottom: 4px; margin-bottom: 8px;">${line}</div>`;
-            } else {
-                htmlContent += `<div class="clause-content">${line}</div>`;
-            }
-        }
-    });
-    if (!text.includes('Signature') && !text.includes('Witness')) {
-        htmlContent += `
-            <div class="signature-section">
-                <div class="signature-line">
-                    <div class="signature-block">
-                        <div class="signature-name"></div>
-                        <div class="signature-label">Signature ✍️</div>
-                    </div>
-                    <div class="signature-block">
-                        <div class="signature-name"></div>
-                        <div class="signature-label">Date 📅</div>
-                    </div>
-                </div>
-            </div>`;
-    }
-    htmlContent += `<div class="legal-note">
-        <strong>Disclaimer:</strong> This template is for educational purposes only. Consult a qualified attorney before use. ⚖️
-    </div>`;
-    documentContainer.innerHTML = htmlContent;
-    return documentContainer.outerHTML;
-}
-
-// Format legal response
-function formatLegalResponse(text) {
-    let formatted = text
-        .replace(/## (.*?)\n/g, '<h3>$1</h3>')
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/- (.*?)\n/g, '<li>$1</li>')
-        .replace(/\n/g, '<br>');
-    formatted = formatted.replace(/(<li>.*?<\/li>)/gs, function(match) {
-        return '<ul>' + match + '</ul>';
-    });
-    if (formatted.includes('Disclaimer') || formatted.includes('अस्वीकरण') || formatted.includes('सूचना')) {
-        formatted = formatted.replace(/(Disclaimer:.*?|अस्वीकरण:.*?|सूचना:.*?)(?=<br><br>|$)/is, 
-            '<div class="legal-note">$1</div>');
-    }
-    const container = document.createElement('div');
-    container.className = 'legal-content';
-    container.innerHTML = formatted;
-    return container.outerHTML;
-}
-
-// Format text for streaming display
-function formatStreamingText(text) {
-    const container = document.createElement('div');
-    container.innerHTML = text
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\n/g, '<br>');
-    return container.innerHTML;
-}
-
-// Create streaming message container
 function createStreamingMessage() {
     const chatMessages = document.getElementById('chatMessages');
     const messageDiv = document.createElement('div');
     messageDiv.className = 'message ai-message';
     const messageId = 'msg_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
     messageDiv.id = messageId;
+    
     const avatar = document.createElement('div');
     avatar.className = 'avatar';
     avatar.innerHTML = '<i class="fas fa-scale-balanced"></i>';
     avatar.style.background = 'linear-gradient(135deg, var(--secondary) 0%, #5e35b1 100%)';
+    
     const messageContent = document.createElement('div');
     messageContent.className = 'message-content';
+    
     const messageText = document.createElement('div');
     messageText.className = 'message-text streaming-content';
-    messageText.innerHTML = '<span class="streaming-cursor"></span>';
+    messageText.innerHTML = 'Typing...';
+    
     messageContent.appendChild(messageText);
     messageDiv.appendChild(avatar);
     messageDiv.appendChild(messageContent);
     chatMessages.appendChild(messageDiv);
+    
     currentStreamingMessageId = messageId;
-    currentStreamingContent = '';
-    currentStreamingBuffer = '';
-    streamingTextChunks = [];
-    streamingTextIndex = 0;
-    const streamControls = document.createElement('div');
-    streamControls.className = 'stream-controls';
-    streamControls.innerHTML = `
-        <button class="stream-control-btn pause-btn" id="pause-${messageId}" onclick="toggleStreamPause('${messageId}')">
-            <i class="fas fa-pause"></i> Pause
-        </button>
-        <button class="stream-control-btn copy-btn" onclick="copyStreamedContent('${messageId}')">
-            <i class="fas fa-copy"></i> Copy
-        </button>
-    `;
-    messageContent.appendChild(streamControls);
-    setTimeout(checkScrollPosition, 100);
     return messageId;
 }
 
-// Start streaming response word by word
 function startStreamingResponse(messageId, response, isDocument = false) {
     const messageDiv = document.getElementById(messageId);
     if (!messageDiv) return;
-    let textToStream = response;
-    streamingTextChunks = splitTextIntoChunks(textToStream);
-    streamingTextIndex = 0;
-    streamNextChunk(messageId, isDocument);
-}
-
-// Split text into chunks for streaming
-function splitTextIntoChunks(text) {
-    const chunks = [];
-    const regex = /[\s.,;!?।।॥]+|\S+/g;
-    let match;
-    while ((match = regex.exec(text)) !== null) {
-        chunks.push(match[0]);
-    }
-    return chunks;
-}
-
-// Stream next chunk of text
-function streamNextChunk(messageId, isDocument = false) {
-    if (stopStreamingRequested || streamingTextIndex >= streamingTextChunks.length) {
-        if (stopStreamingRequested) {
-            console.log('Streaming stopped by user');
-        } else {
+    
+    // Simulate streaming
+    let index = 0;
+    const words = response.split(' ');
+    
+    function typeWord() {
+        if (index >= words.length || stopStreamingRequested) {
             finalizeStreamingMessage(messageId, isDocument);
+            return;
         }
-        return;
-    }
-    const chunk = streamingTextChunks[streamingTextIndex];
-    streamingTextIndex++;
-    updateStreamingMessage(messageId, chunk, isDocument);
-    let delay = streamingWordDelay;
-    if (chunk.match(/[.,;!?।।॥]/)) {
-        delay += streamingPunctuationDelay;
-    }
-    if (chunk.match(/[.!?।।॥]/)) {
-        delay += 150;
-    }
-    setTimeout(() => {
-        if (!isStreamingPaused && !stopStreamingRequested) {
-            streamNextChunk(messageId, isDocument);
+        
+        currentStreamingContent += words[index] + ' ';
+        const messageText = messageDiv.querySelector('.message-text');
+        if (messageText) {
+            if (isDocument) {
+                messageText.innerHTML = formatDocumentResponse(currentStreamingContent);
+            } else {
+                messageText.innerHTML = formatLegalResponse(currentStreamingContent);
+            }
         }
-    }, delay);
+        
+        index++;
+        setTimeout(typeWord, 50);
+    }
+    
+    typeWord();
 }
 
-// Toggle stream pause
-window.toggleStreamPause = function(messageId) {
-    isStreamingPaused = !isStreamingPaused;
-    const pauseBtn = document.getElementById(`pause-${messageId}`);
-    const messageDiv = document.getElementById(messageId);
-    if (isStreamingPaused) {
-        pauseBtn.innerHTML = '<i class="fas fa-play"></i> Continue';
-        pauseBtn.style.background = 'var(--success)';
-        pauseBtn.style.borderColor = 'var(--success)';
-        pauseBtn.style.color = 'white';
-        const messageText = messageDiv.querySelector('.message-text');
-        const existingIndicator = messageText.querySelector('.paused-indicator');
-        if (!existingIndicator) {
-            const indicator = document.createElement('span');
-            indicator.className = 'paused-indicator';
-            indicator.textContent = 'Paused';
-            messageText.appendChild(indicator);
-        }
-        showToast('Response paused ⏸️', 'info');
-    } else {
-        pauseBtn.innerHTML = '<i class="fas fa-pause"></i> Pause';
-        pauseBtn.style.background = '';
-        pauseBtn.style.borderColor = '';
-        pauseBtn.style.color = '';
-        const messageText = messageDiv.querySelector('.message-text');
-        const existingIndicator = messageText.querySelector('.paused-indicator');
-        if (existingIndicator) {
-            existingIndicator.remove();
-        }
-        setTimeout(() => {
-            streamNextChunk(messageId, isDocumentRequest(currentStreamingContent));
-        }, 100);
-        showToast('Response continued ▶️', 'success');
-    }
-};
-
-// Copy streamed content
-window.copyStreamedContent = function(messageId) {
-    const messageDiv = document.getElementById(messageId);
-    if (!messageDiv) return;
-    const messageText = messageDiv.querySelector('.message-text');
-    const textToCopy = messageText.textContent.replace('Paused', '').trim();
-    navigator.clipboard.writeText(textToCopy).then(() => {
-        showToast('Copied to clipboard! 📋', 'success');
-    }).catch(err => {
-        console.error('Copy failed:', err);
-        showToast('Failed to copy ❌', 'error');
-    });
-};
-
-// Update streaming message with new content
-function updateStreamingMessage(messageId, newContent, isDocument = false) {
-    const messageDiv = document.getElementById(messageId);
-    if (!messageDiv) return;
-    const messageText = messageDiv.querySelector('.message-text');
-    currentStreamingBuffer += newContent;
-    currentStreamingContent += newContent;
-    if (isDocument) {
-        messageText.innerHTML = formatDocumentResponse(currentStreamingContent) + '<span class="streaming-cursor"></span>';
-    } else {
-        messageText.innerHTML = formatStreamingText(currentStreamingBuffer) + '<span class="streaming-cursor"></span>';
-    }
-    checkScrollPosition();
-}
-
-// Finalize streaming message
 function finalizeStreamingMessage(messageId, isDocument = false) {
     const messageDiv = document.getElementById(messageId);
     if (!messageDiv) return;
+    
     const messageText = messageDiv.querySelector('.message-text');
-    const cursor = messageText.querySelector('.streaming-cursor');
-    if (cursor) cursor.remove();
-    const pausedIndicator = messageText.querySelector('.paused-indicator');
-    if (pausedIndicator) pausedIndicator.remove();
     if (isDocument) {
         messageText.innerHTML = formatDocumentResponse(currentStreamingContent);
-        addDocumentDownloadButton(messageId, currentStreamingContent);
     } else {
         messageText.innerHTML = formatLegalResponse(currentStreamingContent);
     }
+    
     const messageActions = document.createElement('div');
     messageActions.className = 'message-actions';
     messageActions.innerHTML = `
@@ -9062,267 +8288,36 @@ function finalizeStreamingMessage(messageId, isDocument = false) {
         <button class="action-btn regenerate" onclick="regenerateResponse('${messageId}')" title="Regenerate response">
             <i class="fas fa-sync-alt"></i> Regenerate
         </button>
-        <button class="action-btn like" onclick="likeMessage(this)" title="Mark as helpful">
-            <i class="far fa-thumbs-up"></i> Helpful
-        </button>
-        <button class="action-btn dislike" onclick="dislikeMessage(this)" title="Mark as not helpful">
-            <i class="far fa-thumbs-down"></i> Not Helpful
-        </button>
-        <button class="action-btn share" onclick="shareResponse('${messageId}')" title="Share response">
-            <i class="fas fa-share"></i> Share
-        </button>
-        <button class="action-btn document" onclick="downloadThisMessage('${messageId}')" title="Download document">
-            <i class="fas fa-file-download"></i> Download
-        </button>
     `;
     messageText.parentElement.appendChild(messageActions);
-    const streamControls = messageDiv.querySelector('.stream-controls');
-    if (streamControls) {
-        streamControls.remove();
-    }
-    if (attachedFiles.length > 0) {
-        showAttachedFilesBelowResponse(messageId);
-    }
+    
     currentStreamingMessageId = null;
     currentStreamingContent = '';
-    currentStreamingBuffer = '';
-    streamingTextChunks = [];
-    streamingTextIndex = 0;
-    isStreamingPaused = false;
     isStreamingActive = false;
     stopStreamingRequested = false;
+    
     const sendButton = document.getElementById('sendButton');
-    sendButton.disabled = document.getElementById('userInput').value.trim() === '' && attachedFiles.length === 0;
-    sendButton.classList.remove('stop-button');
-    sendButton.innerHTML = '<i class="fas fa-paper-plane"></i> <span class="hide-on-mobile">Send</span>';
-}
-
-// Show attached files below AI response
-function showAttachedFilesBelowResponse(messageId) {
-    const messageDiv = document.getElementById(messageId);
-    if (!messageDiv || attachedFiles.length === 0) return;
-    const messageContent = messageDiv.querySelector('.message-content');
-    const attachmentsContainer = document.createElement('div');
-    attachmentsContainer.className = 'message-attachments';
-    attachedFiles.forEach((attachment, index) => {
-        const attachmentItem = document.createElement('div');
-        attachmentItem.className = 'attachment-item';
-        attachmentItem.innerHTML = `
-            <img src="${attachment.data}" alt="${attachment.name}" class="attachment-image">
-            <div class="attachment-name">${attachment.name}</div>
-        `;
-        attachmentsContainer.appendChild(attachmentItem);
-    });
-    const messageText = messageContent.querySelector('.message-text');
-    messageContent.insertBefore(attachmentsContainer, messageText.nextSibling);
-    clearAttachments();
-}
-
-// Add document download button to message
-function addDocumentDownloadButton(messageId, content) {
-    const messageDiv = document.getElementById(messageId);
-    if (!messageDiv) return;
-    const messageContent = messageDiv.querySelector('.message-content');
-    const existingBtn = messageContent.querySelector('.document-download-btn');
-    if (existingBtn) return;
-    const downloadBtn = document.createElement('button');
-    downloadBtn.className = 'document-download-btn';
-    downloadBtn.innerHTML = '<i class="fas fa-file-download"></i> Download Document';
-    downloadBtn.title = 'Download this document template';
-    downloadBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        openMessageDownloadModal(content);
-    });
-    messageContent.appendChild(downloadBtn);
-}
-
-// Copy message function
-window.copyMessage = function(button) {
-    const messageText = button.closest('.message-content').querySelector('.message-text');
-    let textToCopy = messageText.innerText || messageText.textContent;
-    const textarea = document.createElement('textarea');
-    textarea.value = textToCopy;
-    textarea.style.position = 'fixed';
-    textarea.style.opacity = '0';
-    document.body.appendChild(textarea);
-    textarea.select();
-    textarea.setSelectionRange(0, 99999);
-    try {
-        const successful = document.execCommand('copy');
-        if (successful) {
-            showToast('Document copied to clipboard! 📋', 'success');
-        } else {
-            showToast('Failed to copy text ❌', 'error');
-        }
-    } catch (err) {
-        console.error('Copy failed:', err);
-        showToast('Failed to copy: ' + err, 'error');
-    }
-    document.body.removeChild(textarea);
-};
-
-// Like message function
-window.likeMessage = function(button) {
-    button.innerHTML = '<i class="fas fa-thumbs-up"></i> Thank you!';
-    button.style.background = 'var(--success)';
-    button.style.borderColor = 'var(--success)';
-    button.style.color = 'white';
-    button.disabled = true;
-    showToast('Thank you for your feedback! 👍', 'success');
-};
-
-// Download this specific message
-window.downloadThisMessage = function(messageId) {
-    const messageDiv = document.getElementById(messageId);
-    if (!messageDiv) return;
-    const messageText = messageDiv.querySelector('.message-text');
-    const content = messageText.innerText || messageText.textContent;
-    openMessageDownloadModal(content);
-};
-
-// Clear current chat
-function clearCurrentChat() {
-    if (conversationHistory.length === 0 && attachedFiles.length === 0) {
-        showToast('Chat is already empty 🗑️', 'warning');
-        return;
-    }
-    if (confirm('Are you sure you want to clear the current chat?')) {
-        const chatMessages = document.getElementById('chatMessages');
-        chatMessages.innerHTML = '';
-        conversationHistory = [];
-        clearAttachments();
-        createNewChat();
-        showToast('Current chat cleared 🗑️', 'success');
+    const userInput = document.getElementById('userInput');
+    if (sendButton && userInput) {
+        sendButton.disabled = userInput.value.trim() === '' && attachedFiles.length === 0;
     }
 }
 
-// Show suggestions
-function showSuggestions() {
-    const suggestions = [
-        "Create a non-disclosure agreement draft 📝",
-        "I need an employment contract template 💼",
-        "Generate a rental agreement for me 🏠",
-        "Draft a loan agreement document 💰",
-        "What are the essential elements of a valid contract? ⚖️"
-    ];
-    addMessageToChat(
-        `<h3>Suggested Questions:</h3>
-        <ul>
-            ${suggestions.map(q => `<li style="cursor: pointer; padding: 6px; border-radius: 6px; transition: background 0.3s;" 
-                onmouseover="this.style.background='var(--dark-surface-light)'" 
-                onmouseout="this.style.background='transparent'"
-                onclick="document.getElementById('userInput').value = '${q}'; document.getElementById('userInput').focus(); document.getElementById('userInput').style.height = Math.min(document.getElementById('userInput').scrollHeight, 180) + 'px'; document.getElementById('sendButton').disabled = false;">
-                ${q}
-            </li>`).join('')}
-        </ul>
-        <p>Click any question to add it to the input field. 👆</p>`,
-        false
-    );
+function formatDocumentResponse(text) {
+    return `<div class="document-template">
+        <div class="document-header">
+            <h2 class="document-title">Legal Document</h2>
+            <div class="document-subtitle">Generated by LegalSwami AI ⚖️</div>
+        </div>
+        <div style="padding: 20px; white-space: pre-wrap;">${text}</div>
+        <div class="legal-note">
+            <strong>Disclaimer:</strong> This template is for educational purposes only. Consult a qualified attorney before use. ⚖️
+        </div>
+    </div>`;
 }
 
-// Check scroll position and show/hide down arrow
-function checkScrollPosition() {
-    const chatMessages = document.getElementById('chatMessages');
-    const scrollBtn = document.getElementById('scrollToBottomBtn');
-    const indicator = document.getElementById('scrollPositionIndicator');
-    if (!chatMessages) return;
-    const isAtBottom = chatMessages.scrollHeight - chatMessages.clientHeight <= chatMessages.scrollTop + 50;
-    if (!isAtBottom) {
-        scrollBtn.classList.add('visible');
-        if (chatMessages.scrollTop < scrollPosition) {
-            indicator.classList.add('visible');
-            setTimeout(() => {
-                indicator.classList.remove('visible');
-            }, 2000);
-        }
-    } else {
-        scrollBtn.classList.remove('visible');
-        indicator.classList.remove('visible');
-    }
-    scrollPosition = chatMessages.scrollTop;
-}
-
-// Scroll to bottom function
-function scrollToBottom() {
-    const chatMessages = document.getElementById('chatMessages');
-    if (chatMessages) {
-        chatMessages.scrollTo({
-            top: chatMessages.scrollHeight,
-            behavior: 'smooth'
-        });
-        document.getElementById('scrollToBottomBtn').classList.remove('visible');
-    }
-}
-
-// Add copy and edit buttons to user messages
-function addCopyEditButtonsToUserMessages() {
-    const userMessages = document.querySelectorAll('.user-message:not(.from-history) .message-content');
-    userMessages.forEach((messageContent, index) => {
-        if (!messageContent.querySelector('.user-message-controls')) {
-            const messageDiv = messageContent.closest('.message');
-            const messageId = messageDiv.id;
-            const messageText = messageContent.querySelector('.message-text');
-            if (messageText && messageText.textContent.trim()) {
-                const controlsContainer = document.createElement('div');
-                controlsContainer.className = 'user-message-controls';
-                const copyBtn = document.createElement('button');
-                copyBtn.className = 'user-message-btn copy-btn';
-                copyBtn.title = 'Copy question';
-                copyBtn.innerHTML = '<i class="fas fa-copy"></i><span class="hide-on-mobile">Copy</span>';
-                copyBtn.addEventListener('click', () => copyUserMessage(messageId));
-                const editBtn = document.createElement('button');
-                editBtn.className = 'user-message-btn edit-btn';
-                editBtn.title = 'Edit question';
-                editBtn.innerHTML = '<i class="fas fa-pencil-alt"></i><span class="hide-on-mobile">Edit</span>';
-                editBtn.addEventListener('click', () => editUserMessage(messageId));
-                controlsContainer.appendChild(copyBtn);
-                controlsContainer.appendChild(editBtn);
-                messageContent.appendChild(controlsContainer);
-            }
-        }
-    });
-}
-
-function loadThemePreference() {
-    const savedTheme = localStorage.getItem('legalSwamiTheme');
-    if (savedTheme === 'light') {
-        document.body.classList.add('light-mode');
-        document.querySelector('.theme-toggle i').className = 'fas fa-moon';
-        isLightMode = true;
-    }
-}
-
-function toggleTheme() {
-    const themeIcon = document.querySelector('.theme-toggle i');
-    if (isLightMode) {
-        document.body.classList.remove('light-mode');
-        themeIcon.className = 'fas fa-sun';
-        localStorage.setItem('legalSwamiTheme', 'dark');
-        isLightMode = false;
-    } else {
-        document.body.classList.add('light-mode');
-        themeIcon.className = 'fas fa-moon';
-        localStorage.setItem('legalSwamiTheme', 'light');
-        isLightMode = true;
-    }
-    const emojiPicker = document.getElementById('emojiPicker');
-    if (emojiPicker) {
-        emojiPicker.setAttribute('class', isLightMode ? 'light' : 'dark');
-    }
-}
-
-function createNewChat() {
-    currentChatId = 'chat_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-    conversationHistory = [];
-    const chatMessages = document.getElementById('chatMessages');
-    const welcomeContainer = document.createElement('div');
-    welcomeContainer.innerHTML = WELCOME_MESSAGE_HTML;
-    chatMessages.innerHTML = '';
-    chatMessages.appendChild(welcomeContainer);
-    addDraftTemplateListeners();
-    clearAttachments();
-    loadHistoryList();
-    showToast('New chat started 💬', 'success');
+function formatLegalResponse(text) {
+    return text.replace(/\n/g, '<br>');
 }
 
 function toggleVoiceRecognition() {
@@ -9345,53 +8340,75 @@ function toggleInputVoiceRecognition() {
     }
 }
 
-// Show language hint
-function showLanguageHint(language) {
-    const languageNames = {
-        'english': 'English 🇬🇧',
-        'hindi': 'Hindi 🇮🇳',
-        'marathi': 'Marathi 🇮🇳',
-        'tamil': 'Tamil 🇮🇳',
-        'telugu': 'Telugu 🇮🇳',
-        'kannada': 'Kannada 🇮🇳',
-        'punjabi': 'Punjabi 🇮🇳',
-        'gujarati': 'Gujarati 🇮🇳',
-        'bengali': 'Bengali 🇮🇳'
-    };
-    let hintElement = document.querySelector('.language-hint');
-    if (!hintElement) {
-        hintElement = document.createElement('div');
-        hintElement.className = 'language-hint';
-        document.querySelector('.input-area').appendChild(hintElement);
-    }
-    hintElement.textContent = `Detected: ${languageNames[language] || 'English 🇬🇧'}`;
-    hintElement.style.display = 'block';
-}
-
-function hideLanguageHint() {
-    const hintElement = document.querySelector('.language-hint');
-    if (hintElement) {
-        hintElement.style.display = 'none';
+function toggleTheme() {
+    const themeIcon = document.querySelector('.theme-toggle i');
+    if (isLightMode) {
+        document.body.classList.remove('light-mode');
+        themeIcon.className = 'fas fa-sun';
+        localStorage.setItem('legalSwamiTheme', 'dark');
+        isLightMode = false;
+    } else {
+        document.body.classList.add('light-mode');
+        themeIcon.className = 'fas fa-moon';
+        localStorage.setItem('legalSwamiTheme', 'light');
+        isLightMode = true;
     }
 }
 
-function adjustChatLayout() {
+function loadThemePreference() {
+    const savedTheme = localStorage.getItem('legalSwamiTheme');
+    if (savedTheme === 'light') {
+        document.body.classList.add('light-mode');
+        const themeIcon = document.querySelector('.theme-toggle i');
+        if (themeIcon) themeIcon.className = 'fas fa-moon';
+        isLightMode = true;
+    }
+}
+
+function showSuggestions() {
+    const suggestions = [
+        "Create a non-disclosure agreement draft 📝",
+        "I need an employment contract template 💼",
+        "Generate a rental agreement for me 🏠",
+        "Draft a loan agreement document 💰",
+        "What are the essential elements of a valid contract? ⚖️"
+    ];
+    
+    addMessageToChat(
+        `<h3>Suggested Questions:</h3>
+        <ul>
+            ${suggestions.map(q => `<li style="cursor: pointer; padding: 6px; border-radius: 6px;" 
+                onclick="document.getElementById('userInput').value = '${q}'; document.getElementById('userInput').focus(); document.getElementById('sendButton').disabled = false;">
+                ${q}
+            </li>`).join('')}
+        </ul>`,
+        false
+    );
+}
+
+function scrollToBottom() {
     const chatMessages = document.getElementById('chatMessages');
     if (chatMessages) {
-        setTimeout(() => {
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }, 100);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
     }
 }
 
-function clearAttachments() {
-    attachedFiles = [];
-    const preview = document.getElementById('attachmentsPreview');
-    if (preview) {
-        preview.innerHTML = '';
-        preview.style.display = 'none';
+function checkScrollPosition() {
+    const chatMessages = document.getElementById('chatMessages');
+    const scrollBtn = document.getElementById('scrollToBottomBtn');
+    if (!chatMessages || !scrollBtn) return;
+    
+    const isAtBottom = chatMessages.scrollHeight - chatMessages.clientHeight <= chatMessages.scrollTop + 50;
+    if (!isAtBottom) {
+        scrollBtn.classList.add('visible');
+    } else {
+        scrollBtn.classList.remove('visible');
     }
 }
+
+// ============================================
+// FILE HANDLING FUNCTIONS
+// ============================================
 
 function openFileUploadModal() {
     document.getElementById('fileUploadModal').classList.add('active');
@@ -9403,249 +8420,45 @@ function updateUploadedFilesDisplay() {
     const container = document.getElementById('uploadedFiles');
     if (!container) return;
     container.innerHTML = '';
+    
     selectedFiles.forEach((file, index) => {
         const item = document.createElement('div');
         item.className = 'uploaded-image-item';
-        if (file.type.startsWith('image/')) {
-            item.innerHTML = `
-                <img src="${file.data}" alt="${file.name}" class="uploaded-image-preview">
-                <button class="remove-uploaded-image" onclick="removeUploadedFile(${index})">
-                    <i class="fas fa-times"></i>
-                </button>
-            `;
-        } else if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
-            item.innerHTML = `
-                <div style="padding: 12px; text-align: center; background: var(--dark-surface-light); height: 90px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                    <i class="fas fa-file-pdf" style="font-size: 1.8rem; color: var(--error); margin-bottom: 6px;"></i>
-                    <div style="font-size: 0.65rem; color: var(--dark-text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">${file.name}</div>
-                </div>
-                <button class="remove-uploaded-image" onclick="removeUploadedFile(${index})">
-                    <i class="fas fa-times"></i>
-                </button>
-            `;
-        } else if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
-            item.innerHTML = `
-                <div style="padding: 12px; text-align: center; background: var(--dark-surface-light); height: 90px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                    <i class="fas fa-file-alt" style="font-size: 1.8rem; color: var(--primary); margin-bottom: 6px;"></i>
-                    <div style="font-size: 0.65rem; color: var(--dark-text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">${file.name}</div>
-                </div>
-                <button class="remove-uploaded-image" onclick="removeUploadedFile(${index})">
-                    <i class="fas fa-times"></i>
-                </button>
-            `;
-        } else {
-            item.innerHTML = `
-                <div style="padding: 12px; text-align: center; background: var(--dark-surface-light); height: 90px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                    <i class="fas fa-file" style="font-size: 1.8rem; color: var(--dark-text-secondary); margin-bottom: 6px;"></i>
-                    <div style="font-size: 0.65rem; color: var(--dark-text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">${file.name}</div>
-                </div>
-                <button class="remove-uploaded-image" onclick="removeUploadedFile(${index})">
-                    <i class="fas fa-times"></i>
-                </button>
-            `;
-        }
+        item.innerHTML = `
+            <div style="padding: 12px; text-align: center; background: var(--dark-surface-light); height: 90px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                <i class="fas fa-file" style="font-size: 1.8rem; color: var(--primary); margin-bottom: 6px;"></i>
+                <div style="font-size: 0.65rem; color: var(--dark-text-secondary); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">${file.name}</div>
+            </div>
+            <button class="remove-uploaded-image" onclick="removeUploadedFile(${index})">
+                <i class="fas fa-times"></i>
+            </button>
+        `;
         container.appendChild(item);
     });
 }
 
-window.removeUploadedFile = function(index) {
+function removeUploadedFile(index) {
     selectedFiles.splice(index, 1);
     updateUploadedFilesDisplay();
-};
+}
 
-// Close file upload modal
-document.getElementById('closeFileUploadModal').addEventListener('click', function() {
-    document.getElementById('fileUploadModal').classList.remove('active');
-});
-document.getElementById('cancelFileUpload').addEventListener('click', function() {
-    document.getElementById('fileUploadModal').classList.remove('active');
-});
-
-// Handle file selection
-document.getElementById('browseFilesBtn').addEventListener('click', function() {
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.multiple = true;
-    fileInput.accept = 'image/*,.pdf,.txt,.doc,.docx';
-    fileInput.onchange = function(e) {
-        handleFileSelection(e.target.files);
-    };
-    fileInput.click();
-});
-
-// Handle drag and drop
-const uploadArea = document.getElementById('uploadArea');
-uploadArea.addEventListener('dragover', function(e) {
-    e.preventDefault();
-    uploadArea.classList.add('dragover');
-});
-uploadArea.addEventListener('dragleave', function(e) {
-    e.preventDefault();
-    uploadArea.classList.remove('dragover');
-});
-uploadArea.addEventListener('drop', function(e) {
-    e.preventDefault();
-    uploadArea.classList.remove('dragover');
-    if (e.dataTransfer.files.length > 0) {
-        handleFileSelection(e.dataTransfer.files);
-    }
-});
-
-function handleFileSelection(files) {
-    for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        if (file.type.startsWith('image/') || 
-            file.type === 'application/pdf' || 
-            file.type === 'text/plain' ||
-            file.type.includes('document') ||
-            file.name.endsWith('.txt') ||
-            file.name.endsWith('.pdf') ||
-            file.name.endsWith('.doc') ||
-            file.name.endsWith('.docx')) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                selectedFiles.push({
-                    name: file.name,
-                    data: e.target.result,
-                    type: file.type,
-                    file: file,
-                    size: file.size
-                });
-                updateUploadedFilesDisplay();
-            };
-            reader.readAsDataURL(file);
-        } else {
-            showToast(`File type not supported: ${file.name} ❌`, 'warning');
-        }
+function clearAttachments() {
+    attachedFiles = [];
+    const preview = document.getElementById('attachmentsPreview');
+    if (preview) {
+        preview.innerHTML = '';
+        preview.style.display = 'none';
     }
 }
 
-// Confirm file upload
-document.getElementById('confirmFileUpload').addEventListener('click', function() {
-    if (selectedFiles.length === 0) {
-        showToast('Please select at least one file 📎', 'warning');
-        return;
-    }
-    attachedFiles = [...attachedFiles, ...selectedFiles];
-    const preview = document.getElementById('attachmentsPreview');
-    preview.innerHTML = '';
-    attachedFiles.forEach((file, index) => {
-        const item = document.createElement('div');
-        item.className = 'attachment-preview-item';
-        if (file.type.startsWith('image/')) {
-            item.innerHTML = `
-                <img src="${file.data}" alt="${file.name}" class="attachment-preview-image">
-                <button class="remove-attachment" onclick="removeAttachment(${index})">
-                    <i class="fas fa-times"></i>
-                </button>
-                <div class="attachment-preview-name">${file.name}</div>
-            `;
-        } else if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
-            item.innerHTML = `
-                <div style="padding: 8px; text-align: center; background: var(--dark-surface-light); height: 70px; width: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                    <i class="fas fa-file-pdf" style="font-size: 1.3rem; color: var(--error);"></i>
-                    <div style="font-size: 0.55rem; color: var(--dark-text-secondary); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">PDF</div>
-                </div>
-                <button class="remove-attachment" onclick="removeAttachment(${index})" style="top: 2px; right: 2px;">
-                    <i class="fas fa-times"></i>
-                </button>
-                <div class="attachment-preview-name">${file.name.substring(0, 12)}${file.name.length > 12 ? '...' : ''}</div>
-            `;
-        } else if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
-            item.innerHTML = `
-                <div style="padding: 8px; text-align: center; background: var(--dark-surface-light); height: 70px; width: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                    <i class="fas fa-file-alt" style="font-size: 1.3rem; color: var(--primary);"></i>
-                    <div style="font-size: 0.55rem; color: var(--dark-text-secondary); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">TXT</div>
-                </div>
-                <button class="remove-attachment" onclick="removeAttachment(${index})" style="top: 2px; right: 2px;">
-                    <i class="fas fa-times"></i>
-                </button>
-                <div class="attachment-preview-name">${file.name.substring(0, 12)}${file.name.length > 12 ? '...' : ''}</div>
-            `;
-        } else {
-            item.innerHTML = `
-                <div style="padding: 8px; text-align: center; background: var(--dark-surface-light); height: 70px; width: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                    <i class="fas fa-file" style="font-size: 1.3rem; color: var(--dark-text-secondary);"></i>
-                    <div style="font-size: 0.55rem; color: var(--dark-text-secondary); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">DOC</div>
-                </div>
-                <button class="remove-attachment" onclick="removeAttachment(${index})" style="top: 2px; right: 2px;">
-                    <i class="fas fa-times"></i>
-                </button>
-                <div class="attachment-preview-name">${file.name.substring(0, 12)}${file.name.length > 12 ? '...' : ''}</div>
-            `;
-        }
-        preview.appendChild(item);
-    });
-    preview.style.display = 'flex';
-    document.getElementById('sendButton').disabled = false;
-    document.getElementById('fileUploadModal').classList.remove('active');
-    showToast(`${selectedFiles.length} file(s) attached 📎`, 'success');
-    selectedFiles = [];
-});
+// ============================================
+// HISTORY FUNCTIONS
+// ============================================
 
-window.removeAttachment = function(index) {
-    attachedFiles.splice(index, 1);
-    const preview = document.getElementById('attachmentsPreview');
-    preview.innerHTML = '';
-    if (attachedFiles.length === 0) {
-        preview.style.display = 'none';
-        document.getElementById('sendButton').disabled = document.getElementById('userInput').value.trim() === '';
-    } else {
-        attachedFiles.forEach((file, idx) => {
-            const item = document.createElement('div');
-            item.className = 'attachment-preview-item';
-            if (file.type.startsWith('image/')) {
-                item.innerHTML = `
-                    <img src="${file.data}" alt="${file.name}" class="attachment-preview-image">
-                    <button class="remove-attachment" onclick="removeAttachment(${idx})">
-                        <i class="fas fa-times"></i>
-                    </button>
-                    <div class="attachment-preview-name">${file.name}</div>
-                `;
-            } else if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
-                item.innerHTML = `
-                    <div style="padding: 8px; text-align: center; background: var(--dark-surface-light); height: 70px; width: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                        <i class="fas fa-file-pdf" style="font-size: 1.3rem; color: var(--error);"></i>
-                        <div style="font-size: 0.55rem; color: var(--dark-text-secondary); margin-top: 4px;">PDF</div>
-                    </div>
-                    <button class="remove-attachment" onclick="removeAttachment(${idx})" style="top: 2px; right: 2px;">
-                        <i class="fas fa-times"></i>
-                    </button>
-                    <div class="attachment-preview-name">${file.name.substring(0, 12)}${file.name.length > 12 ? '...' : ''}</div>
-                `;
-            } else if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
-                item.innerHTML = `
-                    <div style="padding: 8px; text-align: center; background: var(--dark-surface-light); height: 70px; width: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                        <i class="fas fa-file-alt" style="font-size: 1.3rem; color: var(--primary);"></i>
-                        <div style="font-size: 0.55rem; color: var(--dark-text-secondary); margin-top: 4px;">TXT</div>
-                    </div>
-                    <button class="remove-attachment" onclick="removeAttachment(${idx})" style="top: 2px; right: 2px;">
-                        <i class="fas fa-times"></i>
-                    </button>
-                    <div class="attachment-preview-name">${file.name.substring(0, 12)}${file.name.length > 12 ? '...' : ''}</div>
-                `;
-            } else {
-                item.innerHTML = `
-                    <div style="padding: 8px; text-align: center; background: var(--dark-surface-light); height: 70px; width: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                        <i class="fas fa-file" style="font-size: 1.3rem; color: var(--dark-text-secondary);"></i>
-                        <div style="font-size: 0.55rem; color: var(--dark-text-secondary); margin-top: 4px;">DOC</div>
-                    </div>
-                    <button class="remove-attachment" onclick="removeAttachment(${idx})" style="top: 2px; right: 2px;">
-                        <i class="fas fa-times"></i>
-                    </button>
-                    <div class="attachment-preview-name">${file.name.substring(0, 12)}${file.name.length > 12 ? '...' : ''}</div>
-                `;
-            }
-            preview.appendChild(item);
-        });
-        preview.style.display = 'flex';
-    }
-};
-
-// Load history list
 function loadHistoryList() {
     const historyList = document.getElementById('historyList');
     if (!historyList) return;
+    
     if (chatHistory.length === 0) {
         historyList.innerHTML = `
             <div class="empty-history">
@@ -9656,6 +8469,7 @@ function loadHistoryList() {
         `;
         return;
     }
+    
     let html = '';
     chatHistory.forEach(chat => {
         const isActive = chat.id === currentChatId;
@@ -9666,24 +8480,16 @@ function loadHistoryList() {
                 <div class="history-title">${chat.title}</div>
                 <div class="history-preview">${chat.preview}</div>
                 <div class="history-date">${formattedDate}</div>
-                <div class="history-item-actions">
-                    <button class="history-item-btn download" onclick="downloadChatHistory('${chat.id}')" title="Download chat">
-                        <i class="fas fa-download"></i>
-                    </button>
-                    <button class="history-item-btn delete" onclick="confirmDeleteChat('${chat.id}')" title="Delete chat">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
             </div>
         `;
     });
+    
     historyList.innerHTML = html;
+    
     document.querySelectorAll('.history-item').forEach(item => {
-        item.addEventListener('click', function(e) {
-            if (!e.target.closest('.history-item-actions')) {
-                const chatId = this.dataset.chatId;
-                loadChatFromHistory(chatId);
-            }
+        item.addEventListener('click', function() {
+            const chatId = this.dataset.chatId;
+            loadChatFromHistory(chatId);
         });
     });
 }
@@ -9691,796 +8497,155 @@ function loadHistoryList() {
 function loadChatFromHistory(chatId) {
     const chat = chatHistory.find(c => c.id === chatId);
     if (!chat) return;
+    
     currentChatId = chatId;
     conversationHistory = [...chat.messages];
+    
     const chatMessages = document.getElementById('chatMessages');
     chatMessages.innerHTML = '';
+    
     chat.messages.forEach(msg => {
         const isDocument = msg.isDocument || false;
         const hasSources = msg.sources && msg.sources.length > 0;
         addMessageToChat(msg.content, msg.role === 'user', true, isDocument, msg.attachments || [], hasSources ? msg.sources : null);
     });
+    
     loadHistoryList();
+    
     if (window.innerWidth < 1024) {
-        document.getElementById('sidebar').classList.remove('active');
-        document.getElementById('sidebarOverlay').classList.remove('active');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        if (sidebar) sidebar.classList.remove('active');
+        if (sidebarOverlay) sidebarOverlay.classList.remove('active');
         document.body.style.overflow = '';
     }
+    
     showToast('Chat loaded from history 📚', 'success');
 }
 
-window.downloadChatHistory = function(chatId) {
-    const chat = chatHistory.find(c => c.id === chatId);
-    if (!chat) return;
-    let content = `LegalSwami Chat History - ${chat.title}\n`;
-    content += `Date: ${new Date(chat.date).toLocaleString()}\n\n`;
-    content += '='.repeat(50) + '\n\n';
-    chat.messages.forEach((msg, index) => {
-        const role = msg.role === 'user' ? 'You' : 'LegalSwami';
-        const time = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString() : new Date().toLocaleTimeString();
-        content += `${role} (${time}):\n`;
-        content += msg.content + '\n\n';
-        content += '-'.repeat(30) + '\n\n';
-    });
-    const blob = new Blob([content], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `legalswami-chat-${chatId}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    showDownloadNotification(`legalswami-chat-${chatId}.txt`, 'Text File');
-    showToast('Chat history downloaded 📥', 'success');
-};
+// ============================================
+// TOAST & NOTIFICATION FUNCTIONS
+// ============================================
 
-window.confirmDeleteChat = function(chatId) {
-    const chat = chatHistory.find(c => c.id === chatId);
-    if (!chat) return;
-    document.getElementById('deleteChatTitle').textContent = `Delete "${chat.title}"?`;
-    document.getElementById('deleteModal').dataset.chatId = chatId;
-    document.getElementById('deleteModal').classList.add('active');
-};
-
-// Delete chat confirmation
-document.getElementById('confirmDelete').addEventListener('click', function() {
-    const chatId = document.getElementById('deleteModal').dataset.chatId;
-    const chatIndex = chatHistory.findIndex(chat => chat.id === chatId);
-    if (chatIndex !== -1) {
-        if (currentChatId === chatId) {
-            createNewChat();
-        }
-        chatHistory.splice(chatIndex, 1);
-        saveUserChatHistory();
-        loadHistoryList();
-        document.getElementById('deleteModal').classList.remove('active');
-        showToast('Chat deleted successfully 🗑️', 'success');
-    }
-});
-document.getElementById('cancelDelete').addEventListener('click', function() {
-    document.getElementById('deleteModal').classList.remove('active');
-});
-document.getElementById('closeDeleteModal').addEventListener('click', function() {
-    document.getElementById('deleteModal').classList.remove('active');
-});
-
-// Download modal functions
-function openDownloadModal() {
-    document.getElementById('downloadModal').classList.add('active');
-}
-function openMessageDownloadModal(content) {
-    messageContentForDownload = content;
-    document.getElementById('messageDownloadModal').classList.add('active');
-}
-// Close download modals
-document.getElementById('closeDownloadModal').addEventListener('click', function() {
-    document.getElementById('downloadModal').classList.remove('active');
-});
-document.getElementById('closeMessageDownloadModal').addEventListener('click', function() {
-    document.getElementById('messageDownloadModal').classList.remove('active');
-});
-
-// Handle download option clicks
-document.querySelectorAll('.download-option').forEach(option => {
-    option.addEventListener('click', function() {
-        const format = this.dataset.format;
-        const isMessageModal = this.closest('#messageDownloadModal') !== null;
-        if (isMessageModal) {
-            downloadMessage(format, messageContentForDownload);
-        } else {
-            downloadChat(format);
-        }
-    });
-});
-
-function downloadMessage(format, content) {
-    const indicator = document.getElementById('messageProgressIndicator');
-    indicator.classList.add('active');
-    setTimeout(() => {
-        const fileName = `LegalSwami-Document-${formatDateForFilename(new Date())}`;
-        switch(format) {
-            case 'pdf':
-                downloadAsPDF(content, fileName);
-                break;
-            case 'doc':
-                downloadAsDOC(content, fileName);
-                break;
-            case 'txt':
-                downloadAsTXT(content, fileName);
-                break;
-        }
-        indicator.classList.remove('active');
-        document.getElementById('messageDownloadModal').classList.remove('active');
-    }, 500);
-}
-
-function downloadChat(format) {
-    const indicator = document.getElementById('progressIndicator');
-    indicator.classList.add('active');
-    setTimeout(() => {
-        let content = '';
-        conversationHistory.forEach((msg, index) => {
-            const role = msg.role === 'user' ? 'You' : 'LegalSwami';
-            const time = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString() : new Date().toLocaleTimeString();
-            content += `${role} (${time}):\n${msg.content}\n\n`;
-        });
-        const fileName = `LegalSwami-Chat-${formatDateForFilename(new Date())}`;
-        switch(format) {
-            case 'pdf':
-                downloadAsPDF(content, fileName);
-                break;
-            case 'doc':
-                downloadAsDOC(content, fileName);
-                break;
-            case 'txt':
-                downloadAsTXT(content, fileName);
-                break;
-        }
-        indicator.classList.remove('active');
-        document.getElementById('downloadModal').classList.remove('active');
-    }, 500);
-}
-
-function downloadAsPDF(content, filename) {
-    try {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        const lines = doc.splitTextToSize(content, 180);
-        doc.setFontSize(12);
-        doc.text(lines, 10, 20);
-        doc.setFontSize(10);
-        doc.text('Generated by LegalSwami AI Assistant ⚖️', 10, 280);
-        const blob = doc.output('blob');
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${filename}.pdf`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        URL.revokeObjectURL(url);
-        lastDownloadedFileUrl = url;
-        lastDownloadedFileName = `${filename}.pdf`;
-        showDownloadNotification(`${filename}.pdf`, 'PDF Document');
-        showToast('PDF downloaded successfully 📥', 'success');
-    } catch (error) {
-        console.error('PDF generation error:', error);
-        showToast('PDF download failed. Using fallback. 📄', 'warning');
-        downloadAsTXT(content, filename);
-    }
-}
-
-function downloadAsDOC(content, filename) {
-    const htmlContent = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="UTF-8">
-            <title>${filename}</title>
-            <style>
-                body { font-family: Arial, sans-serif; line-height: 1.6; margin: 40px; }
-                h1 { color: #10a37f; }
-                .timestamp { color: #666; font-size: 0.9em; }
-                .user { color: #10a37f; font-weight: bold; }
-                .ai { color: #7e57c2; font-weight: bold; }
-                .disclaimer { 
-                    background-color: #f8f9fa; 
-                    border-left: 4px solid #f59e0b;
-                    padding: 10px;
-                    margin-top: 20px;
-                    font-size: 0.9em;
-                }
-            </style>
-        </head>
-        <body>
-            <h1>${filename} ⚖️</h1>
-            <p class="timestamp">Generated on: ${new Date().toLocaleString()}</p>
-            <hr>
-            <pre style="white-space: pre-wrap; font-family: inherit;">${content}</pre>
-            <div class="disclaimer">
-                <strong>Disclaimer:</strong> This document is generated by LegalSwami AI Assistant for informational purposes only and does not constitute legal advice. ⚖️
-            </div>
-        </body>
-        </html>
-    `;
-    const blob = new Blob([htmlContent], { type: 'application/msword' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${filename}.doc`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    lastDownloadedFileUrl = url;
-    lastDownloadedFileName = `${filename}.doc`;
-    showDownloadNotification(`${filename}.doc`, 'Word Document');
-    showToast('Word document downloaded 📥', 'success');
-}
-
-function downloadAsTXT(content, filename) {
-    const blob = new Blob([content], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${filename}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    lastDownloadedFileUrl = url;
-    lastDownloadedFileName = `${filename}.txt`;
-    showDownloadNotification(`${filename}.txt`, 'Text File');
-    showToast('Text file downloaded 📥', 'success');
-}
-
-// Format date for filename
-function formatDateForFilename(date) {
-    return date.toISOString()
-        .replace(/[:\-]/g, '')
-        .replace('T', '_')
-        .split('.')[0];
-}
-
-// Show toast notification
 function showToast(message, type = 'success') {
     const toast = document.getElementById('toast');
     const toastMessage = document.getElementById('toast-message');
+    if (!toast || !toastMessage) return;
+    
     toastMessage.textContent = message;
     toast.className = `toast ${type} show`;
+    
     setTimeout(() => {
         toast.classList.remove('show');
     }, 3000);
 }
 
-// Initialize backend connection
-async function initializeAppWithBackend() {
-    console.log('🔌 Initializing app with backend...');
+function showDownloadNotification(fileName, fileType) {
+    const notification = document.getElementById('downloadNotification');
+    if (!notification) return;
     
-    try {
-        const backendUrl = 'https://legal-swami-backend.onrender.com';
-        
-        if (!window.legalSwamiAPI) {
-            window.legalSwamiAPI = {
-                token: localStorage.getItem('legalSwamiToken'),
-                user: currentUser,
-                sendMessage: async function(message, attachments, chatId) {
-                    console.log('📤 Sending message to backend:', message.substring(0, 50));
-                    
-                    const userId = this.user ? this.user.id : 'guest_' + Date.now();
-                    
-                    const response = await fetch(backendUrl + '/api/v1/chat/send', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'x-user-id': userId,
-                            'x-request-id': 'req_' + Date.now(),
-                            'x-language': selectedLanguage
-                        },
-                        body: JSON.stringify({
-                            message: message,
-                            generateDocument: isDocumentRequest(message),
-                            language: selectedLanguage
-                        })
-                    });
-                    
-                    if (!response.ok) {
-                        throw new Error('HTTP ' + response.status + ': ' + await response.text());
-                    }
-                    
-                    return await response.json();
-                },
-                getChatHistory: async function(page, size) {
-                    page = page || 0;
-                    size = size || 10;
-                    const userId = this.user ? this.user.id : 'guest';
-                    
-                    const response = await fetch(
-                        backendUrl + '/api/v1/chat/history?userId=' + userId + '&page=' + page + '&size=' + size,
-                        {
-                            headers: {
-                                'x-user-id': userId,
-                                'x-request-id': 'req_' + Date.now()
-                            }
-                        }
-                    );
-                    
-                    if (!response.ok) {
-                        throw new Error('HTTP ' + response.status);
-                    }
-                    
-                    return await response.json();
-                }
-            };
+    const title = document.getElementById('downloadNotificationTitle');
+    const message = document.getElementById('downloadNotificationMessage');
+    
+    if (title) title.textContent = `${fileType} Downloaded 📥`;
+    if (message) message.textContent = `Click to open ${fileName}`;
+    
+    notification.classList.add('show');
+    setTimeout(() => {
+        notification.classList.remove('show');
+    }, 5000);
+}
+
+// ============================================
+// GLOBAL WINDOW FUNCTIONS
+// ============================================
+
+window.copyMessage = function(button) {
+    const messageText = button.closest('.message-content').querySelector('.message-text');
+    let textToCopy = messageText.innerText || messageText.textContent;
+    
+    navigator.clipboard.writeText(textToCopy).then(() => {
+        showToast('Copied to clipboard! 📋', 'success');
+    }).catch(err => {
+        console.error('Copy failed:', err);
+        showToast('Failed to copy ❌', 'error');
+    });
+};
+
+window.regenerateResponse = function(messageId) {
+    showToast('Regenerating response... 🔄', 'info');
+    // Add regeneration logic here
+};
+
+window.removeAttachment = function(index) {
+    attachedFiles.splice(index, 1);
+    const preview = document.getElementById('attachmentsPreview');
+    if (!preview) return;
+    
+    preview.innerHTML = '';
+    if (attachedFiles.length === 0) {
+        preview.style.display = 'none';
+        const sendButton = document.getElementById('sendButton');
+        const userInput = document.getElementById('userInput');
+        if (sendButton && userInput) {
+            sendButton.disabled = userInput.value.trim() === '';
         }
-        
-        // Test backend health
-        try {
-            const healthResponse = await fetch(backendUrl + '/api/v1/public/health');
-            if (healthResponse.ok) {
-                const healthData = await healthResponse.json();
-                console.log('✅ Backend health check passed:', healthData);
-                showToast('Backend connected successfully!', 'success');
-            } else {
-                console.warn('⚠️ Backend health check failed:', healthResponse.status);
-            }
-        } catch (error) {
-            console.warn('⚠️ Backend health check failed:', error.message);
-        }
-        
-    } catch (error) {
-        console.error('❌ Initialization failed:', error);
-        showToast('Note: Some features may be limited', 'warning');
-    }
-}
-
-// Setup event listeners for backend
-function setupBackendEventListeners() {
-    // Header login button
-    const headerLoginBtn = document.getElementById('headerLoginBtn');
-    if (headerLoginBtn) {
-        headerLoginBtn.addEventListener('click', showLoginModal);
-    }
-    
-    // Demo login button
-    const demoLoginBtn = document.getElementById('demoLoginBtn');
-    if (demoLoginBtn) {
-        demoLoginBtn.addEventListener('click', handleDemoLogin);
-    }
-    
-    // Google login button
-    const customGoogleBtn = document.getElementById('customGoogleBtn');
-    if (customGoogleBtn) {
-        customGoogleBtn.addEventListener('click', handleCustomGoogleLogin);
-    }
-}
-
-// Show login modal
-function showLoginModal() {
-    const modal = document.getElementById('loginModal');
-    if (modal) {
-        modal.classList.add('active');
-        isLoginModalOpen = true;
-        
-        // Render Google Sign-In button
-        setTimeout(function() {
-            renderGoogleSignInButton();
-        }, 100);
-    }
-}
-
-// Initialize Google Authentication
-function initializeSimpleGoogleAuth() {
-    console.log('🔐 Initializing Google Authentication...');
-    
-    if (typeof google === 'undefined') {
-        console.warn('⚠️ Google Identity Services not loaded yet, will retry...');
-        setTimeout(initializeSimpleGoogleAuth, 1000);
-        return;
-    }
-    
-    try {
-        google.accounts.id.initialize({
-            client_id: '166511615962-bohur5q8d4i5hud6icr4185kcte9enk8.apps.googleusercontent.com',
-            callback: handleGoogleCredentialResponse,
-            auto_select: false,
-            cancel_on_tap_outside: true,
-            context: 'signin',
-            itp_support: false,
-            ux_mode: isMobile ? 'popup' : 'popup'
+    } else {
+        attachedFiles.forEach((file, idx) => {
+            const item = document.createElement('div');
+            item.className = 'attachment-preview-item';
+            item.innerHTML = `
+                <div style="padding: 8px; text-align: center; background: var(--dark-surface-light); height: 70px; width: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                    <i class="fas fa-file" style="font-size: 1.3rem; color: var(--primary);"></i>
+                    <div style="font-size: 0.55rem; color: var(--dark-text-secondary); margin-top: 4px;">FILE</div>
+                </div>
+                <button class="remove-attachment" onclick="removeAttachment(${idx})" style="top: 2px; right: 2px;">
+                    <i class="fas fa-times"></i>
+                </button>
+                <div class="attachment-preview-name">${file.name.substring(0, 12)}${file.name.length > 12 ? '...' : ''}</div>
+            `;
+            preview.appendChild(item);
         });
-        
-        googleGISInitialized = true;
-        console.log('✅ Google Authentication initialized');
-        
-    } catch (error) {
-        console.error('❌ Google Authentication initialization failed:', error);
+        preview.style.display = 'flex';
     }
-}
+};
 
-// Render Google Sign-In Button
-function renderGoogleSignInButton() {
-    try {
-        const container = document.getElementById('googleSignInContainer');
-        if (!container || !googleGISInitialized) {
-            console.log('⚠️ Google Sign-In container not found or GIS not initialized');
-            const customBtn = document.getElementById('customGoogleBtn');
-            if (customBtn) customBtn.style.display = 'flex';
-            return;
-        }
-        
-        // Clear the container first
-        container.innerHTML = '';
-        
-        // Render Google Sign-In button with mobile optimization
-        const buttonSize = isMobile ? 'large' : 'large';
-        const buttonWidth = isMobile ? '100%' : '400';
-        
-        google.accounts.id.renderButton(
-            container,
-            {
-                theme: 'outline',
-                size: buttonSize,
-                text: 'signin_with',
-                shape: 'rectangular',
-                logo_alignment: 'left',
-                width: buttonWidth,
-                locale: 'en_US'
-            }
-        );
-        
-        console.log('✅ Google Sign-In button rendered');
-        const customBtn = document.getElementById('customGoogleBtn');
-        if (customBtn) customBtn.style.display = 'none';
-        
-    } catch (error) {
-        console.error('❌ Failed to render Google Sign-In button:', error);
-        const customBtn = document.getElementById('customGoogleBtn');
-        if (customBtn) customBtn.style.display = 'flex';
-    }
-}
+// ============================================
+// MOCK FUNCTIONS FOR DEMO
+// ============================================
 
-// Handle Google Credential Response
-function handleGoogleCredentialResponse(response) {
-    console.log('🔐 Google credential received');
-    
-    try {
-        const payload = JSON.parse(atob(response.credential.split('.')[1]));
-        
-        const userData = {
-            id: 'google_' + payload.sub,
-            name: payload.name,
-            email: payload.email,
-            picture: payload.picture,
-            provider: 'google',
-            token: response.credential
-        };
-        
-        console.log('✅ Google user authenticated:', userData.email);
-        
-        localStorage.setItem('legalSwamiUser', JSON.stringify(userData));
-        localStorage.setItem('legalSwamiToken', response.credential);
-        
-        currentUser = userData;
-        isLoggedIn = true;
-        userToken = response.credential;
-        
-        if (window.legalSwamiAPI) {
-            window.legalSwamiAPI.user = userData;
-            window.legalSwamiAPI.token = response.credential;
-        }
-        
-        updateUserUI();
-        document.getElementById('loginModal').classList.remove('active');
-        
-        showToast('Successfully logged in with Google!', 'success');
-        
-    } catch (error) {
-        console.error('❌ Failed to process Google credential:', error);
-        showToast('Login failed. Please try again.', 'error');
-    }
-}
-
-// Handle Custom Google Login
-function handleCustomGoogleLogin() {
-    console.log('🔐 Custom Google login triggered');
-    
-    if (!googleGISInitialized) {
-        showToast('Google Sign-In is not available. Please use demo login.', 'warning');
-        return;
-    }
-    
-    try {
-        google.accounts.id.prompt();
-    } catch (error) {
-        console.error('❌ Google login failed:', error);
-        showToast('Google Sign-In failed. Using demo login instead.', 'warning');
-        handleDemoLogin();
-    }
-}
-
-// Handle Demo Login
-function handleDemoLogin() {
-    console.log('👤 Demo login triggered');
-    
-    const demoUsers = [
-        {
-            id: 'demo_lawyer_1',
-            name: 'Advocate Rajesh Kumar',
-            email: 'demo.lawyer@example.com',
-            role: 'lawyer',
-            specialization: 'Corporate Law'
-        },
-        {
-            id: 'demo_client_1',
-            name: 'Priya Sharma',
-            email: 'demo.client@example.com',
-            role: 'client',
-            caseType: 'Property Dispute'
-        },
-        {
-            id: 'demo_student_1',
-            name: 'Amit Patel',
-            email: 'demo.student@example.com',
-            role: 'student',
-            institution: 'NLSIU Bangalore'
-        }
+async function generateMockResponse(message) {
+    const responses = [
+        "I understand you're asking about legal matters. Based on common legal principles in India, here's what you need to know...",
+        "For the legal document you requested, here's a basic template structure that you can customize...",
+        "Regarding your legal question, here are some general guidelines based on Indian law...",
+        "I'll help you draft that document. Here's a standard format used in Indian legal practice...",
+        "Based on Indian legal practice, here's what you need to consider for your situation..."
     ];
     
-    const randomUser = demoUsers[Math.floor(Math.random() * demoUsers.length)];
-    
-    const userData = {
-        id: randomUser.id,
-        name: randomUser.name,
-        email: randomUser.email,
-        role: randomUser.role,
-        picture: 'https://ui-avatars.com/api/?name=' + encodeURIComponent(randomUser.name) + '&background=1a56db&color=fff&size=128',
-        provider: 'demo',
-        isDemo: true
+    return {
+        response: responses[Math.floor(Math.random() * responses.length)],
+        content: responses[Math.floor(Math.random() * responses.length)],
+        isDocument: isDocumentRequest(message)
     };
-    
-    localStorage.setItem('legalSwamiUser', JSON.stringify(userData));
-    localStorage.setItem('legalSwamiToken', 'demo_token_' + Date.now());
-    
-    currentUser = userData;
-    isLoggedIn = true;
-    userToken = 'demo_token';
-    
-    if (window.legalSwamiAPI) {
-        window.legalSwamiAPI.user = userData;
-        window.legalSwamiAPI.token = 'demo_token';
-    }
-    
-    updateUserUI();
-    document.getElementById('loginModal').classList.remove('active');
-    showToast('Welcome ' + userData.name + '! (Demo Mode)', 'success');
 }
 
-// Check for existing user
-function checkExistingUser() {
-    console.log('👤 Checking for existing user...');
-    
-    const userStr = localStorage.getItem('legalSwamiUser');
-    if (userStr) {
-        try {
-            const user = JSON.parse(userStr);
-            console.log('✅ Found existing user:', user.name);
-            
-            currentUser = user;
-            isLoggedIn = true;
-            userToken = localStorage.getItem('legalSwamiToken');
-            
-            if (window.legalSwamiAPI) {
-                window.legalSwamiAPI.user = user;
-                window.legalSwamiAPI.token = userToken;
-            }
-            
-            updateUserUI();
-            return;
-        } catch (e) {
-            console.error('Error parsing user data:', e);
-            localStorage.removeItem('legalSwamiUser');
-            localStorage.removeItem('legalSwamiToken');
-        }
-    }
-    
-    updateUserUI();
+// ============================================
+// MODAL FUNCTIONS
+// ============================================
+
+function openDownloadModal() {
+    document.getElementById('downloadModal').classList.add('active');
 }
 
-// Apply mobile optimizations
-function applyMobileOptimizations() {
-    console.log('📱 Applying mobile optimizations...');
-    
-    // Larger touch targets
-    const touchElements = document.querySelectorAll('button, .nav-link, .quick-btn, .chat-action-btn');
-    touchElements.forEach(el => {
-        el.style.minHeight = '44px';
-        el.style.minWidth = '44px';
-    });
-    
-    // Prevent zoom on input focus
-    const inputs = document.querySelectorAll('input, select, textarea');
-    inputs.forEach(input => {
-        input.addEventListener('focus', function() {
-            if (isMobile) {
-                setTimeout(() => {
-                    this.style.fontSize = '16px';
-                }, 100);
-            }
-        });
-    });
-    
-    // Better mobile scrolling
-    document.body.style.overflowX = 'hidden';
-    document.body.style.touchAction = 'manipulation';
-    
-    console.log('✅ Mobile optimizations applied');
-}
+// ============================================
+// INITIALIZATION
+// ============================================
 
-// Setup scroll effects
-function setupScrollEffects() {
-    const header = document.querySelector('.premium-navbar');
-    const navLinks = document.querySelectorAll('.nav-link');
-    const backToTopBtn = document.getElementById('backToTop');
-    
-    if (header) {
-        window.addEventListener('scroll', function() {
-            // Header shadow on scroll
-            if (window.scrollY > 50) {
-                header.classList.add('scrolled');
-            } else {
-                header.classList.remove('scrolled');
-            }
-            
-            // Back to top button
-            if (backToTopBtn) {
-                if (window.scrollY > 300) {
-                    backToTopBtn.classList.add('visible');
-                } else {
-                    backToTopBtn.classList.remove('visible');
-                }
-            }
-        });
-    }
-    
-    // Back to top functionality
-    if (backToTopBtn) {
-        backToTopBtn.addEventListener('click', function() {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-    }
-}
-
-// Setup mobile menu
-function setupMobileMenu() {
-    const mobileToggle = document.getElementById('mobileToggle');
-    const mobileMenu = document.getElementById('mobileMenu');
-    const mobileClose = document.getElementById('mobileClose');
-    
-    if (mobileToggle && mobileMenu) {
-        mobileToggle.addEventListener('click', function() {
-            isMobileMenuOpen = !isMobileMenuOpen;
-            if (isMobileMenuOpen) {
-                mobileMenu.style.display = 'block';
-                setTimeout(function() {
-                    mobileMenu.style.opacity = '1';
-                }, 10);
-                document.body.style.overflow = 'hidden';
-            } else {
-                mobileMenu.style.opacity = '0';
-                setTimeout(function() {
-                    mobileMenu.style.display = 'none';
-                }, 300);
-                document.body.style.overflow = '';
-            }
-            this.innerHTML = isMobileMenuOpen ? 
-                '<i class="fas fa-times"></i>' : 
-                '<i class="fas fa-bars"></i>';
-        });
-    }
-    
-    if (mobileClose && mobileMenu) {
-        mobileClose.addEventListener('click', function() {
-            isMobileMenuOpen = false;
-            mobileMenu.style.opacity = '0';
-            setTimeout(function() {
-                mobileMenu.style.display = 'none';
-            }, 300);
-            document.body.style.overflow = '';
-            if (mobileToggle) {
-                mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
-            }
-        });
-    }
-}
-
-// Setup device specific optimizations
-function setupDeviceSpecificOptimizations() {
-    // Tablet specific optimizations
-    if (isTablet) {
-        console.log('📱 Tablet optimizations enabled');
-        
-        // Adjust font sizes for tablet
-        document.documentElement.style.fontSize = '15px';
-    }
-    
-    // Mobile specific optimizations
-    if (isMobile) {
-        // Add swipe support for mobile menu
-        let startX, startY;
-        
-        document.addEventListener('touchstart', function(e) {
-            startX = e.touches[0].clientX;
-            startY = e.touches[0].clientY;
-        });
-        
-        document.addEventListener('touchend', function(e) {
-            if (!startX || !startY) return;
-            
-            const endX = e.changedTouches[0].clientX;
-            const endY = e.changedTouches[0].clientY;
-            
-            const diffX = startX - endX;
-            const diffY = startY - endY;
-            
-            // Horizontal swipe (for chat interface)
-            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
-                if (diffX > 0 && isChatOpen) {
-                    // Swipe left - go back to home
-                    const backBtn = document.getElementById('backToHome');
-                    if (backBtn) {
-                        backBtn.click();
-                    }
-                }
-            }
-        });
-    }
-}
-
-// Setup language buttons
-function setupLanguageButtons() {
-    document.querySelectorAll('.lang-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const lang = this.getAttribute('data-lang');
-            selectedLanguage = lang;
-            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            
-            // Update chat placeholder based on language
-            const messageInput = document.getElementById('userInput');
-            if (messageInput) {
-                if (lang === 'hi') {
-                    messageInput.placeholder = "अपना कानूनी प्रश्न यहां टाइप करें...";
-                } else if (lang === 'mr') {
-                    messageInput.placeholder = "तुमचा कायदेशीर प्रश्न येथे टाइप करा...";
-                } else if (lang === 'gu') {
-                    messageInput.placeholder = "તમારો કાનૂની પ્રશ્ન અહીં ટાઈપ કરો...";
-                } else {
-                    messageInput.placeholder = "Type your legal question here...";
-                }
-            }
-            
-            showToast(`Language changed to ${getLanguageName(lang)}`, 'info');
-        });
-    });
-}
-
-function getLanguageName(code) {
-    const languages = {
-        'en': 'English',
-        'hi': 'Hindi',
-        'mr': 'Marathi',
-        'gu': 'Gujarati'
-    };
-    return languages[code] || 'English';
-}
-
-// DOM Content Loaded
+// Set up file upload modal
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 LegalSwami Premium Frontend Initialized');
-    console.log('📱 Device Type:', isMobile ? 'Mobile' : isTablet ? 'Tablet' : 'Desktop');
-     
+    
     // Hide loading screen
     setTimeout(function() {
         const loadingScreen = document.getElementById('loadingScreen');
@@ -10493,9 +8658,8 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }, 500);
     
-    // Setup button click handlers
+    // Setup all Start Chat buttons
     setTimeout(function() {
-        // Setup all Start Chat buttons
         const startChatButtons = [
             document.getElementById('startChatBtn'),
             document.getElementById('ctaStartChat'),
@@ -10513,121 +8677,182 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
         
-        // Setup other button handlers
-        const watchDemoBtn = document.getElementById('watchDemo');
-        if (watchDemoBtn) {
-            watchDemoBtn.addEventListener('click', function() {
-                alert('Demo video feature coming soon! 🎥');
+        // Setup file upload modal
+        const uploadArea = document.getElementById('uploadArea');
+        const browseFilesBtn = document.getElementById('browseFilesBtn');
+        const confirmFileUpload = document.getElementById('confirmFileUpload');
+        const cancelFileUpload = document.getElementById('cancelFileUpload');
+        const closeFileUploadModal = document.getElementById('closeFileUploadModal');
+        
+        if (browseFilesBtn) {
+            browseFilesBtn.addEventListener('click', function() {
+                const fileInput = document.createElement('input');
+                fileInput.type = 'file';
+                fileInput.multiple = true;
+                fileInput.accept = 'image/*,.pdf,.txt,.doc,.docx';
+                fileInput.onchange = function(e) {
+                    handleFileSelection(e.target.files);
+                };
+                fileInput.click();
             });
         }
         
-        const scheduleDemoBtn = document.getElementById('ctaScheduleDemo');
-        if (scheduleDemoBtn) {
-            scheduleDemoBtn.addEventListener('click', function() {
-                alert('Schedule demo feature coming soon! 📅');
+        if (uploadArea) {
+            uploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                uploadArea.classList.add('dragover');
+            });
+            
+            uploadArea.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+            });
+            
+            uploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                uploadArea.classList.remove('dragover');
+                if (e.dataTransfer.files.length > 0) {
+                    handleFileSelection(e.dataTransfer.files);
+                }
             });
         }
         
-        // Setup all Generate Now buttons
-        document.querySelectorAll('.btn-generate').forEach(btn => {
-            btn.addEventListener('click', function() {
-                showChatGPTInterface();
-                setTimeout(() => {
-                    const userInput = document.getElementById('userInput');
-                    if (userInput) {
-                        userInput.value = 'Create a legal document draft for me';
-                        userInput.focus();
-                        userInput.style.height = Math.min(userInput.scrollHeight, 180) + 'px';
-                    }
-                }, 500);
-            });
-        });
-        
-        // Setup all Search buttons
-        document.querySelectorAll('.btn-database, .btn-search').forEach(btn => {
-            btn.addEventListener('click', function() {
-                showChatGPTInterface();
-                setTimeout(() => {
-                    const userInput = document.getElementById('userInput');
-                    if (userInput) {
-                        userInput.value = 'Search legal information';
-                        userInput.focus();
-                        userInput.style.height = Math.min(userInput.scrollHeight, 180) + 'px';
-                    }
-                }, 500);
-            });
-        });
-        
-        // Setup all Get Started buttons
-        document.querySelectorAll('.btn-pricing').forEach(btn => {
-            btn.addEventListener('click', function() {
-                showChatGPTInterface();
-            });
-        });
-        
-        console.log('✅ All button handlers setup complete');
-    }, 1000);
-    
-    // Initialize backend connection
-    initializeAppWithBackend();
-    
-    // Setup event listeners
-    setupBackendEventListeners();
-    
-    // Initialize Google Authentication
-    setTimeout(initializeSimpleGoogleAuth, 2000);
-    
-    // Check for existing user
-    checkExistingUser();
-    
-    // Setup scroll effects
-    setupScrollEffects();
-    
-    // Setup mobile menu
-    setupMobileMenu();
-    
-    // Setup device-specific optimizations
-    setupDeviceSpecificOptimizations();
-    
-    // Apply mobile optimizations
-    if (isMobile) {
-        applyMobileOptimizations();
-    }
-    
-    // Auto-initialize guest mode if not logged in
-    setTimeout(function() {
-        if (!isLoggedIn && !document.getElementById('loginModal').classList.contains('active')) {
-            console.log("Auto-initializing guest mode...");
-            initializeAppForGuest();
+        function handleFileSelection(files) {
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                if (file.type.startsWith('image/') || 
+                    file.type === 'application/pdf' || 
+                    file.type === 'text/plain' ||
+                    file.type.includes('document') ||
+                    file.name.endsWith('.txt') ||
+                    file.name.endsWith('.pdf') ||
+                    file.name.endsWith('.doc') ||
+                    file.name.endsWith('.docx')) {
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        selectedFiles.push({
+                            name: file.name,
+                            data: e.target.result,
+                            type: file.type,
+                            file: file,
+                            size: file.size
+                        });
+                        updateUploadedFilesDisplay();
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    showToast(`File type not supported: ${file.name} ❌`, 'warning');
+                }
+            }
         }
-    }, 1000);
-    
-    console.log('✅ All initialization complete');
+        
+        if (confirmFileUpload) {
+            confirmFileUpload.addEventListener('click', function() {
+                if (selectedFiles.length === 0) {
+                    showToast('Please select at least one file 📎', 'warning');
+                    return;
+                }
+                
+                attachedFiles = [...attachedFiles, ...selectedFiles];
+                const preview = document.getElementById('attachmentsPreview');
+                if (preview) {
+                    preview.innerHTML = '';
+                    attachedFiles.forEach((file, index) => {
+                        const item = document.createElement('div');
+                        item.className = 'attachment-preview-item';
+                        item.innerHTML = `
+                            <div style="padding: 8px; text-align: center; background: var(--dark-surface-light); height: 70px; width: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                                <i class="fas fa-file" style="font-size: 1.3rem; color: var(--primary);"></i>
+                                <div style="font-size: 0.55rem; color: var(--dark-text-secondary); margin-top: 4px;">FILE</div>
+                            </div>
+                            <button class="remove-attachment" onclick="removeAttachment(${index})" style="top: 2px; right: 2px;">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <div class="attachment-preview-name">${file.name.substring(0, 12)}${file.name.length > 12 ? '...' : ''}</div>
+                        `;
+                        preview.appendChild(item);
+                    });
+                    preview.style.display = 'flex';
+                }
+                
+                document.getElementById('sendButton').disabled = false;
+                document.getElementById('fileUploadModal').classList.remove('active');
+                showToast(`${selectedFiles.length} file(s) attached 📎`, 'success');
+                selectedFiles = [];
+            });
+        }
+        
+        if (cancelFileUpload) {
+            cancelFileUpload.addEventListener('click', function() {
+                document.getElementById('fileUploadModal').classList.remove('active');
+            });
+        }
+        
+        if (closeFileUploadModal) {
+            closeFileUploadModal.addEventListener('click', function() {
+                document.getElementById('fileUploadModal').classList.remove('active');
+            });
+        }
+        
+        // Setup mobile menu
+        const mobileToggle = document.getElementById('mobileToggle');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileClose = document.getElementById('mobileClose');
+        
+        if (mobileToggle && mobileMenu) {
+            mobileToggle.addEventListener('click', function() {
+                isMobileMenuOpen = !isMobileMenuOpen;
+                if (isMobileMenuOpen) {
+                    mobileMenu.style.display = 'block';
+                    setTimeout(function() {
+                        mobileMenu.style.opacity = '1';
+                    }, 10);
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    mobileMenu.style.opacity = '0';
+                    setTimeout(function() {
+                        mobileMenu.style.display = 'none';
+                    }, 300);
+                    document.body.style.overflow = '';
+                }
+                this.innerHTML = isMobileMenuOpen ? 
+                    '<i class="fas fa-times"></i>' : 
+                    '<i class="fas fa-bars"></i>';
+            });
+        }
+        
+        if (mobileClose && mobileMenu) {
+            mobileClose.addEventListener('click', function() {
+                isMobileMenuOpen = false;
+                mobileMenu.style.opacity = '0';
+                setTimeout(function() {
+                    mobileMenu.style.display = 'none';
+                }, 300);
+                document.body.style.overflow = '';
+                if (mobileToggle) {
+                    mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
+                }
+            });
+        }
+        
+        // Auto-initialize guest mode
+        setTimeout(function() {
+            if (!isLoggedIn) {
+                console.log("Auto-initializing guest mode...");
+                initializeAppForGuest();
+            }
+        }, 1000);
+        
+        console.log('✅ All initialization complete');
+    }, 100);
 });
 
-// Mock response generator
-async function generateMockResponse(message) {
-    // Simple mock response for when backend is down
-    const responses = [
-        "I understand you're asking about legal matters. Based on common legal principles in India...",
-        "For the legal document you requested, here's a basic template structure...",
-        "Regarding your legal question, here are some general guidelines...",
-        "I'll help you draft that document. Here's a standard format...",
-        "Based on Indian legal practice, here's what you need to consider..."
-    ];
-    
-    return {
-        response: responses[Math.floor(Math.random() * responses.length)],
-        content: responses[Math.floor(Math.random() * responses.length)],
-        isDocument: isDocumentRequest(message)
-    };
-}
-
-// EMERGENCY FIX: Global error handler
+// Global error handler
 window.onerror = function(msg, url, line, col, error) {
     console.log("Global error caught:", msg, "at", line, ":", col);
-    return true; // Prevents default error handling
+    return true;
 };
-    </script>
+</script>
 </body>
 </html>
