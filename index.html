@@ -3605,6 +3605,40 @@ button:disabled {
 
 .chat-interface .chat-container {
     border: 2px solid green !important;
+}	
+
+/* EMERGENCY DEBUG - Remove after fixing */
+#chatInterface {
+    display: block !important;
+    background: red !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* Force chat to show */
+#chatInterface .container {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100vh !important;
+}
+
+#chatInterface .chat-container {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important;
+    flex: 1 !important;
+}
+
+#chatInterface .chat-messages {
+    flex: 1 !important;
+    overflow-y: auto !important;
+    min-height: 200px !important;
+    background: var(--dark-bg) !important;
+}
+
+/* Hide any overlay that might be blocking */
+.sidebar-overlay {
+    display: none !important;
 }		
 </style>
     
@@ -4689,7 +4723,7 @@ button:disabled {
                             </div>
                         </aside>
                         
-                        <main class="chat-container" id="chatContainer">
+                       <main id="chatContent">
                             <div class="chat-messages" id="chatMessages">
                                 <!-- Welcome Message will be added dynamically -->
                             </div>
@@ -5740,81 +5774,57 @@ button:disabled {
 
         // ✅ FIXED: Show ChatGPT interface - SIMPLIFIED VERSION
         function showChatGPTInterface() {
-    console.log("Showing ChatGPT Interface");
+    console.log("🚀 Showing ChatGPT Interface");
     
-    const chatInterface = document.getElementById('chatInterface');
-    const mainContainer = document.querySelector('.main-container');
-    
-    if (!chatInterface || !mainContainer) {
-        console.error("Required elements not found!");
-        return;
-    }
-    
-    // Hide homepage completely
-    mainContainer.style.display = 'none';
+    // Hide homepage
+    document.querySelector('.main-container').style.display = 'none';
     
     // Show chat interface
+    const chatInterface = document.getElementById('chatInterface');
     chatInterface.style.display = 'block';
-    
-    // Ensure chat interface takes full viewport
     chatInterface.style.position = 'fixed';
     chatInterface.style.top = '0';
     chatInterface.style.left = '0';
     chatInterface.style.width = '100vw';
     chatInterface.style.height = '100vh';
-    chatInterface.style.backgroundColor = 'var(--dark-bg)';
     chatInterface.style.zIndex = '9999';
     chatInterface.style.overflow = 'hidden';
+    chatInterface.style.backgroundColor = 'var(--dark-bg)';
     
-    // Initialize chat if needed
-    if (!chatInitialized) {
-        console.log("Initializing chat...");
-        setTimeout(() => {
-            try {
-                initializeChatApp();
-                chatInitialized = true;
-                
-                // Add welcome message
-                const chatMessages = document.getElementById('chatMessages');
-                if (chatMessages && chatMessages.innerHTML.trim() === '') {
-                    chatMessages.innerHTML = WELCOME_MESSAGE_HTML;
-                    addDraftTemplateListeners();
-                }
-            } catch (error) {
-                console.error("Chat initialization error:", error);
-            }
-        }, 100);
+    // Reset chat messages to show welcome message
+    const chatMessages = document.getElementById('chatMessages');
+    if (chatMessages && chatMessages.innerHTML.trim() === '') {
+        chatMessages.innerHTML = WELCOME_MESSAGE_HTML;
+        addDraftTemplateListeners();
     }
     
-    // Update UI for current user
-    updateUserUI();
+    // Initialize chat if not already
+    if (!chatInitialized) {
+        console.log("🔄 Initializing chat app...");
+        initializeChatApp();
+        chatInitialized = true;
+    }
     
-    // Focus input
+    // Focus input field
     setTimeout(() => {
         const input = document.getElementById('userInput');
         if (input) {
             input.focus();
-            input.style.height = 'auto';
-            input.style.height = Math.min(input.scrollHeight, 150) + 'px';
         }
-    }, 200);
+    }, 300);
     
-    console.log("Chat interface shown successfully");
+    console.log("✅ Chat interface shown successfully");
 }
 
         // ✅ FIXED: Go back to home from chat
         function goBackToHome() {
-    console.log("Going back to home");
-    
-    const chatInterface = document.getElementById('chatInterface');
-    const mainContainer = document.querySelector('.main-container');
-    
-    if (!chatInterface || !mainContainer) return;
+    console.log("🏠 Going back to home");
     
     // Hide chat interface
+    const chatInterface = document.getElementById('chatInterface');
     chatInterface.style.display = 'none';
     
-    // Reset chat interface styles
+    // Reset styles
     chatInterface.style.position = '';
     chatInterface.style.top = '';
     chatInterface.style.left = '';
@@ -5825,12 +5835,12 @@ button:disabled {
     chatInterface.style.overflow = '';
     
     // Show homepage
-    mainContainer.style.display = 'block';
+    document.querySelector('.main-container').style.display = 'block';
     
     // Scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
     
-    console.log("Back to home successful");
+    console.log("✅ Back to home successful");
 }
 
         // Show download notification
