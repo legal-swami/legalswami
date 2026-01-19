@@ -3523,6 +3523,20 @@ header::-webkit-scrollbar {
 .chat-interface .container {
     min-height: 100vh;
 }
+
+/* Add to the end of your style section */
+.chat-interface .container {
+    background: var(--dark-bg) !important;
+    min-height: 100vh;
+}
+
+.chat-container {
+    background: var(--dark-bg) !important;
+}
+
+#chatInterface {
+    background: var(--dark-bg) !important;
+}		
 </style>
     
 </head>
@@ -5626,42 +5640,69 @@ header::-webkit-scrollbar {
     const mainContainer = document.querySelector('.main-container');
     
     if (chatInterface) {
-        // Show chat interface
-        chatInterface.style.display = 'flex';
-        chatInterface.style.opacity = '1';
-        chatInterface.style.visibility = 'visible';
-        chatInterface.style.position = 'fixed';
-        chatInterface.style.top = '0';
-        chatInterface.style.left = '0';
-        chatInterface.style.width = '100%';
-        chatInterface.style.height = '100vh';
-        chatInterface.style.zIndex = '9999'; // Higher z-index
-        chatInterface.style.background = 'var(--dark-bg)';
+        // Step 1: Prepare chat interface
+        chatInterface.style.cssText = `
+            display: block !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            width: 100% !important;
+            height: 100vh !important;
+            background: var(--dark-bg) !important;
+            z-index: 99999 !important;
+            opacity: 1 !important;
+            visibility: visible !important;
+            overflow-y: auto !important;
+        `;
         
-        // Hide main landing page
+        // Step 2: Hide main container
         if (mainContainer) {
             mainContainer.style.display = 'none';
         }
         
-        // Initialize chat if not already done
+        // Step 3: Initialize chat
         if (!chatInitialized) {
-            initializeChatApp();
-            chatInitialized = true;
+            setTimeout(() => {
+                initializeChatApp();
+                chatInitialized = true;
+                
+                // Step 4: Force content to show
+                setTimeout(() => {
+                    const chatMessages = document.getElementById('chatMessages');
+                    const welcomeMessage = document.querySelector('.welcome-message');
+                    
+                    if (!welcomeMessage && chatMessages) {
+                        const welcomeContainer = document.createElement('div');
+                        welcomeContainer.innerHTML = WELCOME_MESSAGE_HTML;
+                        chatMessages.appendChild(welcomeContainer);
+                        addDraftTemplateListeners();
+                    }
+                    
+                    // Step 5: Ensure all elements are visible
+                    document.querySelectorAll('.chat-container, .chat-messages, .input-container').forEach(el => {
+                        el.style.opacity = '1';
+                        el.style.visibility = 'visible';
+                    });
+                    
+                }, 300);
+            }, 100);
+        } else {
+            // If already initialized, just ensure content is visible
+            document.querySelectorAll('.chat-container, .chat-messages').forEach(el => {
+                el.style.opacity = '1';
+                el.style.visibility = 'visible';
+            });
         }
         
-        // Force reflow and focus
+        // Step 6: Focus input
         setTimeout(() => {
             const userInput = document.getElementById('userInput');
             if (userInput) {
                 userInput.focus();
-                // Scroll to ensure visibility
-                window.scrollTo(0, 0);
             }
-        }, 100);
+        }, 500);
         
         console.log("Chat interface shown successfully");
-    } else {
-        console.error("Chat interface element not found!");
     }
 }
 
