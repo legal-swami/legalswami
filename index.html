@@ -3509,14 +3509,17 @@ header::-webkit-scrollbar {
     left: 0;
     width: 100%;
     height: 100vh;
-    background: var(--dark-bg);
-    z-index: 9999;
+    background: var(--dark-bg) !important;
+    z-index: 99999;
     overflow-y: auto;
+    transition: opacity 0.3s ease;
 }
 
 /* When chat is active */
 #chatInterface.active {
     display: block;
+    opacity: 1;
+    visibility: visible;
 }
 
 /* Hide main container when chat is open */
@@ -3526,7 +3529,9 @@ header::-webkit-scrollbar {
 
 /* Ensure chat container fills screen */
 .chat-interface .container {
-    min-height: 100vh;
+    height: 100vh;
+    background: var(--dark-bg) !important;
+    overflow: hidden;
 }
 
 /* Add to the end of your style section */
@@ -3534,6 +3539,12 @@ header::-webkit-scrollbar {
     background: var(--dark-bg) !important;
     min-height: 100vh;
 }
+
+/* FIX: Hide homepage elements when chat is open */
+body.chat-open .premium-navbar,
+body.chat-open .main-container {
+    display: none !important;
+}		
 
 .chat-container {
     background: var(--dark-bg) !important;
@@ -6031,19 +6042,31 @@ button:disabled {
     
     const chatInterface = document.getElementById('chatInterface');
     const mainContainer = document.querySelector('.main-container');
+    const header = document.querySelector('.premium-navbar');
     
     if (chatInterface) {
         chatInterface.style.display = 'none';
         chatInterface.style.opacity = '0';
         chatInterface.style.visibility = 'hidden';
+        chatInterface.style.position = '';
+        chatInterface.style.top = '';
+        chatInterface.style.left = '';
+        chatInterface.style.width = '';
+        chatInterface.style.height = '';
         document.body.style.overflow = '';
     }
     
     if (mainContainer) {
         mainContainer.style.display = 'block';
-        // Scroll to top
-        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
+    
+    // Show header again
+    if (header) {
+        header.style.display = 'block';
+    }
+    
+    // Scroll to top
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     
     console.log("Back to home successful");
 }
