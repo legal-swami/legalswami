@@ -5509,7 +5509,6 @@ button:disabled {
     }
 }
 </style>
-    
 </head>
 <body>
     <!-- Premium Loading Screen -->
@@ -6818,8 +6817,8 @@ button:disabled {
                 </div>
             </div>
         </div>
-
-        <!-- Legal Tools Modal -->
+		
+		<!-- Legal Tools Modal -->
         <div id="legalToolsModal" class="modal">
             <div class="modal-overlay"></div>
             <div class="modal-content">
@@ -7679,47 +7678,35 @@ function initializeChatApp() {
 }
 
 // FIXED: Show ChatGPT interface - UPDATED VERSION
-// FIXED: Show ChatGPT interface - SIMPLIFIED VERSION
 function showChatGPTInterface() {
     console.log("🚀 Showing ChatGPT Interface");
     
-    // 1. Hide homepage completely
-    const mainContainer = document.querySelector('.main-container');
-    if (mainContainer) {
-        mainContainer.style.display = 'none';
-    }
+    // Hide homepage
+    document.querySelector('.main-container').style.display = 'none';
     
-    // 2. Show chat interface
+    // Show chat interface
     const chatInterface = document.getElementById('chatInterface');
-    if (chatInterface) {
-        // Add active class
-        chatInterface.classList.add('active');
-        chatInterface.style.display = 'flex';
-        
-        // Force visible
-        chatInterface.style.visibility = 'visible';
-        chatInterface.style.opacity = '1';
-        chatInterface.style.position = 'fixed';
-        chatInterface.style.top = '0';
-        chatInterface.style.left = '0';
-        chatInterface.style.width = '100vw';
-        chatInterface.style.height = '100vh';
-        chatInterface.style.zIndex = '99999';
-        chatInterface.style.background = 'var(--dark-bg)';
+    chatInterface.classList.add('active');
+    chatInterface.style.display = 'block';
+    
+    // Add chat-active class to body
+    document.body.classList.add('chat-active');
+    
+    // Reset chat messages to show welcome message
+    const chatMessages = document.getElementById('chatMessages');
+    if (chatMessages && chatMessages.innerHTML.trim() === '') {
+        chatMessages.innerHTML = WELCOME_MESSAGE_HTML;
+        addDraftTemplateListeners();
     }
     
-    // 3. Add chat-active class to body
-    document.body.classList.add('chat-active');
-    document.body.style.overflow = 'hidden';
-    
-    // 4. Initialize chat if not already
+    // Initialize chat if not already
     if (!chatInitialized) {
         console.log("🔄 Initializing chat app...");
         initializeChatApp();
         chatInitialized = true;
     }
     
-    // 5. Focus input field
+    // Focus input field
     setTimeout(() => {
         const input = document.getElementById('userInput');
         if (input) {
@@ -7731,26 +7718,19 @@ function showChatGPTInterface() {
 }
 
 // FIXED: Go back to home from chat
-// FIXED: Go back to home from chat
 function goBackToHome() {
     console.log("🏠 Going back to home");
     
     // Hide chat interface
     const chatInterface = document.getElementById('chatInterface');
-    if (chatInterface) {
-        chatInterface.classList.remove('active');
-        chatInterface.style.display = 'none';
-    }
+    chatInterface.classList.remove('active');
+    chatInterface.style.display = 'none';
     
     // Remove chat-active class from body
     document.body.classList.remove('chat-active');
-    document.body.style.overflow = '';
     
     // Show homepage
-    const mainContainer = document.querySelector('.main-container');
-    if (mainContainer) {
-        mainContainer.style.display = 'block';
-    }
+    document.querySelector('.main-container').style.display = 'block';
     
     // Scroll to top
     window.scrollTo({ top: 0, behavior: 'smooth' });
