@@ -7131,13 +7131,13 @@ function showChatGPTInterface() {
     console.log("🚀 Showing ChatGPT Interface");
     
     try {
-        // Hide homepage
+        // 1. Hide homepage
         const mainContainer = document.querySelector('.main-container');
         if (mainContainer) {
             mainContainer.style.display = 'none';
         }
         
-        // Show chat interface
+        // 2. Show chat interface
         const chatInterface = document.getElementById('chatInterface');
         if (!chatInterface) {
             console.error("Chat interface element not found!");
@@ -7145,9 +7145,9 @@ function showChatGPTInterface() {
             return;
         }
         
-        // Apply styles
+        // 3. Apply styles
         chatInterface.style.cssText = `
-            display: block !important;
+            display: flex !important;
             position: fixed !important;
             top: 0 !important;
             left: 0 !important;
@@ -7161,43 +7161,29 @@ function showChatGPTInterface() {
         
         chatInterface.classList.add('active');
         
-        // Add chat-active class to body
+        // 4. Add chat-active class to body
         document.body.classList.add('chat-active');
         document.body.style.overflow = 'hidden';
         
-        // Initialize chat if not already
+        // 5. Initialize chat if not already
         if (!chatInitialized) {
-            console.log("🔄 Initializing chat app...");
-            try {
-                initializeChatApp();
-                chatInitialized = true;
-            } catch (initError) {
-                console.error("Chat initialization failed:", initError);
-            }
+            initializeChatApp();
+            chatInitialized = true;
         }
         
-        // Set up welcome message if empty
+        // 6. Set up welcome message if empty
         const chatMessages = document.getElementById('chatMessages');
         if (chatMessages && chatMessages.innerHTML.trim() === '') {
             chatMessages.innerHTML = WELCOME_MESSAGE_HTML;
-            setTimeout(() => {
-                addDraftTemplateListeners();
-            }, 100);
         }
         
-        // Scroll to bottom
+        // 7. Scroll to bottom and focus input
         setTimeout(() => {
             if (chatMessages) {
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             }
-        }, 200);
-        
-        // Focus input field
-        setTimeout(() => {
             const input = document.getElementById('userInput');
-            if (input) {
-                input.focus();
-            }
+            if (input) input.focus();
         }, 300);
         
         console.log("✅ Chat interface shown successfully");
@@ -8835,6 +8821,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
         }
+
+		// Setup all Start Chat buttons
+document.querySelectorAll('[id*="startChat"], .btn-assistant, #mobileStartChat').forEach(btn => {
+    btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        showChatGPTInterface();
+    });
+});
+
+// Specific button fix
+const startChatBtn = document.getElementById('startChatBtn');
+if (startChatBtn) {
+    startChatBtn.addEventListener('click', showChatGPTInterface);
+}
         
         // Auto-initialize guest mode
         setTimeout(function() {
