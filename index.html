@@ -2177,7 +2177,6 @@ const WELCOME_MESSAGE_HTML = `
 `;
 
 // FIXED: Show ChatGPT interface - COMPLETELY FIXED VERSION
-// FIXED: Show ChatGPT interface - SIMPLIFIED VERSION
 function showChatGPTInterface() {
     console.log("🚀 Showing ChatGPT Interface");
     
@@ -2185,26 +2184,41 @@ function showChatGPTInterface() {
         // 1. Add chat-active class to body
         document.body.classList.add('chat-active');
         
-        // 2. Show chat interface
+        // 2. Hide homepage completely
+        const mainContainer = document.querySelector('.main-container');
+        if (mainContainer) {
+            mainContainer.style.display = 'none';
+            mainContainer.style.visibility = 'hidden';
+            mainContainer.style.position = 'absolute';
+        }
+        
+        // 3. Show chat interface
         const chatInterface = document.getElementById('chatInterface');
         if (chatInterface) {
             chatInterface.classList.add('active');
             chatInterface.style.display = 'flex';
+            chatInterface.style.visibility = 'visible';
+            chatInterface.style.opacity = '1';
+            chatInterface.style.position = 'fixed';
+            chatInterface.style.top = '0';
+            chatInterface.style.left = '0';
+            chatInterface.style.width = '100vw';
+            chatInterface.style.height = '100vh';
+            chatInterface.style.zIndex = '99999';
         }
         
-        // 3. Hide homepage
-        const mainContainer = document.querySelector('.main-container');
-        if (mainContainer) {
-            mainContainer.style.display = 'none';
+        // 4. Initialize chat if not already
+        if (!chatInitialized) {
+            initializeAppForGuest();
         }
         
-        // 4. Focus input
+        // 5. Focus input
         setTimeout(() => {
             const userInput = document.getElementById('userInput');
             if (userInput) {
                 userInput.focus();
             }
-        }, 300);
+        }, 100);
         
         console.log("✅ Chat interface shown successfully");
         
@@ -2219,7 +2233,7 @@ function goBackToHome() {
     console.log("🏠 Going back to home");
     
     try {
-        // 1. Remove chat-active class from body
+        // 1. Remove chat-active class
         document.body.classList.remove('chat-active');
         
         // 2. Hide chat interface
@@ -2227,16 +2241,23 @@ function goBackToHome() {
         if (chatInterface) {
             chatInterface.classList.remove('active');
             chatInterface.style.display = 'none';
+            chatInterface.style.visibility = 'hidden';
         }
         
         // 3. Show homepage
         const mainContainer = document.querySelector('.main-container');
         if (mainContainer) {
             mainContainer.style.display = 'block';
+            mainContainer.style.visibility = 'visible';
+            mainContainer.style.position = 'relative';
         }
         
         // 4. Scroll to top
         window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        // 5. Reset body styles
+        document.body.style.overflow = '';
+        document.body.style.height = '';
         
         console.log("✅ Back to home successful");
         
