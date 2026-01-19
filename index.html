@@ -3014,59 +3014,36 @@ header::-webkit-scrollbar {
     background: var(--light-surface-light);
 }
 
-/* FIXED: Chat interface styling - corrected */
-/* ChatGPT Interface Styling */
-/*#chatInterface {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: var(--dark-bg);
-    z-index: 99999;
+/* CHAT INTERFACE STYLES */
+#chatInterface {
+    display: none !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: var(--dark-bg) !important;
+    z-index: 99999 !important;
 }
 
 #chatInterface.active {
-    display: flex;
-    flex-direction: column;
+    display: flex !important;
+    flex-direction: column !important;
 }
-
-#chatInterface .container {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
-
-#chatInterface .chat-container {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-}
-
-#chatInterface .chat-messages {
-    flex: 1;
-    overflow-y: auto;
-    min-height: 0;
-}*/
-
-/* When chat is active, hide homepage 
-body.chat-active .main-container {
-    display: none !important;
-}*/
 
 #chatInterface .container {
     height: 100vh !important;
+    width: 100vw !important;
     max-height: 100vh !important;
     min-height: 100vh !important;
     overflow: hidden !important;
+    display: flex !important;
+    flex-direction: column !important;
 }
 
 #chatInterface .chat-container {
     height: 100% !important;
-    max-height: 100% !important;
-    min-height: 100% !important;
+    width: 100% !important;
     display: flex !important;
     flex-direction: column !important;
 }
@@ -3074,11 +3051,7 @@ body.chat-active .main-container {
 #chatInterface .chat-messages {
     flex: 1 !important;
     overflow-y: auto !important;
-    min-height: 200px !important;
-}		
-
-#chatInterface.active {
-    display: block;
+    min-height: 0 !important;
 }
 
 /* When chat is active, hide homepage */
@@ -3088,31 +3061,6 @@ body.chat-active .main-container {
 
 body.chat-active {
     overflow: hidden !important;
-}
-
-/* Ensure chat container fills screen */
-#chatInterface .container {
-    background: var(--dark-bg) !important;
-    height: 100vh !important;
-    width: 100vw !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    overflow: hidden !important;
-}
-
-/* Ensure chat container inside fills available space */
-#chatInterface .chat-container {
-    height: 100% !important;
-    width: 100% !important;
-    display: flex !important;
-    flex-direction: column !important;
-}
-
-/* Ensure chat messages area scrolls properly */
-#chatInterface .chat-messages {
-    flex: 1 !important;
-    overflow-y: auto !important;
-    min-height: 0 !important;
 }
 
 /* Mobile Optimization */
@@ -5511,18 +5459,19 @@ button:disabled {
 
 /* EMERGENCY FIX - CHAT INTERFACE FIX */
 #chatInterface {
-    display: none;  /* display: none !important से बदलें */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background: var(--dark-bg);
-    z-index: 99999;
+    display: none !important;
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background: var(--dark-bg) !important;
+    z-index: 99999 !important;
 }
 
 #chatInterface.active {
-    display: flex !important;  /* active होने पर flex show करेगा */
+    display: flex !important;
+    flex-direction: column !important;
 }
 
 #chatInterface .container {
@@ -5557,41 +5506,6 @@ body.chat-active .main-container {
 body.chat-active #chatInterface {
     display: flex !important;
 }
-
-/* जब chat active हो तो homepage hide हो जाए */
-body.chat-active .main-container {
-    display: none !important;
-}
-
-/* Chat interface को proper display कराएं */
-#chatInterface {
-    display: none;
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: var(--dark-bg);
-    z-index: 99999;
-}
-
-#chatInterface.active {
-    display: flex;
-    flex-direction: column;
-}
-
-/* Container को पूरी screen भरने दें */
-#chatInterface .container {
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-}
-
-/* Chat messages area को scrollable बनाएं */
-#chatInterface .chat-messages {
-    flex: 1;
-    overflow-y: auto;
-}		
 </style>
 </head>
 <body>
@@ -7205,29 +7119,28 @@ const WELCOME_MESSAGE_HTML = `
     </div>
 `;
 
-// FIXED: Show ChatGPT interface - COMPLETELY FIXED VERSION
-// FIXED: Show ChatGPT interface - SIMPLIFIED VERSION
+// FIXED: Show ChatGPT interface - CORRECTED VERSION
 function showChatGPTInterface() {
     console.log("🚀 Showing ChatGPT Interface");
     
     try {
-        // Hide homepage
+        // 1. Hide homepage
         const mainContainer = document.querySelector('.main-container');
         if (mainContainer) {
             mainContainer.style.display = 'none';
         }
         
-        // Show chat interface
+        // 2. Show chat interface - FIXED: Remove !important conflict
         const chatInterface = document.getElementById('chatInterface');
         if (chatInterface) {
             chatInterface.style.display = 'flex';
             chatInterface.classList.add('active');
         }
         
-        // Add active class to body
+        // 3. Add chat-active class to body
         document.body.classList.add('chat-active');
         
-        // Focus input
+        // 4. Focus input
         setTimeout(() => {
             const userInput = document.getElementById('userInput');
             if (userInput) {
@@ -7235,7 +7148,7 @@ function showChatGPTInterface() {
             }
         }, 300);
         
-        // Initialize chat if not already initialized
+        // 5. Initialize chat if not already initialized
         if (!chatInitialized) {
             initializeChatApp();
         }
@@ -7249,28 +7162,27 @@ function showChatGPTInterface() {
 }
 
 // FIXED: Go back to home from chat
-// FIXED: Go back to home from chat
 function goBackToHome() {
     console.log("🏠 Going back to home");
     
     try {
-        // Hide chat interface
+        // 1. Hide chat interface
         const chatInterface = document.getElementById('chatInterface');
         if (chatInterface) {
             chatInterface.style.display = 'none';
             chatInterface.classList.remove('active');
         }
         
-        // Remove active class from body
+        // 2. Remove chat-active class from body
         document.body.classList.remove('chat-active');
         
-        // Show homepage
+        // 3. Show homepage
         const mainContainer = document.querySelector('.main-container');
         if (mainContainer) {
             mainContainer.style.display = 'block';
         }
         
-        // Scroll to top
+        // 4. Scroll to top
         window.scrollTo({ top: 0, behavior: 'smooth' });
         
         console.log("✅ Back to home successful");
@@ -7802,7 +7714,7 @@ function initializeChatApp() {
             scrollToBottomBtn.addEventListener('click', scrollToBottom);
         }
         
-        // Monitor scroll position
+        // FIXED: Monitor scroll position with corrected calculation
         if (chatMessages) {
             chatMessages.addEventListener('scroll', checkScrollPosition);
             setTimeout(checkScrollPosition, 500);
@@ -7846,6 +7758,34 @@ function initializeChatApp() {
     } catch (error) {
         console.error("Error initializing chat app:", error);
     }
+}
+
+// FIXED: Check scroll position with corrected calculation
+function checkScrollPosition() {
+    const chatMessages = document.getElementById('chatMessages');
+    const scrollBtn = document.getElementById('scrollToBottomBtn');
+    const indicator = document.getElementById('scrollPositionIndicator');
+    
+    if (!chatMessages || !scrollBtn || !indicator) return;
+    
+    // Corrected calculation
+    const scrollBottom = chatMessages.scrollHeight - chatMessages.clientHeight;
+    const currentScroll = chatMessages.scrollTop;
+    const isAtBottom = Math.abs(scrollBottom - currentScroll) < 10; // 10px tolerance
+    
+    if (!isAtBottom) {
+        scrollBtn.classList.add('visible');
+        if (currentScroll < scrollPosition) {
+            indicator.classList.add('visible');
+            setTimeout(() => {
+                indicator.classList.remove('visible');
+            }, 2000);
+        }
+    } else {
+        scrollBtn.classList.remove('visible');
+        indicator.classList.remove('visible');
+    }
+    scrollPosition = currentScroll;
 }
 
 // Show download notification
@@ -9268,28 +9208,6 @@ function showSuggestions() {
     );
 }
 
-// Check scroll position and show/hide down arrow
-function checkScrollPosition() {
-    const chatMessages = document.getElementById('chatMessages');
-    const scrollBtn = document.getElementById('scrollToBottomBtn');
-    const indicator = document.getElementById('scrollPositionIndicator');
-    if (!chatMessages) return;
-    const isAtBottom = chatMessages.scrollHeight - chatMessages.clientHeight <= chatMessages.scrollTop + 50;
-    if (!isAtBottom) {
-        scrollBtn.classList.add('visible');
-        if (chatMessages.scrollTop < scrollPosition) {
-            indicator.classList.add('visible');
-            setTimeout(() => {
-                indicator.classList.remove('visible');
-            }, 2000);
-        }
-    } else {
-        scrollBtn.classList.remove('visible');
-        indicator.classList.remove('visible');
-    }
-    scrollPosition = chatMessages.scrollTop;
-}
-
 // Scroll to bottom function
 function scrollToBottom() {
     const chatMessages = document.getElementById('chatMessages');
@@ -10524,6 +10442,24 @@ function getLanguageName(code) {
     return languages[code] || 'English';
 }
 
+// Mock response generator
+async function generateMockResponse(message) {
+    // Simple mock response for when backend is down
+    const responses = [
+        "I understand you're asking about legal matters. Based on common legal principles in India...",
+        "For the legal document you requested, here's a basic template structure...",
+        "Regarding your legal question, here are some general guidelines...",
+        "I'll help you draft that document. Here's a standard format...",
+        "Based on Indian legal practice, here's what you need to consider..."
+    ];
+    
+    return {
+        response: responses[Math.floor(Math.random() * responses.length)],
+        content: responses[Math.floor(Math.random() * responses.length)],
+        isDocument: isDocumentRequest(message)
+    };
+}
+
 // DOM Content Loaded
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 LegalSwami Premium Frontend Initialized');
@@ -10653,29 +10589,11 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('✅ All initialization complete');
 });
 
-// Mock response generator
-async function generateMockResponse(message) {
-    // Simple mock response for when backend is down
-    const responses = [
-        "I understand you're asking about legal matters. Based on common legal principles in India...",
-        "For the legal document you requested, here's a basic template structure...",
-        "Regarding your legal question, here are some general guidelines...",
-        "I'll help you draft that document. Here's a standard format...",
-        "Based on Indian legal practice, here's what you need to consider..."
-    ];
-    
-    return {
-        response: responses[Math.floor(Math.random() * responses.length)],
-        content: responses[Math.floor(Math.random() * responses.length)],
-        isDocument: isDocumentRequest(message)
-    };
-}
-
 // EMERGENCY FIX: Global error handler
 window.onerror = function(msg, url, line, col, error) {
     console.log("Global error caught:", msg, "at", line, ":", col);
     return true; // Prevents default error handling
 };
-    </script>
+ </script>
 </body>
 </html>
