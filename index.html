@@ -3496,8 +3496,7 @@ header::-webkit-scrollbar {
     justify-content: center;
     z-index: 9999;
 }
-		/* Add this at end of CSS */
-/* नया कोड - इसे जोड़ें */
+		/* Ensure chat interface overlays everything */
 #chatInterface {
     display: none;
     position: fixed;
@@ -3505,8 +3504,24 @@ header::-webkit-scrollbar {
     left: 0;
     width: 100%;
     height: 100vh;
-    z-index: 9998;
     background: var(--dark-bg);
+    z-index: 9999;
+    overflow-y: auto;
+}
+
+/* When chat is active */
+#chatInterface.active {
+    display: block;
+}
+
+/* Hide main container when chat is open */
+.chat-active .main-container {
+    display: none;
+}
+
+/* Ensure chat container fills screen */
+.chat-interface .container {
+    min-height: 100vh;
 }
 </style>
     
@@ -5604,7 +5619,7 @@ header::-webkit-scrollbar {
         }
 
         // Show ChatGPT interface
-        function showChatGPTInterface() {
+       function showChatGPTInterface() {
     console.log("Showing ChatGPT Interface");
     
     const chatInterface = document.getElementById('chatInterface');
@@ -5615,7 +5630,13 @@ header::-webkit-scrollbar {
         chatInterface.style.display = 'flex';
         chatInterface.style.opacity = '1';
         chatInterface.style.visibility = 'visible';
-        document.body.style.overflow = 'hidden';
+        chatInterface.style.position = 'fixed';
+        chatInterface.style.top = '0';
+        chatInterface.style.left = '0';
+        chatInterface.style.width = '100%';
+        chatInterface.style.height = '100vh';
+        chatInterface.style.zIndex = '9999'; // Higher z-index
+        chatInterface.style.background = 'var(--dark-bg)';
         
         // Hide main landing page
         if (mainContainer) {
@@ -5628,15 +5649,19 @@ header::-webkit-scrollbar {
             chatInitialized = true;
         }
         
-        // Focus on input
+        // Force reflow and focus
         setTimeout(() => {
             const userInput = document.getElementById('userInput');
             if (userInput) {
                 userInput.focus();
+                // Scroll to ensure visibility
+                window.scrollTo(0, 0);
             }
-        }, 300);
+        }, 100);
         
         console.log("Chat interface shown successfully");
+    } else {
+        console.error("Chat interface element not found!");
     }
 }
 
