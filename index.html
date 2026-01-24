@@ -7347,7 +7347,7 @@ function scrollToBottom() {
 
 function addCopyEditButtonsToUserMessages() {
     const userMessages = document.querySelectorAll('.user-message:not(.from-history) .message-content');
-    userMessages.forEach((messageContent, index) {
+    userMessages.forEach((messageContent, index) => {
         if (!messageContent.querySelector('.user-message-controls')) {
             const messageDiv = messageContent.closest('.message');
             const messageId = messageDiv.id;
