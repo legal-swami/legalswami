@@ -3674,6 +3674,46 @@ img {
 #chatInterface.active {
     display: flex; /* When active class is added */
 }
+
+
+/* EMERGENCY FIX FOR BLACK SCREEN */
+#chatInterface {
+    display: none !important;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+body.chat-active #chatInterface {
+    display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+body.chat-active .main-container {
+    display: none !important;
+}
+
+/* Force chat interface to show */
+.chat-interface.active {
+    display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+/* Fix for black screen */
+#chatInterface .container,
+#chatInterface .chat-container {
+    display: flex !important;
+    flex-direction: column;
+    height: 100vh !important;
+    width: 100% !important;
+    background: var(--dark-bg) !important;
+}
+
+#chatInterface .chat-messages {
+    flex: 1 !important;
+    overflow-y: auto !important;
+}
 	  </style>
 </head>
 <body>
@@ -5293,44 +5333,128 @@ const WELCOME_MESSAGE_HTML = `
 // SIMPLE CHAT OPEN/CLOSE FUNCTIONS
 // =============================================
 
-// SIMPLIFIED VERSION
+// REPLACE THIS FUNCTION - Line ~135 ke paas
 function openChat() {
-    console.log("Opening chat...");
+    console.log("🚀 Opening chat with EMERGENCY fix...");
     
-    // Hide main content
-    document.querySelector('.main-container').style.display = 'none';
+    // Emergency fix: Direct DOM manipulation
+    const mainContainer = document.querySelector('.main-container');
+    const chatInterface = document.getElementById('chatInterface');
     
-    // Show chat interface
-    document.getElementById('chatInterface').style.display = 'flex';
+    if (mainContainer) {
+        mainContainer.style.display = 'none';
+        mainContainer.style.visibility = 'hidden';
+        mainContainer.style.opacity = '0';
+    }
     
-    // Add class to body
-    document.body.classList.add('chat-active');
+    if (chatInterface) {
+        // Force remove any conflicting styles
+        chatInterface.style.display = 'flex';
+        chatInterface.style.visibility = 'visible';
+        chatInterface.style.opacity = '1';
+        chatInterface.style.position = 'fixed';
+        chatInterface.style.top = '0';
+        chatInterface.style.left = '0';
+        chatInterface.style.width = '100%';
+        chatInterface.style.height = '100vh';
+        chatInterface.style.zIndex = '99999';
+        chatInterface.style.background = 'var(--dark-bg)';
+        chatInterface.classList.add('active', 'chat-interface');
+        
+        // Add class to body
+        document.body.classList.add('chat-active');
+        
+        // Remove any conflicting classes
+        document.body.classList.remove('light-mode');
+    }
     
     // Initialize chat
     if (!chatInitialized) {
         setTimeout(() => {
-            initializeChatApp();
-            chatInitialized = true;
-        }, 300);
+            try {
+                initializeChatApp();
+                chatInitialized = true;
+                console.log("✅ Chat initialized successfully");
+            } catch (error) {
+                console.error("❌ Chat initialization error:", error);
+                // Emergency fallback - create basic chat
+                createEmergencyChat();
+            }
+        }, 100);
     }
     
-    // Focus on input
+    // Force focus on input
     setTimeout(() => {
-        document.getElementById('userInput').focus();
+        const userInput = document.getElementById('userInput');
+        if (userInput) {
+            userInput.focus();
+            userInput.style.opacity = '1';
+        }
+    }, 300);
+    
+    // Emergency scroll fix
+    setTimeout(() => {
+        const chatMessages = document.getElementById('chatMessages');
+        if (chatMessages) {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
     }, 500);
 }
 
-function closeChat() {
-    console.log("Closing chat...");
+// Emergency fallback function
+function createEmergencyChat() {
+    console.log("🆘 Creating emergency chat interface...");
     
-    // Hide chat interface
-    document.getElementById('chatInterface').style.display = 'none';
+    const chatMessages = document.getElementById('chatMessages');
+    if (chatMessages && chatMessages.innerHTML.trim() === '') {
+        chatMessages.innerHTML = WELCOME_MESSAGE_HTML;
+    }
+    
+    // Force show input area
+    const inputArea = document.querySelector('.input-area');
+    if (inputArea) {
+        inputArea.style.display = 'block';
+        inputArea.style.visibility = 'visible';
+        inputArea.style.opacity = '1';
+    }
+    
+    // Force show chat content
+    const chatContent = document.getElementById('chatContent');
+    if (chatContent) {
+        chatContent.style.display = 'block';
+        chatContent.style.visibility = 'visible';
+        chatContent.style.opacity = '1';
+    }
+}
+
+function closeChat() {
+    console.log("🔙 Closing chat...");
     
     // Show main content
-    document.querySelector('.main-container').style.display = 'block';
+    const mainContainer = document.querySelector('.main-container');
+    if (mainContainer) {
+        mainContainer.style.display = 'block';
+        mainContainer.style.visibility = 'visible';
+        mainContainer.style.opacity = '1';
+    }
+    
+    // Hide chat interface
+    const chatInterface = document.getElementById('chatInterface');
+    if (chatInterface) {
+        chatInterface.style.display = 'none';
+        chatInterface.style.visibility = 'hidden';
+        chatInterface.style.opacity = '0';
+        chatInterface.classList.remove('active', 'chat-interface');
+    }
     
     // Remove class from body
     document.body.classList.remove('chat-active');
+    
+    // Restore theme if needed
+    const isLightMode = localStorage.getItem('legalSwamiTheme') === 'light';
+    if (isLightMode) {
+        document.body.classList.add('light-mode');
+    }
 }
 
 // =============================================
@@ -8041,6 +8165,9 @@ function stopStreaming() {
 // SETUP EVENT LISTENERS
 // =============================================
 
+
+
+
 // Setup file upload modal event listeners
 document.addEventListener('DOMContentLoaded', function() {
     // Close file upload modal
@@ -8466,30 +8593,54 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     if (mobileStartChat) {
-        mobileStartChat.addEventListener('click', function() {
-            mobileMenu.style.display = 'none';
-            isMobileMenuOpen = false;
+        mobileStartChat.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
             openChat();
+            
+            // Close mobile menu
+            const mobileMenu = document.getElementById('mobileMenu');
+            if (mobileMenu) {
+                mobileMenu.style.display = 'none';
+            }
         });
     }
 
     // Start chat buttons - नए function का उपयोग करें
+	const startChatBtn = document.getElementById('startChatBtn');
+    if (startChatBtn) {
+        startChatBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log("Start Chat button clicked");
+            openChat();
+        });
+    }
+	
 const startChatBtn = document.getElementById('startChatBtn');
 if (startChatBtn) {
     startChatBtn.addEventListener('click', openChat);
 }
 
 const ctaStartChat = document.getElementById('ctaStartChat');
-if (ctaStartChat) {
-    ctaStartChat.addEventListener('click', openChat);
-}
+    if (ctaStartChat) {
+        ctaStartChat.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            console.log("CTA Start Chat button clicked");
+            openChat();
+        });
+    }
 
 // Back to home button - नए function का उपयोग करें
 const backToHomeBtn = document.getElementById('backToHomeBtn');
 if (backToHomeBtn) {
-    backToHomeBtn.addEventListener('click', closeChat);
-}
-
+        backToHomeBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            closeChat();
+        });
+    }
     // Login buttons
     const headerLoginBtn = document.getElementById('headerLoginBtn');
     if (headerLoginBtn) {
