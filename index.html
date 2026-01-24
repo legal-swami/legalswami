@@ -6895,7 +6895,7 @@ body.chat-active #chatInterface {
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 	
     <!-- Main App Script -->
-    <script>
+<script>
 // Global variables
 let chatHistory = [];
 let currentChatId = null;
@@ -7341,25 +7341,26 @@ function initializeChatApp() {
             });
             
             userInput.addEventListener('input', function() {
-            this.style.height = 'auto';
-            this.style.height = Math.min(this.scrollHeight, 150) + 'px';
-            if (isStreamingActive) {
-                sendButton.disabled = false;
-                sendButton.classList.add('stop-button');
-                sendButton.innerHTML = '<i class="fas fa-stop"></i> <span class="hide-on-mobile">Stop</span>';
-            } else {
-                sendButton.disabled = this.value.trim() === '' && attachedFiles.length === 0;
-                sendButton.classList.remove('stop-button');
-                sendButton.innerHTML = '<i class="fas fa-paper-plane"></i> <span class="hide-on-mobile">Send</span>';
-            }
-            const text = this.value.trim();
-            if (text.length > 0) {
-                const lang = detectLanguage(text);
-                showLanguageHint(lang);
-            } else {
-                hideLanguageHint();
-            }
-        });
+                this.style.height = 'auto';
+                this.style.height = Math.min(this.scrollHeight, 150) + 'px';
+                if (isStreamingActive) {
+                    sendButton.disabled = false;
+                    sendButton.classList.add('stop-button');
+                    sendButton.innerHTML = '<i class="fas fa-stop"></i> <span class="hide-on-mobile">Stop</span>';
+                } else {
+                    sendButton.disabled = this.value.trim() === '' && attachedFiles.length === 0;
+                    sendButton.classList.remove('stop-button');
+                    sendButton.innerHTML = '<i class="fas fa-paper-plane"></i> <span class="hide-on-mobile">Send</span>';
+                }
+                const text = this.value.trim();
+                if (text.length > 0) {
+                    const lang = detectLanguage(text);
+                    showLanguageHint(lang);
+                } else {
+                    hideLanguageHint();
+                }
+            });
+        }
 
         // Voice search functionality
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
@@ -7652,6 +7653,20 @@ function initializeChatApp() {
         
     } catch (error) {
         console.error("Error initializing chat app:", error);
+        showToast("Chat initialization failed. Please refresh the page.", "error");
+        
+        // Emergency fallback - still show basic functionality
+        const userInput = document.getElementById('userInput');
+        const sendButton = document.getElementById('sendButton');
+        if (userInput && sendButton) {
+            sendButton.addEventListener('click', sendMessage);
+            userInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && e.ctrlKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+        }
     }
 }
 
@@ -10360,128 +10375,146 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 LegalSwami Premium Frontend Initialized');
     console.log('📱 Device Type:', isMobile ? 'Mobile' : isTablet ? 'Tablet' : 'Desktop');
      
-    // Hide loading screen
-    setTimeout(function() {
-        const loadingScreen = document.getElementById('loadingScreen');
-        if (loadingScreen) {
-            loadingScreen.style.opacity = '0';
-            setTimeout(function() {
-                loadingScreen.style.display = 'none';
-                console.log('✅ Loading screen hidden');
-            }, 300);
-        }
-    }, 500);
-    
-    // Setup button click handlers
-    setTimeout(function() {
-        // Setup all Start Chat buttons
-        const startChatButtons = [
-            document.getElementById('startChatBtn'),
-            document.getElementById('ctaStartChat'),
-            document.querySelector('.btn-assistant'),
-            document.querySelector('#mobileStartChat')
-        ];
+    try {
+        // Hide loading screen
+        setTimeout(function() {
+            const loadingScreen = document.getElementById('loadingScreen');
+            if (loadingScreen) {
+                loadingScreen.style.opacity = '0';
+                setTimeout(function() {
+                    loadingScreen.style.display = 'none';
+                    console.log('✅ Loading screen hidden');
+                }, 300);
+            }
+        }, 500);
         
-        startChatButtons.forEach(btn => {
-            if (btn) {
-                btn.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    showChatGPTInterface();
+        // Setup button click handlers
+        setTimeout(function() {
+            // Setup all Start Chat buttons
+            const startChatButtons = [
+                document.getElementById('startChatBtn'),
+                document.getElementById('ctaStartChat'),
+                document.querySelector('.btn-assistant'),
+                document.querySelector('#mobileStartChat')
+            ];
+            
+            startChatButtons.forEach(btn => {
+                if (btn) {
+                    btn.addEventListener('click', function(e) {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        showChatGPTInterface();
+                    });
+                }
+            });
+            
+            // Setup other button handlers
+            const watchDemoBtn = document.getElementById('watchDemo');
+            if (watchDemoBtn) {
+                watchDemoBtn.addEventListener('click', function() {
+                    alert('Demo video feature coming soon! 🎥');
                 });
             }
-        });
-        
-        // Setup other button handlers
-        const watchDemoBtn = document.getElementById('watchDemo');
-        if (watchDemoBtn) {
-            watchDemoBtn.addEventListener('click', function() {
-                alert('Demo video feature coming soon! 🎥');
+            
+            const scheduleDemoBtn = document.getElementById('ctaScheduleDemo');
+            if (scheduleDemoBtn) {
+                scheduleDemoBtn.addEventListener('click', function() {
+                    alert('Schedule demo feature coming soon! 📅');
+                });
+            }
+            
+            // Setup all Generate Now buttons
+            document.querySelectorAll('.btn-generate').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    showChatGPTInterface();
+                    setTimeout(() => {
+                        const userInput = document.getElementById('userInput');
+                        if (userInput) {
+                            userInput.value = 'Create a legal document draft for me';
+                            userInput.focus();
+                            userInput.style.height = Math.min(userInput.scrollHeight, 180) + 'px';
+                        }
+                    }, 500);
+                });
             });
+            
+            // Setup all Search buttons
+            document.querySelectorAll('.btn-database, .btn-search').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    showChatGPTInterface();
+                    setTimeout(() => {
+                        const userInput = document.getElementById('userInput');
+                        if (userInput) {
+                            userInput.value = 'Search legal information';
+                            userInput.focus();
+                            userInput.style.height = Math.min(userInput.scrollHeight, 180) + 'px';
+                        }
+                    }, 500);
+                });
+            });
+            
+            // Setup all Get Started buttons
+            document.querySelectorAll('.btn-pricing').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    showChatGPTInterface();
+                });
+            });
+            
+            console.log('✅ All button handlers setup complete');
+        }, 1000);
+        
+        // Initialize backend connection
+        initializeAppWithBackend();
+        
+        // Setup event listeners
+        setupBackendEventListeners();
+        
+        // Initialize Google Authentication
+        setTimeout(initializeSimpleGoogleAuth, 2000);
+        
+        // Check for existing user
+        checkExistingUser();
+        
+        // Setup scroll effects
+        setupScrollEffects();
+        
+        // Setup mobile menu
+        setupMobileMenu();
+        
+        // Setup device-specific optimizations
+        setupDeviceSpecificOptimizations();
+        
+        // Apply mobile optimizations
+        if (isMobile) {
+            applyMobileOptimizations();
         }
         
-        const scheduleDemoBtn = document.getElementById('ctaScheduleDemo');
-        if (scheduleDemoBtn) {
-            scheduleDemoBtn.addEventListener('click', function() {
-                alert('Schedule demo feature coming soon! 📅');
-            });
+        // Auto-initialize guest mode if not logged in
+        setTimeout(function() {
+            if (!isLoggedIn && !document.getElementById('loginModal').classList.contains('active')) {
+                console.log("Auto-initializing guest mode...");
+                initializeAppForGuest();
+            }
+        }, 1000);
+        
+        console.log('✅ All initialization complete');
+        
+    } catch (error) {
+        console.error('Fatal initialization error:', error);
+        const loadingScreen = document.getElementById('loadingScreen');
+        if (loadingScreen) {
+            loadingScreen.innerHTML = `
+                <div style="text-align: center; color: white; padding: 2rem;">
+                    <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #f59e0b; margin-bottom: 1rem;"></i>
+                    <h2>Initialization Error</h2>
+                    <p>There was an error loading the application.</p>
+                    <button onclick="window.location.reload()" style="margin-top: 1rem; padding: 10px 20px; background: #10a37f; color: white; border: none; border-radius: 6px; cursor: pointer;">
+                        Reload Page
+                    </button>
+                </div>
+            `;
         }
-        
-        // Setup all Generate Now buttons
-        document.querySelectorAll('.btn-generate').forEach(btn => {
-            btn.addEventListener('click', function() {
-                showChatGPTInterface();
-                setTimeout(() => {
-                    const userInput = document.getElementById('userInput');
-                    if (userInput) {
-                        userInput.value = 'Create a legal document draft for me';
-                        userInput.focus();
-                        userInput.style.height = Math.min(userInput.scrollHeight, 180) + 'px';
-                    }
-                }, 500);
-            });
-        });
-        
-        // Setup all Search buttons
-        document.querySelectorAll('.btn-database, .btn-search').forEach(btn => {
-            btn.addEventListener('click', function() {
-                showChatGPTInterface();
-                setTimeout(() => {
-                    const userInput = document.getElementById('userInput');
-                    if (userInput) {
-                        userInput.value = 'Search legal information';
-                        userInput.focus();
-                        userInput.style.height = Math.min(userInput.scrollHeight, 180) + 'px';
-                    }
-                }, 500);
-            });
-        });
-        
-        // Setup all Get Started buttons
-        document.querySelectorAll('.btn-pricing').forEach(btn => {
-            btn.addEventListener('click', function() {
-                showChatGPTInterface();
-            });
-        });
-        
-        console.log('✅ All button handlers setup complete');
-    }, 1000);
-    
-    // Initialize backend connection
-    initializeAppWithBackend();
-    
-    // Setup event listeners
-    setupBackendEventListeners();
-    
-    // Initialize Google Authentication
-    setTimeout(initializeSimpleGoogleAuth, 2000);
-    
-    // Check for existing user
-    checkExistingUser();
-    
-    // Setup scroll effects
-    setupScrollEffects();
-    
-    // Setup mobile menu
-    setupMobileMenu();
-    
-    // Setup device-specific optimizations
-    setupDeviceSpecificOptimizations();
-    
-    // Apply mobile optimizations
-    if (isMobile) {
-        applyMobileOptimizations();
     }
-    
-    // Auto-initialize guest mode if not logged in
-    setTimeout(function() {
-        if (!isLoggedIn && !document.getElementById('loginModal').classList.contains('active')) {
-            console.log("Auto-initializing guest mode...");
-            initializeAppForGuest();
-        }
-    }, 1000);
-    
-    console.log('✅ All initialization complete');
 });
 
 // EMERGENCY FIX: Global error handler
@@ -10489,7 +10522,7 @@ window.onerror = function(msg, url, line, col, error) {
     console.log("Global error caught:", msg, "at", line, ":", col);
     return true; // Prevents default error handling
 };
- </script>
+</script>
 </body>
 </html>
                
