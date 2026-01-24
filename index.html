@@ -95,6 +95,31 @@ body.light-mode {
     color: var(--light-text);
 }
 
+/* FIX FOR CHAT BLACK SCREEN */
+body.chat-active {
+    overflow: hidden !important;
+}
+
+body.chat-active .main-container {
+    display: none !important;
+}
+
+#chatInterface {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--dark-bg);
+    z-index: 99999;
+    flex-direction: column;
+}
+
+#chatInterface.active {
+    display: flex;
+}
+
 /* ============================================= */
 /* MAIN CONTAINERS */
 /* ============================================= */
@@ -115,32 +140,6 @@ body.light-mode {
 /* ============================================= */
 /* CHAT INTERFACE STYLES - FIXED */
 /* ============================================= */
-
-/* CHAT INTERFACE CONTAINER - PROPERLY MANAGED */
-#chatInterface {
-    display: none; /* Default hidden */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: var(--dark-bg);
-    z-index: 9999;
-    flex-direction: column;
-}
-
-#chatInterface.active {
-    display: flex; /* Show when active */
-}
-
-/* Body when chat is active */
-body.chat-active {
-    overflow: hidden;
-}
-
-body.chat-active .main-container {
-    display: none !important; /* Hide homepage */
-}
 
 /* Chat Container Structure */
 #chatInterface .container {
@@ -3516,8 +3515,8 @@ img {
 
 .download-option i {
     font-size: 2rem;
-    margin-bottom: 0.75rem;
     color: var(--primary);
+    margin-bottom: 0.75rem;
 }
 
 .download-option h3 {
@@ -3637,23 +3636,6 @@ img {
     max-width: 500px;
     max-height: 90vh;
     overflow: hidden;
-}
-
-/* Ensure no conflicts */
-body.chat-active {
-    overflow: hidden !important;
-}
-
-#chatInterface:not(.active) {
-    display: none !important;
-}
-
-#chatInterface.active {
-    display: flex !important;
-}
-
-body.chat-active .main-container {
-    display: none !important;
 }
 	  </style>
 </head>
@@ -7365,7 +7347,7 @@ function scrollToBottom() {
 
 function addCopyEditButtonsToUserMessages() {
     const userMessages = document.querySelectorAll('.user-message:not(.from-history) .message-content');
-    userMessages.forEach((messageContent, index) => {
+    userMessages.forEach((messageContent, index) {
         if (!messageContent.querySelector('.user-message-controls')) {
             const messageDiv = messageContent.closest('.message');
             const messageId = messageDiv.id;
@@ -8061,16 +8043,18 @@ document.addEventListener('DOMContentLoaded', function() {
             if (fileUploadModal) fileUploadModal.classList.remove('active');
         });
     }
-    
+
+    // Cancel file upload
     const cancelFileUpload = document.getElementById('cancelFileUpload');
     if (cancelFileUpload) {
         cancelFileUpload.addEventListener('click', function() {
             const fileUploadModal = document.getElementById('fileUploadModal');
             if (fileUploadModal) fileUploadModal.classList.remove('active');
+            selectedFiles = [];
         });
     }
-    
-    // Handle file selection
+
+    // Browse files button
     const browseFilesBtn = document.getElementById('browseFilesBtn');
     if (browseFilesBtn) {
         browseFilesBtn.addEventListener('click', function() {
@@ -8078,153 +8062,238 @@ document.addEventListener('DOMContentLoaded', function() {
             fileInput.type = 'file';
             fileInput.multiple = true;
             fileInput.accept = 'image/*,.pdf,.txt,.doc,.docx';
-            fileInput.onchange = function(e) {
-                handleFileSelection(e.target.files);
-            };
+            
+            fileInput.addEventListener('change', function(e) {
+                if (e.target.files) {
+                    Array.from(e.target.files).forEach(file => {
+                        if (file.size > 10 * 1024 * 1024) { // 10MB limit
+                            showToast(`File ${file.name} is too large (max 10MB) ❌`, 'warning');
+                            return;
+                        }
+                        
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            selectedFiles.push({
+                                name: file.name,
+                                type: file.type,
+                                size: file.size,
+                                data: event.target.result,
+                                file: file
+                            });
+                            updateUploadedFilesDisplay();
+                        };
+                        
+                        if (file.type.startsWith('image/')) {
+                            reader.readAsDataURL(file);
+                        } else if (file.type === 'application/pdf' || 
+                                   file.name.endsWith('.pdf') ||
+                                   file.type === 'text/plain' || 
+                                   file.name.endsWith('.txt') ||
+                                   file.type.includes('document')) {
+                            reader.readAsDataURL(file);
+                        } else {
+                            showToast(`File type ${file.type} not supported ❌`, 'warning');
+                        }
+                    });
+                }
+            });
+            
             fileInput.click();
         });
     }
-    
-    // Handle drag and drop
+
+    // Drag and drop file upload
     const uploadArea = document.getElementById('uploadArea');
     if (uploadArea) {
         uploadArea.addEventListener('dragover', function(e) {
             e.preventDefault();
-            uploadArea.classList.add('dragover');
+            this.classList.add('dragover');
         });
+        
         uploadArea.addEventListener('dragleave', function(e) {
             e.preventDefault();
-            uploadArea.classList.remove('dragover');
+            this.classList.remove('dragover');
         });
+        
         uploadArea.addEventListener('drop', function(e) {
             e.preventDefault();
-            uploadArea.classList.remove('dragover');
-            if (e.dataTransfer.files.length > 0) {
-                handleFileSelection(e.dataTransfer.files);
+            this.classList.remove('dragover');
+            
+            if (e.dataTransfer.files) {
+                Array.from(e.dataTransfer.files).forEach(file => {
+                    if (file.size > 10 * 1024 * 1024) { // 10MB limit
+                        showToast(`File ${file.name} is too large (max 10MB) ❌`, 'warning');
+                        return;
+                    }
+                    
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        selectedFiles.push({
+                            name: file.name,
+                            type: file.type,
+                            size: file.size,
+                            data: event.target.result,
+                            file: file
+                        });
+                        updateUploadedFilesDisplay();
+                    };
+                    
+                    if (file.type.startsWith('image/')) {
+                        reader.readAsDataURL(file);
+                    } else if (file.type === 'application/pdf' || 
+                               file.name.endsWith('.pdf') ||
+                               file.type === 'text/plain' || 
+                               file.name.endsWith('.txt') ||
+                               file.type.includes('document')) {
+                        reader.readAsDataURL(file);
+                    } else {
+                        showToast(`File type ${file.type} not supported ❌`, 'warning');
+                    }
+                });
             }
         });
+        
+        // Click to upload
+        uploadArea.addEventListener('click', function() {
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.multiple = true;
+            fileInput.accept = 'image/*,.pdf,.txt,.doc,.docx';
+            
+            fileInput.addEventListener('change', function(e) {
+                if (e.target.files) {
+                    Array.from(e.target.files).forEach(file => {
+                        if (file.size > 10 * 1024 * 1024) { // 10MB limit
+                            showToast(`File ${file.name} is too large (max 10MB) ❌`, 'warning');
+                            return;
+                        }
+                        
+                        const reader = new FileReader();
+                        reader.onload = function(event) {
+                            selectedFiles.push({
+                                name: file.name,
+                                type: file.type,
+                                size: file.size,
+                                data: event.target.result,
+                                file: file
+                            });
+                            updateUploadedFilesDisplay();
+                        };
+                        
+                        if (file.type.startsWith('image/')) {
+                            reader.readAsDataURL(file);
+                        } else if (file.type === 'application/pdf' || 
+                                   file.name.endsWith('.pdf') ||
+                                   file.type === 'text/plain' || 
+                                   file.name.endsWith('.txt') ||
+                                   file.type.includes('document')) {
+                            reader.readAsDataURL(file);
+                        } else {
+                            showToast(`File type ${file.type} not supported ❌`, 'warning');
+                        }
+                    });
+                }
+            });
+            
+            fileInput.click();
+        });
     }
-    
+
     // Confirm file upload
     const confirmFileUpload = document.getElementById('confirmFileUpload');
     if (confirmFileUpload) {
         confirmFileUpload.addEventListener('click', function() {
             if (selectedFiles.length === 0) {
-                showToast('Please select at least one file 📎', 'warning');
+                showToast('No files selected 📁', 'warning');
                 return;
             }
-            attachedFiles = [...attachedFiles, ...selectedFiles];
+            
+            attachedFiles = [...selectedFiles];
+            selectedFiles = [];
+            
+            // Update attachments preview
             const preview = document.getElementById('attachmentsPreview');
             if (preview) {
                 preview.innerHTML = '';
                 attachedFiles.forEach((file, index) => {
                     const item = document.createElement('div');
                     item.className = 'attachment-preview-item';
+                    
                     if (file.type.startsWith('image/')) {
                         item.innerHTML = `
                             <img src="${file.data}" alt="${file.name}" class="attachment-preview-image">
-                            <button class="remove-attachment" onclick="removeAttachment(${index})">
+                            <div class="attachment-preview-name">${file.name}</div>
+                            <button class="remove-attachment" onclick="removeAttachedFile(${index})">
                                 <i class="fas fa-times"></i>
                             </button>
-                            <div class="attachment-preview-name">${file.name}</div>
                         `;
                     } else if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
                         item.innerHTML = `
-                            <div style="padding: 8px; text-align: center; background: var(--dark-surface-light); height: 70px; width: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                                <i class="fas fa-file-pdf" style="font-size: 1.3rem; color: var(--error);"></i>
-                                <div style="font-size: 0.55rem; color: var(--dark-text-secondary); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">PDF</div>
+                            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; background: var(--error); padding: 5px;">
+                                <i class="fas fa-file-pdf" style="font-size: 1.2rem; color: white; margin-bottom: 3px;"></i>
+                                <div class="attachment-preview-name" style="color: white; font-size: 0.55rem;">PDF</div>
                             </div>
-                            <button class="remove-attachment" onclick="removeAttachment(${index})" style="top: 2px; right: 2px;">
+                            <div class="attachment-preview-name">${file.name.substring(0, 8)}...</div>
+                            <button class="remove-attachment" onclick="removeAttachedFile(${index})">
                                 <i class="fas fa-times"></i>
                             </button>
-                            <div class="attachment-preview-name">${file.name.substring(0, 12)}${file.name.length > 12 ? '...' : ''}</div>
                         `;
                     } else if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
                         item.innerHTML = `
-                            <div style="padding: 8px; text-align: center; background: var(--dark-surface-light); height: 70px; width: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                                <i class="fas fa-file-alt" style="font-size: 1.3rem; color: var(--primary);"></i>
-                                <div style="font-size: 0.55rem; color: var(--dark-text-secondary); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">TXT</div>
+                            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; background: var(--primary); padding: 5px;">
+                                <i class="fas fa-file-alt" style="font-size: 1.2rem; color: white; margin-bottom: 3px;"></i>
+                                <div class="attachment-preview-name" style="color: white; font-size: 0.55rem;">TXT</div>
                             </div>
-                            <button class="remove-attachment" onclick="removeAttachment(${index})" style="top: 2px; right: 2px;">
+                            <div class="attachment-preview-name">${file.name.substring(0, 8)}...</div>
+                            <button class="remove-attachment" onclick="removeAttachedFile(${index})">
                                 <i class="fas fa-times"></i>
                             </button>
-                            <div class="attachment-preview-name">${file.name.substring(0, 12)}${file.name.length > 12 ? '...' : ''}</div>
                         `;
                     } else {
                         item.innerHTML = `
-                            <div style="padding: 8px; text-align: center; background: var(--dark-surface-light); height: 70px; width: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                                <i class="fas fa-file" style="font-size: 1.3rem; color: var(--dark-text-secondary);"></i>
-                                <div style="font-size: 0.55rem; color: var(--dark-text-secondary); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">DOC</div>
+                            <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; background: var(--dark-surface-light); padding: 5px;">
+                                <i class="fas fa-file" style="font-size: 1.2rem; color: var(--dark-text-secondary); margin-bottom: 3px;"></i>
+                                <div class="attachment-preview-name" style="color: var(--dark-text-secondary); font-size: 0.55rem;">FILE</div>
                             </div>
-                            <button class="remove-attachment" onclick="removeAttachment(${index})" style="top: 2px; right: 2px;">
+                            <div class="attachment-preview-name">${file.name.substring(0, 8)}...</div>
+                            <button class="remove-attachment" onclick="removeAttachedFile(${index})">
                                 <i class="fas fa-times"></i>
                             </button>
-                            <div class="attachment-preview-name">${file.name.substring(0, 12)}${file.name.length > 12 ? '...' : ''}</div>
                         `;
                     }
+                    
                     preview.appendChild(item);
                 });
                 preview.style.display = 'flex';
             }
-            const sendButton = document.getElementById('sendButton');
-            if (sendButton) sendButton.disabled = false;
+            
             const fileUploadModal = document.getElementById('fileUploadModal');
             if (fileUploadModal) fileUploadModal.classList.remove('active');
-            showToast(`${selectedFiles.length} file(s) attached 📎`, 'success');
-            selectedFiles = [];
-        });
-    }
-    
-    // Delete chat confirmation
-    const confirmDelete = document.getElementById('confirmDelete');
-    if (confirmDelete) {
-        confirmDelete.addEventListener('click', function() {
-            const deleteModal = document.getElementById('deleteModal');
-            const chatId = deleteModal.dataset.chatId;
-            const chatIndex = chatHistory.findIndex(chat => chat.id === chatId);
-            if (chatIndex !== -1) {
-                if (currentChatId === chatId) {
-                    createNewChat();
-                }
-                chatHistory.splice(chatIndex, 1);
-                saveUserChatHistory();
-                loadHistoryList();
-                if (deleteModal) deleteModal.classList.remove('active');
-                showToast('Chat deleted successfully 🗑️', 'success');
+            
+            const userInput = document.getElementById('userInput');
+            const sendButton = document.getElementById('sendButton');
+            if (userInput && sendButton) {
+                sendButton.disabled = userInput.value.trim() === '' && attachedFiles.length === 0;
             }
+            
+            showToast(`${attachedFiles.length} file(s) attached 📎`, 'success');
         });
     }
-    
-    const cancelDelete = document.getElementById('cancelDelete');
-    if (cancelDelete) {
-        cancelDelete.addEventListener('click', function() {
-            const deleteModal = document.getElementById('deleteModal');
-            if (deleteModal) deleteModal.classList.remove('active');
-        });
-    }
-    
-    const closeDeleteModal = document.getElementById('closeDeleteModal');
-    if (closeDeleteModal) {
-        closeDeleteModal.addEventListener('click', function() {
-            const deleteModal = document.getElementById('deleteModal');
-            if (deleteModal) deleteModal.classList.remove('active');
-        });
-    }
-    
-    // Download option clicks
-    document.querySelectorAll('.download-option').forEach(option => {
+
+    // Download modal options
+    const downloadOptions = document.querySelectorAll('.download-option');
+    downloadOptions.forEach(option => {
         option.addEventListener('click', function() {
             const format = this.dataset.format;
-            const isMessageModal = this.closest('#messageDownloadModal') !== null;
-            if (isMessageModal) {
-                downloadMessage(format, messageContentForDownload);
-            } else {
+            if (this.closest('#downloadModal')) {
                 downloadChat(format);
+            } else if (this.closest('#messageDownloadModal')) {
+                downloadMessage(format, messageContentForDownload);
             }
         });
     });
-    
-    // Close download modals
+
+    // Close download modal
     const closeDownloadModal = document.getElementById('closeDownloadModal');
     if (closeDownloadModal) {
         closeDownloadModal.addEventListener('click', function() {
@@ -8232,7 +8301,8 @@ document.addEventListener('DOMContentLoaded', function() {
             if (downloadModal) downloadModal.classList.remove('active');
         });
     }
-    
+
+    // Close message download modal
     const closeMessageDownloadModal = document.getElementById('closeMessageDownloadModal');
     if (closeMessageDownloadModal) {
         closeMessageDownloadModal.addEventListener('click', function() {
@@ -8240,173 +8310,694 @@ document.addEventListener('DOMContentLoaded', function() {
             if (messageDownloadModal) messageDownloadModal.classList.remove('active');
         });
     }
-});
 
-// Handle file selection
-function handleFileSelection(files) {
-    for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        if (file.type.startsWith('image/') || 
-            file.type === 'application/pdf' || 
-            file.type === 'text/plain' ||
-            file.type.includes('document') ||
-            file.name.endsWith('.txt') ||
-            file.name.endsWith('.pdf') ||
-            file.name.endsWith('.doc') ||
-            file.name.endsWith('.docx')) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                selectedFiles.push({
-                    name: file.name,
-                    data: e.target.result,
-                    type: file.type,
-                    file: file,
-                    size: file.size
+    // Delete modal buttons
+    const closeDeleteModal = document.getElementById('closeDeleteModal');
+    if (closeDeleteModal) {
+        closeDeleteModal.addEventListener('click', function() {
+            const deleteModal = document.getElementById('deleteModal');
+            if (deleteModal) deleteModal.classList.remove('active');
+        });
+    }
+
+    const cancelDelete = document.getElementById('cancelDelete');
+    if (cancelDelete) {
+        cancelDelete.addEventListener('click', function() {
+            const deleteModal = document.getElementById('deleteModal');
+            if (deleteModal) deleteModal.classList.remove('active');
+        });
+    }
+
+    const confirmDelete = document.getElementById('confirmDelete');
+    if (confirmDelete) {
+        confirmDelete.addEventListener('click', function() {
+            const deleteModal = document.getElementById('deleteModal');
+            const chatId = deleteModal ? deleteModal.dataset.chatId : null;
+            
+            if (chatId) {
+                const index = chatHistory.findIndex(chat => chat.id === chatId);
+                if (index !== -1) {
+                    // If deleting current chat, create new one
+                    if (currentChatId === chatId) {
+                        createNewChat();
+                    }
+                    
+                    chatHistory.splice(index, 1);
+                    saveUserChatHistory();
+                    loadHistoryList();
+                    showToast('Chat deleted permanently 🗑️', 'success');
+                }
+            }
+            
+            if (deleteModal) deleteModal.classList.remove('active');
+        });
+    }
+
+    // Emoji picker button
+    const emojiPickerBtn = document.getElementById('emojiPickerBtn');
+    if (emojiPickerBtn) {
+        emojiPickerBtn.addEventListener('click', function() {
+            const userInput = document.getElementById('userInput');
+            if (userInput) {
+                const emojis = ['⚖️', '📝', '🔍', '💼', '🏠', '💰', '👨‍👩‍👧', '⚡', '📚', '🔐'];
+                const emoji = emojis[Math.floor(Math.random() * emojis.length)];
+                const cursorPos = userInput.selectionStart;
+                const textBefore = userInput.value.substring(0, cursorPos);
+                const textAfter = userInput.value.substring(cursorPos);
+                userInput.value = textBefore + emoji + textAfter;
+                userInput.focus();
+                userInput.selectionStart = cursorPos + emoji.length;
+                userInput.selectionEnd = cursorPos + emoji.length;
+                userInput.style.height = Math.min(userInput.scrollHeight, 180) + 'px';
+                
+                const sendButton = document.getElementById('sendButton');
+                if (sendButton) sendButton.disabled = false;
+            }
+        });
+    }
+
+    // Initialize app for guest
+    setTimeout(() => {
+        initializeAppForGuest();
+        
+        // Show loading screen briefly
+        const loadingScreen = document.getElementById('loadingScreen');
+        if (loadingScreen) {
+            setTimeout(() => {
+                loadingScreen.style.display = 'none';
+            }, 1500);
+        }
+    }, 500);
+
+    // Back to top button
+    const backToTopBtn = document.getElementById('backToTop');
+    if (backToTopBtn) {
+        backToTopBtn.addEventListener('click', function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+        
+        window.addEventListener('scroll', function() {
+            if (window.pageYOffset > 300) {
+                backToTopBtn.style.display = 'flex';
+            } else {
+                backToTopBtn.style.display = 'none';
+            }
+        });
+    }
+
+    // Smooth scrolling for navigation links
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function(e) {
+            if (this.getAttribute('href') === '#') return;
+            
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+            
+            if (targetElement) {
+                // Update active nav link
+                document.querySelectorAll('.nav-link').forEach(link => {
+                    link.classList.remove('active');
                 });
-                updateUploadedFilesDisplay();
+                this.classList.add('active');
+                
+                // Scroll to target
+                window.scrollTo({
+                    top: targetElement.offsetTop - 80,
+                    behavior: 'smooth'
+                });
+                
+                // Close mobile menu if open
+                if (isMobileMenuOpen) {
+                    const mobileMenu = document.getElementById('mobileMenu');
+                    if (mobileMenu) mobileMenu.style.display = 'none';
+                    isMobileMenuOpen = false;
+                }
+            }
+        });
+    });
+
+    // Mobile menu toggle
+    const mobileToggle = document.getElementById('mobileToggle');
+    const mobileMenu = document.getElementById('mobileMenu');
+    const mobileClose = document.getElementById('mobileClose');
+    const mobileStartChat = document.getElementById('mobileStartChat');
+    
+    if (mobileToggle && mobileMenu) {
+        mobileToggle.addEventListener('click', function() {
+            mobileMenu.style.display = 'block';
+            isMobileMenuOpen = true;
+        });
+    }
+    
+    if (mobileClose && mobileMenu) {
+        mobileClose.addEventListener('click', function() {
+            mobileMenu.style.display = 'none';
+            isMobileMenuOpen = false;
+        });
+    }
+    
+    if (mobileStartChat) {
+        mobileStartChat.addEventListener('click', function() {
+            mobileMenu.style.display = 'none';
+            isMobileMenuOpen = false;
+            openChat();
+        });
+    }
+
+    // Start chat buttons
+    const startChatBtn = document.getElementById('startChatBtn');
+    if (startChatBtn) {
+        startChatBtn.addEventListener('click', openChat);
+    }
+
+    const ctaStartChat = document.getElementById('ctaStartChat');
+    if (ctaStartChat) {
+        ctaStartChat.addEventListener('click', openChat);
+    }
+
+    // Login buttons
+    const headerLoginBtn = document.getElementById('headerLoginBtn');
+    if (headerLoginBtn) {
+        headerLoginBtn.addEventListener('click', function() {
+            const loginModal = document.getElementById('loginModal');
+            if (loginModal) loginModal.classList.add('active');
+            isLoginModalOpen = true;
+        });
+    }
+
+    // Close login modal
+    const closeLoginModal = document.getElementById('closeLoginModal');
+    if (closeLoginModal) {
+        closeLoginModal.addEventListener('click', function() {
+            const loginModal = document.getElementById('loginModal');
+            if (loginModal) loginModal.classList.remove('active');
+            isLoginModalOpen = false;
+        });
+    }
+
+    // Demo login
+    const demoLoginBtn = document.getElementById('demoLoginBtn');
+    if (demoLoginBtn) {
+        demoLoginBtn.addEventListener('click', function() {
+            currentUser = {
+                id: 'demo_' + Date.now(),
+                name: 'Demo User',
+                email: 'demo@legalswami.com',
+                isGuest: true,
+                picture: null
             };
-            reader.readAsDataURL(file);
-        } else {
-            showToast(`File type not supported: ${file.name} ❌`, 'warning');
+            isLoggedIn = true;
+            updateUserUI();
+            
+            const loginModal = document.getElementById('loginModal');
+            if (loginModal) loginModal.classList.remove('active');
+            isLoginModalOpen = false;
+            
+            showToast('Welcome to Demo Mode! You have full access. 🎉', 'success');
+        });
+    }
+
+    // Custom Google login button
+    const customGoogleBtn = document.getElementById('customGoogleBtn');
+    if (customGoogleBtn) {
+        customGoogleBtn.addEventListener('click', function() {
+            showToast('Google login coming soon! 👨‍💻', 'info');
+        });
+    }
+
+    // Home logout button
+    const homeLogoutBtn = document.getElementById('homeLogoutBtn');
+    if (homeLogoutBtn) {
+        homeLogoutBtn.addEventListener('click', function() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('legalSwamiUser');
+                localStorage.removeItem('legalSwamiToken');
+                currentUser = null;
+                userToken = null;
+                isLoggedIn = false;
+                updateUserUI();
+                showToast('Logged out successfully 👋', 'success');
+            }
+        });
+    }
+
+    // Watch demo button
+    const watchDemoBtn = document.getElementById('watchDemo');
+    if (watchDemoBtn) {
+        watchDemoBtn.addEventListener('click', function() {
+            showToast('Demo video coming soon! 🎬', 'info');
+        });
+    }
+
+    // Schedule demo button
+    const ctaScheduleDemo = document.getElementById('ctaScheduleDemo');
+    if (ctaScheduleDemo) {
+        ctaScheduleDemo.addEventListener('click', function() {
+            showToast('Schedule demo feature coming soon! 📅', 'info');
+        });
+    }
+
+    // Document generation buttons
+    document.querySelectorAll('.btn-generate').forEach(button => {
+        button.addEventListener('click', function() {
+            openChat();
+            setTimeout(() => {
+                const userInput = document.getElementById('userInput');
+                const sendButton = document.getElementById('sendButton');
+                
+                const documentType = this.closest('.document-category').querySelector('.category-title').textContent;
+                
+                if (userInput && sendButton) {
+                    userInput.value = `Create a ${documentType.toLowerCase()} template for me 📝`;
+                    userInput.focus();
+                    userInput.style.height = Math.min(userInput.scrollHeight, 180) + 'px';
+                    sendButton.disabled = false;
+                    
+                    setTimeout(() => {
+                        sendMessage();
+                    }, 1000);
+                }
+            }, 500);
+        });
+    });
+
+    // Lawyer consultation buttons
+    document.querySelectorAll('.btn-consult').forEach(button => {
+        button.addEventListener('click', function() {
+            showToast('Lawyer consultation feature coming soon! 👨‍⚖️', 'info');
+        });
+    });
+
+    // Pricing plan buttons
+    document.querySelectorAll('.btn-pricing').forEach(button => {
+        button.addEventListener('click', function() {
+            if (this.textContent.includes('Contact Sales')) {
+                showToast('Contact sales feature coming soon! 📞', 'info');
+            } else if (this.textContent.includes('Get Started Free')) {
+                openChat();
+            } else {
+                showToast('Premium features coming soon! ⭐', 'info');
+            }
+        });
+    });
+
+    // Database search buttons
+    document.querySelectorAll('.btn-database').forEach(button => {
+        button.addEventListener('click', function() {
+            openChat();
+            setTimeout(() => {
+                const userInput = document.getElementById('userInput');
+                const sendButton = document.getElementById('sendButton');
+                
+                const databaseType = this.closest('.database-card').querySelector('.database-title').textContent;
+                
+                if (userInput && sendButton) {
+                    userInput.value = `Search ${databaseType.toLowerCase()} in Indian law 🔍`;
+                    userInput.focus();
+                    userInput.style.height = Math.min(userInput.scrollHeight, 180) + 'px';
+                    sendButton.disabled = false;
+                    
+                    setTimeout(() => {
+                        sendMessage();
+                    }, 1000);
+                }
+            }, 500);
+        });
+    });
+
+    // Guide view buttons
+    document.querySelectorAll('.btn-guide').forEach(button => {
+        button.addEventListener('click', function() {
+            openChat();
+            setTimeout(() => {
+                const userInput = document.getElementById('userInput');
+                const sendButton = document.getElementById('sendButton');
+                
+                const guideTitle = this.closest('.guide-card').querySelector('.guide-title').textContent;
+                
+                if (userInput && sendButton) {
+                    userInput.value = `Explain ${guideTitle.toLowerCase()} in simple terms 📚`;
+                    userInput.focus();
+                    userInput.style.height = Math.min(userInput.scrollHeight, 180) + 'px';
+                    sendButton.disabled = false;
+                    
+                    setTimeout(() => {
+                        sendMessage();
+                    }, 1000);
+                }
+            }, 500);
+        });
+    });
+
+    // Lawyer search button
+    const btnSearch = document.querySelector('.btn-search');
+    if (btnSearch) {
+        btnSearch.addEventListener('click', function() {
+            const searchInput = document.getElementById('lawyerSearch');
+            if (searchInput && searchInput.value.trim()) {
+                showToast(`Searching for lawyers specializing in: ${searchInput.value} 👨‍⚖️`, 'info');
+            } else {
+                showToast('Please enter a search term 🔍', 'warning');
+            }
+        });
+    }
+
+    // Lawyer specialization filters
+    document.querySelectorAll('.filter-btn').forEach(button => {
+        button.addEventListener('click', function() {
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            this.classList.add('active');
+            
+            const specialization = this.dataset.specialization;
+            showToast(`Showing ${specialization === 'all' ? 'all' : specialization} lawyers 👨‍⚖️`, 'info');
+        });
+    });
+
+    // Assistant chat button
+    const btnAssistant = document.querySelector('.btn-assistant');
+    if (btnAssistant) {
+        btnAssistant.addEventListener('click', openChat);
+    }
+
+    // Feature card chat buttons
+    document.querySelectorAll('.feature-card').forEach(card => {
+        card.addEventListener('click', function(e) {
+            if (!e.target.closest('button') && !e.target.closest('a')) {
+                const featureTitle = this.querySelector('.feature-title').textContent;
+                openChat();
+                setTimeout(() => {
+                    const userInput = document.getElementById('userInput');
+                    const sendButton = document.getElementById('sendButton');
+                    
+                    if (userInput && sendButton) {
+                        userInput.value = `Tell me about ${featureTitle.toLowerCase()} ⚖️`;
+                        userInput.focus();
+                        userInput.style.height = Math.min(userInput.scrollHeight, 180) + 'px';
+                        sendButton.disabled = false;
+                        
+                        setTimeout(() => {
+                            sendMessage();
+                        }, 1000);
+                    }
+                }, 500);
+            }
+        });
+    });
+
+    // Testimonial card click
+    document.querySelectorAll('.testimonial-card').forEach(card => {
+        card.addEventListener('click', function() {
+            const testimonialText = this.querySelector('.testimonial-text').textContent;
+            openChat();
+            setTimeout(() => {
+                const userInput = document.getElementById('userInput');
+                const sendButton = document.getElementById('sendButton');
+                
+                if (userInput && sendButton) {
+                    userInput.value = `I need help with a legal matter similar to what was mentioned in testimonials. Can you assist? ⚖️`;
+                    userInput.focus();
+                    userInput.style.height = Math.min(userInput.scrollHeight, 180) + 'px';
+                    sendButton.disabled = false;
+                    
+                    setTimeout(() => {
+                        sendMessage();
+                    }, 1000);
+                }
+            }, 500);
+        });
+    });
+
+    // Footer links
+    document.querySelectorAll('#termsLink, #privacyLink, #disclaimerLink, #cookieLink').forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            const linkType = this.id.replace('Link', '');
+            const messages = {
+                'terms': 'Terms of Service',
+                'privacy': 'Privacy Policy',
+                'disclaimer': 'Legal Disclaimer',
+                'cookie': 'Cookie Policy'
+            };
+            showToast(`${messages[linkType]} page coming soon! 📄`, 'info');
+        });
+    });
+
+    // Handle escape key to close modals
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') {
+            // Close login modal
+            if (isLoginModalOpen) {
+                const loginModal = document.getElementById('loginModal');
+                if (loginModal) loginModal.classList.remove('active');
+                isLoginModalOpen = false;
+            }
+            
+            // Close mobile menu
+            if (isMobileMenuOpen) {
+                const mobileMenu = document.getElementById('mobileMenu');
+                if (mobileMenu) mobileMenu.style.display = 'none';
+                isMobileMenuOpen = false;
+            }
+            
+            // Close sidebar on mobile
+            if (window.innerWidth < 1024) {
+                const sidebar = document.getElementById('sidebar');
+                const sidebarOverlay = document.getElementById('sidebarOverlay');
+                if (sidebar && sidebar.classList.contains('active')) {
+                    sidebar.classList.remove('active');
+                    if (sidebarOverlay) sidebarOverlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                }
+            }
+            
+            // Stop streaming if active
+            if (isStreamingActive) {
+                stopStreaming();
+            }
+        }
+        
+        // Ctrl+/ to focus chat input
+        if (e.key === '/' && e.ctrlKey) {
+            e.preventDefault();
+            if (document.getElementById('chatInterface').classList.contains('active')) {
+                const userInput = document.getElementById('userInput');
+                if (userInput) userInput.focus();
+            }
+        }
+    });
+
+    // Handle click outside of modals to close them
+    document.addEventListener('click', function(e) {
+        // Close login modal
+        const loginModal = document.getElementById('loginModal');
+        if (loginModal && loginModal.classList.contains('active')) {
+            const modalContent = loginModal.querySelector('.modal-content');
+            if (!modalContent.contains(e.target) && !e.target.closest('#headerLoginBtn') && !e.target.closest('#chatHeaderLoginBtn')) {
+                loginModal.classList.remove('active');
+                isLoginModalOpen = false;
+            }
+        }
+        
+        // Close mobile menu
+        const mobileMenu = document.getElementById('mobileMenu');
+        if (mobileMenu && mobileMenu.style.display === 'block') {
+            const mobileMenuContainer = mobileMenu.querySelector('.mobile-menu-container');
+            if (!mobileMenuContainer.contains(e.target) && !e.target.closest('#mobileToggle')) {
+                mobileMenu.style.display = 'none';
+                isMobileMenuOpen = false;
+            }
+        }
+    });
+
+    // Initialize Google Sign-In
+    function initializeGoogleSignIn() {
+        try {
+            if (typeof google !== 'undefined' && google.accounts && google.accounts.id) {
+                google.accounts.id.initialize({
+                    client_id: '166511615962-bohur5q8d4i5hud6icr4185kcte9enk8.apps.googleusercontent.com',
+                    callback: handleCredentialResponse,
+                    auto_select: false,
+                    cancel_on_tap_outside: true
+                });
+                
+                google.accounts.id.renderButton(
+                    document.getElementById('googleSignInContainer'),
+                    { 
+                        theme: 'outline', 
+                        size: 'large',
+                        width: 280,
+                        text: 'continue_with',
+                        shape: 'rectangular',
+                        logo_alignment: 'center'
+                    }
+                );
+                
+                google.accounts.id.prompt();
+            }
+        } catch (error) {
+            console.error('Google Sign-In initialization error:', error);
         }
     }
-}
+    
+    // Handle Google Sign-In response
+    function handleCredentialResponse(response) {
+        try {
+            const responsePayload = JSON.parse(atob(response.credential.split('.')[1]));
+            
+            currentUser = {
+                id: responsePayload.sub,
+                name: responsePayload.name,
+                email: responsePayload.email,
+                picture: responsePayload.picture,
+                isGuest: false
+            };
+            
+            userToken = response.credential;
+            isLoggedIn = true;
+            
+            // Save user data
+            localStorage.setItem('legalSwamiUser', JSON.stringify(currentUser));
+            localStorage.setItem('legalSwamiToken', userToken);
+            
+            updateUserUI();
+            
+            const loginModal = document.getElementById('loginModal');
+            if (loginModal) loginModal.classList.remove('active');
+            isLoginModalOpen = false;
+            
+            showToast(`Welcome ${currentUser.name}! 👋`, 'success');
+            
+            // Load user's chat history
+            loadUserChatHistory();
+            
+        } catch (error) {
+            console.error('Google Sign-In error:', error);
+            showToast('Google login failed. Please try again. ❌', 'error');
+        }
+    }
+    
+    // Initialize Google Sign-In when DOM is loaded
+    setTimeout(initializeGoogleSignIn, 1000);
+});
 
-window.removeAttachment = function(index) {
+// Global function to remove attached files
+window.removeAttachedFile = function(index) {
     attachedFiles.splice(index, 1);
+    
+    // Update preview
     const preview = document.getElementById('attachmentsPreview');
     if (preview) {
-        preview.innerHTML = '';
         if (attachedFiles.length === 0) {
             preview.style.display = 'none';
-            const sendButton = document.getElementById('sendButton');
-            const userInput = document.getElementById('userInput');
-            if (sendButton && userInput) {
-                sendButton.disabled = userInput.value.trim() === '';
-            }
+            preview.innerHTML = '';
         } else {
-            attachedFiles.forEach((file, idx) => {
+            preview.innerHTML = '';
+            attachedFiles.forEach((file, newIndex) => {
                 const item = document.createElement('div');
                 item.className = 'attachment-preview-item';
+                
                 if (file.type.startsWith('image/')) {
                     item.innerHTML = `
                         <img src="${file.data}" alt="${file.name}" class="attachment-preview-image">
-                        <button class="remove-attachment" onclick="removeAttachment(${idx})">
+                        <div class="attachment-preview-name">${file.name}</div>
+                        <button class="remove-attachment" onclick="removeAttachedFile(${newIndex})">
                             <i class="fas fa-times"></i>
                         </button>
-                        <div class="attachment-preview-name">${file.name}</div>
                     `;
                 } else if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
                     item.innerHTML = `
-                        <div style="padding: 8px; text-align: center; background: var(--dark-surface-light); height: 70px; width: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                            <i class="fas fa-file-pdf" style="font-size: 1.3rem; color: var(--error);"></i>
-                            <div style="font-size: 0.55rem; color: var(--dark-text-secondary); margin-top: 4px;">PDF</div>
+                        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; background: var(--error); padding: 5px;">
+                            <i class="fas fa-file-pdf" style="font-size: 1.2rem; color: white; margin-bottom: 3px;"></i>
+                            <div class="attachment-preview-name" style="color: white; font-size: 0.55rem;">PDF</div>
                         </div>
-                        <button class="remove-attachment" onclick="removeAttachment(${idx})" style="top: 2px; right: 2px;">
+                        <div class="attachment-preview-name">${file.name.substring(0, 8)}...</div>
+                        <button class="remove-attachment" onclick="removeAttachedFile(${newIndex})">
                             <i class="fas fa-times"></i>
                         </button>
-                        <div class="attachment-preview-name">${file.name.substring(0, 12)}${file.name.length > 12 ? '...' : ''}</div>
                     `;
                 } else if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
                     item.innerHTML = `
-                        <div style="padding: 8px; text-align: center; background: var(--dark-surface-light); height: 70px; width: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                            <i class="fas fa-file-alt" style="font-size: 1.3rem; color: var(--primary);"></i>
-                            <div style="font-size: 0.55rem; color: var(--dark-text-secondary); margin-top: 4px;">TXT</div>
+                        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; background: var(--primary); padding: 5px;">
+                            <i class="fas fa-file-alt" style="font-size: 1.2rem; color: white; margin-bottom: 3px;"></i>
+                            <div class="attachment-preview-name" style="color: white; font-size: 0.55rem;">TXT</div>
                         </div>
-                        <button class="remove-attachment" onclick="removeAttachment(${idx})" style="top: 2px; right: 2px;">
+                        <div class="attachment-preview-name">${file.name.substring(0, 8)}...</div>
+                        <button class="remove-attachment" onclick="removeAttachedFile(${newIndex})">
                             <i class="fas fa-times"></i>
                         </button>
-                        <div class="attachment-preview-name">${file.name.substring(0, 12)}${file.name.length > 12 ? '...' : ''}</div>
                     `;
                 } else {
                     item.innerHTML = `
-                        <div style="padding: 8px; text-align: center; background: var(--dark-surface-light); height: 70px; width: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                            <i class="fas fa-file" style="font-size: 1.3rem; color: var(--dark-text-secondary);"></i>
-                            <div style="font-size: 0.55rem; color: var(--dark-text-secondary); margin-top: 4px;">DOC</div>
+                        <div style="display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; background: var(--dark-surface-light); padding: 5px;">
+                            <i class="fas fa-file" style="font-size: 1.2rem; color: var(--dark-text-secondary); margin-bottom: 3px;"></i>
+                            <div class="attachment-preview-name" style="color: var(--dark-text-secondary); font-size: 0.55rem;">FILE</div>
                         </div>
-                        <button class="remove-attachment" onclick="removeAttachment(${idx})" style="top: 2px; right: 2px;">
+                        <div class="attachment-preview-name">${file.name.substring(0, 8)}...</div>
+                        <button class="remove-attachment" onclick="removeAttachedFile(${newIndex})">
                             <i class="fas fa-times"></i>
                         </button>
-                        <div class="attachment-preview-name">${file.name.substring(0, 12)}${file.name.length > 12 ? '...' : ''}</div>
                     `;
                 }
+                
                 preview.appendChild(item);
             });
-            preview.style.display = 'flex';
         }
     }
+    
+    const userInput = document.getElementById('userInput');
+    const sendButton = document.getElementById('sendButton');
+    if (userInput && sendButton) {
+        sendButton.disabled = userInput.value.trim() === '' && attachedFiles.length === 0;
+    }
+    
+    showToast('File removed 📎', 'info');
 };
 
-// =============================================
-// INITIALIZE APP ON LOAD
-// =============================================
-
-document.addEventListener('DOMContentLoaded', function() {
-    console.log('🚀 LegalSwami Premium Frontend Initialized');
+// Handle window resize
+window.addEventListener('resize', function() {
+    adjustChatLayout();
     
-    // Hide loading screen
-    setTimeout(function() {
-        const loadingScreen = document.getElementById('loadingScreen');
-        if (loadingScreen) {
-            loadingScreen.style.opacity = '0';
-            setTimeout(function() {
-                loadingScreen.style.display = 'none';
-                console.log('✅ Loading screen hidden');
-            }, 300);
+    // Close sidebar on mobile when resizing to desktop
+    if (window.innerWidth >= 1025) {
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        if (sidebar && sidebarOverlay) {
+            sidebar.classList.add('active');
+            sidebarOverlay.classList.remove('active');
+            document.body.style.overflow = '';
         }
-    }, 500);
-    
-    // Setup homepage button click handlers
-    const startButtons = ['startChatBtn', 'ctaStartChat', 'mobileStartChat'];
-    startButtons.forEach(btnId => {
-        const btn = document.getElementById(btnId);
-        if (btn) {
-            btn.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log("Button clicked:", btnId);
-                openChat();
-            });
-        }
-    });
-    
-    // Setup assistant buttons
-    document.querySelectorAll('.btn-assistant').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            openChat();
-        });
-    });
-    
-    // Setup generate/pricing buttons
-    document.querySelectorAll('.btn-generate, .btn-pricing').forEach(btn => {
-        btn.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            openChat();
-        });
-    });
-    
-    // Initialize guest mode if not logged in
-    setTimeout(function() {
-        if (!isLoggedIn) {
-            console.log("Auto-initializing guest mode...");
-            initializeAppForGuest();
-        }
-    }, 1000);
-    
-    console.log('✅ All initialization complete');
+    }
 });
 
-// =============================================
-// GLOBAL ERROR HANDLER
-// =============================================
+// Handle page visibility change
+document.addEventListener('visibilitychange', function() {
+    if (document.visibilityState === 'visible') {
+        // Check if search counter needs reset
+        initializeSearchCounter();
+    }
+});
 
-window.onerror = function(msg, url, line, col, error) {
-    console.log("Global error caught:", msg, "at", line, ":", col);
-    return true; // Prevents default error handling
-};
+// Handle beforeunload to save data
+window.addEventListener('beforeunload', function() {
+    saveCurrentChat();
+    saveSearchCounter();
+});
+
+// Initialize when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    console.log('🚀 LegalSwami AI Legal Assistant Initialized');
+    
+    // Show welcome message
+    setTimeout(() => {
+        console.log('✅ App ready to use');
+        console.log('📱 Device:', isMobile ? 'Mobile' : isTablet ? 'Tablet' : 'Desktop');
+        console.log('👤 User mode:', isLoggedIn ? 'Logged In' : 'Guest');
+    }, 1000);
+});
+
 </script>
 </body>
 </html>
