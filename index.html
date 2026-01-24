@@ -5192,12 +5192,10 @@ let isLoggedIn = false;
 let userToken = null;
 let searchCount = 0;
 const MAX_FREE_SEARCHES = 500;
-const MAX_PREMIUM_SEARCHES = 1000;
 let scrollPosition = 0;
 let lastDownloadedFileUrl = null;
 let lastDownloadedFileName = '';
 let isProcessing = false;
-let googleGISInitialized = false;
 let isMobileMenuOpen = false;
 let isChatOpen = false;
 let isLoginModalOpen = false;
@@ -5289,16 +5287,6 @@ function openChat() {
         // Show chat interface
         const chatInterface = document.getElementById('chatInterface');
         if (chatInterface) {
-            chatInterface.style.display = 'flex';
-            chatInterface.style.position = 'fixed';
-            chatInterface.style.top = '0';
-            chatInterface.style.left = '0';
-            chatInterface.style.width = '100%';
-            chatInterface.style.height = '100%';
-            chatInterface.style.background = '#343541';
-            chatInterface.style.zIndex = '100000';
-            chatInterface.style.flexDirection = 'column';
-            
             chatInterface.classList.add('active');
             document.body.classList.add('chat-active');
             document.body.style.overflow = 'hidden';
@@ -5336,7 +5324,6 @@ function closeChat() {
         // Hide chat
         const chatInterface = document.getElementById('chatInterface');
         if (chatInterface) {
-            chatInterface.style.display = 'none';
             chatInterface.classList.remove('active');
         }
         
@@ -7430,10 +7417,6 @@ function toggleTheme() {
         if (themeIcon) themeIcon.className = 'fas fa-moon';
         localStorage.setItem('legalSwamiTheme', 'light');
         isLightMode = true;
-    }
-    const emojiPicker = document.getElementById('emojiPicker');
-    if (emojiPicker) {
-        emojiPicker.setAttribute('class', isLightMode ? 'light' : 'dark');
     }
 }
 
