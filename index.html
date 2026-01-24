@@ -100,10 +100,6 @@ body.chat-active {
     overflow: hidden !important;
 }
 
-body.chat-active .main-container {
-    display: none !important;
-}
-
 #chatInterface {
     display: none;
     position: fixed;
@@ -3637,6 +3633,33 @@ img {
     max-height: 90vh;
     overflow: hidden;
 }
+
+/* Animation for smooth transitions */
+.main-container, #chatInterface {
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Remove the conflicting rule */
+body.chat-active .main-container {
+    /* Remove this line completely */
+}
+
+/* Ensure chat interface is properly positioned */
+#chatInterface {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--dark-bg);
+    z-index: 99999;
+    display: none; /* Start hidden */
+    flex-direction: column;
+}
+
+#chatInterface.active {
+    display: flex; /* When active class is added */
+}
 	  </style>
 </head>
 <body>
@@ -5256,22 +5279,36 @@ const WELCOME_MESSAGE_HTML = `
 // SIMPLE CHAT OPEN/CLOSE FUNCTIONS
 // =============================================
 
+// नया openChat फंक्शन
 function openChat() {
     console.log("Opening chat...");
     
     try {
-        // Hide homepage
+        // Hide homepage smoothly
         const mainContainer = document.querySelector('.main-container');
         if (mainContainer) {
-            mainContainer.style.display = 'none';
+            mainContainer.style.opacity = '0';
+            mainContainer.style.transform = 'translateY(20px)';
+            setTimeout(() => {
+                mainContainer.style.display = 'none';
+                mainContainer.style.opacity = '';
+                mainContainer.style.transform = '';
+            }, 300);
         }
         
         // Show chat interface
         const chatInterface = document.getElementById('chatInterface');
         if (chatInterface) {
-            chatInterface.classList.add('active');
+            chatInterface.style.display = 'flex';
+            chatInterface.style.opacity = '0';
+            
+            // Smooth animation
+            setTimeout(() => {
+                chatInterface.style.opacity = '1';
+                chatInterface.style.transition = 'opacity 0.3s ease';
+            }, 10);
+            
             document.body.classList.add('chat-active');
-            document.body.style.overflow = 'hidden';
             
             console.log("✅ Chat interface shown successfully");
             
@@ -5292,27 +5329,37 @@ function openChat() {
             }, 500);
         } else {
             console.error("❌ Chat interface element not found!");
-            alert('Chat interface not found. Please refresh the page.');
         }
     } catch (error) {
         console.error("❌ Error opening chat:", error);
     }
 }
 
+// नया closeChat फंक्शन
 function closeChat() {
     console.log("Closing chat...");
     
     try {
-        // Hide chat
+        // Hide chat interface
         const chatInterface = document.getElementById('chatInterface');
         if (chatInterface) {
-            chatInterface.classList.remove('active');
+            chatInterface.style.opacity = '0';
+            setTimeout(() => {
+                chatInterface.style.display = 'none';
+                chatInterface.style.opacity = '';
+            }, 300);
         }
         
         // Show homepage
         const mainContainer = document.querySelector('.main-container');
         if (mainContainer) {
             mainContainer.style.display = 'block';
+            mainContainer.style.opacity = '0';
+            
+            setTimeout(() => {
+                mainContainer.style.opacity = '1';
+                mainContainer.style.transition = 'opacity 0.3s ease';
+            }, 10);
         }
         
         document.body.classList.remove('chat-active');
@@ -8465,16 +8512,22 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     }
 
-    // Start chat buttons
-    const startChatBtn = document.getElementById('startChatBtn');
-    if (startChatBtn) {
-        startChatBtn.addEventListener('click', openChat);
-    }
+    // Start chat buttons - नए function का उपयोग करें
+const startChatBtn = document.getElementById('startChatBtn');
+if (startChatBtn) {
+    startChatBtn.addEventListener('click', openChat);
+}
 
-    const ctaStartChat = document.getElementById('ctaStartChat');
-    if (ctaStartChat) {
-        ctaStartChat.addEventListener('click', openChat);
-    }
+const ctaStartChat = document.getElementById('ctaStartChat');
+if (ctaStartChat) {
+    ctaStartChat.addEventListener('click', openChat);
+}
+
+// Back to home button - नए function का उपयोग करें
+const backToHomeBtn = document.getElementById('backToHomeBtn');
+if (backToHomeBtn) {
+    backToHomeBtn.addEventListener('click', closeChat);
+}
 
     // Login buttons
     const headerLoginBtn = document.getElementById('headerLoginBtn');
