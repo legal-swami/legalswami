@@ -4103,7 +4103,7 @@ img {
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 	
     <!-- Main App Script -->
-   <script>
+<script>
 // =============================================
 // LEGALSWAMI - COMPLETE UPDATED SCRIPT
 // =============================================
@@ -4216,11 +4216,11 @@ const WELCOME_MESSAGE_HTML = `
 `;
 
 // =============================================
-// CHAT INTERFACE FUNCTIONS
+// SIMPLE CHAT OPEN/CLOSE FUNCTIONS
 // =============================================
 
-function showChatGPTInterface() {
-    console.log("🚀 Opening Chat Interface");
+function openChat() {
+    console.log("Opening chat...");
     
     try {
         // Hide homepage
@@ -4232,7 +4232,6 @@ function showChatGPTInterface() {
         // Show chat interface
         const chatInterface = document.getElementById('chatInterface');
         if (chatInterface) {
-            // Force show with inline styles
             chatInterface.style.display = 'flex';
             chatInterface.style.position = 'fixed';
             chatInterface.style.top = '0';
@@ -4243,7 +4242,6 @@ function showChatGPTInterface() {
             chatInterface.style.zIndex = '100000';
             chatInterface.style.flexDirection = 'column';
             
-            // Add active class
             chatInterface.classList.add('active');
             document.body.classList.add('chat-active');
             document.body.style.overflow = 'hidden';
@@ -4274,8 +4272,8 @@ function showChatGPTInterface() {
     }
 }
 
-function goBackToHome() {
-    console.log("🏠 Going back to home");
+function closeChat() {
+    console.log("Closing chat...");
     
     try {
         // Hide chat
@@ -4826,8 +4824,8 @@ function initializeChatApp() {
             });
         }
         
-        // Back to home button
-        if (backToHomeBtn) backToHomeBtn.addEventListener('click', goBackToHome);
+        // Back to home button - Use simple close function
+        if (backToHomeBtn) backToHomeBtn.addEventListener('click', closeChat);
         
         // User profile click
         if (userProfile) userProfile.addEventListener('click', toggleUserDropdown);
@@ -7327,7 +7325,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 e.preventDefault();
                 e.stopPropagation();
                 console.log("Button clicked:", btnId);
-                showChatGPTInterface();
+                openChat();
             });
         }
     });
@@ -7337,7 +7335,7 @@ document.addEventListener('DOMContentLoaded', function() {
         btn.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            showChatGPTInterface();
+            openChat();
         });
     });
     
@@ -7346,7 +7344,7 @@ document.addEventListener('DOMContentLoaded', function() {
         btn.addEventListener('click', function(e) {
             e.preventDefault();
             e.stopPropagation();
-            showChatGPTInterface();
+            openChat();
         });
     });
     
@@ -7369,62 +7367,6 @@ window.onerror = function(msg, url, line, col, error) {
     console.log("Global error caught:", msg, "at", line, ":", col);
     return true; // Prevents default error handling
 };
-
-// SIMPLE CHAT OPEN/CLOSE FUNCTIONS
-function openChat() {
-    console.log("Opening chat...");
-    
-    // Hide homepage
-    document.querySelector('.main-container').style.display = 'none';
-    
-    // Show chat
-    const chat = document.getElementById('chatInterface');
-    chat.style.display = 'flex';
-    chat.classList.add('active');
-    document.body.classList.add('chat-active');
-    
-    // Initialize chat
-    setTimeout(() => {
-        if (typeof initializeChatApp === 'function') {
-            initializeChatApp();
-        }
-    }, 100);
-}
-
-function closeChat() {
-    console.log("Closing chat...");
-    
-    // Hide chat
-    const chat = document.getElementById('chatInterface');
-    chat.style.display = 'none';
-    chat.classList.remove('active');
-    
-    // Show homepage
-    document.querySelector('.main-container').style.display = 'block';
-    document.body.classList.remove('chat-active');
-}
-
-// Setup button listeners
-document.addEventListener('DOMContentLoaded', function() {
-    // All start chat buttons
-    ['startChatBtn', 'ctaStartChat', 'mobileStartChat'].forEach(id => {
-        const btn = document.getElementById(id);
-        if (btn) {
-            btn.onclick = openChat;
-        }
-    });
-    
-    // Back to home button
-    const backBtn = document.getElementById('backToHomeBtn');
-    if (backBtn) {
-        backBtn.onclick = closeChat;
-    }
-    
-    // All other chat-opening buttons
-    document.querySelectorAll('.btn-assistant, .btn-generate, .btn-pricing').forEach(btn => {
-        btn.onclick = openChat;
-    });
-});	   
 </script>
 </body>
 </html>
