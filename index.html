@@ -2995,44 +2995,42 @@ header::-webkit-scrollbar {
     background: var(--bg-secondary-light);
 }
 
-/* CHAT INTERFACE STYLES */
+/* CHAT INTERFACE STYLES - FIXED */
 #chatInterface {
-    display: none !important;
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100vw !important;
-    height: 100vh !important;
-    background: var(--bg-primary) !important;
-    z-index: 99999 !important;
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--bg-primary);
+    z-index: 99999;
 }
 
 #chatInterface.active {
-    display: flex !important;
-    flex-direction: column !important;
+    display: flex;
+    flex-direction: column;
 }
 
 #chatInterface .container {
-    height: 100vh !important;
-    width: 100vw !important;
-    max-height: 100vh !important;
-    min-height: 100vh !important;
-    overflow: hidden !important;
-    display: flex !important;
-    flex-direction: column !important;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 #chatInterface .chat-container {
-    height: 100% !important;
-    width: 100% !important;
-    display: flex !important;
-    flex-direction: column !important;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 #chatInterface .chat-messages {
-    flex: 1 !important;
-    overflow-y: auto !important;
-    min-height: 0 !important;
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
 }
 
 body.chat-active .main-container {
@@ -3040,7 +3038,7 @@ body.chat-active .main-container {
 }
 
 body.chat-active {
-    overflow: hidden !important;
+    overflow: hidden;
 }
 
 /* Mobile Optimization */
@@ -3454,7 +3452,7 @@ body.chat-active {
 
 /* FIXED: Added scope for chat interface to prevent conflicts */
 #chatInterface .premium-navbar {
-    display: none !important;
+    display: none;
 }
 
 #chatInterface .legal-seal {
@@ -3503,34 +3501,34 @@ body.chat-active {
 
 /* Remove emergency debug styles */
 #chatInterface {
-    background: var(--bg-primary) !important;
-    opacity: 1 !important;
-    visibility: visible !important;
+    background: var(--bg-primary);
+    opacity: 1;
+    visibility: visible;
 }
 
 #chatInterface .container {
-    display: flex !important;
-    flex-direction: column !important;
-    height: 100vh !important;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
 }
 
 #chatInterface .chat-container {
-    display: flex !important;
-    flex-direction: column !important;
-    height: 100% !important;
-    flex: 1 !important;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    flex: 1;
 }
 
 #chatInterface .chat-messages {
-    flex: 1 !important;
-    overflow-y: auto !important;
-    min-height: 200px !important;
-    background: var(--bg-primary) !important;
+    flex: 1;
+    overflow-y: auto;
+    min-height: 200px;
+    background: var(--bg-primary);
 }
 
 /* Hide any overlay that might be blocking */
 .sidebar-overlay {
-    display: none !important;
+    display: none;
 }
 
 .draft-templates {
@@ -5289,7 +5287,7 @@ body.chat-active {
 
 button:disabled {
     opacity: 0.5;
-    cursor: not-allowed !important;
+    cursor: not-allowed;
 }
 
 .modal-overlay {
@@ -5301,18 +5299,18 @@ button:disabled {
 }
 
 #chatInterface .container {
-    height: 100vh !important;
-    max-height: 100vh !important;
-    min-height: 100vh !important;
-    overflow: hidden !important;
+    height: 100vh;
+    max-height: 100vh;
+    min-height: 100vh;
+    overflow: hidden;
 }
 
 #chatInterface .chat-container {
-    height: 100% !important;
-    max-height: 100% !important;
-    min-height: 100% !important;
-    display: flex !important;
-    flex-direction: column !important;
+    height: 100%;
+    max-height: 100%;
+    min-height: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 #chatInterface .chat-messages {
@@ -5339,60 +5337,59 @@ button:disabled {
     }
     
     #chatInterface .chat-container {
-        height: 100vh !important;
-        max-height: 100vh !important;
+        height: 100vh;
+        max-height: 100vh;
     }
     
     #chatInterface .chat-messages {
-        padding-bottom: 80px !important;
+        padding-bottom: 80px;
     }
 }
 
+/* CHAT INTERFACE STYLES - CORRECTED */
 #chatInterface {
-    display: none !important;
-    position: fixed !important;
-    top: 0 !important;
-    left: 0 !important;
-    width: 100vw !important;
-    height: 100vh !important;
-    background: var(--bg-primary) !important;
-    z-index: 99999 !important;
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--bg-primary);
+    z-index: 99999;
 }
 
 #chatInterface.active {
-    display: flex !important;
-    flex-direction: column !important;
+    display: flex;
+    flex-direction: column;
 }
 
 #chatInterface .container {
-    height: 100vh !important;
-    width: 100vw !important;
-    max-height: 100vh !important;
-    min-height: 100vh !important;
-    overflow: hidden !important;
-    display: flex !important;
-    flex-direction: column !important;
+    height: 100%;
+    width: 100%;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 #chatInterface .chat-container {
-    height: 100% !important;
-    width: 100% !important;
-    display: flex !important;
-    flex-direction: column !important;
+    height: 100%;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
 }
 
 #chatInterface .chat-messages {
-    flex: 1 !important;
-    overflow-y: auto !important;
-    min-height: 0 !important;
+    flex: 1;
+    overflow-y: auto;
+    min-height: 0;
 }
 
 body.chat-active .main-container {
-    display: none ;
+    display: none;
 }
 
 body.chat-active #chatInterface {
-    display: flex !important;
+    display: flex;
 }
 </style>
 </head>
@@ -5583,7 +5580,6 @@ body.chat-active #chatInterface {
                     </div>
                     
                     <div class="hero-actions">
-                        <!-- Fixed: Safe onclick handler -->
                         <button id="startChatBtn" class="btn-hero-primary btn-premium">
                             <i class="fas fa-comments"></i>
                             <span>Start Free Chat Now</span>
@@ -7018,10 +7014,10 @@ function showChatGPTInterface() {
             mainContainer.style.display = 'none';
         }
         
-        // 2. Show chat interface - FIXED: Remove !important conflict
+        // 2. Show chat interface
         const chatInterface = document.getElementById('chatInterface');
         if (chatInterface) {
-            chatInterface.style.display = 'block';
+            chatInterface.style.display = 'flex';
             chatInterface.classList.add('active');
         }
         
@@ -7148,7 +7144,9 @@ function updateUserUI() {
 // FIXED: Toggle User Dropdown for chat
 function toggleUserDropdown() {
     const dropdown = document.getElementById('chatUserDropdown');
-    dropdown.classList.toggle('active');
+    if (dropdown) {
+        dropdown.classList.toggle('active');
+    }
 }
 
 // FIXED: Handle Logout
@@ -7261,7 +7259,7 @@ function updateSearchCounterDisplay() {
         } else if (remaining <= 10) {
             searchCounterElement.style.color = 'var(--error)';
         } else {
-            searchCounterElement.style.color = 'var(--dark-text-secondary)';
+            searchCounterElement.style.color = '';
         }
     }
 }
@@ -7295,6 +7293,12 @@ function initializeChatApp() {
         const emojiPickerBtn = document.getElementById('emojiPickerBtn');
         const backToHomeBtn = document.getElementById('backToHomeBtn');
 
+        // Check if elements exist before adding event listeners
+        if (!chatMessages || !userInput || !sendButton) {
+            console.error("Required chat elements not found");
+            return;
+        }
+
         const isDesktop = window.innerWidth >= 1025;
         if (isDesktop && sidebar) {
             sidebar.classList.add('active');
@@ -7308,32 +7312,35 @@ function initializeChatApp() {
         }
 
         // Event listeners for chat functionality
-        sendButton.addEventListener('click', function() {
-            if (isStreamingActive) {
-                stopStreaming();
-            } else {
-                sendMessage();
-            }
-        });
-        
-        userInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && e.ctrlKey) {
-                e.preventDefault();
+        if (sendButton) {
+            sendButton.addEventListener('click', function() {
                 if (isStreamingActive) {
                     stopStreaming();
                 } else {
                     sendMessage();
                 }
-            }
-            if (e.key === 'Enter' && !e.ctrlKey) {
-                setTimeout(() => {
-                    this.style.height = 'auto';
-                    this.style.height = Math.min(this.scrollHeight, 150) + 'px';
-                }, 10);
-            }
-        });
+            });
+        }
         
-        userInput.addEventListener('input', function() {
+        if (userInput) {
+            userInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && e.ctrlKey) {
+                    e.preventDefault();
+                    if (isStreamingActive) {
+                        stopStreaming();
+                    } else {
+                        sendMessage();
+                    }
+                }
+                if (e.key === 'Enter' && !e.ctrlKey) {
+                    setTimeout(() => {
+                        this.style.height = 'auto';
+                        this.style.height = Math.min(this.scrollHeight, 150) + 'px';
+                    }, 10);
+                }
+            });
+            
+            userInput.addEventListener('input', function() {
             this.style.height = 'auto';
             this.style.height = Math.min(this.scrollHeight, 150) + 'px';
             if (isStreamingActive) {
@@ -10485,3 +10492,4 @@ window.onerror = function(msg, url, line, col, error) {
  </script>
 </body>
 </html>
+               
