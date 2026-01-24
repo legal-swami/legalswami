@@ -119,6 +119,21 @@ body.chat-active {
     display: flex;
 }
 
+/* EMERGENCY FIX - Direct style override */
+body.chat-active #chatInterface {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+body:not(.chat-active) #chatInterface {
+    display: none !important;
+}
+
+body.chat-active .main-container {
+    display: none !important;
+}
+
 /* ============================================= */
 /* MAIN CONTAINERS */
 /* ============================================= */
@@ -3642,10 +3657,6 @@ img {
     transition: opacity 0.3s ease, transform 0.3s ease;
 }
 
-/* Remove the conflicting rule */
-body.chat-active .main-container {
-    /* Remove this line completely */
-}
 
 /* Ensure chat interface is properly positioned */
 #chatInterface {
@@ -5282,70 +5293,44 @@ const WELCOME_MESSAGE_HTML = `
 // SIMPLE CHAT OPEN/CLOSE FUNCTIONS
 // =============================================
 
+// SIMPLIFIED VERSION
 function openChat() {
     console.log("Opening chat...");
     
-    try {
-        // Hide homepage smoothly
-        const mainContainer = document.querySelector('.main-container');
-        if (mainContainer) {
-            mainContainer.style.display = 'none';
-        }
-        
-        // Show chat interface
-        const chatInterface = document.getElementById('chatInterface');
-        if (chatInterface) {
-            chatInterface.classList.add('active');
-            document.body.classList.add('chat-active');
-            
-            console.log("✅ Chat interface shown successfully");
-            
-            // Initialize chat if not already initialized
-            if (!chatInitialized) {
-                setTimeout(() => {
-                    initializeChatApp();
-                    chatInitialized = true;
-                }, 300);
-            }
-            
-            // Focus on input
-            setTimeout(() => {
-                const userInput = document.getElementById('userInput');
-                if (userInput) {
-                    userInput.focus();
-                }
-            }, 500);
-        } else {
-            console.error("❌ Chat interface element not found!");
-        }
-    } catch (error) {
-        console.error("❌ Error opening chat:", error);
+    // Hide main content
+    document.querySelector('.main-container').style.display = 'none';
+    
+    // Show chat interface
+    document.getElementById('chatInterface').style.display = 'flex';
+    
+    // Add class to body
+    document.body.classList.add('chat-active');
+    
+    // Initialize chat
+    if (!chatInitialized) {
+        setTimeout(() => {
+            initializeChatApp();
+            chatInitialized = true;
+        }, 300);
     }
+    
+    // Focus on input
+    setTimeout(() => {
+        document.getElementById('userInput').focus();
+    }, 500);
 }
 
-// नया closeChat फंक्शन
 function closeChat() {
     console.log("Closing chat...");
     
-    try {
-        // Hide chat interface
-        const chatInterface = document.getElementById('chatInterface');
-        if (chatInterface) {
-            chatInterface.classList.remove('active');
-        }
-        
-        // Show homepage
-        const mainContainer = document.querySelector('.main-container');
-        if (mainContainer) {
-            mainContainer.style.display = 'block';
-        }
-        
-        document.body.classList.remove('chat-active');
-        
-        console.log("✅ Back to home successful");
-    } catch (error) {
-        console.error("❌ Error going back to home:", error);
-    }
+    // Hide chat interface
+    document.getElementById('chatInterface').style.display = 'none';
+    
+    // Show main content
+    document.querySelector('.main-container').style.display = 'block';
+    
+    // Remove class from body
+    document.body.classList.remove('chat-active');
 }
 
 // =============================================
