@@ -7369,6 +7369,62 @@ window.onerror = function(msg, url, line, col, error) {
     console.log("Global error caught:", msg, "at", line, ":", col);
     return true; // Prevents default error handling
 };
+
+// SIMPLE CHAT OPEN/CLOSE FUNCTIONS
+function openChat() {
+    console.log("Opening chat...");
+    
+    // Hide homepage
+    document.querySelector('.main-container').style.display = 'none';
+    
+    // Show chat
+    const chat = document.getElementById('chatInterface');
+    chat.style.display = 'flex';
+    chat.classList.add('active');
+    document.body.classList.add('chat-active');
+    
+    // Initialize chat
+    setTimeout(() => {
+        if (typeof initializeChatApp === 'function') {
+            initializeChatApp();
+        }
+    }, 100);
+}
+
+function closeChat() {
+    console.log("Closing chat...");
+    
+    // Hide chat
+    const chat = document.getElementById('chatInterface');
+    chat.style.display = 'none';
+    chat.classList.remove('active');
+    
+    // Show homepage
+    document.querySelector('.main-container').style.display = 'block';
+    document.body.classList.remove('chat-active');
+}
+
+// Setup button listeners
+document.addEventListener('DOMContentLoaded', function() {
+    // All start chat buttons
+    ['startChatBtn', 'ctaStartChat', 'mobileStartChat'].forEach(id => {
+        const btn = document.getElementById(id);
+        if (btn) {
+            btn.onclick = openChat;
+        }
+    });
+    
+    // Back to home button
+    const backBtn = document.getElementById('backToHomeBtn');
+    if (backBtn) {
+        backBtn.onclick = closeChat;
+    }
+    
+    // All other chat-opening buttons
+    document.querySelectorAll('.btn-assistant, .btn-generate, .btn-pricing').forEach(btn => {
+        btn.onclick = openChat;
+    });
+});	   
 </script>
 </body>
 </html>
