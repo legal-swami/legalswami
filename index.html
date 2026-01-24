@@ -2319,7 +2319,11 @@ header {
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 	
     <!-- Main App Script -->
-    <script>
+   <script>
+// =============================================
+// LEGALSWAMI - COMPLETE UPDATED SCRIPT
+// =============================================
+
 // Global variables
 let chatHistory = [];
 let currentChatId = null;
@@ -2427,71 +2431,98 @@ const WELCOME_MESSAGE_HTML = `
     </div>
 `;
 
-// FIXED: Show ChatGPT interface - CORRECTED VERSION
+// =============================================
+// CHAT INTERFACE FUNCTIONS
+// =============================================
+
 function showChatGPTInterface() {
-    console.log("🚀 Showing Chat Interface");
+    console.log("🚀 Opening Chat Interface");
     
-    const mainContainer = document.querySelector('.main-container');
-    const chatInterface = document.getElementById('chatInterface');
-    
-    if (!chatInterface) {
-        console.error("❌ Chat interface not found!");
-        return;
-    }
-    
-    // Hide homepage
-    if (mainContainer) {
-        mainContainer.style.display = 'none';
-    }
-    
-    // Show chat
-    chatInterface.classList.add('active');
-    document.body.classList.add('chat-active');
-    
-    // Initialize if needed
-    if (!chatInitialized) {
-        setTimeout(() => {
-            initializeChatApp();
-        }, 100);
-    }
-    
-    // Focus input
-    setTimeout(() => {
-        const userInput = document.getElementById('userInput');
-        if (userInput) {
-            userInput.focus();
+    try {
+        // Hide homepage
+        const mainContainer = document.querySelector('.main-container');
+        if (mainContainer) {
+            mainContainer.style.display = 'none';
         }
-    }, 300);
-    
-    console.log("✅ Chat shown successfully");
+        
+        // Show chat interface
+        const chatInterface = document.getElementById('chatInterface');
+        if (chatInterface) {
+            // Force show with inline styles
+            chatInterface.style.display = 'flex';
+            chatInterface.style.position = 'fixed';
+            chatInterface.style.top = '0';
+            chatInterface.style.left = '0';
+            chatInterface.style.width = '100%';
+            chatInterface.style.height = '100%';
+            chatInterface.style.background = '#343541';
+            chatInterface.style.zIndex = '100000';
+            chatInterface.style.flexDirection = 'column';
+            
+            // Add active class
+            chatInterface.classList.add('active');
+            document.body.classList.add('chat-active');
+            document.body.style.overflow = 'hidden';
+            
+            console.log("✅ Chat interface shown successfully");
+            
+            // Initialize chat if not already initialized
+            if (!chatInitialized) {
+                setTimeout(() => {
+                    initializeChatApp();
+                    chatInitialized = true;
+                }, 300);
+            }
+            
+            // Focus on input
+            setTimeout(() => {
+                const userInput = document.getElementById('userInput');
+                if (userInput) {
+                    userInput.focus();
+                }
+            }, 500);
+        } else {
+            console.error("❌ Chat interface element not found!");
+            alert('Chat interface not found. Please refresh the page.');
+        }
+    } catch (error) {
+        console.error("❌ Error opening chat:", error);
+    }
 }
 
-// FIXED: Go Back to Home
 function goBackToHome() {
     console.log("🏠 Going back to home");
     
-    const chatInterface = document.getElementById('chatInterface');
-    const mainContainer = document.querySelector('.main-container');
-    
-    // Hide chat
-    if (chatInterface) {
-        chatInterface.classList.remove('active');
+    try {
+        // Hide chat
+        const chatInterface = document.getElementById('chatInterface');
+        if (chatInterface) {
+            chatInterface.style.display = 'none';
+            chatInterface.classList.remove('active');
+        }
+        
+        // Show homepage
+        const mainContainer = document.querySelector('.main-container');
+        if (mainContainer) {
+            mainContainer.style.display = 'block';
+        }
+        
+        document.body.classList.remove('chat-active');
+        document.body.style.overflow = 'auto';
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        console.log("✅ Back to home successful");
+    } catch (error) {
+        console.error("❌ Error going back to home:", error);
     }
-    
-    // Show homepage
-    document.body.classList.remove('chat-active');
-    if (mainContainer) {
-        mainContainer.style.display = 'block';
-    }
-    
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    
-    console.log("✅ Back to home successful");
 }
 
-// FIXED: Initialize app for guest users
+// =============================================
+// INITIALIZATION FUNCTIONS
+// =============================================
+
 function initializeAppForGuest() {
-    console.log("Initializing in guest mode...");
+    console.log("👤 Initializing in guest mode...");
     currentUser = {
         id: 'guest_' + Date.now(),
         name: 'Guest User',
@@ -2501,66 +2532,82 @@ function initializeAppForGuest() {
     };
     isLoggedIn = false;
     updateUserUI();
-    initializeChatApp();
     loadUserChatHistory();
     showToast('Welcome to LegalSwami! You have 500 free searches per day.', 'info');
 }
 
-// FIXED: Update User UI - handles both homepage and chat
 function updateUserUI() {
     // Update homepage UI
     if (isLoggedIn && currentUser) {
-        document.getElementById('headerLoginBtn').style.display = 'none';
-        document.getElementById('homeUserProfile').style.display = 'flex';
-        document.getElementById('homeUserName').textContent = currentUser.name;
-        document.getElementById('homeUserEmail').textContent = currentUser.email;
+        const headerLoginBtn = document.getElementById('headerLoginBtn');
+        const homeUserProfile = document.getElementById('homeUserProfile');
+        const homeUserName = document.getElementById('homeUserName');
+        const homeUserEmail = document.getElementById('homeUserEmail');
+        const homeUserAvatar = document.getElementById('homeUserAvatar');
         
-        const avatar = document.getElementById('homeUserAvatar');
-        if (currentUser.picture) {
-            avatar.innerHTML = `<img src="${currentUser.picture}" alt="${currentUser.name}" style="width: 100%; height: 100%; border-radius: 8px;">`;
-        } else {
-            avatar.innerHTML = '<i class="fas fa-user"></i>';
+        if (headerLoginBtn) headerLoginBtn.style.display = 'none';
+        if (homeUserProfile) homeUserProfile.style.display = 'flex';
+        if (homeUserName) homeUserName.textContent = currentUser.name;
+        if (homeUserEmail) homeUserEmail.textContent = currentUser.email;
+        
+        if (homeUserAvatar) {
+            if (currentUser.picture) {
+                homeUserAvatar.innerHTML = `<img src="${currentUser.picture}" alt="${currentUser.name}" style="width: 100%; height: 100%; border-radius: 8px;">`;
+            } else {
+                homeUserAvatar.innerHTML = '<i class="fas fa-user"></i>';
+            }
         }
     } else {
-        document.getElementById('headerLoginBtn').style.display = 'flex';
-        document.getElementById('homeUserProfile').style.display = 'none';
+        const headerLoginBtn = document.getElementById('headerLoginBtn');
+        const homeUserProfile = document.getElementById('homeUserProfile');
+        if (headerLoginBtn) headerLoginBtn.style.display = 'flex';
+        if (homeUserProfile) homeUserProfile.style.display = 'none';
     }
     
     // Update chat UI if chat interface is visible
     const chatInterface = document.getElementById('chatInterface');
     if (chatInterface && chatInterface.classList.contains('active')) {
         if (isLoggedIn && currentUser) {
-            document.getElementById('chatUserProfile').style.display = 'flex';
-            document.getElementById('chatUserName').textContent = currentUser.name;
-            document.getElementById('chatUserEmail').textContent = currentUser.email;
-            document.getElementById('chatDropdownName').textContent = currentUser.name;
-            document.getElementById('chatDropdownEmail').textContent = currentUser.email;
+            const chatUserProfile = document.getElementById('chatUserProfile');
+            const chatUserName = document.getElementById('chatUserName');
+            const chatUserEmail = document.getElementById('chatUserEmail');
+            const chatUserAvatar = document.getElementById('chatUserAvatar');
+            const chatDropdownName = document.getElementById('chatDropdownName');
+            const chatDropdownEmail = document.getElementById('chatDropdownEmail');
+            const chatDropdownAvatar = document.getElementById('chatDropdownAvatar');
+            const chatHeaderLoginBtn = document.getElementById('chatHeaderLoginBtn');
             
-            const chatAvatar = document.getElementById('chatUserAvatar');
-            const dropdownAvatar = document.getElementById('chatDropdownAvatar');
-            if (currentUser.picture) {
-                chatAvatar.innerHTML = `<img src="${currentUser.picture}" alt="${currentUser.name}" style="width: 100%; height: 100%; border-radius: 6px;">`;
-                dropdownAvatar.innerHTML = `<img src="${currentUser.picture}" alt="${currentUser.name}" style="width: 100%; height: 100%; border-radius: 6px;">`;
-            } else {
-                chatAvatar.innerHTML = '<i class="fas fa-user"></i>';
-                dropdownAvatar.innerHTML = '<i class="fas fa-user"></i>';
+            if (chatUserProfile) chatUserProfile.style.display = 'flex';
+            if (chatUserName) chatUserName.textContent = currentUser.name;
+            if (chatUserEmail) chatUserEmail.textContent = currentUser.email;
+            if (chatDropdownName) chatDropdownName.textContent = currentUser.name;
+            if (chatDropdownEmail) chatDropdownEmail.textContent = currentUser.email;
+            
+            if (chatUserAvatar && currentUser.picture) {
+                chatUserAvatar.innerHTML = `<img src="${currentUser.picture}" alt="${currentUser.name}" style="width: 100%; height: 100%; border-radius: 6px;">`;
             }
+            if (chatDropdownAvatar && currentUser.picture) {
+                chatDropdownAvatar.innerHTML = `<img src="${currentUser.picture}" alt="${currentUser.name}" style="width: 100%; height: 100%; border-radius: 6px;">`;
+            }
+            if (chatHeaderLoginBtn) chatHeaderLoginBtn.style.display = 'none';
         } else {
-            document.getElementById('chatUserProfile').style.display = 'none';
-            document.getElementById('chatHeaderLoginBtn').style.display = 'flex';
+            const chatUserProfile = document.getElementById('chatUserProfile');
+            const chatHeaderLoginBtn = document.getElementById('chatHeaderLoginBtn');
+            if (chatUserProfile) chatUserProfile.style.display = 'none';
+            if (chatHeaderLoginBtn) chatHeaderLoginBtn.style.display = 'flex';
         }
     }
     
     updateSearchCounterDisplay();
 }
 
-// FIXED: Toggle User Dropdown for chat
 function toggleUserDropdown() {
     const dropdown = document.getElementById('chatUserDropdown');
-    dropdown.classList.toggle('active');
+    if (dropdown) {
+        dropdown.classList.toggle('active');
+    }
 }
 
-// FIXED: Handle Logout
 function handleLogout() {
     if (currentUser && currentUser.isGuest) {
         if (confirm('Are you sure you want to clear all local data? This will delete all chat history and settings.')) {
@@ -2571,7 +2618,8 @@ function handleLogout() {
             searchCount = 0;
             currentUser = null;
             isLoggedIn = false;
-            document.getElementById('loginModal').classList.add('active');
+            const loginModal = document.getElementById('loginModal');
+            if (loginModal) loginModal.classList.add('active');
             updateUserUI();
             showToast('Local data cleared', 'success');
         }
@@ -2582,14 +2630,18 @@ function handleLogout() {
             currentUser = null;
             userToken = null;
             isLoggedIn = false;
-            document.getElementById('loginModal').classList.add('active');
+            const loginModal = document.getElementById('loginModal');
+            if (loginModal) loginModal.classList.add('active');
             updateUserUI();
             showToast('Logged out successfully', 'success');
         }
     }
 }
 
-// Load User's Chat History
+// =============================================
+// CHAT HISTORY FUNCTIONS
+// =============================================
+
 function loadUserChatHistory() {
     const userId = currentUser ? currentUser.id : 'guest';
     const storageKey = `legalSwamiChatHistory_${userId}`;
@@ -2612,7 +2664,6 @@ function loadUserChatHistory() {
     }
 }
 
-// Save User's Chat History
 function saveUserChatHistory() {
     const userId = currentUser ? currentUser.id : 'guest';
     const storageKey = `legalSwamiChatHistory_${userId}`;
@@ -2624,7 +2675,10 @@ function saveUserChatHistory() {
     }
 }
 
-// Initialize search counter
+// =============================================
+// SEARCH COUNTER FUNCTIONS
+// =============================================
+
 function initializeSearchCounter() {
     try {
         const savedCount = localStorage.getItem('legalSwamiSearchCount');
@@ -2648,7 +2702,6 @@ function initializeSearchCounter() {
     }
 }
 
-// Save search counter
 function saveSearchCounter() {
     try {
         localStorage.setItem('legalSwamiSearchCount', searchCount.toString());
@@ -2658,7 +2711,6 @@ function saveSearchCounter() {
     }
 }
 
-// Update search counter display in header
 function updateSearchCounterDisplay() {
     const searchCounterElement = document.getElementById('searchCounter');
     if (searchCounterElement) {
@@ -2675,9 +2727,12 @@ function updateSearchCounterDisplay() {
     }
 }
 
-// FIXED: Initialize Chat App
+// =============================================
+// MAIN CHAT APP INITIALIZATION
+// =============================================
+
 function initializeChatApp() {
-    console.log("Initializing chat app...");
+    console.log("🤖 Initializing chat app...");
     
     try {
         const chatMessages = document.getElementById('chatMessages');
@@ -2704,66 +2759,76 @@ function initializeChatApp() {
         const emojiPickerBtn = document.getElementById('emojiPickerBtn');
         const backToHomeBtn = document.getElementById('backToHomeBtn');
 
+        // Initialize for desktop
         const isDesktop = window.innerWidth >= 1025;
         if (isDesktop && sidebar) {
             sidebar.classList.add('active');
         }
+        
+        // Load preferences
         loadThemePreference();
         initializeSearchCounter();
+        
+        // Load or create chat
         if (!currentChatId || conversationHistory.length === 0) {
             createNewChat();
         } else {
             loadCurrentChatMessages();
         }
 
-        // Event listeners for chat functionality
-        sendButton.addEventListener('click', function() {
-            if (isStreamingActive) {
-                stopStreaming();
-            } else {
-                sendMessage();
-            }
-        });
-        
-        userInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && e.ctrlKey) {
-                e.preventDefault();
+        // Send button click
+        if (sendButton) {
+            sendButton.addEventListener('click', function() {
                 if (isStreamingActive) {
                     stopStreaming();
                 } else {
                     sendMessage();
                 }
-            }
-            if (e.key === 'Enter' && !e.ctrlKey) {
-                setTimeout(() => {
-                    this.style.height = 'auto';
-                    this.style.height = Math.min(this.scrollHeight, 150) + 'px';
-                }, 10);
-            }
-        });
+            });
+        }
         
-        userInput.addEventListener('input', function() {
-            this.style.height = 'auto';
-            this.style.height = Math.min(this.scrollHeight, 150) + 'px';
-            if (isStreamingActive) {
-                sendButton.disabled = false;
-                sendButton.classList.add('stop-button');
-                sendButton.innerHTML = '<i class="fas fa-stop"></i> <span class="hide-on-mobile">Stop</span>';
-            } else {
-                sendButton.disabled = this.value.trim() === '' && attachedFiles.length === 0;
-                sendButton.classList.remove('stop-button');
-                sendButton.innerHTML = '<i class="fas fa-paper-plane"></i> <span class="hide-on-mobile">Send</span>';
-            }
-            const text = this.value.trim();
-            if (text.length > 0) {
-                const lang = detectLanguage(text);
-                showLanguageHint(lang);
-            } else {
-                hideLanguageHint();
-            }
-        });
+        // User input keydown
+        if (userInput) {
+            userInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && e.ctrlKey) {
+                    e.preventDefault();
+                    if (isStreamingActive) {
+                        stopStreaming();
+                    } else {
+                        sendMessage();
+                    }
+                }
+                if (e.key === 'Enter' && !e.ctrlKey) {
+                    setTimeout(() => {
+                        this.style.height = 'auto';
+                        this.style.height = Math.min(this.scrollHeight, 150) + 'px';
+                    }, 10);
+                }
+            });
+            
+            userInput.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = Math.min(this.scrollHeight, 150) + 'px';
+                if (isStreamingActive && sendButton) {
+                    sendButton.disabled = false;
+                    sendButton.classList.add('stop-button');
+                    sendButton.innerHTML = '<i class="fas fa-stop"></i> <span class="hide-on-mobile">Stop</span>';
+                } else if (sendButton) {
+                    sendButton.disabled = this.value.trim() === '' && attachedFiles.length === 0;
+                    sendButton.classList.remove('stop-button');
+                    sendButton.innerHTML = '<i class="fas fa-paper-plane"></i> <span class="hide-on-mobile">Send</span>';
+                }
+                const text = this.value.trim();
+                if (text.length > 0) {
+                    const lang = detectLanguage(text);
+                    showLanguageHint(lang);
+                } else {
+                    hideLanguageHint();
+                }
+            });
+        }
 
-        // Voice search functionality
+        // Voice recognition setup
         if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
             const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
             recognition = new SpeechRecognition();
@@ -2773,31 +2838,32 @@ function initializeChatApp() {
             
             recognition.onstart = function() {
                 isListening = true;
-                if (isInputMicrophoneActive) {
+                if (isInputMicrophoneActive && inputMicrophoneBtn) {
                     inputMicrophoneBtn.classList.add('listening');
-                } else {
+                } else if (voiceSearchBtn) {
                     voiceSearchBtn.classList.add('listening');
                 }
-                document.getElementById('voiceInputStatus').classList.add('active');
+                const voiceInputStatus = document.getElementById('voiceInputStatus');
+                if (voiceInputStatus) voiceInputStatus.classList.add('active');
                 showToast('Listening... Speak now 🎤', 'info');
             };
             
             recognition.onresult = function(event) {
                 const transcript = event.results[0][0].transcript;
                 const voiceInputText = document.getElementById('voiceInputText');
-                if (event.results[0].isFinal) {
+                if (event.results[0].isFinal && userInput) {
                     userInput.value = transcript;
                     userInput.style.height = Math.min(userInput.scrollHeight, 180) + 'px';
-                    voiceInputText.style.display = 'none';
+                    if (voiceInputText) voiceInputText.style.display = 'none';
                     const lang = detectLanguage(transcript);
                     showLanguageHint(lang);
-                    sendButton.disabled = false;
+                    if (sendButton) sendButton.disabled = false;
                     if (transcript.split(' ').length <= 10) {
                         setTimeout(() => {
                             sendMessage();
                         }, 1000);
                     }
-                } else {
+                } else if (voiceInputText) {
                     voiceInputText.textContent = transcript;
                     voiceInputText.style.display = 'block';
                 }
@@ -2807,9 +2873,10 @@ function initializeChatApp() {
                 console.error('Speech recognition error:', event.error);
                 isListening = false;
                 isInputMicrophoneActive = false;
-                inputMicrophoneBtn.classList.remove('listening');
-                voiceSearchBtn.classList.remove('listening');
-                document.getElementById('voiceInputStatus').classList.remove('active');
+                if (inputMicrophoneBtn) inputMicrophoneBtn.classList.remove('listening');
+                if (voiceSearchBtn) voiceSearchBtn.classList.remove('listening');
+                const voiceInputStatus = document.getElementById('voiceInputStatus');
+                if (voiceInputStatus) voiceInputStatus.classList.remove('active');
                 if (event.error === 'not-allowed') {
                     showToast('Microphone access denied. Please allow microphone access. 🎤', 'error');
                 } else {
@@ -2820,22 +2887,30 @@ function initializeChatApp() {
             recognition.onend = function() {
                 isListening = false;
                 isInputMicrophoneActive = false;
-                inputMicrophoneBtn.classList.remove('listening');
-                voiceSearchBtn.classList.remove('listening');
-                document.getElementById('voiceInputStatus').classList.remove('active');
-                document.getElementById('voiceInputText').style.display = 'none';
+                if (inputMicrophoneBtn) inputMicrophoneBtn.classList.remove('listening');
+                if (voiceSearchBtn) voiceSearchBtn.classList.remove('listening');
+                const voiceInputStatus = document.getElementById('voiceInputStatus');
+                if (voiceInputStatus) voiceInputStatus.classList.remove('active');
+                const voiceInputText = document.getElementById('voiceInputText');
+                if (voiceInputText) voiceInputText.style.display = 'none';
             };
             
-            voiceSearchBtn.addEventListener('click', toggleVoiceRecognition);
-            inputMicrophoneBtn.addEventListener('click', toggleInputVoiceRecognition);
+            if (voiceSearchBtn) {
+                voiceSearchBtn.addEventListener('click', toggleVoiceRecognition);
+            }
+            if (inputMicrophoneBtn) {
+                inputMicrophoneBtn.addEventListener('click', toggleInputVoiceRecognition);
+            }
         } else {
-            voiceSearchBtn.style.display = 'none';
-            inputMicrophoneBtn.style.display = 'none';
+            if (voiceSearchBtn) voiceSearchBtn.style.display = 'none';
+            if (inputMicrophoneBtn) inputMicrophoneBtn.style.display = 'none';
             showToast('Voice search not supported in your browser 🎤', 'warning');
         }
 
         // Theme toggle
-        themeToggle.addEventListener('click', toggleTheme);
+        if (themeToggle) {
+            themeToggle.addEventListener('click', toggleTheme);
+        }
         
         // Sidebar toggle buttons
         if (sidebarToggle && sidebar && sidebarOverlay) {
@@ -2845,11 +2920,13 @@ function initializeChatApp() {
                 document.body.style.overflow = 'hidden';
             });
             
-            sidebarClose.addEventListener('click', function() {
-                sidebar.classList.remove('active');
-                sidebarOverlay.classList.remove('active');
-                document.body.style.overflow = '';
-            });
+            if (sidebarClose) {
+                sidebarClose.addEventListener('click', function() {
+                    sidebar.classList.remove('active');
+                    sidebarOverlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            }
             
             sidebarOverlay.addEventListener('click', function() {
                 sidebar.classList.remove('active');
@@ -2867,7 +2944,8 @@ function initializeChatApp() {
                 document.querySelectorAll('.tab-content').forEach(content => {
                     content.classList.remove('active');
                 });
-                document.getElementById(`${tabId}-content`).classList.add('active');
+                const tabContent = document.getElementById(`${tabId}-content`);
+                if (tabContent) tabContent.classList.add('active');
                 if (tabId === 'chat-history') {
                     loadHistoryList();
                 }
@@ -2912,15 +2990,17 @@ function initializeChatApp() {
                         'family': 'What are the grounds for divorce under Hindu Marriage Act? 👨‍👩‍👧',
                         'criminal': 'What is the difference between bailable and non-bailable offenses? ⚖️'
                     };
-                    userInput.value = questions[topic] || `Tell me about ${topicName.toLowerCase()} in Indian law. ⚖️`;
-                    userInput.focus();
-                    userInput.style.height = Math.min(userInput.scrollHeight, 180) + 'px';
-                    sendButton.disabled = false;
+                    if (userInput) {
+                        userInput.value = questions[topic] || `Tell me about ${topicName.toLowerCase()} in Indian law. ⚖️`;
+                        userInput.focus();
+                        userInput.style.height = Math.min(userInput.scrollHeight, 180) + 'px';
+                    }
+                    if (sendButton) sendButton.disabled = false;
                     showToast(`${topicName} tab opened 📂`, 'success');
                 }
-                if (window.innerWidth < 1024) {
+                if (window.innerWidth < 1024 && sidebar) {
                     sidebar.classList.remove('active');
-                    sidebarOverlay.classList.remove('active');
+                    if (sidebarOverlay) sidebarOverlay.classList.remove('active');
                     document.body.style.overflow = '';
                 }
             });
@@ -2930,21 +3010,25 @@ function initializeChatApp() {
         actionItems.forEach(item => {
             item.addEventListener('click', function() {
                 const action = this.dataset.action;
+                let inputText = '';
+                
                 if (action === 'document-drafts') {
-                    userInput.value = 'Create a non-disclosure agreement draft for me 📝';
-                    userInput.focus();
+                    inputText = 'Create a non-disclosure agreement draft for me 📝';
                 } else if (action === 'legal-research') {
-                    userInput.value = 'Can you help me research case laws related to breach of contract? 🔍';
-                    userInput.focus();
+                    inputText = 'Can you help me research case laws related to breach of contract? 🔍';
                 } else if (action === 'case-analysis') {
-                    userInput.value = 'Can you analyze the legal principles in landmark privacy law cases? 📊';
-                    userInput.focus();
+                    inputText = 'Can you analyze the legal principles in landmark privacy law cases? 📊';
                 }
-                userInput.style.height = Math.min(userInput.scrollHeight, 180) + 'px';
-                sendButton.disabled = false;
-                if (window.innerWidth < 1024) {
+                
+                if (userInput && inputText) {
+                    userInput.value = inputText;
+                    userInput.focus();
+                    userInput.style.height = Math.min(userInput.scrollHeight, 180) + 'px';
+                }
+                if (sendButton) sendButton.disabled = false;
+                if (window.innerWidth < 1024 && sidebar) {
                     sidebar.classList.remove('active');
-                    sidebarOverlay.classList.remove('active');
+                    if (sidebarOverlay) sidebarOverlay.classList.remove('active');
                     document.body.style.overflow = '';
                 }
             });
@@ -2953,7 +3037,8 @@ function initializeChatApp() {
         // Header login button click
         if (headerLoginBtn) {
             headerLoginBtn.addEventListener('click', function() {
-                document.getElementById('loginModal').classList.add('active');
+                const loginModal = document.getElementById('loginModal');
+                if (loginModal) loginModal.classList.add('active');
             });
         }
         
@@ -2983,13 +3068,6 @@ function initializeChatApp() {
                 if (sidebarOverlay) sidebarOverlay.classList.remove('active');
                 document.body.style.overflow = '';
             }
-            const emojiPicker = document.getElementById('emojiPicker');
-            const emojiBtn = document.getElementById('emojiPickerBtn');
-            if (emojiPicker && emojiPicker.style.display === 'block' &&
-                !emojiPicker.contains(event.target) && 
-                emojiBtn && !emojiBtn.contains(event.target)) {
-                emojiPicker.style.display = 'none';
-            }
         });
         
         // Focus input on load
@@ -3011,7 +3089,7 @@ function initializeChatApp() {
             scrollToBottomBtn.addEventListener('click', scrollToBottom);
         }
         
-        // FIXED: Monitor scroll position with corrected calculation
+        // Monitor scroll position
         if (chatMessages) {
             chatMessages.addEventListener('scroll', checkScrollPosition);
             setTimeout(checkScrollPosition, 500);
@@ -3020,7 +3098,7 @@ function initializeChatApp() {
         }
         
         // Initialize send button state
-        if (sendButton) {
+        if (sendButton && userInput) {
             sendButton.disabled = userInput.value.trim() === '' && attachedFiles.length === 0;
         }
         
@@ -3034,7 +3112,8 @@ function initializeChatApp() {
         const closeDownloadNotification = document.getElementById('closeDownloadNotification');
         if (closeDownloadNotification) {
             closeDownloadNotification.addEventListener('click', function() {
-                document.getElementById('downloadNotification').classList.remove('show');
+                const downloadNotification = document.getElementById('downloadNotification');
+                if (downloadNotification) downloadNotification.classList.remove('show');
             });
         }
         
@@ -3049,15 +3128,18 @@ function initializeChatApp() {
             });
         }
         
-        console.log("Chat app initialized successfully");
+        console.log("✅ Chat app initialized successfully");
         chatInitialized = true;
         
     } catch (error) {
-        console.error("Error initializing chat app:", error);
+        console.error("❌ Error initializing chat app:", error);
     }
 }
 
-// FIXED: Check scroll position with corrected calculation
+// =============================================
+// CHAT MESSAGE FUNCTIONS
+// =============================================
+
 function checkScrollPosition() {
     const chatMessages = document.getElementById('chatMessages');
     const scrollBtn = document.getElementById('scrollToBottomBtn');
@@ -3065,10 +3147,9 @@ function checkScrollPosition() {
     
     if (!chatMessages || !scrollBtn || !indicator) return;
     
-    // Corrected calculation
     const scrollBottom = chatMessages.scrollHeight - chatMessages.clientHeight;
     const currentScroll = chatMessages.scrollTop;
-    const isAtBottom = Math.abs(scrollBottom - currentScroll) < 10; // 10px tolerance
+    const isAtBottom = Math.abs(scrollBottom - currentScroll) < 10;
     
     if (!isAtBottom) {
         scrollBtn.classList.add('visible');
@@ -3085,7 +3166,6 @@ function checkScrollPosition() {
     scrollPosition = currentScroll;
 }
 
-// Show download notification
 function showDownloadNotification(fileName, fileType) {
     const notification = document.getElementById('downloadNotification');
     if (!notification) return;
@@ -3102,7 +3182,10 @@ function showDownloadNotification(fileName, fileType) {
     }, 5000);
 }
 
-// Add active topic to sidebar
+// =============================================
+// TOPICS MANAGEMENT
+// =============================================
+
 function addActiveTopic(topicId, topicName) {
     const existingIndex = activeLegalTopics.findIndex(t => t.id === topicId);
     if (existingIndex !== -1) return;
@@ -3116,13 +3199,11 @@ function addActiveTopic(topicId, topicName) {
     updateActiveTopicsUI();
 }
 
-// Remove active topic from sidebar
 function removeActiveTopic(topicId) {
     activeLegalTopics = activeLegalTopics.filter(t => t.id !== topicId);
     updateActiveTopicsUI();
 }
 
-// Update active topics UI in sidebar
 function updateActiveTopicsUI() {
     const activeTopicsSection = document.getElementById('activeTopicsSection');
     const activeTopicsList = document.getElementById('activeTopicsList');
@@ -3157,7 +3238,6 @@ function updateActiveTopicsUI() {
     });
 }
 
-// Clear file content display for a specific topic
 function clearTopicFileContent(topicId) {
     const fileContents = document.querySelectorAll(`.file-content-display[data-topic="${topicId}"]`);
     fileContents.forEach(content => {
@@ -3165,7 +3245,10 @@ function clearTopicFileContent(topicId) {
     });
 }
 
-// Load current chat messages
+// =============================================
+// CHAT HISTORY LOADING
+// =============================================
+
 function loadCurrentChatMessages() {
     const chatMessages = document.getElementById('chatMessages');
     if (!chatMessages) return;
@@ -3189,7 +3272,6 @@ function loadCurrentChatMessages() {
     setTimeout(addCopyEditButtonsToUserMessages, 100);
 }
 
-// Add draft template listeners
 function addDraftTemplateListeners() {
     const draftTemplates = document.querySelectorAll('.draft-template');
     draftTemplates.forEach(template => {
@@ -3231,7 +3313,10 @@ function addDraftTemplateListeners() {
     });
 }
 
-// FIXED: Send message function
+// =============================================
+// SEND MESSAGE FUNCTION
+// =============================================
+
 async function sendMessage() {
     const userInput = document.getElementById('userInput');
     const sendButton = document.getElementById('sendButton');
@@ -3435,85 +3520,10 @@ async function sendMessage() {
     }
 }
 
-// Stop streaming function
-function stopStreaming() {
-    stopStreamingRequested = true;
-    isStreamingActive = false;
-    isStreamingPaused = false;
-    
-    const sendButton = document.getElementById('sendButton');
-    const userInput = document.getElementById('userInput');
-    
-    if (sendButton && userInput) {
-        sendButton.disabled = userInput.value.trim() === '' && attachedFiles.length === 0;
-        sendButton.classList.remove('stop-button');
-        sendButton.innerHTML = '<i class="fas fa-paper-plane"></i> <span class="hide-on-mobile">Send</span>';
-    }
-    
-    if (currentStreamingMessageId) {
-        const messageDiv = document.getElementById(currentStreamingMessageId);
-        if (messageDiv) {
-            const messageText = messageDiv.querySelector('.message-text');
-            const streamControls = messageDiv.querySelector('.stream-controls');
-            
-            if (streamControls) {
-                streamControls.remove();
-            }
-            
-            const messageActions = document.createElement('div');
-            messageActions.className = 'message-actions';
-            messageActions.innerHTML = `
-                <button class="action-btn copy" onclick="copyMessage(this)" title="Copy response">
-                    <i class="fas fa-copy"></i> Copy
-                </button>
-                <button class="action-btn regenerate" onclick="regenerateResponse('${currentStreamingMessageId}')" title="Regenerate response">
-                    <i class="fas fa-sync-alt"></i> Regenerate
-                </button>
-                <button class="action-btn like" onclick="likeMessage(this)" title="Mark as helpful">
-                    <i class="far fa-thumbs-up"></i> Helpful
-                </button>
-                <button class="action-btn dislike" onclick="dislikeMessage(this)" title="Mark as not helpful">
-                    <i class="far fa-thumbs-down"></i> Not Helpful
-                </button>
-                <button class="action-btn share" onclick="shareResponse('${currentStreamingMessageId}')" title="Share response">
-                    <i class="fas fa-share"></i> Share
-                </button>
-                <button class="action-btn document" onclick="downloadThisMessage('${currentStreamingMessageId}')" title="Download document">
-                    <i class="fas fa-file-download"></i> Download
-                </button>
-            `;
-            
-            if (messageText && messageText.parentElement) {
-                messageText.parentElement.appendChild(messageActions);
-            }
-            
-            const cursor = messageText ? messageText.querySelector('.streaming-cursor') : null;
-            if (cursor) cursor.remove();
-            
-            const pausedIndicator = messageText ? messageText.querySelector('.paused-indicator') : null;
-            if (pausedIndicator) pausedIndicator.remove();
-            
-            if (messageText) {
-                if (isDocumentRequest(currentStreamingContent)) {
-                    messageText.innerHTML = formatDocumentResponse(currentStreamingContent);
-                    addDocumentDownloadButton(currentStreamingMessageId, currentStreamingContent);
-                } else {
-                    messageText.innerHTML = formatLegalResponse(currentStreamingContent);
-                }
-            }
-        }
-        
-        currentStreamingMessageId = null;
-        currentStreamingContent = '';
-        currentStreamingBuffer = '';
-        streamingTextChunks = [];
-        streamingTextIndex = 0;
-    }
-    
-    showToast('Response stopped ⏹️', 'info');
-}
+// =============================================
+// FILE HANDLING FUNCTIONS
+// =============================================
 
-// Read file content
 async function readFileContent(file) {
     return new Promise((resolve, reject) => {
         if (file.type.startsWith('image/')) {
@@ -3535,7 +3545,10 @@ async function readFileContent(file) {
     });
 }
 
-// Extract ONLY sources from AI response (NO SUMMARY)
+// =============================================
+// SOURCE EXTRACTION
+// =============================================
+
 function extractSourcesFromResponse(response) {
     const sources = [];
     const indianActsPatterns = [
@@ -3631,7 +3644,6 @@ function extractSourcesFromResponse(response) {
     };
 }
 
-// Show ONLY sources after response
 function addResponseSources(messageId, sourcesData) {
     const messageDiv = document.getElementById(messageId);
     if (!messageDiv || !sourcesData || !sourcesData.hasSources) return;
@@ -3685,7 +3697,10 @@ function addResponseSources(messageId, sourcesData) {
     setTimeout(() => clearInterval(checkStreaming), 10000);
 }
 
-// Save current chat to history
+// =============================================
+// CHAT HISTORY MANAGEMENT
+// =============================================
+
 function saveCurrentChat() {
     if (!currentChatId || conversationHistory.length === 0) return;
     const chatIndex = chatHistory.findIndex(chat => chat.id === currentChatId);
@@ -3723,7 +3738,6 @@ function saveCurrentChat() {
     saveUserChatHistory();
 }
 
-// Check if user is asking for document
 function isDocumentRequest(message) {
     if (!message) return false;
     const docKeywords = [
@@ -3739,7 +3753,6 @@ function isDocumentRequest(message) {
     return docKeywords.some(keyword => lowerMessage.includes(keyword));
 }
 
-// Enhanced language detection
 function detectLanguage(text) {
     if (!text) return 'english';
     const hasNonEnglishScript = /[\u0900-\u097F\u0B80-\u0BFF\u0C00-\u0C7F\u0C80-\u0CFF\u0A00-\u0A7F\u0A80-\u0AFF\u0980-\u09FF]/.test(text);
@@ -3790,10 +3803,13 @@ function detectLanguage(text) {
     return 'english';
 }
 
-// Add message to chat with sources parameter
+// =============================================
+// MESSAGE DISPLAY FUNCTIONS
+// =============================================
+
 function addMessageToChat(content, isUser, fromHistory = false, isDocument = false, attachments = [], sources = null) {
     const chatMessages = document.getElementById('chatMessages');
-    if (!fromHistory && isUser) {
+    if (!fromHistory && isUser && chatMessages) {
         const welcomeMessage = document.querySelector('.welcome-message');
         if (welcomeMessage) {
             welcomeMessage.remove();
@@ -3885,7 +3901,7 @@ function addMessageToChat(content, isUser, fromHistory = false, isDocument = fal
     }
     messageDiv.appendChild(avatar);
     messageDiv.appendChild(messageContent);
-    chatMessages.appendChild(messageDiv);
+    if (chatMessages) chatMessages.appendChild(messageDiv);
     if (isUser && attachments && attachments.length > 0) {
         showAttachedFilesBelowUserMessage(messageId, attachments);
     }
@@ -3893,7 +3909,6 @@ function addMessageToChat(content, isUser, fromHistory = false, isDocument = fal
     return messageId;
 }
 
-// Show attached files with content preview
 function showAttachedFilesBelowUserMessage(messageId, attachments) {
     const messageDiv = document.getElementById(messageId);
     if (!messageDiv || !attachments || attachments.length === 0) return;
@@ -3945,6 +3960,7 @@ function showAttachedFilesBelowUserMessage(messageId, attachments) {
     });
 }
 
+// Make function globally accessible
 window.showFileContent = async function(dataUrl, fileName) {
     try {
         const response = await fetch(dataUrl);
@@ -3967,17 +3983,18 @@ window.showFileContent = async function(dataUrl, fileName) {
             </div>
         `;
         const chatMessages = document.getElementById('chatMessages');
-        chatMessages.appendChild(contentDiv);
-        setTimeout(() => {
-            contentDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }, 100);
+        if (chatMessages) {
+            chatMessages.appendChild(contentDiv);
+            setTimeout(() => {
+                contentDiv.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+        }
     } catch (error) {
         console.error('Error reading file content:', error);
         showToast('Could not read file content 📄', 'error');
     }
 };
 
-// Regenerate response function
 window.regenerateResponse = function(messageId) {
     const messageDiv = document.getElementById(messageId);
     if (!messageDiv) return;
@@ -4008,27 +4025,29 @@ window.regenerateResponse = function(messageId) {
         }
         messageDiv.remove();
         const userInput = document.getElementById('userInput');
-        userInput.value = userMessageContent;
-        userInput.focus();
-        userInput.style.height = Math.min(userInput.scrollHeight, 180) + 'px';
-        setTimeout(() => {
-            sendMessage();
-        }, 500);
-        showToast('Regenerating response... 🔄', 'info');
+        if (userInput) {
+            userInput.value = userMessageContent;
+            userInput.focus();
+            userInput.style.height = Math.min(userInput.scrollHeight, 180) + 'px';
+            setTimeout(() => {
+                sendMessage();
+            }, 500);
+            showToast('Regenerating response... 🔄', 'info');
+        }
     }
 };
 
-// Dislike message function
 window.dislikeMessage = function(button) {
-    button.innerHTML = '<i class="fas fa-thumbs-down"></i> Feedback Sent';
-    button.style.background = 'var(--error)';
-    button.style.borderColor = 'var(--error)';
-    button.style.color = 'white';
-    button.disabled = true;
-    showToast('Thank you for your feedback! 👍', 'info');
+    if (button) {
+        button.innerHTML = '<i class="fas fa-thumbs-down"></i> Feedback Sent';
+        button.style.background = 'var(--error)';
+        button.style.borderColor = 'var(--error)';
+        button.style.color = 'white';
+        button.disabled = true;
+        showToast('Thank you for your feedback! 👍', 'info');
+    }
 };
 
-// Share response function
 window.shareResponse = function(messageId) {
     const messageDiv = document.getElementById(messageId);
     if (!messageDiv) return;
@@ -4050,7 +4069,6 @@ window.shareResponse = function(messageId) {
     }
 };
 
-// Helper function to copy to clipboard
 function copyToClipboard(text) {
     navigator.clipboard.writeText(text).then(() => {
         showToast('Response copied to clipboard! 📋', 'success');
@@ -4060,7 +4078,6 @@ function copyToClipboard(text) {
     });
 }
 
-// Copy user message
 window.copyUserMessage = function(messageId) {
     const messageDiv = document.getElementById(messageId);
     if (!messageDiv) return;
@@ -4074,22 +4091,27 @@ window.copyUserMessage = function(messageId) {
     });
 };
 
-// Edit user message
 window.editUserMessage = function(messageId) {
     const messageDiv = document.getElementById(messageId);
     if (!messageDiv) return;
     const messageText = messageDiv.querySelector('.message-text');
     const content = messageText.textContent;
     const userInput = document.getElementById('userInput');
-    userInput.value = content;
-    userInput.focus();
-    userInput.style.height = 'auto';
-    userInput.style.height = Math.min(userInput.scrollHeight, 180) + 'px';
-    document.getElementById('sendButton').disabled = false;
-    showToast('Question loaded for editing. Press Ctrl+Enter to send. ✏️', 'info');
+    if (userInput) {
+        userInput.value = content;
+        userInput.focus();
+        userInput.style.height = 'auto';
+        userInput.style.height = Math.min(userInput.scrollHeight, 180) + 'px';
+        const sendButton = document.getElementById('sendButton');
+        if (sendButton) sendButton.disabled = false;
+        showToast('Question loaded for editing. Press Ctrl+Enter to send. ✏️', 'info');
+    }
 };
 
-// Format document response
+// =============================================
+// DOCUMENT AND RESPONSE FORMATTING
+// =============================================
+
 function formatDocumentResponse(text) {
     const documentContainer = document.createElement('div');
     documentContainer.className = 'document-template';
@@ -4141,7 +4163,6 @@ function formatDocumentResponse(text) {
     return documentContainer.outerHTML;
 }
 
-// Format legal response
 function formatLegalResponse(text) {
     let formatted = text
         .replace(/## (.*?)\n/g, '<h3>$1</h3>')
@@ -4161,7 +4182,6 @@ function formatLegalResponse(text) {
     return container.outerHTML;
 }
 
-// Format text for streaming display
 function formatStreamingText(text) {
     const container = document.createElement('div');
     container.innerHTML = text
@@ -4170,7 +4190,10 @@ function formatStreamingText(text) {
     return container.innerHTML;
 }
 
-// Create streaming message container
+// =============================================
+// STREAMING FUNCTIONS
+// =============================================
+
 function createStreamingMessage() {
     const chatMessages = document.getElementById('chatMessages');
     const messageDiv = document.createElement('div');
@@ -4189,7 +4212,7 @@ function createStreamingMessage() {
     messageContent.appendChild(messageText);
     messageDiv.appendChild(avatar);
     messageDiv.appendChild(messageContent);
-    chatMessages.appendChild(messageDiv);
+    if (chatMessages) chatMessages.appendChild(messageDiv);
     currentStreamingMessageId = messageId;
     currentStreamingContent = '';
     currentStreamingBuffer = '';
@@ -4210,7 +4233,6 @@ function createStreamingMessage() {
     return messageId;
 }
 
-// Start streaming response word by word
 function startStreamingResponse(messageId, response, isDocument = false) {
     const messageDiv = document.getElementById(messageId);
     if (!messageDiv) return;
@@ -4220,7 +4242,6 @@ function startStreamingResponse(messageId, response, isDocument = false) {
     streamNextChunk(messageId, isDocument);
 }
 
-// Split text into chunks for streaming
 function splitTextIntoChunks(text) {
     const chunks = [];
     const regex = /[\s.,;!?।।॥]+|\S+/g;
@@ -4231,7 +4252,6 @@ function splitTextIntoChunks(text) {
     return chunks;
 }
 
-// Stream next chunk of text
 function streamNextChunk(messageId, isDocument = false) {
     if (stopStreamingRequested || streamingTextIndex >= streamingTextChunks.length) {
         if (stopStreamingRequested) {
@@ -4258,12 +4278,11 @@ function streamNextChunk(messageId, isDocument = false) {
     }, delay);
 }
 
-// Toggle stream pause
 window.toggleStreamPause = function(messageId) {
     isStreamingPaused = !isStreamingPaused;
     const pauseBtn = document.getElementById(`pause-${messageId}`);
     const messageDiv = document.getElementById(messageId);
-    if (isStreamingPaused) {
+    if (isStreamingPaused && pauseBtn) {
         pauseBtn.innerHTML = '<i class="fas fa-play"></i> Continue';
         pauseBtn.style.background = 'var(--success)';
         pauseBtn.style.borderColor = 'var(--success)';
@@ -4277,7 +4296,7 @@ window.toggleStreamPause = function(messageId) {
             messageText.appendChild(indicator);
         }
         showToast('Response paused ⏸️', 'info');
-    } else {
+    } else if (pauseBtn) {
         pauseBtn.innerHTML = '<i class="fas fa-pause"></i> Pause';
         pauseBtn.style.background = '';
         pauseBtn.style.borderColor = '';
@@ -4294,7 +4313,6 @@ window.toggleStreamPause = function(messageId) {
     }
 };
 
-// Copy streamed content
 window.copyStreamedContent = function(messageId) {
     const messageDiv = document.getElementById(messageId);
     if (!messageDiv) return;
@@ -4308,7 +4326,6 @@ window.copyStreamedContent = function(messageId) {
     });
 };
 
-// Update streaming message with new content
 function updateStreamingMessage(messageId, newContent, isDocument = false) {
     const messageDiv = document.getElementById(messageId);
     if (!messageDiv) return;
@@ -4323,7 +4340,6 @@ function updateStreamingMessage(messageId, newContent, isDocument = false) {
     checkScrollPosition();
 }
 
-// Finalize streaming message
 function finalizeStreamingMessage(messageId, isDocument = false) {
     const messageDiv = document.getElementById(messageId);
     if (!messageDiv) return;
@@ -4360,7 +4376,9 @@ function finalizeStreamingMessage(messageId, isDocument = false) {
             <i class="fas fa-file-download"></i> Download
         </button>
     `;
-    messageText.parentElement.appendChild(messageActions);
+    if (messageText && messageText.parentElement) {
+        messageText.parentElement.appendChild(messageActions);
+    }
     const streamControls = messageDiv.querySelector('.stream-controls');
     if (streamControls) {
         streamControls.remove();
@@ -4377,12 +4395,14 @@ function finalizeStreamingMessage(messageId, isDocument = false) {
     isStreamingActive = false;
     stopStreamingRequested = false;
     const sendButton = document.getElementById('sendButton');
-    sendButton.disabled = document.getElementById('userInput').value.trim() === '' && attachedFiles.length === 0;
-    sendButton.classList.remove('stop-button');
-    sendButton.innerHTML = '<i class="fas fa-paper-plane"></i> <span class="hide-on-mobile">Send</span>';
+    const userInput = document.getElementById('userInput');
+    if (sendButton && userInput) {
+        sendButton.disabled = userInput.value.trim() === '' && attachedFiles.length === 0;
+        sendButton.classList.remove('stop-button');
+        sendButton.innerHTML = '<i class="fas fa-paper-plane"></i> <span class="hide-on-mobile">Send</span>';
+    }
 }
 
-// Show attached files below AI response
 function showAttachedFilesBelowResponse(messageId) {
     const messageDiv = document.getElementById(messageId);
     if (!messageDiv || attachedFiles.length === 0) return;
@@ -4403,7 +4423,6 @@ function showAttachedFilesBelowResponse(messageId) {
     clearAttachments();
 }
 
-// Add document download button to message
 function addDocumentDownloadButton(messageId, content) {
     const messageDiv = document.getElementById(messageId);
     if (!messageDiv) return;
@@ -4421,7 +4440,6 @@ function addDocumentDownloadButton(messageId, content) {
     messageContent.appendChild(downloadBtn);
 }
 
-// Copy message function
 window.copyMessage = function(button) {
     const messageText = button.closest('.message-content').querySelector('.message-text');
     let textToCopy = messageText.innerText || messageText.textContent;
@@ -4446,17 +4464,17 @@ window.copyMessage = function(button) {
     document.body.removeChild(textarea);
 };
 
-// Like message function
 window.likeMessage = function(button) {
-    button.innerHTML = '<i class="fas fa-thumbs-up"></i> Thank you!';
-    button.style.background = 'var(--success)';
-    button.style.borderColor = 'var(--success)';
-    button.style.color = 'white';
-    button.disabled = true;
-    showToast('Thank you for your feedback! 👍', 'success');
+    if (button) {
+        button.innerHTML = '<i class="fas fa-thumbs-up"></i> Thank you!';
+        button.style.background = 'var(--success)';
+        button.style.borderColor = 'var(--success)';
+        button.style.color = 'white';
+        button.disabled = true;
+        showToast('Thank you for your feedback! 👍', 'success');
+    }
 };
 
-// Download this specific message
 window.downloadThisMessage = function(messageId) {
     const messageDiv = document.getElementById(messageId);
     if (!messageDiv) return;
@@ -4465,7 +4483,10 @@ window.downloadThisMessage = function(messageId) {
     openMessageDownloadModal(content);
 };
 
-// Clear current chat
+// =============================================
+// CHAT MANAGEMENT FUNCTIONS
+// =============================================
+
 function clearCurrentChat() {
     if (conversationHistory.length === 0 && attachedFiles.length === 0) {
         showToast('Chat is already empty 🗑️', 'warning');
@@ -4473,7 +4494,7 @@ function clearCurrentChat() {
     }
     if (confirm('Are you sure you want to clear the current chat?')) {
         const chatMessages = document.getElementById('chatMessages');
-        chatMessages.innerHTML = '';
+        if (chatMessages) chatMessages.innerHTML = '';
         conversationHistory = [];
         clearAttachments();
         createNewChat();
@@ -4481,7 +4502,6 @@ function clearCurrentChat() {
     }
 }
 
-// Show suggestions
 function showSuggestions() {
     const suggestions = [
         "Create a non-disclosure agreement draft 📝",
@@ -4505,7 +4525,6 @@ function showSuggestions() {
     );
 }
 
-// Scroll to bottom function
 function scrollToBottom() {
     const chatMessages = document.getElementById('chatMessages');
     if (chatMessages) {
@@ -4513,11 +4532,11 @@ function scrollToBottom() {
             top: chatMessages.scrollHeight,
             behavior: 'smooth'
         });
-        document.getElementById('scrollToBottomBtn').classList.remove('visible');
+        const scrollBtn = document.getElementById('scrollToBottomBtn');
+        if (scrollBtn) scrollBtn.classList.remove('visible');
     }
 }
 
-// Add copy and edit buttons to user messages
 function addCopyEditButtonsToUserMessages() {
     const userMessages = document.querySelectorAll('.user-message:not(.from-history) .message-content');
     userMessages.forEach((messageContent, index) => {
@@ -4546,11 +4565,16 @@ function addCopyEditButtonsToUserMessages() {
     });
 }
 
+// =============================================
+// THEME AND PREFERENCE FUNCTIONS
+// =============================================
+
 function loadThemePreference() {
     const savedTheme = localStorage.getItem('legalSwamiTheme');
     if (savedTheme === 'light') {
         document.body.classList.add('light-mode');
-        document.querySelector('.theme-toggle i').className = 'fas fa-moon';
+        const themeIcon = document.querySelector('.theme-toggle i');
+        if (themeIcon) themeIcon.className = 'fas fa-moon';
         isLightMode = true;
     }
 }
@@ -4559,12 +4583,12 @@ function toggleTheme() {
     const themeIcon = document.querySelector('.theme-toggle i');
     if (isLightMode) {
         document.body.classList.remove('light-mode');
-        themeIcon.className = 'fas fa-sun';
+        if (themeIcon) themeIcon.className = 'fas fa-sun';
         localStorage.setItem('legalSwamiTheme', 'dark');
         isLightMode = false;
     } else {
         document.body.classList.add('light-mode');
-        themeIcon.className = 'fas fa-moon';
+        if (themeIcon) themeIcon.className = 'fas fa-moon';
         localStorage.setItem('legalSwamiTheme', 'light');
         isLightMode = true;
     }
@@ -4578,11 +4602,13 @@ function createNewChat() {
     currentChatId = 'chat_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
     conversationHistory = [];
     const chatMessages = document.getElementById('chatMessages');
-    const welcomeContainer = document.createElement('div');
-    welcomeContainer.innerHTML = WELCOME_MESSAGE_HTML;
-    chatMessages.innerHTML = '';
-    chatMessages.appendChild(welcomeContainer);
-    addDraftTemplateListeners();
+    if (chatMessages) {
+        const welcomeContainer = document.createElement('div');
+        welcomeContainer.innerHTML = WELCOME_MESSAGE_HTML;
+        chatMessages.innerHTML = '';
+        chatMessages.appendChild(welcomeContainer);
+        addDraftTemplateListeners();
+    }
     clearAttachments();
     loadHistoryList();
     showToast('New chat started 💬', 'success');
@@ -4608,7 +4634,6 @@ function toggleInputVoiceRecognition() {
     }
 }
 
-// Show language hint
 function showLanguageHint(language) {
     const languageNames = {
         'english': 'English 🇬🇧',
@@ -4625,7 +4650,8 @@ function showLanguageHint(language) {
     if (!hintElement) {
         hintElement = document.createElement('div');
         hintElement.className = 'language-hint';
-        document.querySelector('.input-area').appendChild(hintElement);
+        const inputArea = document.querySelector('.input-area');
+        if (inputArea) inputArea.appendChild(hintElement);
     }
     hintElement.textContent = `Detected: ${languageNames[language] || 'English 🇬🇧'}`;
     hintElement.style.display = 'block';
@@ -4656,8 +4682,13 @@ function clearAttachments() {
     }
 }
 
+// =============================================
+// FILE UPLOAD FUNCTIONS
+// =============================================
+
 function openFileUploadModal() {
-    document.getElementById('fileUploadModal').classList.add('active');
+    const fileUploadModal = document.getElementById('fileUploadModal');
+    if (fileUploadModal) fileUploadModal.classList.add('active');
     selectedFiles = [];
     updateUploadedFilesDisplay();
 }
@@ -4716,196 +4747,10 @@ window.removeUploadedFile = function(index) {
     updateUploadedFilesDisplay();
 };
 
-// Close file upload modal
-document.getElementById('closeFileUploadModal').addEventListener('click', function() {
-    document.getElementById('fileUploadModal').classList.remove('active');
-});
-document.getElementById('cancelFileUpload').addEventListener('click', function() {
-    document.getElementById('fileUploadModal').classList.remove('active');
-});
+// =============================================
+// HISTORY LIST FUNCTIONS
+// =============================================
 
-// Handle file selection
-document.getElementById('browseFilesBtn').addEventListener('click', function() {
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.multiple = true;
-    fileInput.accept = 'image/*,.pdf,.txt,.doc,.docx';
-    fileInput.onchange = function(e) {
-        handleFileSelection(e.target.files);
-    };
-    fileInput.click();
-});
-
-// Handle drag and drop
-const uploadArea = document.getElementById('uploadArea');
-uploadArea.addEventListener('dragover', function(e) {
-    e.preventDefault();
-    uploadArea.classList.add('dragover');
-});
-uploadArea.addEventListener('dragleave', function(e) {
-    e.preventDefault();
-    uploadArea.classList.remove('dragover');
-});
-uploadArea.addEventListener('drop', function(e) {
-    e.preventDefault();
-    uploadArea.classList.remove('dragover');
-    if (e.dataTransfer.files.length > 0) {
-        handleFileSelection(e.dataTransfer.files);
-    }
-});
-
-function handleFileSelection(files) {
-    for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        if (file.type.startsWith('image/') || 
-            file.type === 'application/pdf' || 
-            file.type === 'text/plain' ||
-            file.type.includes('document') ||
-            file.name.endsWith('.txt') ||
-            file.name.endsWith('.pdf') ||
-            file.name.endsWith('.doc') ||
-            file.name.endsWith('.docx')) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                selectedFiles.push({
-                    name: file.name,
-                    data: e.target.result,
-                    type: file.type,
-                    file: file,
-                    size: file.size
-                });
-                updateUploadedFilesDisplay();
-            };
-            reader.readAsDataURL(file);
-        } else {
-            showToast(`File type not supported: ${file.name} ❌`, 'warning');
-        }
-    }
-}
-
-// Confirm file upload
-document.getElementById('confirmFileUpload').addEventListener('click', function() {
-    if (selectedFiles.length === 0) {
-        showToast('Please select at least one file 📎', 'warning');
-        return;
-    }
-    attachedFiles = [...attachedFiles, ...selectedFiles];
-    const preview = document.getElementById('attachmentsPreview');
-    preview.innerHTML = '';
-    attachedFiles.forEach((file, index) => {
-        const item = document.createElement('div');
-        item.className = 'attachment-preview-item';
-        if (file.type.startsWith('image/')) {
-            item.innerHTML = `
-                <img src="${file.data}" alt="${file.name}" class="attachment-preview-image">
-                <button class="remove-attachment" onclick="removeAttachment(${index})">
-                    <i class="fas fa-times"></i>
-                </button>
-                <div class="attachment-preview-name">${file.name}</div>
-            `;
-        } else if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
-            item.innerHTML = `
-                <div style="padding: 8px; text-align: center; background: var(--dark-surface-light); height: 70px; width: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                    <i class="fas fa-file-pdf" style="font-size: 1.3rem; color: var(--error);"></i>
-                    <div style="font-size: 0.55rem; color: var(--dark-text-secondary); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">PDF</div>
-                </div>
-                <button class="remove-attachment" onclick="removeAttachment(${index})" style="top: 2px; right: 2px;">
-                    <i class="fas fa-times"></i>
-                </button>
-                <div class="attachment-preview-name">${file.name.substring(0, 12)}${file.name.length > 12 ? '...' : ''}</div>
-            `;
-        } else if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
-            item.innerHTML = `
-                <div style="padding: 8px; text-align: center; background: var(--dark-surface-light); height: 70px; width: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                    <i class="fas fa-file-alt" style="font-size: 1.3rem; color: var(--primary);"></i>
-                    <div style="font-size: 0.55rem; color: var(--dark-text-secondary); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">TXT</div>
-                </div>
-                <button class="remove-attachment" onclick="removeAttachment(${index})" style="top: 2px; right: 2px;">
-                    <i class="fas fa-times"></i>
-                </button>
-                <div class="attachment-preview-name">${file.name.substring(0, 12)}${file.name.length > 12 ? '...' : ''}</div>
-            `;
-        } else {
-            item.innerHTML = `
-                <div style="padding: 8px; text-align: center; background: var(--dark-surface-light); height: 70px; width: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                    <i class="fas fa-file" style="font-size: 1.3rem; color: var(--dark-text-secondary);"></i>
-                    <div style="font-size: 0.55rem; color: var(--dark-text-secondary); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">DOC</div>
-                </div>
-                <button class="remove-attachment" onclick="removeAttachment(${index})" style="top: 2px; right: 2px;">
-                    <i class="fas fa-times"></i>
-                </button>
-                <div class="attachment-preview-name">${file.name.substring(0, 12)}${file.name.length > 12 ? '...' : ''}</div>
-            `;
-        }
-        preview.appendChild(item);
-    });
-    preview.style.display = 'flex';
-    document.getElementById('sendButton').disabled = false;
-    document.getElementById('fileUploadModal').classList.remove('active');
-    showToast(`${selectedFiles.length} file(s) attached 📎`, 'success');
-    selectedFiles = [];
-});
-
-window.removeAttachment = function(index) {
-    attachedFiles.splice(index, 1);
-    const preview = document.getElementById('attachmentsPreview');
-    preview.innerHTML = '';
-    if (attachedFiles.length === 0) {
-        preview.style.display = 'none';
-        document.getElementById('sendButton').disabled = document.getElementById('userInput').value.trim() === '';
-    } else {
-        attachedFiles.forEach((file, idx) => {
-            const item = document.createElement('div');
-            item.className = 'attachment-preview-item';
-            if (file.type.startsWith('image/')) {
-                item.innerHTML = `
-                    <img src="${file.data}" alt="${file.name}" class="attachment-preview-image">
-                    <button class="remove-attachment" onclick="removeAttachment(${idx})">
-                        <i class="fas fa-times"></i>
-                    </button>
-                    <div class="attachment-preview-name">${file.name}</div>
-                `;
-            } else if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
-                item.innerHTML = `
-                    <div style="padding: 8px; text-align: center; background: var(--dark-surface-light); height: 70px; width: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                        <i class="fas fa-file-pdf" style="font-size: 1.3rem; color: var(--error);"></i>
-                        <div style="font-size: 0.55rem; color: var(--dark-text-secondary); margin-top: 4px;">PDF</div>
-                    </div>
-                    <button class="remove-attachment" onclick="removeAttachment(${idx})" style="top: 2px; right: 2px;">
-                        <i class="fas fa-times"></i>
-                    </button>
-                    <div class="attachment-preview-name">${file.name.substring(0, 12)}${file.name.length > 12 ? '...' : ''}</div>
-                `;
-            } else if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
-                item.innerHTML = `
-                    <div style="padding: 8px; text-align: center; background: var(--dark-surface-light); height: 70px; width: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                        <i class="fas fa-file-alt" style="font-size: 1.3rem; color: var(--primary);"></i>
-                        <div style="font-size: 0.55rem; color: var(--dark-text-secondary); margin-top: 4px;">TXT</div>
-                    </div>
-                    <button class="remove-attachment" onclick="removeAttachment(${idx})" style="top: 2px; right: 2px;">
-                        <i class="fas fa-times"></i>
-                    </button>
-                    <div class="attachment-preview-name">${file.name.substring(0, 12)}${file.name.length > 12 ? '...' : ''}</div>
-                `;
-            } else {
-                item.innerHTML = `
-                    <div style="padding: 8px; text-align: center; background: var(--dark-surface-light); height: 70px; width: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                        <i class="fas fa-file" style="font-size: 1.3rem; color: var(--dark-text-secondary);"></i>
-                        <div style="font-size: 0.55rem; color: var(--dark-text-secondary); margin-top: 4px;">DOC</div>
-                    </div>
-                    <button class="remove-attachment" onclick="removeAttachment(${idx})" style="top: 2px; right: 2px;">
-                        <i class="fas fa-times"></i>
-                    </button>
-                    <div class="attachment-preview-name">${file.name.substring(0, 12)}${file.name.length > 12 ? '...' : ''}</div>
-                `;
-            }
-            preview.appendChild(item);
-        });
-        preview.style.display = 'flex';
-    }
-};
-
-// Load history list
 function loadHistoryList() {
     const historyList = document.getElementById('historyList');
     if (!historyList) return;
@@ -4957,16 +4802,20 @@ function loadChatFromHistory(chatId) {
     currentChatId = chatId;
     conversationHistory = [...chat.messages];
     const chatMessages = document.getElementById('chatMessages');
-    chatMessages.innerHTML = '';
-    chat.messages.forEach(msg => {
-        const isDocument = msg.isDocument || false;
-        const hasSources = msg.sources && msg.sources.length > 0;
-        addMessageToChat(msg.content, msg.role === 'user', true, isDocument, msg.attachments || [], hasSources ? msg.sources : null);
-    });
+    if (chatMessages) {
+        chatMessages.innerHTML = '';
+        chat.messages.forEach(msg => {
+            const isDocument = msg.isDocument || false;
+            const hasSources = msg.sources && msg.sources.length > 0;
+            addMessageToChat(msg.content, msg.role === 'user', true, isDocument, msg.attachments || [], hasSources ? msg.sources : null);
+        });
+    }
     loadHistoryList();
     if (window.innerWidth < 1024) {
-        document.getElementById('sidebar').classList.remove('active');
-        document.getElementById('sidebarOverlay').classList.remove('active');
+        const sidebar = document.getElementById('sidebar');
+        const sidebarOverlay = document.getElementById('sidebarOverlay');
+        if (sidebar) sidebar.classList.remove('active');
+        if (sidebarOverlay) sidebarOverlay.classList.remove('active');
         document.body.style.overflow = '';
     }
     showToast('Chat loaded from history 📚', 'success');
@@ -5001,65 +4850,37 @@ window.downloadChatHistory = function(chatId) {
 window.confirmDeleteChat = function(chatId) {
     const chat = chatHistory.find(c => c.id === chatId);
     if (!chat) return;
-    document.getElementById('deleteChatTitle').textContent = `Delete "${chat.title}"?`;
-    document.getElementById('deleteModal').dataset.chatId = chatId;
-    document.getElementById('deleteModal').classList.add('active');
+    const deleteChatTitle = document.getElementById('deleteChatTitle');
+    if (deleteChatTitle) deleteChatTitle.textContent = `Delete "${chat.title}"?`;
+    const deleteModal = document.getElementById('deleteModal');
+    if (deleteModal) {
+        deleteModal.dataset.chatId = chatId;
+        deleteModal.classList.add('active');
+    }
 };
 
-// Delete chat confirmation
-document.getElementById('confirmDelete').addEventListener('click', function() {
-    const chatId = document.getElementById('deleteModal').dataset.chatId;
-    const chatIndex = chatHistory.findIndex(chat => chat.id === chatId);
-    if (chatIndex !== -1) {
-        if (currentChatId === chatId) {
-            createNewChat();
-        }
-        chatHistory.splice(chatIndex, 1);
-        saveUserChatHistory();
-        loadHistoryList();
-        document.getElementById('deleteModal').classList.remove('active');
-        showToast('Chat deleted successfully 🗑️', 'success');
-    }
-});
-document.getElementById('cancelDelete').addEventListener('click', function() {
-    document.getElementById('deleteModal').classList.remove('active');
-});
-document.getElementById('closeDeleteModal').addEventListener('click', function() {
-    document.getElementById('deleteModal').classList.remove('active');
-});
+// =============================================
+// MODAL FUNCTIONS
+// =============================================
 
-// Download modal functions
 function openDownloadModal() {
-    document.getElementById('downloadModal').classList.add('active');
+    const downloadModal = document.getElementById('downloadModal');
+    if (downloadModal) downloadModal.classList.add('active');
 }
+
 function openMessageDownloadModal(content) {
     messageContentForDownload = content;
-    document.getElementById('messageDownloadModal').classList.add('active');
+    const messageDownloadModal = document.getElementById('messageDownloadModal');
+    if (messageDownloadModal) messageDownloadModal.classList.add('active');
 }
-// Close download modals
-document.getElementById('closeDownloadModal').addEventListener('click', function() {
-    document.getElementById('downloadModal').classList.remove('active');
-});
-document.getElementById('closeMessageDownloadModal').addEventListener('click', function() {
-    document.getElementById('messageDownloadModal').classList.remove('active');
-});
 
-// Handle download option clicks
-document.querySelectorAll('.download-option').forEach(option => {
-    option.addEventListener('click', function() {
-        const format = this.dataset.format;
-        const isMessageModal = this.closest('#messageDownloadModal') !== null;
-        if (isMessageModal) {
-            downloadMessage(format, messageContentForDownload);
-        } else {
-            downloadChat(format);
-        }
-    });
-});
+// =============================================
+// DOWNLOAD FUNCTIONS
+// =============================================
 
 function downloadMessage(format, content) {
     const indicator = document.getElementById('messageProgressIndicator');
-    indicator.classList.add('active');
+    if (indicator) indicator.classList.add('active');
     setTimeout(() => {
         const fileName = `LegalSwami-Document-${formatDateForFilename(new Date())}`;
         switch(format) {
@@ -5073,14 +4894,15 @@ function downloadMessage(format, content) {
                 downloadAsTXT(content, fileName);
                 break;
         }
-        indicator.classList.remove('active');
-        document.getElementById('messageDownloadModal').classList.remove('active');
+        if (indicator) indicator.classList.remove('active');
+        const messageDownloadModal = document.getElementById('messageDownloadModal');
+        if (messageDownloadModal) messageDownloadModal.classList.remove('active');
     }, 500);
 }
 
 function downloadChat(format) {
     const indicator = document.getElementById('progressIndicator');
-    indicator.classList.add('active');
+    if (indicator) indicator.classList.add('active');
     setTimeout(() => {
         let content = '';
         conversationHistory.forEach((msg, index) => {
@@ -5100,8 +4922,9 @@ function downloadChat(format) {
                 downloadAsTXT(content, fileName);
                 break;
         }
-        indicator.classList.remove('active');
-        document.getElementById('downloadModal').classList.remove('active');
+        if (indicator) indicator.classList.remove('active');
+        const downloadModal = document.getElementById('downloadModal');
+        if (downloadModal) downloadModal.classList.remove('active');
     }, 500);
 }
 
@@ -5198,7 +5021,6 @@ function downloadAsTXT(content, filename) {
     showToast('Text file downloaded 📥', 'success');
 }
 
-// Format date for filename
 function formatDateForFilename(date) {
     return date.toISOString()
         .replace(/[:\-]/g, '')
@@ -5206,561 +5028,32 @@ function formatDateForFilename(date) {
         .split('.')[0];
 }
 
-// Show toast notification
+// =============================================
+// TOAST NOTIFICATION
+// =============================================
+
 function showToast(message, type = 'success') {
     const toast = document.getElementById('toast');
     const toastMessage = document.getElementById('toast-message');
-    toastMessage.textContent = message;
-    toast.className = `toast ${type} show`;
-    setTimeout(() => {
-        toast.classList.remove('show');
-    }, 3000);
-}
-
-// Initialize backend connection
-async function initializeAppWithBackend() {
-    console.log('🔌 Initializing app with backend...');
-    
-    try {
-        const backendUrl = 'https://legal-swami-backend.onrender.com';
-        
-        if (!window.legalSwamiAPI) {
-            window.legalSwamiAPI = {
-                token: localStorage.getItem('legalSwamiToken'),
-                user: currentUser,
-                sendMessage: async function(message, attachments, chatId) {
-                    console.log('📤 Sending message to backend:', message.substring(0, 50));
-                    
-                    const userId = this.user ? this.user.id : 'guest_' + Date.now();
-                    
-                    const response = await fetch(backendUrl + '/api/v1/chat/send', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'x-user-id': userId,
-                            'x-request-id': 'req_' + Date.now(),
-                            'x-language': selectedLanguage
-                        },
-                        body: JSON.stringify({
-                            message: message,
-                            generateDocument: isDocumentRequest(message),
-                            language: selectedLanguage
-                        })
-                    });
-                    
-                    if (!response.ok) {
-                        throw new Error('HTTP ' + response.status + ': ' + await response.text());
-                    }
-                    
-                    return await response.json();
-                },
-                getChatHistory: async function(page, size) {
-                    page = page || 0;
-                    size = size || 10;
-                    const userId = this.user ? this.user.id : 'guest';
-                    
-                    const response = await fetch(
-                        backendUrl + '/api/v1/chat/history?userId=' + userId + '&page=' + page + '&size=' + size,
-                        {
-                            headers: {
-                                'x-user-id': userId,
-                                'x-request-id': 'req_' + Date.now()
-                            }
-                        }
-                    );
-                    
-                    if (!response.ok) {
-                        throw new Error('HTTP ' + response.status);
-                    }
-                    
-                    return await response.json();
-                }
-            };
-        }
-        
-        // Test backend health
-        try {
-            const healthResponse = await fetch(backendUrl + '/api/v1/public/health');
-            if (healthResponse.ok) {
-                const healthData = await healthResponse.json();
-                console.log('✅ Backend health check passed:', healthData);
-                showToast('Backend connected successfully!', 'success');
-            } else {
-                console.warn('⚠️ Backend health check failed:', healthResponse.status);
-            }
-        } catch (error) {
-            console.warn('⚠️ Backend health check failed:', error.message);
-        }
-        
-    } catch (error) {
-        console.error('❌ Initialization failed:', error);
-        showToast('Note: Some features may be limited', 'warning');
+    if (toast && toastMessage) {
+        toastMessage.textContent = message;
+        toast.className = `toast ${type} show`;
+        setTimeout(() => {
+            toast.classList.remove('show');
+        }, 3000);
     }
 }
 
-// Setup event listeners for backend
-function setupBackendEventListeners() {
-    // Header login button
-    const headerLoginBtn = document.getElementById('headerLoginBtn');
-    if (headerLoginBtn) {
-        headerLoginBtn.addEventListener('click', showLoginModal);
-    }
-    
-    // Demo login button
-    const demoLoginBtn = document.getElementById('demoLoginBtn');
-    if (demoLoginBtn) {
-        demoLoginBtn.addEventListener('click', handleDemoLogin);
-    }
-    
-    // Google login button
-    const customGoogleBtn = document.getElementById('customGoogleBtn');
-    if (customGoogleBtn) {
-        customGoogleBtn.addEventListener('click', handleCustomGoogleLogin);
-    }
-}
+// =============================================
+// MOCK RESPONSE GENERATOR
+// =============================================
 
-// Show login modal
-function showLoginModal() {
-    const modal = document.getElementById('loginModal');
-    if (modal) {
-        modal.classList.add('active');
-        isLoginModalOpen = true;
-        
-        // Render Google Sign-In button
-        setTimeout(function() {
-            renderGoogleSignInButton();
-        }, 100);
-    }
-}
-
-// Initialize Google Authentication
-function initializeSimpleGoogleAuth() {
-    console.log('🔐 Initializing Google Authentication...');
-    
-    if (typeof google === 'undefined') {
-        console.warn('⚠️ Google Identity Services not loaded yet, will retry...');
-        setTimeout(initializeSimpleGoogleAuth, 1000);
-        return;
-    }
-    
-    try {
-        google.accounts.id.initialize({
-            client_id: '166511615962-bohur5q8d4i5hud6icr4185kcte9enk8.apps.googleusercontent.com',
-            callback: handleGoogleCredentialResponse,
-            auto_select: false,
-            cancel_on_tap_outside: true,
-            context: 'signin',
-            itp_support: false,
-            ux_mode: isMobile ? 'popup' : 'popup'
-        });
-        
-        googleGISInitialized = true;
-        console.log('✅ Google Authentication initialized');
-        
-    } catch (error) {
-        console.error('❌ Google Authentication initialization failed:', error);
-    }
-}
-
-// Render Google Sign-In Button
-function renderGoogleSignInButton() {
-    try {
-        const container = document.getElementById('googleSignInContainer');
-        if (!container || !googleGISInitialized) {
-            console.log('⚠️ Google Sign-In container not found or GIS not initialized');
-            const customBtn = document.getElementById('customGoogleBtn');
-            if (customBtn) customBtn.style.display = 'flex';
-            return;
-        }
-        
-        // Clear the container first
-        container.innerHTML = '';
-        
-        // Render Google Sign-In button with mobile optimization
-        const buttonSize = isMobile ? 'large' : 'large';
-        const buttonWidth = isMobile ? '100%' : '400';
-        
-        google.accounts.id.renderButton(
-            container,
-            {
-                theme: 'outline',
-                size: buttonSize,
-                text: 'signin_with',
-                shape: 'rectangular',
-                logo_alignment: 'left',
-                width: buttonWidth,
-                locale: 'en_US'
-            }
-        );
-        
-        console.log('✅ Google Sign-In button rendered');
-        const customBtn = document.getElementById('customGoogleBtn');
-        if (customBtn) customBtn.style.display = 'none';
-        
-    } catch (error) {
-        console.error('❌ Failed to render Google Sign-In button:', error);
-        const customBtn = document.getElementById('customGoogleBtn');
-        if (customBtn) customBtn.style.display = 'flex';
-    }
-}
-
-// Handle Google Credential Response
-function handleGoogleCredentialResponse(response) {
-    console.log('🔐 Google credential received');
-    
-    try {
-        const payload = JSON.parse(atob(response.credential.split('.')[1]));
-        
-        const userData = {
-            id: 'google_' + payload.sub,
-            name: payload.name,
-            email: payload.email,
-            picture: payload.picture,
-            provider: 'google',
-            token: response.credential
-        };
-        
-        console.log('✅ Google user authenticated:', userData.email);
-        
-        localStorage.setItem('legalSwamiUser', JSON.stringify(userData));
-        localStorage.setItem('legalSwamiToken', response.credential);
-        
-        currentUser = userData;
-        isLoggedIn = true;
-        userToken = response.credential;
-        
-        if (window.legalSwamiAPI) {
-            window.legalSwamiAPI.user = userData;
-            window.legalSwamiAPI.token = response.credential;
-        }
-        
-        updateUserUI();
-        document.getElementById('loginModal').classList.remove('active');
-        
-        showToast('Successfully logged in with Google!', 'success');
-        
-    } catch (error) {
-        console.error('❌ Failed to process Google credential:', error);
-        showToast('Login failed. Please try again.', 'error');
-    }
-}
-
-// Handle Custom Google Login
-function handleCustomGoogleLogin() {
-    console.log('🔐 Custom Google login triggered');
-    
-    if (!googleGISInitialized) {
-        showToast('Google Sign-In is not available. Please use demo login.', 'warning');
-        return;
-    }
-    
-    try {
-        google.accounts.id.prompt();
-    } catch (error) {
-        console.error('❌ Google login failed:', error);
-        showToast('Google Sign-In failed. Using demo login instead.', 'warning');
-        handleDemoLogin();
-    }
-}
-
-// Handle Demo Login
-function handleDemoLogin() {
-    console.log('👤 Demo login triggered');
-    
-    const demoUsers = [
-        {
-            id: 'demo_lawyer_1',
-            name: 'Advocate Rajesh Kumar',
-            email: 'demo.lawyer@example.com',
-            role: 'lawyer',
-            specialization: 'Corporate Law'
-        },
-        {
-            id: 'demo_client_1',
-            name: 'Priya Sharma',
-            email: 'demo.client@example.com',
-            role: 'client',
-            caseType: 'Property Dispute'
-        },
-        {
-            id: 'demo_student_1',
-            name: 'Amit Patel',
-            email: 'demo.student@example.com',
-            role: 'student',
-            institution: 'NLSIU Bangalore'
-        }
-    ];
-    
-    const randomUser = demoUsers[Math.floor(Math.random() * demoUsers.length)];
-    
-    const userData = {
-        id: randomUser.id,
-        name: randomUser.name,
-        email: randomUser.email,
-        role: randomUser.role,
-        picture: 'https://ui-avatars.com/api/?name=' + encodeURIComponent(randomUser.name) + '&background=1a56db&color=fff&size=128',
-        provider: 'demo',
-        isDemo: true
-    };
-    
-    localStorage.setItem('legalSwamiUser', JSON.stringify(userData));
-    localStorage.setItem('legalSwamiToken', 'demo_token_' + Date.now());
-    
-    currentUser = userData;
-    isLoggedIn = true;
-    userToken = 'demo_token';
-    
-    if (window.legalSwamiAPI) {
-        window.legalSwamiAPI.user = userData;
-        window.legalSwamiAPI.token = 'demo_token';
-    }
-    
-    updateUserUI();
-    document.getElementById('loginModal').classList.remove('active');
-    showToast('Welcome ' + userData.name + '! (Demo Mode)', 'success');
-}
-
-// Check for existing user
-function checkExistingUser() {
-    console.log('👤 Checking for existing user...');
-    
-    const userStr = localStorage.getItem('legalSwamiUser');
-    if (userStr) {
-        try {
-            const user = JSON.parse(userStr);
-            console.log('✅ Found existing user:', user.name);
-            
-            currentUser = user;
-            isLoggedIn = true;
-            userToken = localStorage.getItem('legalSwamiToken');
-            
-            if (window.legalSwamiAPI) {
-                window.legalSwamiAPI.user = user;
-                window.legalSwamiAPI.token = userToken;
-            }
-            
-            updateUserUI();
-            return;
-        } catch (e) {
-            console.error('Error parsing user data:', e);
-            localStorage.removeItem('legalSwamiUser');
-            localStorage.removeItem('legalSwamiToken');
-        }
-    }
-    
-    updateUserUI();
-}
-
-// Apply mobile optimizations
-function applyMobileOptimizations() {
-    console.log('📱 Applying mobile optimizations...');
-    
-    // Larger touch targets
-    const touchElements = document.querySelectorAll('button, .nav-link, .quick-btn, .chat-action-btn');
-    touchElements.forEach(el => {
-        el.style.minHeight = '44px';
-        el.style.minWidth = '44px';
-    });
-    
-    // Prevent zoom on input focus
-    const inputs = document.querySelectorAll('input, select, textarea');
-    inputs.forEach(input => {
-        input.addEventListener('focus', function() {
-            if (isMobile) {
-                setTimeout(() => {
-                    this.style.fontSize = '16px';
-                }, 100);
-            }
-        });
-    });
-    
-    // Better mobile scrolling
-    document.body.style.overflowX = 'hidden';
-    document.body.style.touchAction = 'manipulation';
-    
-    console.log('✅ Mobile optimizations applied');
-}
-
-// Setup scroll effects
-function setupScrollEffects() {
-    const header = document.querySelector('.premium-navbar');
-    const navLinks = document.querySelectorAll('.nav-link');
-    const backToTopBtn = document.getElementById('backToTop');
-    
-    if (header) {
-        window.addEventListener('scroll', function() {
-            // Header shadow on scroll
-            if (window.scrollY > 50) {
-                header.classList.add('scrolled');
-            } else {
-                header.classList.remove('scrolled');
-            }
-            
-            // Back to top button
-            if (backToTopBtn) {
-                if (window.scrollY > 300) {
-                    backToTopBtn.classList.add('visible');
-                } else {
-                    backToTopBtn.classList.remove('visible');
-                }
-            }
-        });
-    }
-    
-    // Back to top functionality
-    if (backToTopBtn) {
-        backToTopBtn.addEventListener('click', function() {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-    }
-}
-
-// Setup mobile menu
-function setupMobileMenu() {
-    const mobileToggle = document.getElementById('mobileToggle');
-    const mobileMenu = document.getElementById('mobileMenu');
-    const mobileClose = document.getElementById('mobileClose');
-    
-    if (mobileToggle && mobileMenu) {
-        mobileToggle.addEventListener('click', function() {
-            isMobileMenuOpen = !isMobileMenuOpen;
-            if (isMobileMenuOpen) {
-                mobileMenu.style.display = 'block';
-                setTimeout(function() {
-                    mobileMenu.style.opacity = '1';
-                }, 10);
-                document.body.style.overflow = 'hidden';
-            } else {
-                mobileMenu.style.opacity = '0';
-                setTimeout(function() {
-                    mobileMenu.style.display = 'none';
-                }, 300);
-                document.body.style.overflow = '';
-            }
-            this.innerHTML = isMobileMenuOpen ? 
-                '<i class="fas fa-times"></i>' : 
-                '<i class="fas fa-bars"></i>';
-        });
-    }
-    
-    if (mobileClose && mobileMenu) {
-        mobileClose.addEventListener('click', function() {
-            isMobileMenuOpen = false;
-            mobileMenu.style.opacity = '0';
-            setTimeout(function() {
-                mobileMenu.style.display = 'none';
-            }, 300);
-            document.body.style.overflow = '';
-            if (mobileToggle) {
-                mobileToggle.innerHTML = '<i class="fas fa-bars"></i>';
-            }
-        });
-    }
-}
-
-// Setup device specific optimizations
-function setupDeviceSpecificOptimizations() {
-    // Tablet specific optimizations
-    if (isTablet) {
-        console.log('📱 Tablet optimizations enabled');
-        
-        // Adjust font sizes for tablet
-        document.documentElement.style.fontSize = '15px';
-    }
-    
-    // Mobile specific optimizations
-    if (isMobile) {
-        // Add swipe support for mobile menu
-        let startX, startY;
-        
-        document.addEventListener('touchstart', function(e) {
-            startX = e.touches[0].clientX;
-            startY = e.touches[0].clientY;
-        });
-        
-        document.addEventListener('touchend', function(e) {
-            if (!startX || !startY) return;
-            
-            const endX = e.changedTouches[0].clientX;
-            const endY = e.changedTouches[0].clientY;
-            
-            const diffX = startX - endX;
-            const diffY = startY - endY;
-            
-            // Horizontal swipe (for chat interface)
-            if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
-                if (diffX > 0 && isChatOpen) {
-                    // Swipe left - go back to home
-                    const backBtn = document.getElementById('backToHome');
-                    if (backBtn) {
-                        backBtn.click();
-                    }
-                }
-            }
-        });
-    }
-}
-
-// Setup language buttons
-function setupLanguageButtons() {
-    document.querySelectorAll('.lang-btn').forEach(btn => {
-        btn.addEventListener('click', function() {
-            const lang = this.getAttribute('data-lang');
-            selectedLanguage = lang;
-            document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-            this.classList.add('active');
-            
-            // Update chat placeholder based on language
-            const messageInput = document.getElementById('userInput');
-            if (messageInput) {
-                if (lang === 'hi') {
-                    messageInput.placeholder = "अपना कानूनी प्रश्न यहां टाइप करें...";
-                } else if (lang === 'mr') {
-                    messageInput.placeholder = "तुमचा कायदेशीर प्रश्न येथे टाइप करा...";
-                } else if (lang === 'gu') {
-                    messageInput.placeholder = "તમારો કાનૂની પ્રશ્ન અહીં ટાઈપ કરો...";
-                } else {
-                    messageInput.placeholder = "Type your legal question here...";
-                }
-            }
-            
-            showToast(`Language changed to ${getLanguageName(lang)}`, 'info');
-        });
-    });
-}
-
-function getLanguageName(code) {
-    const languages = {
-        'en': 'English',
-        'hi': 'Hindi',
-        'mr': 'Marathi',
-        'gu': 'Gujarati'
-    };
-    return languages[code] || 'English';
-}
-
-// Mock response generator
 async function generateMockResponse(message) {
-    // Simple mock response for when backend is down
-    const responses = [
-        "I understand you're asking about legal matters. Based on common legal principles in India...",
-        "For the legal document you requested, here's a basic template structure...",
-        "Regarding your legal question, here are some general guidelines...",
-        "I'll help you draft that document. Here's a standard format...",
-        "Based on Indian legal practice, here's what you need to consider..."
-    ];
+    const isDoc = isDocumentRequest(message);
     
-    return {
-        response: responses[Math.floor(Math.random() * responses.length)],
-        content: responses[Math.floor(Math.random() * responses.length)],
-        isDocument: isDocumentRequest(message)
-    };
-}
-
-// Mock Response Generator - ADD THIS
-function generateDocumentTemplate(query) {
-    const templates = {
-        nda: `NON-DISCLOSURE AGREEMENT
+    if (isDoc) {
+        const templates = {
+            nda: `NON-DISCLOSURE AGREEMENT
 
 This Non-Disclosure Agreement is entered into on [DATE]
 
@@ -5782,8 +5075,8 @@ ___________________                    ___________________
 Party A Signature                      Party B Signature
 
 Disclaimer: Template for reference only. Consult a lawyer. ⚖️`,
-        
-        rental: `RENTAL AGREEMENT
+            
+            rental: `RENTAL AGREEMENT
 
 Date: [DATE]
 
@@ -5800,8 +5093,8 @@ ___________________                    ___________________
 Landlord                               Tenant
 
 Disclaimer: Get this reviewed by a lawyer before signing. ⚖️`,
-        
-        default: `LEGAL DOCUMENT TEMPLATE
+            
+            default: `LEGAL DOCUMENT TEMPLATE
 
 [TITLE]
 
@@ -5817,29 +5110,22 @@ ___________________
 Signatures
 
 Disclaimer: Consult a qualified attorney before use. ⚖️`
-    };
-    
-    if (query.toLowerCase().includes('nda')) return templates.nda;
-    if (query.toLowerCase().includes('rental')) return templates.rental;
-    return templates.default;
-}
-
-async function generateMockResponse(message, originalQuery) {
-    console.log("🤖 Generating mock response");
-    
-    const isDoc = isDocumentRequest(originalQuery);
-    
-    if (isDoc) {
+        };
+        
+        let template = templates.default;
+        if (message.toLowerCase().includes('nda')) template = templates.nda;
+        if (message.toLowerCase().includes('rental')) template = templates.rental;
+        
         return {
-            response: generateDocumentTemplate(originalQuery),
-            content: generateDocumentTemplate(originalQuery),
+            response: template,
+            content: template,
             isDocument: true
         };
     }
     
     const response = `**Legal Information**
 
-Based on your query: "${originalQuery.substring(0, 100)}..."
+Based on your query: "${message.substring(0, 100)}..."
 
 In India, legal matters require proper understanding of:
 
@@ -5858,11 +5144,384 @@ In India, legal matters require proper understanding of:
     };
 }
 
-// DOM Content Loaded
+// =============================================
+// STOP STREAMING FUNCTION
+// =============================================
+
+function stopStreaming() {
+    stopStreamingRequested = true;
+    isStreamingActive = false;
+    isStreamingPaused = false;
+    
+    const sendButton = document.getElementById('sendButton');
+    const userInput = document.getElementById('userInput');
+    
+    if (sendButton && userInput) {
+        sendButton.disabled = userInput.value.trim() === '' && attachedFiles.length === 0;
+        sendButton.classList.remove('stop-button');
+        sendButton.innerHTML = '<i class="fas fa-paper-plane"></i> <span class="hide-on-mobile">Send</span>';
+    }
+    
+    if (currentStreamingMessageId) {
+        const messageDiv = document.getElementById(currentStreamingMessageId);
+        if (messageDiv) {
+            const messageText = messageDiv.querySelector('.message-text');
+            const streamControls = messageDiv.querySelector('.stream-controls');
+            
+            if (streamControls) {
+                streamControls.remove();
+            }
+            
+            const messageActions = document.createElement('div');
+            messageActions.className = 'message-actions';
+            messageActions.innerHTML = `
+                <button class="action-btn copy" onclick="copyMessage(this)" title="Copy response">
+                    <i class="fas fa-copy"></i> Copy
+                </button>
+                <button class="action-btn regenerate" onclick="regenerateResponse('${currentStreamingMessageId}')" title="Regenerate response">
+                    <i class="fas fa-sync-alt"></i> Regenerate
+                </button>
+                <button class="action-btn like" onclick="likeMessage(this)" title="Mark as helpful">
+                    <i class="far fa-thumbs-up"></i> Helpful
+                </button>
+                <button class="action-btn dislike" onclick="dislikeMessage(this)" title="Mark as not helpful">
+                    <i class="far fa-thumbs-down"></i> Not Helpful
+                </button>
+                <button class="action-btn share" onclick="shareResponse('${currentStreamingMessageId}')" title="Share response">
+                    <i class="fas fa-share"></i> Share
+                </button>
+                <button class="action-btn document" onclick="downloadThisMessage('${currentStreamingMessageId}')" title="Download document">
+                    <i class="fas fa-file-download"></i> Download
+                </button>
+            `;
+            
+            if (messageText && messageText.parentElement) {
+                messageText.parentElement.appendChild(messageActions);
+            }
+            
+            const cursor = messageText ? messageText.querySelector('.streaming-cursor') : null;
+            if (cursor) cursor.remove();
+            
+            const pausedIndicator = messageText ? messageText.querySelector('.paused-indicator') : null;
+            if (pausedIndicator) pausedIndicator.remove();
+            
+            if (messageText) {
+                if (isDocumentRequest(currentStreamingContent)) {
+                    messageText.innerHTML = formatDocumentResponse(currentStreamingContent);
+                    addDocumentDownloadButton(currentStreamingMessageId, currentStreamingContent);
+                } else {
+                    messageText.innerHTML = formatLegalResponse(currentStreamingContent);
+                }
+            }
+        }
+        
+        currentStreamingMessageId = null;
+        currentStreamingContent = '';
+        currentStreamingBuffer = '';
+        streamingTextChunks = [];
+        streamingTextIndex = 0;
+    }
+    
+    showToast('Response stopped ⏹️', 'info');
+}
+
+// =============================================
+// SETUP EVENT LISTENERS
+// =============================================
+
+// Setup file upload modal event listeners
+document.addEventListener('DOMContentLoaded', function() {
+    // Close file upload modal
+    const closeFileUploadModal = document.getElementById('closeFileUploadModal');
+    if (closeFileUploadModal) {
+        closeFileUploadModal.addEventListener('click', function() {
+            const fileUploadModal = document.getElementById('fileUploadModal');
+            if (fileUploadModal) fileUploadModal.classList.remove('active');
+        });
+    }
+    
+    const cancelFileUpload = document.getElementById('cancelFileUpload');
+    if (cancelFileUpload) {
+        cancelFileUpload.addEventListener('click', function() {
+            const fileUploadModal = document.getElementById('fileUploadModal');
+            if (fileUploadModal) fileUploadModal.classList.remove('active');
+        });
+    }
+    
+    // Handle file selection
+    const browseFilesBtn = document.getElementById('browseFilesBtn');
+    if (browseFilesBtn) {
+        browseFilesBtn.addEventListener('click', function() {
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.multiple = true;
+            fileInput.accept = 'image/*,.pdf,.txt,.doc,.docx';
+            fileInput.onchange = function(e) {
+                handleFileSelection(e.target.files);
+            };
+            fileInput.click();
+        });
+    }
+    
+    // Handle drag and drop
+    const uploadArea = document.getElementById('uploadArea');
+    if (uploadArea) {
+        uploadArea.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        uploadArea.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+        });
+        uploadArea.addEventListener('drop', function(e) {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            if (e.dataTransfer.files.length > 0) {
+                handleFileSelection(e.dataTransfer.files);
+            }
+        });
+    }
+    
+    // Confirm file upload
+    const confirmFileUpload = document.getElementById('confirmFileUpload');
+    if (confirmFileUpload) {
+        confirmFileUpload.addEventListener('click', function() {
+            if (selectedFiles.length === 0) {
+                showToast('Please select at least one file 📎', 'warning');
+                return;
+            }
+            attachedFiles = [...attachedFiles, ...selectedFiles];
+            const preview = document.getElementById('attachmentsPreview');
+            if (preview) {
+                preview.innerHTML = '';
+                attachedFiles.forEach((file, index) => {
+                    const item = document.createElement('div');
+                    item.className = 'attachment-preview-item';
+                    if (file.type.startsWith('image/')) {
+                        item.innerHTML = `
+                            <img src="${file.data}" alt="${file.name}" class="attachment-preview-image">
+                            <button class="remove-attachment" onclick="removeAttachment(${index})">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <div class="attachment-preview-name">${file.name}</div>
+                        `;
+                    } else if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
+                        item.innerHTML = `
+                            <div style="padding: 8px; text-align: center; background: var(--dark-surface-light); height: 70px; width: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                                <i class="fas fa-file-pdf" style="font-size: 1.3rem; color: var(--error);"></i>
+                                <div style="font-size: 0.55rem; color: var(--dark-text-secondary); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">PDF</div>
+                            </div>
+                            <button class="remove-attachment" onclick="removeAttachment(${index})" style="top: 2px; right: 2px;">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <div class="attachment-preview-name">${file.name.substring(0, 12)}${file.name.length > 12 ? '...' : ''}</div>
+                        `;
+                    } else if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
+                        item.innerHTML = `
+                            <div style="padding: 8px; text-align: center; background: var(--dark-surface-light); height: 70px; width: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                                <i class="fas fa-file-alt" style="font-size: 1.3rem; color: var(--primary);"></i>
+                                <div style="font-size: 0.55rem; color: var(--dark-text-secondary); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">TXT</div>
+                            </div>
+                            <button class="remove-attachment" onclick="removeAttachment(${index})" style="top: 2px; right: 2px;">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <div class="attachment-preview-name">${file.name.substring(0, 12)}${file.name.length > 12 ? '...' : ''}</div>
+                        `;
+                    } else {
+                        item.innerHTML = `
+                            <div style="padding: 8px; text-align: center; background: var(--dark-surface-light); height: 70px; width: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                                <i class="fas fa-file" style="font-size: 1.3rem; color: var(--dark-text-secondary);"></i>
+                                <div style="font-size: 0.55rem; color: var(--dark-text-secondary); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">DOC</div>
+                            </div>
+                            <button class="remove-attachment" onclick="removeAttachment(${index})" style="top: 2px; right: 2px;">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            <div class="attachment-preview-name">${file.name.substring(0, 12)}${file.name.length > 12 ? '...' : ''}</div>
+                        `;
+                    }
+                    preview.appendChild(item);
+                });
+                preview.style.display = 'flex';
+            }
+            const sendButton = document.getElementById('sendButton');
+            if (sendButton) sendButton.disabled = false;
+            const fileUploadModal = document.getElementById('fileUploadModal');
+            if (fileUploadModal) fileUploadModal.classList.remove('active');
+            showToast(`${selectedFiles.length} file(s) attached 📎`, 'success');
+            selectedFiles = [];
+        });
+    }
+    
+    // Delete chat confirmation
+    const confirmDelete = document.getElementById('confirmDelete');
+    if (confirmDelete) {
+        confirmDelete.addEventListener('click', function() {
+            const deleteModal = document.getElementById('deleteModal');
+            const chatId = deleteModal.dataset.chatId;
+            const chatIndex = chatHistory.findIndex(chat => chat.id === chatId);
+            if (chatIndex !== -1) {
+                if (currentChatId === chatId) {
+                    createNewChat();
+                }
+                chatHistory.splice(chatIndex, 1);
+                saveUserChatHistory();
+                loadHistoryList();
+                if (deleteModal) deleteModal.classList.remove('active');
+                showToast('Chat deleted successfully 🗑️', 'success');
+            }
+        });
+    }
+    
+    const cancelDelete = document.getElementById('cancelDelete');
+    if (cancelDelete) {
+        cancelDelete.addEventListener('click', function() {
+            const deleteModal = document.getElementById('deleteModal');
+            if (deleteModal) deleteModal.classList.remove('active');
+        });
+    }
+    
+    const closeDeleteModal = document.getElementById('closeDeleteModal');
+    if (closeDeleteModal) {
+        closeDeleteModal.addEventListener('click', function() {
+            const deleteModal = document.getElementById('deleteModal');
+            if (deleteModal) deleteModal.classList.remove('active');
+        });
+    }
+    
+    // Download option clicks
+    document.querySelectorAll('.download-option').forEach(option => {
+        option.addEventListener('click', function() {
+            const format = this.dataset.format;
+            const isMessageModal = this.closest('#messageDownloadModal') !== null;
+            if (isMessageModal) {
+                downloadMessage(format, messageContentForDownload);
+            } else {
+                downloadChat(format);
+            }
+        });
+    });
+    
+    // Close download modals
+    const closeDownloadModal = document.getElementById('closeDownloadModal');
+    if (closeDownloadModal) {
+        closeDownloadModal.addEventListener('click', function() {
+            const downloadModal = document.getElementById('downloadModal');
+            if (downloadModal) downloadModal.classList.remove('active');
+        });
+    }
+    
+    const closeMessageDownloadModal = document.getElementById('closeMessageDownloadModal');
+    if (closeMessageDownloadModal) {
+        closeMessageDownloadModal.addEventListener('click', function() {
+            const messageDownloadModal = document.getElementById('messageDownloadModal');
+            if (messageDownloadModal) messageDownloadModal.classList.remove('active');
+        });
+    }
+});
+
+// Handle file selection
+function handleFileSelection(files) {
+    for (let i = 0; i < files.length; i++) {
+        const file = files[i];
+        if (file.type.startsWith('image/') || 
+            file.type === 'application/pdf' || 
+            file.type === 'text/plain' ||
+            file.type.includes('document') ||
+            file.name.endsWith('.txt') ||
+            file.name.endsWith('.pdf') ||
+            file.name.endsWith('.doc') ||
+            file.name.endsWith('.docx')) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                selectedFiles.push({
+                    name: file.name,
+                    data: e.target.result,
+                    type: file.type,
+                    file: file,
+                    size: file.size
+                });
+                updateUploadedFilesDisplay();
+            };
+            reader.readAsDataURL(file);
+        } else {
+            showToast(`File type not supported: ${file.name} ❌`, 'warning');
+        }
+    }
+}
+
+window.removeAttachment = function(index) {
+    attachedFiles.splice(index, 1);
+    const preview = document.getElementById('attachmentsPreview');
+    if (preview) {
+        preview.innerHTML = '';
+        if (attachedFiles.length === 0) {
+            preview.style.display = 'none';
+            const sendButton = document.getElementById('sendButton');
+            const userInput = document.getElementById('userInput');
+            if (sendButton && userInput) {
+                sendButton.disabled = userInput.value.trim() === '';
+            }
+        } else {
+            attachedFiles.forEach((file, idx) => {
+                const item = document.createElement('div');
+                item.className = 'attachment-preview-item';
+                if (file.type.startsWith('image/')) {
+                    item.innerHTML = `
+                        <img src="${file.data}" alt="${file.name}" class="attachment-preview-image">
+                        <button class="remove-attachment" onclick="removeAttachment(${idx})">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <div class="attachment-preview-name">${file.name}</div>
+                    `;
+                } else if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
+                    item.innerHTML = `
+                        <div style="padding: 8px; text-align: center; background: var(--dark-surface-light); height: 70px; width: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                            <i class="fas fa-file-pdf" style="font-size: 1.3rem; color: var(--error);"></i>
+                            <div style="font-size: 0.55rem; color: var(--dark-text-secondary); margin-top: 4px;">PDF</div>
+                        </div>
+                        <button class="remove-attachment" onclick="removeAttachment(${idx})" style="top: 2px; right: 2px;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <div class="attachment-preview-name">${file.name.substring(0, 12)}${file.name.length > 12 ? '...' : ''}</div>
+                    `;
+                } else if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
+                    item.innerHTML = `
+                        <div style="padding: 8px; text-align: center; background: var(--dark-surface-light); height: 70px; width: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                            <i class="fas fa-file-alt" style="font-size: 1.3rem; color: var(--primary);"></i>
+                            <div style="font-size: 0.55rem; color: var(--dark-text-secondary); margin-top: 4px;">TXT</div>
+                        </div>
+                        <button class="remove-attachment" onclick="removeAttachment(${idx})" style="top: 2px; right: 2px;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <div class="attachment-preview-name">${file.name.substring(0, 12)}${file.name.length > 12 ? '...' : ''}</div>
+                    `;
+                } else {
+                    item.innerHTML = `
+                        <div style="padding: 8px; text-align: center; background: var(--dark-surface-light); height: 70px; width: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                            <i class="fas fa-file" style="font-size: 1.3rem; color: var(--dark-text-secondary);"></i>
+                            <div style="font-size: 0.55rem; color: var(--dark-text-secondary); margin-top: 4px;">DOC</div>
+                        </div>
+                        <button class="remove-attachment" onclick="removeAttachment(${idx})" style="top: 2px; right: 2px;">
+                            <i class="fas fa-times"></i>
+                        </button>
+                        <div class="attachment-preview-name">${file.name.substring(0, 12)}${file.name.length > 12 ? '...' : ''}</div>
+                    `;
+                }
+                preview.appendChild(item);
+            });
+            preview.style.display = 'flex';
+        }
+    }
+};
+
+// =============================================
+// INITIALIZE APP ON LOAD
+// =============================================
+
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 LegalSwami Premium Frontend Initialized');
-    console.log('📱 Device Type:', isMobile ? 'Mobile' : isTablet ? 'Tablet' : 'Desktop');
-     
+    
     // Hide loading screen
     setTimeout(function() {
         const loadingScreen = document.getElementById('loadingScreen');
@@ -5875,73 +5534,41 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }, 500);
     
-    // Setup button click handlers
-    // FIXED: Button Setup
-setTimeout(function() {
-    console.log("🔧 Setting up buttons...");
-    
-    // Start Chat Buttons
-    const startBtns = ['startChatBtn', 'ctaStartChat', 'mobileStartChat'];
-    startBtns.forEach(btnId => {
+    // Setup homepage button click handlers
+    const startButtons = ['startChatBtn', 'ctaStartChat', 'mobileStartChat'];
+    startButtons.forEach(btnId => {
         const btn = document.getElementById(btnId);
         if (btn) {
             btn.addEventListener('click', function(e) {
                 e.preventDefault();
+                e.stopPropagation();
                 console.log("Button clicked:", btnId);
                 showChatGPTInterface();
             });
-            console.log("✅ Handler added:", btnId);
         }
     });
     
-    // .btn-assistant class buttons
+    // Setup assistant buttons
     document.querySelectorAll('.btn-assistant').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.preventDefault();
+            e.stopPropagation();
             showChatGPTInterface();
         });
     });
     
-    // Generate/Pricing buttons
+    // Setup generate/pricing buttons
     document.querySelectorAll('.btn-generate, .btn-pricing').forEach(btn => {
         btn.addEventListener('click', function(e) {
             e.preventDefault();
+            e.stopPropagation();
             showChatGPTInterface();
         });
     });
     
-    console.log('✅ All buttons setup complete');
-}, 1000);
-    
-    // Initialize backend connection
-    initializeAppWithBackend();
-    
-    // Setup event listeners
-    setupBackendEventListeners();
-    
-    // Initialize Google Authentication
-    setTimeout(initializeSimpleGoogleAuth, 2000);
-    
-    // Check for existing user
-    checkExistingUser();
-    
-    // Setup scroll effects
-    setupScrollEffects();
-    
-    // Setup mobile menu
-    setupMobileMenu();
-    
-    // Setup device-specific optimizations
-    setupDeviceSpecificOptimizations();
-    
-    // Apply mobile optimizations
-    if (isMobile) {
-        applyMobileOptimizations();
-    }
-    
-    // Auto-initialize guest mode if not logged in
+    // Initialize guest mode if not logged in
     setTimeout(function() {
-        if (!isLoggedIn && !document.getElementById('loginModal').classList.contains('active')) {
+        if (!isLoggedIn) {
             console.log("Auto-initializing guest mode...");
             initializeAppForGuest();
         }
@@ -5950,253 +5577,14 @@ setTimeout(function() {
     console.log('✅ All initialization complete');
 });
 
-// EMERGENCY FIX: Global error handler
+// =============================================
+// GLOBAL ERROR HANDLER
+// =============================================
+
 window.onerror = function(msg, url, line, col, error) {
     console.log("Global error caught:", msg, "at", line, ":", col);
     return true; // Prevents default error handling
 };
-
-// =============================================
-// EMERGENCY FIX FOR CHAT INTERFACE
-// =============================================
-
-// Override showChatGPTInterface function
-window.showChatGPTInterface = function() {
-    console.log("🚀 EMERGENCY: Showing Chat Interface");
-    
-    // Hide homepage completely
-    const mainContainer = document.querySelector('.main-container');
-    if (mainContainer) {
-        mainContainer.style.display = 'none';
-        console.log("✅ Main container hidden");
-    }
-    
-    // Show chat interface
-    const chatInterface = document.getElementById('chatInterface');
-    if (chatInterface) {
-        // Remove any conflicting styles
-        chatInterface.style.cssText = `
-            display: flex !important;
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100vw !important;
-            height: 100vh !important;
-            background: var(--dark-bg) !important;
-            z-index: 99999 !important;
-            flex-direction: column !important;
-            opacity: 1 !important;
-            visibility: visible !important;
-        `;
-        
-        // Add active class
-        chatInterface.classList.add('active');
-        document.body.classList.add('chat-active');
-        document.body.style.overflow = 'hidden';
-        
-        console.log("✅ Chat interface shown");
-        
-        // Initialize chat if not already initialized
-        if (typeof initializeChatApp === 'function' && !window.chatInitialized) {
-            setTimeout(function() {
-                initializeChatApp();
-                window.chatInitialized = true;
-            }, 300);
-        }
-        
-        // Focus on input
-        setTimeout(function() {
-            const userInput = document.getElementById('userInput');
-            if (userInput) {
-                userInput.focus();
-                console.log("✅ Input focused");
-            }
-        }, 500);
-    } else {
-        console.error("❌ Chat interface element not found!");
-        alert('Chat interface not found. Please refresh the page.');
-    }
-};
-
-// Override goBackToHome function
-window.goBackToHome = function() {
-    console.log("🏠 EMERGENCY: Going back to home");
-    
-    // Hide chat
-    const chatInterface = document.getElementById('chatInterface');
-    if (chatInterface) {
-        chatInterface.classList.remove('active');
-        chatInterface.style.display = 'none';
-    }
-    
-    // Show homepage
-    const mainContainer = document.querySelector('.main-container');
-    if (mainContainer) {
-        mainContainer.style.display = 'block';
-    }
-    
-    document.body.classList.remove('chat-active');
-    document.body.style.overflow = '';
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    
-    console.log("✅ Back to home successful");
-};
-
-// Force initialize guest mode immediately
-if (!window.currentUser) {
-    console.log("👤 Forcing guest mode initialization");
-    
-    window.currentUser = {
-        id: 'guest_' + Date.now(),
-        name: 'Guest User',
-        email: 'Local Browser Mode',
-        isGuest: true,
-        picture: null
-    };
-    
-    window.isLoggedIn = false;
-    
-    // Show toast
-    if (typeof showToast === 'function') {
-        showToast('Welcome to LegalSwami! You have 500 free searches per day.', 'info');
-    }
-}
-
-// Fix all button click handlers
-document.addEventListener('DOMContentLoaded', function() {
-    console.log("🔧 Setting up emergency button handlers");
-    
-    // Start Chat buttons
-    const startButtons = [
-        'startChatBtn',
-        'ctaStartChat', 
-        'mobileStartChat'
-    ];
-    
-    startButtons.forEach(function(btnId) {
-        const btn = document.getElementById(btnId);
-        if (btn) {
-            // Remove any existing listeners
-            const newBtn = btn.cloneNode(true);
-            btn.parentNode.replaceChild(newBtn, btn);
-            
-            // Add fresh listener
-            newBtn.addEventListener('click', function(e) {
-                e.preventDefault();
-                e.stopPropagation();
-                console.log("🖱️ Button clicked:", btnId);
-                showChatGPTInterface();
-            });
-            
-            console.log("✅ Fixed button:", btnId);
-        }
-    });
-    
-    // Back to Home button in chat
-    const backBtn = document.getElementById('backToHomeBtn');
-    if (backBtn) {
-        const newBackBtn = backBtn.cloneNode(true);
-        backBtn.parentNode.replaceChild(newBackBtn, backBtn);
-        
-        newBackBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            goBackToHome();
-        });
-        
-        console.log("✅ Fixed back button");
-    }
-    
-    // Fix .btn-assistant buttons
-    document.querySelectorAll('.btn-assistant').forEach(function(btn) {
-        const newBtn = btn.cloneNode(true);
-        btn.parentNode.replaceChild(newBtn, btn);
-        
-        newBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            showChatGPTInterface();
-        });
-    });
-    
-    // Fix .btn-generate buttons
-    document.querySelectorAll('.btn-generate').forEach(function(btn) {
-        const newBtn = btn.cloneNode(true);
-        btn.parentNode.replaceChild(newBtn, btn);
-        
-        newBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            e.stopPropagation();
-            showChatGPTInterface();
-        });
-    });
-    
-    console.log("✅ All emergency fixes applied");
-});
-
-// Add critical CSS fixes
-(function() {
-    const style = document.createElement('style');
-    style.textContent = `
-        /* EMERGENCY CSS FIXES */
-        #chatInterface {
-            display: none !important;
-            position: fixed !important;
-            top: 0 !important;
-            left: 0 !important;
-            width: 100vw !important;
-            height: 100vh !important;
-            background: var(--dark-bg) !important;
-            z-index: 99999 !important;
-        }
-        
-        #chatInterface.active {
-            display: flex !important;
-            flex-direction: column !important;
-        }
-        
-        body.chat-active .main-container {
-            display: none !important;
-        }
-        
-        body.chat-active {
-            overflow: hidden !important;
-        }
-        
-        #chatInterface .container {
-            height: 100vh !important;
-            width: 100vw !important;
-            display: flex !important;
-            flex-direction: column !important;
-        }
-        
-        #chatInterface .chat-container {
-            flex: 1 !important;
-            display: flex !important;
-            flex-direction: column !important;
-        }
-        
-        #chatInterface .chat-messages {
-            flex: 1 !important;
-            overflow-y: auto !important;
-            background: var(--dark-bg) !important;
-        }
-        
-        /* Mobile fixes */
-        @media (max-width: 768px) {
-            #chatInterface {
-                height: -webkit-fill-available !important;
-            }
-        }
-    `;
-    document.head.appendChild(style);
-    console.log("✅ Emergency CSS fixes added");
-})();
-
-// Force show chat on page load for testing (remove this after testing)
-// setTimeout(function() {
-//     showChatGPTInterface();
-// }, 2000);
- </script>
+</script>
 </body>
 </html>
