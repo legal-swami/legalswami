@@ -4320,32 +4320,22 @@ body.chat-active {
 let chatHistory = [];
 let currentChatId = null;
 let conversationHistory = [];
-let isListening = false;
-let recognition = null;
-let isInputMicrophoneActive = false;
 let isLightMode = false;
-let currentStreamingMessageId = null;
-let currentStreamingContent = '';
-let currentStreamingBuffer = '';
-let streamingTextChunks = [];
-let streamingTextIndex = 0;
-let streamingWordDelay = 20;
-let streamingPunctuationDelay = 100;
-let attachedFiles = [];
-let selectedFiles = [];
-let isStreamingPaused = false;
-let isStreamingActive = false;
-let stopStreamingRequested = false;
-let searchCount = 0;
-const MAX_FREE_SEARCHES = 500;
-let scrollPosition = 0;
-let isChatOpen = false;
+let currentUser = null;
+let isLoggedIn = false;
+let chatInitialized = false;
+
+// Check device type
+const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 
 // Welcome message HTML
 const WELCOME_MESSAGE_HTML = `
     <div class="welcome-message">
         <h2>Welcome to LegalSwami</h2>
         <p>Your AI-powered legal assistant for accurate, comprehensive legal information and guidance.</p>
+        <p style="color: var(--primary); margin-top: 10px; font-size: 0.875rem;">
+            <i class="fas fa-language"></i> Supports multiple Indian languages including Marathi, Hindi, and more!
+        </p>
         <div style="margin-top: 1.5rem;">
             <h3 style="color: var(--primary); margin-bottom: 0.875rem; font-size: 1rem;">Ready-to-Use Legal Documents:</h3>
             <div class="draft-templates">
@@ -4402,89 +4392,126 @@ const WELCOME_MESSAGE_HTML = `
     </div>
 `;
 
-// FIXED: Show ChatGPT interface
+// Show ChatGPT interface
 function showChatGPTInterface() {
-    console.log("🚀 Showing Chat Interface");
+    console.log("🚀 Showing ChatGPT Interface");
     
-    const mainContainer = document.querySelector('.main-container');
-    const chatInterface = document.getElementById('chatInterface');
-    
-    // Hide homepage
-    if (mainContainer) {
-        mainContainer.style.display = 'none';
-    }
-    
-    // Show chat
-    if (chatInterface) {
-        chatInterface.classList.add('active');
-        document.body.classList.add('chat-active');
-        isChatOpen = true;
-    }
-    
-    // Initialize chat if needed
-    if (!isChatOpen) {
-        initializeChatApp();
-        isChatOpen = true;
-    }
-    
-    // Focus input
-    setTimeout(() => {
-        const userInput = document.getElementById('userInput');
-        if (userInput) {
-            userInput.focus();
+    try {
+        // Hide homepage
+        const mainContainer = document.querySelector('.main-container');
+        if (mainContainer) {
+            mainContainer.style.display = 'none';
         }
-    }, 300);
-    
-    console.log("✅ Chat shown successfully");
+        
+        // Show chat interface
+        const chatInterface = document.getElementById('chatInterface');
+        if (chatInterface) {
+            chatInterface.style.display = 'flex';
+            chatInterface.classList.add('active');
+        }
+        
+        // Add chat-active class to body
+        document.body.classList.add('chat-active');
+        
+        // Focus input
+        setTimeout(() => {
+            const userInput = document.getElementById('userInput');
+            if (userInput) {
+                userInput.focus();
+            }
+        }, 300);
+        
+        // Initialize chat if not already initialized
+        if (!chatInitialized) {
+            initializeChatApp();
+        }
+        
+        console.log("✅ Chat interface shown successfully");
+        
+    } catch (error) {
+        console.error("❌ Error showing chat interface:", error);
+        // Fallback: just show alert
+        alert("Chat interface cannot be loaded. Please refresh the page.");
+    }
 }
 
-// FIXED: Go Back to Home
+// Go back to home from chat
 function goBackToHome() {
     console.log("🏠 Going back to home");
     
-    const chatInterface = document.getElementById('chatInterface');
-    const mainContainer = document.querySelector('.main-container');
-    
-    // Hide chat
-    if (chatInterface) {
-        chatInterface.classList.remove('active');
+    try {
+        // Hide chat interface
+        const chatInterface = document.getElementById('chatInterface');
+        if (chatInterface) {
+            chatInterface.style.display = 'none';
+            chatInterface.classList.remove('active');
+        }
+        
+        // Remove chat-active class from body
+        document.body.classList.remove('chat-active');
+        
+        // Show homepage
+        const mainContainer = document.querySelector('.main-container');
+        if (mainContainer) {
+            mainContainer.style.display = 'block';
+        }
+        
+        // Scroll to top
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+        
+        console.log("✅ Back to home successful");
+        
+    } catch (error) {
+        console.error("❌ Error going back to home:", error);
     }
-    
-    // Show homepage
-    document.body.classList.remove('chat-active');
-    if (mainContainer) {
-        mainContainer.style.display = 'block';
-    }
-    
-    isChatOpen = false;
-    
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-    
-    console.log("✅ Back to home successful");
 }
 
 // Initialize app for guest users
 function initializeAppForGuest() {
     console.log("Initializing in guest mode...");
+    currentUser = {
+        id: 'guest_' + Date.now(),
+        name: 'Guest User',
+        email: 'Local Browser Mode',
+        isGuest: true,
+        picture: null
+    };
+    isLoggedIn = false;
+    updateUserUI();
     initializeChatApp();
     loadUserChatHistory();
     showToast('Welcome to LegalSwami! You have 500 free searches per day.', 'info');
 }
 
+// Update User UI
+function updateUserUI() {
+    // Update homepage UI
+    if (isLoggedIn && currentUser) {
+        document.getElementById('headerLoginBtn').style.display = 'none';
+        document.getElementById('homeUserProfile').style.display = 'flex';
+        document.getElementById('homeUserName').textContent = currentUser.name;
+        document.getElementById('homeUserEmail').textContent = currentUser.email;
+        
+        const avatar = document.getElementById('homeUserAvatar');
+        if (currentUser.picture) {
+            avatar.innerHTML = `<img src="${currentUser.picture}" alt="${currentUser.name}" style="width: 100%; height: 100%; border-radius: 8px;">`;
+        } else {
+            avatar.innerHTML = '<i class="fas fa-user"></i>';
+        }
+    } else {
+        document.getElementById('headerLoginBtn').style.display = 'flex';
+        document.getElementById('homeUserProfile').style.display = 'none';
+    }
+}
+
 // Load User's Chat History
 function loadUserChatHistory() {
+    const userId = currentUser ? currentUser.id : 'guest';
+    const storageKey = `legalSwamiChatHistory_${userId}`;
     try {
-        const savedHistory = localStorage.getItem('legalSwamiChatHistory');
+        const savedHistory = localStorage.getItem(storageKey);
         if (savedHistory) {
             chatHistory = JSON.parse(savedHistory);
-        }
-        const savedChatId = localStorage.getItem('legalSwamiCurrentChatId');
-        if (savedChatId) {
-            currentChatId = savedChatId;
-            const currentChat = chatHistory.find(chat => chat.id === currentChatId);
-            if (currentChat) {
-                conversationHistory = [...currentChat.messages];
-            }
         }
     } catch (error) {
         console.error('Error loading chat history:', error);
@@ -4494,66 +4521,16 @@ function loadUserChatHistory() {
 
 // Save User's Chat History
 function saveUserChatHistory() {
+    const userId = currentUser ? currentUser.id : 'guest';
+    const storageKey = `legalSwamiChatHistory_${userId}`;
     try {
-        localStorage.setItem('legalSwamiChatHistory', JSON.stringify(chatHistory));
-        localStorage.setItem('legalSwamiCurrentChatId', currentChatId);
+        localStorage.setItem(storageKey, JSON.stringify(chatHistory));
     } catch (error) {
         console.error('Error saving chat history:', error);
     }
 }
 
-// Initialize search counter
-function initializeSearchCounter() {
-    try {
-        const savedCount = localStorage.getItem('legalSwamiSearchCount');
-        if (savedCount) {
-            searchCount = parseInt(savedCount);
-        }
-        const savedDate = localStorage.getItem('legalSwamiSearchDate');
-        if (savedDate) {
-            const lastDate = new Date(savedDate);
-            const today = new Date();
-            if (lastDate.getDate() !== today.getDate() || 
-                lastDate.getMonth() !== today.getMonth() || 
-                lastDate.getFullYear() !== today.getFullYear()) {
-                searchCount = 0;
-                saveSearchCounter();
-            }
-        }
-        updateSearchCounterDisplay();
-    } catch (error) {
-        console.error('Error loading search counter:', error);
-    }
-}
-
-// Save search counter
-function saveSearchCounter() {
-    try {
-        localStorage.setItem('legalSwamiSearchCount', searchCount.toString());
-        localStorage.setItem('legalSwamiSearchDate', new Date().toISOString());
-    } catch (error) {
-        console.error('Error saving search counter:', error);
-    }
-}
-
-// Update search counter display in header
-function updateSearchCounterDisplay() {
-    const searchCounterElement = document.getElementById('searchCounter');
-    if (searchCounterElement) {
-        const maxSearches = MAX_FREE_SEARCHES;
-        const remaining = maxSearches - searchCount;
-        searchCounterElement.innerHTML = `<i class="fas fa-search"></i><span class="hide-on-mobile">Free searches: ${remaining}/${maxSearches}</span>`;
-        if (remaining <= 50) {
-            searchCounterElement.style.color = 'var(--warning)';
-        } else if (remaining <= 10) {
-            searchCounterElement.style.color = 'var(--error)';
-        } else {
-            searchCounterElement.style.color = 'var(--dark-text-secondary)';
-        }
-    }
-}
-
-// FIXED: Initialize Chat App
+// Initialize Chat App
 function initializeChatApp() {
     console.log("Initializing chat app...");
     
@@ -4567,140 +4544,51 @@ function initializeChatApp() {
         const sidebarOverlay = document.getElementById('sidebarOverlay');
         const clearChatBtn = document.getElementById('clearChatBtn');
         const downloadCurrentBtn = document.getElementById('downloadCurrentBtn');
-        const suggestionsBtn = document.getElementById('suggestionsBtn');
-        const voiceSearchBtn = document.getElementById('voiceSearchBtn');
-        const inputMicrophoneBtn = document.getElementById('inputMicrophoneBtn');
         const themeToggle = document.getElementById('themeToggle');
-        const topicItems = document.querySelectorAll('.topic-item');
-        const actionItems = document.querySelectorAll('.action-item');
-        const sidebarTabs = document.querySelectorAll('.sidebar-tab');
-        const newChatBtn = document.getElementById('newChatBtn');
-        const attachmentBtn = document.getElementById('attachmentBtn');
         const backToHomeBtn = document.getElementById('backToHomeBtn');
 
-        const isDesktop = window.innerWidth >= 1025;
-        if (isDesktop && sidebar) {
-            sidebar.classList.add('active');
+        // Check if elements exist
+        if (!chatMessages || !userInput || !sendButton) {
+            console.error("Required chat elements not found");
+            return;
         }
+
+        // Set initial theme
         loadThemePreference();
-        initializeSearchCounter();
+        
+        // Create new chat if none exists
         if (!currentChatId || conversationHistory.length === 0) {
             createNewChat();
         } else {
             loadCurrentChatMessages();
         }
 
-        // Event listeners for chat functionality
-        sendButton.addEventListener('click', function() {
-            if (isStreamingActive) {
-                stopStreaming();
-            } else {
+        // Event listeners
+        if (sendButton) {
+            sendButton.addEventListener('click', function() {
                 sendMessage();
-            }
-        });
+            });
+        }
         
-        userInput.addEventListener('keydown', function(e) {
-            if (e.key === 'Enter' && e.ctrlKey) {
-                e.preventDefault();
-                if (isStreamingActive) {
-                    stopStreaming();
-                } else {
+        if (userInput) {
+            userInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter' && e.ctrlKey) {
+                    e.preventDefault();
                     sendMessage();
                 }
-            }
-            if (e.key === 'Enter' && !e.ctrlKey) {
-                setTimeout(() => {
-                    this.style.height = 'auto';
-                    this.style.height = Math.min(this.scrollHeight, 150) + 'px';
-                }, 10);
-            }
-        });
-        
-        userInput.addEventListener('input', function() {
-            this.style.height = 'auto';
-            this.style.height = Math.min(this.scrollHeight, 150) + 'px';
-            if (isStreamingActive) {
-                sendButton.disabled = false;
-                sendButton.classList.add('stop-button');
-                sendButton.innerHTML = '<i class="fas fa-stop"></i> <span class="hide-on-mobile">Stop</span>';
-            } else {
-                sendButton.disabled = this.value.trim() === '' && attachedFiles.length === 0;
-                sendButton.classList.remove('stop-button');
-                sendButton.innerHTML = '<i class="fas fa-paper-plane"></i> <span class="hide-on-mobile">Send</span>';
-            }
-        });
-
-        // Voice search functionality
-        if ('webkitSpeechRecognition' in window || 'SpeechRecognition' in window) {
-            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-            recognition = new SpeechRecognition();
-            recognition.continuous = false;
-            recognition.interimResults = true;
-            recognition.lang = 'en-IN,hi-IN,mr-IN,ta-IN,te-IN';
+            });
             
-            recognition.onstart = function() {
-                isListening = true;
-                if (isInputMicrophoneActive) {
-                    inputMicrophoneBtn.classList.add('listening');
-                } else {
-                    voiceSearchBtn.classList.add('listening');
-                }
-                document.getElementById('voiceInputStatus').classList.add('active');
-                showToast('Listening... Speak now 🎤', 'info');
-            };
-            
-            recognition.onresult = function(event) {
-                const transcript = event.results[0][0].transcript;
-                const voiceInputText = document.getElementById('voiceInputText');
-                if (event.results[0].isFinal) {
-                    userInput.value = transcript;
-                    userInput.style.height = Math.min(userInput.scrollHeight, 180) + 'px';
-                    voiceInputText.style.display = 'none';
-                    sendButton.disabled = false;
-                    if (transcript.split(' ').length <= 10) {
-                        setTimeout(() => {
-                            sendMessage();
-                        }, 1000);
-                    }
-                } else {
-                    voiceInputText.textContent = transcript;
-                    voiceInputText.style.display = 'block';
-                }
-            };
-            
-            recognition.onerror = function(event) {
-                console.error('Speech recognition error:', event.error);
-                isListening = false;
-                isInputMicrophoneActive = false;
-                inputMicrophoneBtn.classList.remove('listening');
-                voiceSearchBtn.classList.remove('listening');
-                document.getElementById('voiceInputStatus').classList.remove('active');
-                if (event.error === 'not-allowed') {
-                    showToast('Microphone access denied. Please allow microphone access. 🎤', 'error');
-                } else {
-                    showToast('Voice recognition failed. Please try again. ❌', 'error');
-                }
-            };
-            
-            recognition.onend = function() {
-                isListening = false;
-                isInputMicrophoneActive = false;
-                inputMicrophoneBtn.classList.remove('listening');
-                voiceSearchBtn.classList.remove('listening');
-                document.getElementById('voiceInputStatus').classList.remove('active');
-                document.getElementById('voiceInputText').style.display = 'none';
-            };
-            
-            voiceSearchBtn.addEventListener('click', toggleVoiceRecognition);
-            inputMicrophoneBtn.addEventListener('click', toggleInputVoiceRecognition);
-        } else {
-            voiceSearchBtn.style.display = 'none';
-            inputMicrophoneBtn.style.display = 'none';
-            showToast('Voice search not supported in your browser 🎤', 'warning');
+            userInput.addEventListener('input', function() {
+                this.style.height = 'auto';
+                this.style.height = Math.min(this.scrollHeight, 150) + 'px';
+                sendButton.disabled = this.value.trim() === '';
+            });
         }
 
         // Theme toggle
-        themeToggle.addEventListener('click', toggleTheme);
+        if (themeToggle) {
+            themeToggle.addEventListener('click', toggleTheme);
+        }
         
         // Sidebar toggle buttons
         if (sidebarToggle && sidebar && sidebarOverlay) {
@@ -4710,11 +4598,13 @@ function initializeChatApp() {
                 document.body.style.overflow = 'hidden';
             });
             
-            sidebarClose.addEventListener('click', function() {
-                sidebar.classList.remove('active');
-                sidebarOverlay.classList.remove('active');
-                document.body.style.overflow = '';
-            });
+            if (sidebarClose) {
+                sidebarClose.addEventListener('click', function() {
+                    sidebar.classList.remove('active');
+                    sidebarOverlay.classList.remove('active');
+                    document.body.style.overflow = '';
+                });
+            }
             
             sidebarOverlay.addEventListener('click', function() {
                 sidebar.classList.remove('active');
@@ -4723,26 +4613,12 @@ function initializeChatApp() {
             });
         }
         
-        // Sidebar tab switching
-        sidebarTabs.forEach(tab => {
-            tab.addEventListener('click', function() {
-                const tabId = this.dataset.tab;
-                sidebarTabs.forEach(t => t.classList.remove('active'));
-                this.classList.add('active');
-                document.querySelectorAll('.tab-content').forEach(content => {
-                    content.classList.remove('active');
-                });
-                document.getElementById(`${tabId}-content`).classList.add('active');
-                if (tabId === 'chat-history') {
-                    loadHistoryList();
-                }
-            });
-        });
+        // Clear chat button
+        if (clearChatBtn) {
+            clearChatBtn.addEventListener('click', clearCurrentChat);
+        }
         
-        // New chat button
-        if (newChatBtn) newChatBtn.addEventListener('click', createNewChat);
-        if (clearChatBtn) clearChatBtn.addEventListener('click', clearCurrentChat);
-        
+        // Download button
         if (downloadCurrentBtn) {
             downloadCurrentBtn.addEventListener('click', () => {
                 if (conversationHistory.length === 0) {
@@ -4753,80 +4629,17 @@ function initializeChatApp() {
             });
         }
         
-        if (suggestionsBtn) suggestionsBtn.addEventListener('click', showSuggestions);
-        
-        // Topic click handlers
-        topicItems.forEach(item => {
-            item.addEventListener('click', function() {
-                const topic = this.dataset.topic;
-                const topicName = this.querySelector('span').textContent;
-                const questions = {
-                    'contract': 'What are the essential elements of a valid contract under Indian law? ⚖️',
-                    'employment': 'What are the rights of employees regarding workplace harassment in India? 💼',
-                    'intellectual': 'How does copyright protection work for software in India? 🧠',
-                    'realestate': 'What documents are required for property registration in India? 🏠',
-                    'family': 'What are the grounds for divorce under Hindu Marriage Act? 👨‍👩‍👧',
-                    'criminal': 'What is the difference between bailable and non-bailable offenses? ⚖️'
-                };
-                userInput.value = questions[topic] || `Tell me about ${topicName.toLowerCase()} in Indian law. ⚖️`;
-                userInput.focus();
-                userInput.style.height = Math.min(userInput.scrollHeight, 180) + 'px';
-                sendButton.disabled = false;
-                showToast(`${topicName} topic selected 📂`, 'success');
-                
-                if (window.innerWidth < 1024) {
-                    sidebar.classList.remove('active');
-                    sidebarOverlay.classList.remove('active');
-                    document.body.style.overflow = '';
-                }
-            });
-        });
-        
-        // Action click handlers
-        actionItems.forEach(item => {
-            item.addEventListener('click', function() {
-                const action = this.dataset.action;
-                if (action === 'document-drafts') {
-                    userInput.value = 'Create a non-disclosure agreement draft for me 📝';
-                    userInput.focus();
-                } else if (action === 'legal-research') {
-                    userInput.value = 'Can you help me research case laws related to breach of contract? 🔍';
-                    userInput.focus();
-                } else if (action === 'case-analysis') {
-                    userInput.value = 'Can you analyze the legal principles in landmark privacy law cases? 📊';
-                    userInput.focus();
-                }
-                userInput.style.height = Math.min(userInput.scrollHeight, 180) + 'px';
-                sendButton.disabled = false;
-                if (window.innerWidth < 1024) {
-                    sidebar.classList.remove('active');
-                    sidebarOverlay.classList.remove('active');
-                    document.body.style.overflow = '';
-                }
-            });
-        });
-        
         // Back to home button
-        if (backToHomeBtn) backToHomeBtn.addEventListener('click', goBackToHome);
-        
-        // Close dropdown when clicking outside
-        document.addEventListener('click', function(event) {
-            const isMobile = window.innerWidth < 1024;
-            if (isMobile && sidebar && sidebar.classList.contains('active') && 
-                !sidebar.contains(event.target) && 
-                sidebarToggle && !sidebarToggle.contains(event.target)) {
-                sidebar.classList.remove('active');
-                if (sidebarOverlay) sidebarOverlay.classList.remove('active');
-                document.body.style.overflow = '';
-            }
-        });
+        if (backToHomeBtn) {
+            backToHomeBtn.addEventListener('click', goBackToHome);
+        }
         
         // Focus input on load
         setTimeout(() => {
             if (userInput) userInput.focus();
         }, 300);
         
-        // Adjust textarea height on page load
+        // Adjust textarea height
         setTimeout(() => {
             if (userInput) {
                 userInput.style.height = 'auto';
@@ -4834,63 +4647,13 @@ function initializeChatApp() {
             }
         }, 100);
         
-        // Initialize scroll to bottom button
-        const scrollToBottomBtn = document.getElementById('scrollToBottomBtn');
-        if (scrollToBottomBtn) {
-            scrollToBottomBtn.addEventListener('click', scrollToBottom);
-        }
-        
-        // Monitor scroll position
-        if (chatMessages) {
-            chatMessages.addEventListener('scroll', checkScrollPosition);
-            setTimeout(checkScrollPosition, 500);
-            const observer = new MutationObserver(checkScrollPosition);
-            observer.observe(chatMessages, { childList: true, subtree: true });
-        }
-        
-        // Initialize send button state
-        if (sendButton) {
-            sendButton.disabled = userInput.value.trim() === '' && attachedFiles.length === 0;
-        }
-        
-        // Adjust chat layout
-        setTimeout(adjustChatLayout, 100);
-        
-        // File upload functionality
-        if (attachmentBtn) attachmentBtn.addEventListener('click', openFileUploadModal);
-        
         console.log("Chat app initialized successfully");
+        chatInitialized = true;
         
     } catch (error) {
         console.error("Error initializing chat app:", error);
+        showToast("Chat initialization failed. Please refresh the page.", "error");
     }
-}
-
-// FIXED: Check scroll position
-function checkScrollPosition() {
-    const chatMessages = document.getElementById('chatMessages');
-    const scrollBtn = document.getElementById('scrollToBottomBtn');
-    const indicator = document.getElementById('scrollPositionIndicator');
-    
-    if (!chatMessages || !scrollBtn || !indicator) return;
-    
-    const scrollBottom = chatMessages.scrollHeight - chatMessages.clientHeight;
-    const currentScroll = chatMessages.scrollTop;
-    const isAtBottom = Math.abs(scrollBottom - currentScroll) < 10;
-    
-    if (!isAtBottom) {
-        scrollBtn.classList.add('visible');
-        if (currentScroll < scrollPosition) {
-            indicator.classList.add('visible');
-            setTimeout(() => {
-                indicator.classList.remove('visible');
-            }, 2000);
-        }
-    } else {
-        scrollBtn.classList.remove('visible');
-        indicator.classList.remove('visible');
-    }
-    scrollPosition = currentScroll;
 }
 
 // Load current chat messages
@@ -4909,11 +4672,8 @@ function loadCurrentChatMessages() {
     }
     
     conversationHistory.forEach(msg => {
-        const isDocument = msg.isDocument || false;
-        addMessageToChat(msg.content, msg.role === 'user', true, isDocument, msg.attachments || []);
+        addMessageToChat(msg.content, msg.role === 'user', true);
     });
-    
-    setTimeout(addCopyEditButtonsToUserMessages, 100);
 }
 
 // Add draft template listeners
@@ -4958,7 +4718,7 @@ function addDraftTemplateListeners() {
     });
 }
 
-// FIXED: Send message function
+// Send message function
 async function sendMessage() {
     const userInput = document.getElementById('userInput');
     const sendButton = document.getElementById('sendButton');
@@ -4967,177 +4727,91 @@ async function sendMessage() {
     
     const message = userInput.value.trim();
     
-    if (!message && attachedFiles.length === 0) {
-        showToast('Please enter a message or attach a file 📝', 'warning');
+    if (!message) {
+        showToast('Please enter a message 📝', 'warning');
         return;
     }
     
-    if (searchCount >= MAX_FREE_SEARCHES) {
-        showToast(`You've used ${MAX_FREE_SEARCHES} free searches today. Please wait until tomorrow. ⏰`, 'warning');
-        return;
-    }
-    
-    if (isListening && recognition) {
-        recognition.stop();
-    }
-    
-    const messageId = addMessageToChat(message, true, false, false, attachedFiles);
+    // Add user message to chat
+    addMessageToChat(message, true);
     userInput.value = '';
     userInput.style.height = '52px';
-    
-    sendButton.disabled = false;
-    sendButton.classList.add('stop-button');
-    sendButton.innerHTML = '<i class="fas fa-stop"></i> <span class="hide-on-mobile">Stop</span>';
-    
-    isStreamingActive = true;
-    stopStreamingRequested = false;
-    clearAttachments();
+    sendButton.disabled = true;
     
     try {
+        // Add user message to conversation history
         const userMessage = {
             role: 'user',
             content: message,
-            attachments: [...attachedFiles],
             timestamp: new Date().toISOString()
         };
         
         conversationHistory.push(userMessage);
         
-        searchCount++;
-        saveSearchCounter();
-        updateSearchCounterDisplay();
-        
-        const remaining = MAX_FREE_SEARCHES - searchCount;
-        if (remaining === 50) {
-            showToast(`You have ${remaining} free searches remaining. ⚠️`, 'warning');
-        } else if (remaining === 10) {
-            showToast(`Only ${remaining} free searches left! ⚠️`, 'warning');
-        } else if (remaining === 0) {
-            showToast(`Daily limit reached! You've used ${MAX_FREE_SEARCHES} searches today. ⏰`, 'warning');
+        // Show typing indicator
+        const typingIndicator = document.createElement('div');
+        typingIndicator.className = 'typing-indicator';
+        typingIndicator.innerHTML = `
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+        `;
+        const chatMessages = document.getElementById('chatMessages');
+        if (chatMessages) {
+            chatMessages.appendChild(typingIndicator);
         }
         
-        let fileContents = '';
-        if (attachedFiles.length > 0) {
-            for (const file of attachedFiles) {
-                const content = await readFileContent(file);
-                if (content) {
-                    fileContents += `\n\n[Content from ${file.name}]:\n${content.substring(0, 2000)}${content.length > 2000 ? '... (truncated)' : ''}`;
-                }
+        // Simulate AI response (replace with actual API call)
+        setTimeout(() => {
+            // Remove typing indicator
+            if (typingIndicator.parentNode) {
+                typingIndicator.remove();
             }
-        }
-        
-        const fullMessage = message + fileContents;
-        
-        // Use mock response (simplified for demo)
-        const mockResponse = await generateMockResponse(fullMessage);
-        const aiMessage = {
-            role: 'assistant',
-            content: mockResponse.response || mockResponse.content || '',
-            isDocument: mockResponse.isDocument,
-            timestamp: new Date().toISOString()
-        };
-        
-        conversationHistory.push(aiMessage);
-        const aiMessageId = createStreamingMessage();
-        startStreamingResponse(aiMessageId, aiMessage.content, mockResponse.isDocument);
+            
+            // Generate response
+            const response = generateMockResponse(message);
+            
+            // Add AI response to chat
+            const aiMessageId = addMessageToChat(response.response, false);
+            
+            // Add to conversation history
+            conversationHistory.push({
+                role: 'assistant',
+                content: response.response,
+                timestamp: new Date().toISOString()
+            });
+            
+            // Save chat
+            saveCurrentChat();
+            
+        }, 1500);
         
     } catch (error) {
-        console.error('AI Service Error:', error);
+        console.error('Error sending message:', error);
         const errorMessage = "I apologize for the inconvenience. I'm currently experiencing technical difficulties. Please try again in a moment. ⚠️";
         addMessageToChat(errorMessage, false);
-        conversationHistory.push({
-            role: 'assistant',
-            content: errorMessage,
-            timestamp: new Date().toISOString()
-        });
         showToast('Service temporarily unavailable ⚠️', 'warning');
-    } finally {
-        if (sendButton) {
-            sendButton.disabled = userInput.value.trim() === '' && attachedFiles.length === 0;
-            sendButton.classList.remove('stop-button');
-            sendButton.innerHTML = '<i class="fas fa-paper-plane"></i> <span class="hide-on-mobile">Send</span>';
-        }
-        
-        isStreamingActive = false;
-        
-        if (userInput) {
-            userInput.focus();
-        }
-        
-        setTimeout(adjustChatLayout, 100);
-        setTimeout(addCopyEditButtonsToUserMessages, 100);
-        saveCurrentChat();
     }
 }
 
-// Read file content
-async function readFileContent(file) {
-    return new Promise((resolve, reject) => {
-        if (file.type.startsWith('image/')) {
-            resolve(`[Image file: ${file.name}. Size: ${(file.size / 1024).toFixed(2)} KB]`);
-        } else if (file.type === 'application/pdf') {
-            resolve(`[PDF file: ${file.name}. Size: ${(file.size / 1024).toFixed(2)} KB. Content preview not available in browser.]`);
-        } else if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                resolve(e.target.result);
-            };
-            reader.onerror = reject;
-            reader.readAsText(file.file);
-        } else {
-            resolve(`[File: ${file.name}. Type: ${file.type}. Size: ${(file.size / 1024).toFixed(2)} KB]`);
-        }
-    });
-}
-
-// Mock response generator
-async function generateMockResponse(message) {
-    const isDoc = isDocumentRequest(message);
-    
-    if (isDoc) {
-        return {
-            response: generateDocumentTemplate(message),
-            content: generateDocumentTemplate(message),
-            isDocument: true
-        };
-    }
-    
-    const response = `**Legal Information**
-
-Based on your query: "${message.substring(0, 100)}..."
-
-In India, legal matters require proper understanding of:
-
-1. **Applicable Laws**: Identify relevant statutes
-2. **Jurisdiction**: Determine appropriate authority
-3. **Documentation**: Maintain proper records
-4. **Time Limits**: Be aware of limitation periods
-5. **Professional Advice**: Consult a qualified lawyer
-
-**Disclaimer**: This is AI-generated general information, not legal advice. Always consult a licensed attorney. ⚖️`;
+// Generate mock response
+function generateMockResponse(message) {
+    const responses = [
+        "I understand you're asking about legal matters. Based on common legal principles in India, here's what you should know...",
+        "For the legal document you requested, here's a basic template structure that you can customize...",
+        "Regarding your legal question, here are some general guidelines based on Indian law...",
+        "I'll help you draft that document. Here's a standard format that's commonly used...",
+        "Based on Indian legal practice, here's what you need to consider for your situation..."
+    ];
     
     return {
-        response: response,
-        content: response,
-        isDocument: false
+        response: responses[Math.floor(Math.random() * responses.length)],
+        isDocument: message.toLowerCase().includes('draft') || message.toLowerCase().includes('template')
     };
 }
 
-// Check if user is asking for document
-function isDocumentRequest(message) {
-    if (!message) return false;
-    const docKeywords = [
-        'draft', 'template', 'format', 'document', 'agreement', 
-        'contract', 'nda', 'non disclosure', 'employment', 
-        'rental', 'loan', 'will', 'testament', 'legal document',
-        'ready made', 'sample', 'example', 'form'
-    ];
-    const lowerMessage = message.toLowerCase();
-    return docKeywords.some(keyword => lowerMessage.includes(keyword));
-}
-
 // Add message to chat
-function addMessageToChat(content, isUser, fromHistory = false, isDocument = false, attachments = []) {
+function addMessageToChat(content, isUser, fromHistory = false) {
     const chatMessages = document.getElementById('chatMessages');
     if (!fromHistory && isUser) {
         const welcomeMessage = document.querySelector('.welcome-message');
@@ -5145,487 +4819,136 @@ function addMessageToChat(content, isUser, fromHistory = false, isDocument = fal
             welcomeMessage.remove();
         }
     }
+    
     const messageDiv = document.createElement('div');
     messageDiv.className = `message ${isUser ? 'user-message' : 'ai-message'}`;
     const messageId = 'msg_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
     messageDiv.id = messageId;
+    
     const avatar = document.createElement('div');
     avatar.className = 'avatar';
     if (isUser) {
-        avatar.innerHTML = '<i class="fas fa-user"></i>';
+        if (currentUser && currentUser.picture) {
+            avatar.innerHTML = `<img src="${currentUser.picture}" alt="${currentUser.name}" style="width: 100%; height: 100%; border-radius: 8px;">`;
+        } else {
+            avatar.innerHTML = '<i class="fas fa-user"></i>';
+        }
     } else {
         avatar.innerHTML = '<i class="fas fa-scale-balanced"></i>';
         avatar.style.background = 'linear-gradient(135deg, var(--secondary) 0%, #5e35b1 100%)';
     }
+    
     const messageContent = document.createElement('div');
     messageContent.className = 'message-content';
+    
     const messageText = document.createElement('div');
     messageText.className = 'message-text';
-    if (isUser) {
-        if (content) {
-            messageText.innerHTML = content.replace(/\n/g, '<br>');
-        }
-        if (!fromHistory) {
-            const controlsContainer = document.createElement('div');
-            controlsContainer.className = 'user-message-controls';
-            controlsContainer.innerHTML = `
-                <button class="user-message-btn copy-btn" onclick="copyUserMessage('${messageId}')" title="Copy question">
-                    <i class="fas fa-copy"></i>
-                    <span class="hide-on-mobile">Copy</span>
-                </button>
-                <button class="user-message-btn edit-btn" onclick="editUserMessage('${messageId}')" title="Edit question">
-                    <i class="fas fa-pencil-alt"></i>
-                    <span class="hide-on-mobile">Edit</span>
-                </button>
-            `;
-            messageContent.appendChild(controlsContainer);
-        }
-    } else {
-        if (isDocument) {
-            messageText.innerHTML = formatDocumentResponse(content);
-        } else {
-            messageText.innerHTML = formatLegalResponse(content);
-        }
-    }
+    messageText.innerHTML = content.replace(/\n/g, '<br>');
+    
     messageContent.appendChild(messageText);
+    
+    // Add action buttons for AI messages
     if (!isUser && !fromHistory) {
         const messageActions = document.createElement('div');
         messageActions.className = 'message-actions';
         messageActions.innerHTML = `
-            <button class="action-btn copy" onclick="copyMessage(this)" title="Copy response">
+            <button class="action-btn copy" onclick="copyMessage('${messageId}')" title="Copy response">
                 <i class="fas fa-copy"></i> Copy
             </button>
-            <button class="action-btn like" onclick="likeMessage(this)" title="Mark as helpful">
-                <i class="far fa-thumbs-up"></i> Helpful
-            </button>
-            <button class="action-btn dislike" onclick="dislikeMessage(this)" title="Mark as not helpful">
-                <i class="far fa-thumbs-down"></i> Not Helpful
+            <button class="action-btn download" onclick="downloadMessage('${messageId}')" title="Download response">
+                <i class="fas fa-file-download"></i> Download
             </button>
         `;
         messageContent.appendChild(messageActions);
     }
+    
     messageDiv.appendChild(avatar);
     messageDiv.appendChild(messageContent);
     chatMessages.appendChild(messageDiv);
-    setTimeout(checkScrollPosition, 100);
-    return messageId;
-}
-
-// Format document response
-function formatDocumentResponse(text) {
-    const documentContainer = document.createElement('div');
-    documentContainer.className = 'document-template';
-    const lines = text.split('\n');
-    let htmlContent = '';
-    lines.forEach(line => {
-        if (line.trim() === '') return;
-        if (line.toUpperCase() === line && line.length > 10 && !line.includes(':')) {
-            htmlContent += `<div class="document-header">
-                <h2 class="document-title">${line}</h2>
-                <div class="document-subtitle">Legal Document Template ⚖️</div>
-            </div>`;
-        }
-        else if (line.match(/^\d+\.\s+.+/) || line.match(/^[A-Z\s]+:$/)) {
-            htmlContent += `<div class="document-section">
-                <h3 class="document-section-title">${line}</h3>`;
-        }
-        else if (line.match(/^[a-z]\)\s+.+/)) {
-            htmlContent += `<div class="document-clause">
-                <div class="clause-title">${line}</div>`;
-        }
-        else {
-            if (line.includes('___________________') || line.includes('________________')) {
-                htmlContent += `<div class="clause-content" style="border-bottom: 1px solid var(--dark-border); padding-bottom: 4px; margin-bottom: 8px;">${line}</div>`;
-            } else {
-                htmlContent += `<div class="clause-content">${line}</div>`;
-            }
-        }
-    });
-    if (!text.includes('Signature') && !text.includes('Witness')) {
-        htmlContent += `
-            <div class="signature-section">
-                <div class="signature-line">
-                    <div class="signature-block">
-                        <div class="signature-name"></div>
-                        <div class="signature-label">Signature ✍️</div>
-                    </div>
-                    <div class="signature-block">
-                        <div class="signature-name"></div>
-                        <div class="signature-label">Date 📅</div>
-                    </div>
-                </div>
-            </div>`;
-    }
-    htmlContent += `<div class="legal-note">
-        <strong>Disclaimer:</strong> This template is for educational purposes only. Consult a qualified attorney before use. ⚖️
-    </div>`;
-    documentContainer.innerHTML = htmlContent;
-    return documentContainer.outerHTML;
-}
-
-// Format legal response
-function formatLegalResponse(text) {
-    let formatted = text
-        .replace(/## (.*?)\n/g, '<h3>$1</h3>')
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/- (.*?)\n/g, '<li>$1</li>')
-        .replace(/\n/g, '<br>');
-    formatted = formatted.replace(/(<li>.*?<\/li>)/gs, function(match) {
-        return '<ul>' + match + '</ul>';
-    });
-    if (formatted.includes('Disclaimer') || formatted.includes('अस्वीकरण') || formatted.includes('सूचना')) {
-        formatted = formatted.replace(/(Disclaimer:.*?|अस्वीकरण:.*?|सूचना:.*?)(?=<br><br>|$)/is, 
-            '<div class="legal-note">$1</div>');
-    }
-    const container = document.createElement('div');
-    container.className = 'legal-content';
-    container.innerHTML = formatted;
-    return container.outerHTML;
-}
-
-// Format text for streaming display
-function formatStreamingText(text) {
-    const container = document.createElement('div');
-    container.innerHTML = text
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\n/g, '<br>');
-    return container.innerHTML;
-}
-
-// Create streaming message container
-function createStreamingMessage() {
-    const chatMessages = document.getElementById('chatMessages');
-    const messageDiv = document.createElement('div');
-    messageDiv.className = 'message ai-message';
-    const messageId = 'msg_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-    messageDiv.id = messageId;
-    const avatar = document.createElement('div');
-    avatar.className = 'avatar';
-    avatar.innerHTML = '<i class="fas fa-scale-balanced"></i>';
-    avatar.style.background = 'linear-gradient(135deg, var(--secondary) 0%, #5e35b1 100%)';
-    const messageContent = document.createElement('div');
-    messageContent.className = 'message-content';
-    const messageText = document.createElement('div');
-    messageText.className = 'message-text streaming-content';
-    messageText.innerHTML = '<span class="streaming-cursor"></span>';
-    messageContent.appendChild(messageText);
-    messageDiv.appendChild(avatar);
-    messageDiv.appendChild(messageContent);
-    chatMessages.appendChild(messageDiv);
-    currentStreamingMessageId = messageId;
-    currentStreamingContent = '';
-    currentStreamingBuffer = '';
-    streamingTextChunks = [];
-    streamingTextIndex = 0;
-    const streamControls = document.createElement('div');
-    streamControls.className = 'stream-controls';
-    streamControls.innerHTML = `
-        <button class="stream-control-btn pause-btn" id="pause-${messageId}" onclick="toggleStreamPause('${messageId}')">
-            <i class="fas fa-pause"></i> Pause
-        </button>
-        <button class="stream-control-btn copy-btn" onclick="copyStreamedContent('${messageId}')">
-            <i class="fas fa-copy"></i> Copy
-        </button>
-    `;
-    messageContent.appendChild(streamControls);
-    setTimeout(checkScrollPosition, 100);
-    return messageId;
-}
-
-// Start streaming response word by word
-function startStreamingResponse(messageId, response, isDocument = false) {
-    const messageDiv = document.getElementById(messageId);
-    if (!messageDiv) return;
-    let textToStream = response;
-    streamingTextChunks = splitTextIntoChunks(textToStream);
-    streamingTextIndex = 0;
-    streamNextChunk(messageId, isDocument);
-}
-
-// Split text into chunks for streaming
-function splitTextIntoChunks(text) {
-    const chunks = [];
-    const regex = /[\s.,;!?।।॥]+|\S+/g;
-    let match;
-    while ((match = regex.exec(text)) !== null) {
-        chunks.push(match[0]);
-    }
-    return chunks;
-}
-
-// Stream next chunk of text
-function streamNextChunk(messageId, isDocument = false) {
-    if (stopStreamingRequested || streamingTextIndex >= streamingTextChunks.length) {
-        if (stopStreamingRequested) {
-            console.log('Streaming stopped by user');
-        } else {
-            finalizeStreamingMessage(messageId, isDocument);
-        }
-        return;
-    }
-    const chunk = streamingTextChunks[streamingTextIndex];
-    streamingTextIndex++;
-    updateStreamingMessage(messageId, chunk, isDocument);
-    let delay = streamingWordDelay;
-    if (chunk.match(/[.,;!?।।॥]/)) {
-        delay += streamingPunctuationDelay;
-    }
-    if (chunk.match(/[.!?।।॥]/)) {
-        delay += 150;
-    }
+    
+    // Scroll to bottom
     setTimeout(() => {
-        if (!isStreamingPaused && !stopStreamingRequested) {
-            streamNextChunk(messageId, isDocument);
-        }
-    }, delay);
-}
-
-// Toggle stream pause
-window.toggleStreamPause = function(messageId) {
-    isStreamingPaused = !isStreamingPaused;
-    const pauseBtn = document.getElementById(`pause-${messageId}`);
-    const messageDiv = document.getElementById(messageId);
-    if (isStreamingPaused) {
-        pauseBtn.innerHTML = '<i class="fas fa-play"></i> Continue';
-        pauseBtn.style.background = 'var(--success)';
-        pauseBtn.style.borderColor = 'var(--success)';
-        pauseBtn.style.color = 'white';
-        const messageText = messageDiv.querySelector('.message-text');
-        const existingIndicator = messageText.querySelector('.paused-indicator');
-        if (!existingIndicator) {
-            const indicator = document.createElement('span');
-            indicator.className = 'paused-indicator';
-            indicator.textContent = 'Paused';
-            messageText.appendChild(indicator);
-        }
-        showToast('Response paused ⏸️', 'info');
-    } else {
-        pauseBtn.innerHTML = '<i class="fas fa-pause"></i> Pause';
-        pauseBtn.style.background = '';
-        pauseBtn.style.borderColor = '';
-        pauseBtn.style.color = '';
-        const messageText = messageDiv.querySelector('.message-text');
-        const existingIndicator = messageText.querySelector('.paused-indicator');
-        if (existingIndicator) {
-            existingIndicator.remove();
-        }
-        setTimeout(() => {
-            streamNextChunk(messageId, isDocumentRequest(currentStreamingContent));
-        }, 100);
-        showToast('Response continued ▶️', 'success');
-    }
-};
-
-// Copy streamed content
-window.copyStreamedContent = function(messageId) {
-    const messageDiv = document.getElementById(messageId);
-    if (!messageDiv) return;
-    const messageText = messageDiv.querySelector('.message-text');
-    const textToCopy = messageText.textContent.replace('Paused', '').trim();
-    navigator.clipboard.writeText(textToCopy).then(() => {
-        showToast('Copied to clipboard! 📋', 'success');
-    }).catch(err => {
-        console.error('Copy failed:', err);
-        showToast('Failed to copy ❌', 'error');
-    });
-};
-
-// Update streaming message with new content
-function updateStreamingMessage(messageId, newContent, isDocument = false) {
-    const messageDiv = document.getElementById(messageId);
-    if (!messageDiv) return;
-    const messageText = messageDiv.querySelector('.message-text');
-    currentStreamingBuffer += newContent;
-    currentStreamingContent += newContent;
-    if (isDocument) {
-        messageText.innerHTML = formatDocumentResponse(currentStreamingContent) + '<span class="streaming-cursor"></span>';
-    } else {
-        messageText.innerHTML = formatStreamingText(currentStreamingBuffer) + '<span class="streaming-cursor"></span>';
-    }
-    checkScrollPosition();
-}
-
-// Finalize streaming message
-function finalizeStreamingMessage(messageId, isDocument = false) {
-    const messageDiv = document.getElementById(messageId);
-    if (!messageDiv) return;
-    const messageText = messageDiv.querySelector('.message-text');
-    const cursor = messageText.querySelector('.streaming-cursor');
-    if (cursor) cursor.remove();
-    const pausedIndicator = messageText.querySelector('.paused-indicator');
-    if (pausedIndicator) pausedIndicator.remove();
-    if (isDocument) {
-        messageText.innerHTML = formatDocumentResponse(currentStreamingContent);
-    } else {
-        messageText.innerHTML = formatLegalResponse(currentStreamingContent);
-    }
-    const messageActions = document.createElement('div');
-    messageActions.className = 'message-actions';
-    messageActions.innerHTML = `
-        <button class="action-btn copy" onclick="copyMessage(this)" title="Copy response">
-            <i class="fas fa-copy"></i> Copy
-        </button>
-        <button class="action-btn like" onclick="likeMessage(this)" title="Mark as helpful">
-            <i class="far fa-thumbs-up"></i> Helpful
-        </button>
-        <button class="action-btn dislike" onclick="dislikeMessage(this)" title="Mark as not helpful">
-            <i class="far fa-thumbs-down"></i> Not Helpful
-        </button>
-    `;
-    messageText.parentElement.appendChild(messageActions);
-    const streamControls = messageDiv.querySelector('.stream-controls');
-    if (streamControls) {
-        streamControls.remove();
-    }
-    currentStreamingMessageId = null;
-    currentStreamingContent = '';
-    currentStreamingBuffer = '';
-    streamingTextChunks = [];
-    streamingTextIndex = 0;
-    isStreamingPaused = false;
-    isStreamingActive = false;
-    stopStreamingRequested = false;
-    const sendButton = document.getElementById('sendButton');
-    sendButton.disabled = document.getElementById('userInput').value.trim() === '' && attachedFiles.length === 0;
-    sendButton.classList.remove('stop-button');
-    sendButton.innerHTML = '<i class="fas fa-paper-plane"></i> <span class="hide-on-mobile">Send</span>';
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+    }, 100);
+    
+    return messageId;
 }
 
 // Copy message function
-window.copyMessage = function(button) {
-    const messageText = button.closest('.message-content').querySelector('.message-text');
-    let textToCopy = messageText.innerText || messageText.textContent;
-    navigator.clipboard.writeText(textToCopy).then(() => {
-        showToast('Document copied to clipboard! 📋', 'success');
-    }).catch(err => {
-        console.error('Copy failed:', err);
-        showToast('Failed to copy text ❌', 'error');
-    });
-};
-
-// Like message function
-window.likeMessage = function(button) {
-    button.innerHTML = '<i class="fas fa-thumbs-up"></i> Thank you!';
-    button.style.background = 'var(--success)';
-    button.style.borderColor = 'var(--success)';
-    button.style.color = 'white';
-    button.disabled = true;
-    showToast('Thank you for your feedback! 👍', 'success');
-};
-
-// Dislike message function
-window.dislikeMessage = function(button) {
-    button.innerHTML = '<i class="fas fa-thumbs-down"></i> Feedback Sent';
-    button.style.background = 'var(--error)';
-    button.style.borderColor = 'var(--error)';
-    button.style.color = 'white';
-    button.disabled = true;
-    showToast('Thank you for your feedback! 👍', 'info');
-};
-
-// Copy user message
-window.copyUserMessage = function(messageId) {
+window.copyMessage = function(messageId) {
     const messageDiv = document.getElementById(messageId);
     if (!messageDiv) return;
     const messageText = messageDiv.querySelector('.message-text');
     const textToCopy = messageText.textContent;
+    
     navigator.clipboard.writeText(textToCopy).then(() => {
-        showToast('Question copied to clipboard! 📋', 'success');
+        showToast('Response copied to clipboard! 📋', 'success');
     }).catch(err => {
         console.error('Copy failed:', err);
-        showToast('Failed to copy question ❌', 'error');
+        showToast('Failed to copy response ❌', 'error');
     });
 };
 
-// Edit user message
-window.editUserMessage = function(messageId) {
+// Download message function
+window.downloadMessage = function(messageId) {
     const messageDiv = document.getElementById(messageId);
     if (!messageDiv) return;
     const messageText = messageDiv.querySelector('.message-text');
     const content = messageText.textContent;
-    const userInput = document.getElementById('userInput');
-    userInput.value = content;
-    userInput.focus();
-    userInput.style.height = 'auto';
-    userInput.style.height = Math.min(userInput.scrollHeight, 180) + 'px';
-    document.getElementById('sendButton').disabled = false;
-    showToast('Question loaded for editing. Press Ctrl+Enter to send. ✏️', 'info');
+    
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `legal-response-${Date.now()}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    showToast('Response downloaded 📥', 'success');
 };
 
-// Stop streaming function
-function stopStreaming() {
-    stopStreamingRequested = true;
-    isStreamingActive = false;
-    isStreamingPaused = false;
-    
-    const sendButton = document.getElementById('sendButton');
-    const userInput = document.getElementById('userInput');
-    
-    if (sendButton && userInput) {
-        sendButton.disabled = userInput.value.trim() === '' && attachedFiles.length === 0;
-        sendButton.classList.remove('stop-button');
-        sendButton.innerHTML = '<i class="fas fa-paper-plane"></i> <span class="hide-on-mobile">Send</span>';
+// Clear current chat
+function clearCurrentChat() {
+    if (conversationHistory.length === 0) {
+        showToast('Chat is already empty 🗑️', 'warning');
+        return;
     }
     
-    if (currentStreamingMessageId) {
-        const messageDiv = document.getElementById(currentStreamingMessageId);
-        if (messageDiv) {
-            const messageText = messageDiv.querySelector('.message-text');
-            const streamControls = messageDiv.querySelector('.stream-controls');
-            
-            if (streamControls) {
-                streamControls.remove();
-            }
-            
-            const messageActions = document.createElement('div');
-            messageActions.className = 'message-actions';
-            messageActions.innerHTML = `
-                <button class="action-btn copy" onclick="copyMessage(this)" title="Copy response">
-                    <i class="fas fa-copy"></i> Copy
-                </button>
-                <button class="action-btn like" onclick="likeMessage(this)" title="Mark as helpful">
-                    <i class="far fa-thumbs-up"></i> Helpful
-                </button>
-                <button class="action-btn dislike" onclick="dislikeMessage(this)" title="Mark as not helpful">
-                    <i class="far fa-thumbs-down"></i> Not Helpful
-                </button>
-            `;
-            
-            if (messageText && messageText.parentElement) {
-                messageText.parentElement.appendChild(messageActions);
-            }
-            
-            const cursor = messageText ? messageText.querySelector('.streaming-cursor') : null;
-            if (cursor) cursor.remove();
-            
-            const pausedIndicator = messageText ? messageText.querySelector('.paused-indicator') : null;
-            if (pausedIndicator) pausedIndicator.remove();
-            
-            if (messageText) {
-                if (isDocumentRequest(currentStreamingContent)) {
-                    messageText.innerHTML = formatDocumentResponse(currentStreamingContent);
-                } else {
-                    messageText.innerHTML = formatLegalResponse(currentStreamingContent);
-                }
-            }
+    if (confirm('Are you sure you want to clear the current chat?')) {
+        const chatMessages = document.getElementById('chatMessages');
+        if (chatMessages) {
+            chatMessages.innerHTML = '';
         }
-        
-        currentStreamingMessageId = null;
-        currentStreamingContent = '';
-        currentStreamingBuffer = '';
-        streamingTextChunks = [];
-        streamingTextIndex = 0;
+        conversationHistory = [];
+        createNewChat();
+        showToast('Current chat cleared 🗑️', 'success');
     }
-    
-    showToast('Response stopped ⏹️', 'info');
+}
+
+// Create new chat
+function createNewChat() {
+    currentChatId = 'chat_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    conversationHistory = [];
+    const chatMessages = document.getElementById('chatMessages');
+    if (chatMessages) {
+        const welcomeContainer = document.createElement('div');
+        welcomeContainer.innerHTML = WELCOME_MESSAGE_HTML;
+        chatMessages.innerHTML = '';
+        chatMessages.appendChild(welcomeContainer);
+        addDraftTemplateListeners();
+    }
+    showToast('New chat started 💬', 'success');
 }
 
 // Save current chat to history
 function saveCurrentChat() {
     if (!currentChatId || conversationHistory.length === 0) return;
-    const chatIndex = chatHistory.findIndex(chat => chat.id === currentChatId);
+    
     let title = 'New Chat';
     let preview = 'No messages yet';
+    
     if (conversationHistory.length > 0) {
         const firstUserMessage = conversationHistory.find(msg => msg.role === 'user');
         if (firstUserMessage) {
@@ -5642,510 +4965,219 @@ function saveCurrentChat() {
             }
         }
     }
+    
     const chatData = {
         id: currentChatId,
         title: title,
         preview: preview,
         date: new Date().toISOString(),
-        messages: [...conversationHistory]
+        messages: [...conversationHistory],
+        userId: currentUser ? currentUser.id : 'guest'
     };
+    
+    // Remove existing chat with same ID
+    const chatIndex = chatHistory.findIndex(chat => chat.id === currentChatId);
     if (chatIndex !== -1) {
         chatHistory[chatIndex] = chatData;
     } else {
         chatHistory.unshift(chatData);
     }
+    
     saveUserChatHistory();
 }
 
-// Clear current chat
-function clearCurrentChat() {
-    if (conversationHistory.length === 0 && attachedFiles.length === 0) {
-        showToast('Chat is already empty 🗑️', 'warning');
-        return;
-    }
-    if (confirm('Are you sure you want to clear the current chat?')) {
-        const chatMessages = document.getElementById('chatMessages');
-        chatMessages.innerHTML = '';
-        conversationHistory = [];
-        clearAttachments();
-        createNewChat();
-        showToast('Current chat cleared 🗑️', 'success');
-    }
-}
-
-// Show suggestions
-function showSuggestions() {
-    const suggestions = [
-        "Create a non-disclosure agreement draft 📝",
-        "I need an employment contract template 💼",
-        "Generate a rental agreement for me 🏠",
-        "Draft a loan agreement document 💰",
-        "What are the essential elements of a valid contract? ⚖️"
-    ];
-    addMessageToChat(
-        `<h3>Suggested Questions:</h3>
-        <ul>
-            ${suggestions.map(q => `<li style="cursor: pointer; padding: 6px; border-radius: 6px; transition: background 0.3s;" 
-                onmouseover="this.style.background='var(--dark-surface-light)'" 
-                onmouseout="this.style.background='transparent'"
-                onclick="document.getElementById('userInput').value = '${q}'; document.getElementById('userInput').focus(); document.getElementById('userInput').style.height = Math.min(document.getElementById('userInput').scrollHeight, 180) + 'px'; document.getElementById('sendButton').disabled = false;">
-                ${q}
-            </li>`).join('')}
-        </ul>
-        <p>Click any question to add it to the input field. 👆</p>`,
-        false
-    );
-}
-
-// Scroll to bottom function
-function scrollToBottom() {
-    const chatMessages = document.getElementById('chatMessages');
-    if (chatMessages) {
-        chatMessages.scrollTo({
-            top: chatMessages.scrollHeight,
-            behavior: 'smooth'
-        });
-        document.getElementById('scrollToBottomBtn').classList.remove('visible');
-    }
-}
-
-// Add copy and edit buttons to user messages
-function addCopyEditButtonsToUserMessages() {
-    const userMessages = document.querySelectorAll('.user-message:not(.from-history) .message-content');
-    userMessages.forEach((messageContent, index) => {
-        if (!messageContent.querySelector('.user-message-controls')) {
-            const messageDiv = messageContent.closest('.message');
-            const messageId = messageDiv.id;
-            const messageText = messageContent.querySelector('.message-text');
-            if (messageText && messageText.textContent.trim()) {
-                const controlsContainer = document.createElement('div');
-                controlsContainer.className = 'user-message-controls';
-                const copyBtn = document.createElement('button');
-                copyBtn.className = 'user-message-btn copy-btn';
-                copyBtn.title = 'Copy question';
-                copyBtn.innerHTML = '<i class="fas fa-copy"></i><span class="hide-on-mobile">Copy</span>';
-                copyBtn.addEventListener('click', () => copyUserMessage(messageId));
-                const editBtn = document.createElement('button');
-                editBtn.className = 'user-message-btn edit-btn';
-                editBtn.title = 'Edit question';
-                editBtn.innerHTML = '<i class="fas fa-pencil-alt"></i><span class="hide-on-mobile">Edit</span>';
-                editBtn.addEventListener('click', () => editUserMessage(messageId));
-                controlsContainer.appendChild(copyBtn);
-                controlsContainer.appendChild(editBtn);
-                messageContent.appendChild(controlsContainer);
-            }
-        }
+// Download chat
+function downloadChat(format) {
+    let content = '';
+    conversationHistory.forEach((msg, index) => {
+        const role = msg.role === 'user' ? 'You' : 'LegalSwami';
+        const time = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString() : new Date().toLocaleTimeString();
+        content += `${role} (${time}):\n${msg.content}\n\n`;
     });
+    
+    const fileName = `LegalSwami-Chat-${formatDateForFilename(new Date())}`;
+    
+    if (format === 'txt') {
+        const blob = new Blob([content], { type: 'text/plain' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `${fileName}.txt`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast('Chat downloaded 📥', 'success');
+    }
 }
 
+// Format date for filename
+function formatDateForFilename(date) {
+    return date.toISOString()
+        .replace(/[:\-]/g, '')
+        .replace('T', '_')
+        .split('.')[0];
+}
+
+// Load theme preference
 function loadThemePreference() {
     const savedTheme = localStorage.getItem('legalSwamiTheme');
     if (savedTheme === 'light') {
         document.body.classList.add('light-mode');
-        document.querySelector('.theme-toggle i').className = 'fas fa-moon';
+        const themeIcon = document.querySelector('.theme-toggle i');
+        if (themeIcon) {
+            themeIcon.className = 'fas fa-moon';
+        }
         isLightMode = true;
     }
 }
 
+// Toggle theme
 function toggleTheme() {
     const themeIcon = document.querySelector('.theme-toggle i');
     if (isLightMode) {
         document.body.classList.remove('light-mode');
-        themeIcon.className = 'fas fa-sun';
+        if (themeIcon) {
+            themeIcon.className = 'fas fa-sun';
+        }
         localStorage.setItem('legalSwamiTheme', 'dark');
         isLightMode = false;
     } else {
         document.body.classList.add('light-mode');
-        themeIcon.className = 'fas fa-moon';
+        if (themeIcon) {
+            themeIcon.className = 'fas fa-moon';
+        }
         localStorage.setItem('legalSwamiTheme', 'light');
         isLightMode = true;
     }
 }
 
-function createNewChat() {
-    currentChatId = 'chat_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-    conversationHistory = [];
-    const chatMessages = document.getElementById('chatMessages');
-    const welcomeContainer = document.createElement('div');
-    welcomeContainer.innerHTML = WELCOME_MESSAGE_HTML;
-    chatMessages.innerHTML = '';
-    chatMessages.appendChild(welcomeContainer);
-    addDraftTemplateListeners();
-    clearAttachments();
-    loadHistoryList();
-    showToast('New chat started 💬', 'success');
-}
-
-function toggleVoiceRecognition() {
-    if (!recognition) return;
-    if (isListening && !isInputMicrophoneActive) {
-        recognition.stop();
-    } else {
-        isInputMicrophoneActive = false;
-        recognition.start();
-    }
-}
-
-function toggleInputVoiceRecognition() {
-    if (!recognition) return;
-    if (isListening && isInputMicrophoneActive) {
-        recognition.stop();
-    } else {
-        isInputMicrophoneActive = true;
-        recognition.start();
-    }
-}
-
-function adjustChatLayout() {
-    const chatMessages = document.getElementById('chatMessages');
-    if (chatMessages) {
-        setTimeout(() => {
-            chatMessages.scrollTop = chatMessages.scrollHeight;
-        }, 100);
-    }
-}
-
-function clearAttachments() {
-    attachedFiles = [];
-    const preview = document.getElementById('attachmentsPreview');
-    if (preview) {
-        preview.innerHTML = '';
-        preview.style.display = 'none';
-    }
-}
-
-function openFileUploadModal() {
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.multiple = true;
-    fileInput.accept = 'image/*,.pdf,.txt,.doc,.docx';
-    fileInput.onchange = function(e) {
-        handleFileSelection(e.target.files);
-    };
-    fileInput.click();
-}
-
-function handleFileSelection(files) {
-    for (let i = 0; i < files.length; i++) {
-        const file = files[i];
-        if (file.type.startsWith('image/') || 
-            file.type === 'application/pdf' || 
-            file.type === 'text/plain' ||
-            file.type.includes('document') ||
-            file.name.endsWith('.txt') ||
-            file.name.endsWith('.pdf') ||
-            file.name.endsWith('.doc') ||
-            file.name.endsWith('.docx')) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                attachedFiles.push({
-                    name: file.name,
-                    data: e.target.result,
-                    type: file.type,
-                    file: file,
-                    size: file.size
-                });
-                updateAttachmentsPreview();
-                showToast(`${file.name} attached 📎`, 'success');
-            };
-            reader.readAsDataURL(file);
-        } else {
-            showToast(`File type not supported: ${file.name} ❌`, 'warning');
-        }
-    }
-}
-
-function updateAttachmentsPreview() {
-    const preview = document.getElementById('attachmentsPreview');
-    preview.innerHTML = '';
-    attachedFiles.forEach((file, index) => {
-        const item = document.createElement('div');
-        item.className = 'attachment-preview-item';
-        if (file.type.startsWith('image/')) {
-            item.innerHTML = `
-                <img src="${file.data}" alt="${file.name}" class="attachment-preview-image">
-                <button class="remove-attachment" onclick="removeAttachment(${index})">
-                    <i class="fas fa-times"></i>
-                </button>
-                <div class="attachment-preview-name">${file.name}</div>
-            `;
-        } else if (file.type === 'application/pdf' || file.name.endsWith('.pdf')) {
-            item.innerHTML = `
-                <div style="padding: 8px; text-align: center; background: var(--dark-surface-light); height: 70px; width: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                    <i class="fas fa-file-pdf" style="font-size: 1.3rem; color: var(--error);"></i>
-                    <div style="font-size: 0.55rem; color: var(--dark-text-secondary); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">PDF</div>
-                </div>
-                <button class="remove-attachment" onclick="removeAttachment(${index})" style="top: 2px; right: 2px;">
-                    <i class="fas fa-times"></i>
-                </button>
-                <div class="attachment-preview-name">${file.name.substring(0, 12)}${file.name.length > 12 ? '...' : ''}</div>
-            `;
-        } else if (file.type === 'text/plain' || file.name.endsWith('.txt')) {
-            item.innerHTML = `
-                <div style="padding: 8px; text-align: center; background: var(--dark-surface-light); height: 70px; width: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                    <i class="fas fa-file-alt" style="font-size: 1.3rem; color: var(--primary);"></i>
-                    <div style="font-size: 0.55rem; color: var(--dark-text-secondary); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">TXT</div>
-                </div>
-                <button class="remove-attachment" onclick="removeAttachment(${index})" style="top: 2px; right: 2px;">
-                    <i class="fas fa-times"></i>
-                </button>
-                <div class="attachment-preview-name">${file.name.substring(0, 12)}${file.name.length > 12 ? '...' : ''}</div>
-            `;
-        } else {
-            item.innerHTML = `
-                <div style="padding: 8px; text-align: center; background: var(--dark-surface-light); height: 70px; width: 70px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
-                    <i class="fas fa-file" style="font-size: 1.3rem; color: var(--dark-text-secondary);"></i>
-                    <div style="font-size: 0.55rem; color: var(--dark-text-secondary); margin-top: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; width: 100%;">DOC</div>
-                </div>
-                <button class="remove-attachment" onclick="removeAttachment(${index})" style="top: 2px; right: 2px;">
-                    <i class="fas fa-times"></i>
-                </button>
-                <div class="attachment-preview-name">${file.name.substring(0, 12)}${file.name.length > 12 ? '...' : ''}</div>
-            `;
-        }
-        preview.appendChild(item);
-    });
-    preview.style.display = 'flex';
-    document.getElementById('sendButton').disabled = false;
-}
-
-window.removeAttachment = function(index) {
-    attachedFiles.splice(index, 1);
-    const preview = document.getElementById('attachmentsPreview');
-    preview.innerHTML = '';
-    if (attachedFiles.length === 0) {
-        preview.style.display = 'none';
-        document.getElementById('sendButton').disabled = document.getElementById('userInput').value.trim() === '';
-    } else {
-        updateAttachmentsPreview();
-    }
-};
-
-// Load history list
-function loadHistoryList() {
-    const historyList = document.getElementById('historyList');
-    if (!historyList) return;
-    if (chatHistory.length === 0) {
-        historyList.innerHTML = `
-            <div class="empty-history">
-                <i class="fas fa-comments"></i>
-                <p>No chat history yet</p>
-                <p style="font-size: 0.75rem; margin-top: 0.4rem;">Start a conversation to see it here</p>
-            </div>
-        `;
-        return;
-    }
-    let html = '';
-    chatHistory.forEach(chat => {
-        const isActive = chat.id === currentChatId;
-        const date = new Date(chat.date);
-        const formattedDate = date.toLocaleDateString() + ' ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-        html += `
-            <div class="history-item ${isActive ? 'active' : ''}" data-chat-id="${chat.id}">
-                <div class="history-title">${chat.title}</div>
-                <div class="history-preview">${chat.preview}</div>
-                <div class="history-date">${formattedDate}</div>
-                <div class="history-item-actions">
-                    <button class="history-item-btn delete" onclick="confirmDeleteChat('${chat.id}')" title="Delete chat">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-            </div>
-        `;
-    });
-    historyList.innerHTML = html;
-    document.querySelectorAll('.history-item').forEach(item => {
-        item.addEventListener('click', function(e) {
-            if (!e.target.closest('.history-item-actions')) {
-                const chatId = this.dataset.chatId;
-                loadChatFromHistory(chatId);
-            }
-        });
-    });
-}
-
-function loadChatFromHistory(chatId) {
-    const chat = chatHistory.find(c => c.id === chatId);
-    if (!chat) return;
-    currentChatId = chatId;
-    conversationHistory = [...chat.messages];
-    const chatMessages = document.getElementById('chatMessages');
-    chatMessages.innerHTML = '';
-    chat.messages.forEach(msg => {
-        const isDocument = msg.isDocument || false;
-        addMessageToChat(msg.content, msg.role === 'user', true, isDocument, msg.attachments || []);
-    });
-    loadHistoryList();
-    if (window.innerWidth < 1024) {
-        document.getElementById('sidebar').classList.remove('active');
-        document.getElementById('sidebarOverlay').classList.remove('active');
-        document.body.style.overflow = '';
-    }
-    showToast('Chat loaded from history 📚', 'success');
-}
-
-window.confirmDeleteChat = function(chatId) {
-    const chat = chatHistory.find(c => c.id === chatId);
-    if (!chat) return;
-    if (confirm(`Delete "${chat.title}"?`)) {
-        const chatIndex = chatHistory.findIndex(chat => chat.id === chatId);
-        if (chatIndex !== -1) {
-            if (currentChatId === chatId) {
-                createNewChat();
-            }
-            chatHistory.splice(chatIndex, 1);
-            saveUserChatHistory();
-            loadHistoryList();
-            showToast('Chat deleted successfully 🗑️', 'success');
-        }
-    }
-};
-
-function downloadChat(format) {
-    let content = `LegalSwami Chat History\n`;
-    content += `Date: ${new Date().toLocaleString()}\n\n`;
-    content += '='.repeat(50) + '\n\n';
-    conversationHistory.forEach((msg, index) => {
-        const role = msg.role === 'user' ? 'You' : 'LegalSwami';
-        const time = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString() : new Date().toLocaleTimeString();
-        content += `${role} (${time}):\n`;
-        content += msg.content + '\n\n';
-        content += '-'.repeat(30) + '\n\n';
-    });
-    const blob = new Blob([content], { type: 'text/plain' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `legalswami-chat-${currentChatId}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    showToast('Chat history downloaded 📥', 'success');
-}
-
 // Show toast notification
 function showToast(message, type = 'success') {
-    const toast = document.getElementById('toast');
-    const toastMessage = document.getElementById('toast-message');
+    // Create toast element if it doesn't exist
+    let toast = document.getElementById('toast');
+    if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'toast';
+        toast.className = 'toast';
+        document.body.appendChild(toast);
+    }
+    
+    const toastMessage = document.createElement('div');
+    toastMessage.id = 'toast-message';
     toastMessage.textContent = message;
+    
+    toast.innerHTML = '';
+    toast.appendChild(toastMessage);
     toast.className = `toast ${type} show`;
+    
     setTimeout(() => {
         toast.classList.remove('show');
     }, 3000);
 }
 
-// Document template generator
-function generateDocumentTemplate(query) {
-    const templates = {
-        nda: `NON-DISCLOSURE AGREEMENT
-
-This Non-Disclosure Agreement is entered into on [DATE]
-
-BETWEEN:
-Party A: [NAME]
-Party B: [NAME]
-
-1. CONFIDENTIAL INFORMATION
-   - All information disclosed shall remain confidential
-   
-2. OBLIGATIONS
-   - Not to disclose to third parties
-   - Use only for stated purposes
-
-3. TERM
-   - Valid for [X] years
-
-___________________                    ___________________
-Party A Signature                      Party B Signature
-
-Disclaimer: Template for reference only. Consult a lawyer. ⚖️`,
-        
-        rental: `RENTAL AGREEMENT
-
-Date: [DATE]
-
-LANDLORD: [NAME]
-TENANT: [NAME]
-PROPERTY: [ADDRESS]
-
-TERMS:
-- Monthly Rent: ₹[AMOUNT]
-- Security Deposit: ₹[AMOUNT]
-- Duration: [X] months
-
-___________________                    ___________________
-Landlord                               Tenant
-
-Disclaimer: Get this reviewed by a lawyer before signing. ⚖️`,
-        
-        default: `LEGAL DOCUMENT TEMPLATE
-
-[TITLE]
-
-PARTIES:
-1. [NAME]
-2. [NAME]
-
-TERMS:
-1. [TERM 1]
-2. [TERM 2]
-
-___________________
-Signatures
-
-Disclaimer: Consult a qualified attorney before use. ⚖️`
-    };
-    
-    if (query.toLowerCase().includes('nda')) return templates.nda;
-    if (query.toLowerCase().includes('rental')) return templates.rental;
-    return templates.default;
-}
-
 // DOM Content Loaded
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 LegalSwami Premium Frontend Initialized');
-     
-    // Hide loading screen
-    setTimeout(function() {
+    
+    try {
+        // Hide loading screen
+        setTimeout(function() {
+            const loadingScreen = document.getElementById('loadingScreen');
+            if (loadingScreen) {
+                loadingScreen.style.opacity = '0';
+                setTimeout(function() {
+                    loadingScreen.style.display = 'none';
+                    console.log('✅ Loading screen hidden');
+                }, 300);
+            }
+        }, 500);
+        
+        // Setup all Start Chat buttons
+        const startChatButtons = [
+            document.getElementById('startChatBtn'),
+            document.getElementById('ctaStartChat'),
+            document.querySelector('.btn-assistant')
+        ];
+        
+        startChatButtons.forEach(btn => {
+            if (btn) {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    showChatGPTInterface();
+                });
+            }
+        });
+        
+        // Setup other button handlers
+        const watchDemoBtn = document.getElementById('watchDemo');
+        if (watchDemoBtn) {
+            watchDemoBtn.addEventListener('click', function() {
+                alert('Demo video feature coming soon! 🎥');
+            });
+        }
+        
+        // Setup mobile menu
+        const mobileToggle = document.getElementById('mobileToggle');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileClose = document.getElementById('mobileClose');
+        
+        if (mobileToggle && mobileMenu) {
+            mobileToggle.addEventListener('click', function() {
+                mobileMenu.style.display = 'block';
+                setTimeout(function() {
+                    mobileMenu.style.opacity = '1';
+                }, 10);
+                document.body.style.overflow = 'hidden';
+            });
+        }
+        
+        if (mobileClose && mobileMenu) {
+            mobileClose.addEventListener('click', function() {
+                mobileMenu.style.opacity = '0';
+                setTimeout(function() {
+                    mobileMenu.style.display = 'none';
+                }, 300);
+                document.body.style.overflow = '';
+            });
+        }
+        
+        // Setup back to top button
+        const backToTopBtn = document.getElementById('backToTop');
+        if (backToTopBtn) {
+            backToTopBtn.addEventListener('click', function() {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            });
+        }
+        
+        // Auto-initialize guest mode
+        setTimeout(function() {
+            if (!isLoggedIn) {
+                console.log("Auto-initializing guest mode...");
+                initializeAppForGuest();
+            }
+        }, 1000);
+        
+        console.log('✅ All initialization complete');
+        
+    } catch (error) {
+        console.error('Fatal initialization error:', error);
+        // Show simple error message
         const loadingScreen = document.getElementById('loadingScreen');
         if (loadingScreen) {
-            loadingScreen.style.opacity = '0';
-            setTimeout(function() {
-                loadingScreen.style.display = 'none';
-                console.log('✅ Loading screen hidden');
-            }, 300);
+            loadingScreen.innerHTML = `
+                <div style="text-align: center; color: white; padding: 2rem;">
+                    <h2>Error Loading App</h2>
+                    <p>Please refresh the page or try again later.</p>
+                    <button onclick="window.location.reload()" style="margin-top: 1rem; padding: 10px 20px; background: #10a37f; color: white; border: none; border-radius: 6px; cursor: pointer;">
+                        Reload Page
+                    </button>
+                </div>
+            `;
         }
-    }, 500);
-    
-    // Setup button click handlers
-    const startChatBtn = document.getElementById('startChatBtn');
-    const heroChatBtn = document.getElementById('heroChatBtn');
-    
-    if (startChatBtn) {
-        startChatBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            console.log("Start Chat button clicked");
-            showChatGPTInterface();
-        });
     }
-    
-    if (heroChatBtn) {
-        heroChatBtn.addEventListener('click', function(e) {
-            e.preventDefault();
-            console.log("Hero Chat button clicked");
-            showChatGPTInterface();
-        });
-    }
-    
-    // Initialize app
-    setTimeout(function() {
-        console.log("Auto-initializing guest mode...");
-        initializeAppForGuest();
-    }, 1000);
-    
-    console.log('✅ All initialization complete');
 });
-    </script>
+</script>
 </body>
 </html>
