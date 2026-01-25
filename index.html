@@ -514,9 +514,10 @@ body.light-mode {
 #chatInterface .main-content {
     display: flex;
     flex: 1;
-    overflow: hidden;
     height: calc(100vh - 70px);
     background: var(--dark-surface);
+    overflow: hidden;
+    position: relative;
 }
 
 /* Chat Sidebar - Case File Style */
@@ -619,6 +620,8 @@ body.light-mode {
     position: relative;
     z-index: 10;
     min-height: 0;
+    /* FIXED: Chat box scrollbar issue */
+    height: calc(100% - 80px); /* Adjust based on input height */
 }
 
 #chatMessages {
@@ -628,6 +631,26 @@ body.light-mode {
     flex-direction: column;
     gap: 1.5rem;
     padding-bottom: 1rem;
+    /* FIXED: Scroll bar visible */
+    max-height: 100%;
+}
+
+/* FIXED: Proper scrollbar for chat */
+#chatMessages::-webkit-scrollbar {
+    width: 8px;
+}
+
+#chatMessages::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+#chatMessages::-webkit-scrollbar-thumb {
+    background: var(--court-gold);
+    border-radius: 4px;
+}
+
+#chatMessages::-webkit-scrollbar-thumb:hover {
+    background: var(--court-maroon);
 }
 
 .message {
@@ -907,6 +930,11 @@ body.light-mode {
     position: relative;
     z-index: 100;
     box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
+    /* FIXED: Input area position */
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
 }
 
 .input-area {
@@ -932,6 +960,9 @@ body.light-mode {
     font-family: inherit;
     outline: none;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    /* FIXED: Visible text */
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
 .input-area textarea:focus {
@@ -3999,7 +4030,7 @@ body.light-mode {
                     <div class="search-container">
                         <i class="fas fa-search"></i>
                         <input type="text" id="lawyerSearch" placeholder="Search by specialization, location, or name...">
-                        <button class="btn-search">
+                        <button class="btn-search" id="lawyerSearchBtn">
                             <i class="fas fa-search"></i>
                             Search
                         </button>
@@ -4017,7 +4048,7 @@ body.light-mode {
                 
                 <div class="lawyers-grid" id="lawyersGrid">
                     <!-- Lawyers will be dynamically loaded here -->
-                    <div class="lawyer-card">
+                    <div class="lawyer-card" data-specialization="criminal">
                         <div class="lawyer-avatar">
                             <i class="fas fa-user-tie"></i>
                         </div>
@@ -4029,7 +4060,7 @@ body.light-mode {
                         </button>
                     </div>
                     
-                    <div class="lawyer-card">
+                    <div class="lawyer-card" data-specialization="corporate">
                         <div class="lawyer-avatar">
                             <i class="fas fa-user-tie"></i>
                         </div>
@@ -4041,7 +4072,7 @@ body.light-mode {
                         </button>
                     </div>
                     
-                    <div class="lawyer-card">
+                    <div class="lawyer-card" data-specialization="family">
                         <div class="lawyer-avatar">
                             <i class="fas fa-user-tie"></i>
                         </div>
@@ -4053,13 +4084,37 @@ body.light-mode {
                         </button>
                     </div>
                     
-                    <div class="lawyer-card">
+                    <div class="lawyer-card" data-specialization="property">
                         <div class="lawyer-avatar">
                             <i class="fas fa-user-tie"></i>
                         </div>
                         <h3 class="lawyer-name">Adv. Neha Singh</h3>
                         <p class="lawyer-specialization">Property Law Expert</p>
                         <p class="lawyer-experience">8+ Years Experience</p>
+                        <button class="btn-consult">
+                            <i class="fas fa-comments"></i> Consult Now
+                        </button>
+                    </div>
+                    
+                    <div class="lawyer-card" data-specialization="civil">
+                        <div class="lawyer-avatar">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <h3 class="lawyer-name">Adv. Vikram Singh</h3>
+                        <p class="lawyer-specialization">Civil Law Expert</p>
+                        <p class="lawyer-experience">14+ Years Experience</p>
+                        <button class="btn-consult">
+                            <i class="fas fa-comments"></i> Consult Now
+                        </button>
+                    </div>
+                    
+                    <div class="lawyer-card" data-specialization="criminal">
+                        <div class="lawyer-avatar">
+                            <i class="fas fa-user-tie"></i>
+                        </div>
+                        <h3 class="lawyer-name">Adv. Sanjay Gupta</h3>
+                        <p class="lawyer-specialization">Criminal Law Expert</p>
+                        <p class="lawyer-experience">18+ Years Experience</p>
                         <button class="btn-consult">
                             <i class="fas fa-comments"></i> Consult Now
                         </button>
@@ -6085,6 +6140,92 @@ function showToast(message, type = 'success') {
 }
 
 // =============================================
+// LAWYER SEARCH & FILTER FUNCTIONS
+// =============================================
+
+function initializeLawyerSearch() {
+    const lawyerSearchInput = document.getElementById('lawyerSearch');
+    const lawyerSearchBtn = document.getElementById('lawyerSearchBtn');
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    const lawyerCards = document.querySelectorAll('.lawyer-card');
+    
+    // Search function
+    function performSearch() {
+        const searchTerm = lawyerSearchInput.value.toLowerCase().trim();
+        const activeFilter = document.querySelector('.filter-btn.active').dataset.specialization;
+        
+        lawyerCards.forEach(card => {
+            const name = card.querySelector('.lawyer-name').textContent.toLowerCase();
+            const specialization = card.querySelector('.lawyer-specialization').textContent.toLowerCase();
+            const experience = card.querySelector('.lawyer-experience').textContent.toLowerCase();
+            const cardSpecialization = card.dataset.specialization;
+            
+            // Check if matches search term
+            const matchesSearch = searchTerm === '' || 
+                                   name.includes(searchTerm) || 
+                                   specialization.includes(searchTerm) || 
+                                   experience.includes(searchTerm);
+            
+            // Check if matches filter
+            const matchesFilter = activeFilter === 'all' || 
+                                   cardSpecialization === activeFilter;
+            
+            // Show/hide based on both conditions
+            if (matchesSearch && matchesFilter) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+        
+        if (searchTerm !== '') {
+            showToast(`Search results for: "${searchTerm}" 🔍`, 'info');
+        }
+    }
+    
+    // Event listeners
+    if (lawyerSearchBtn) {
+        lawyerSearchBtn.addEventListener('click', performSearch);
+    }
+    
+    if (lawyerSearchInput) {
+        lawyerSearchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                performSearch();
+            }
+        });
+        
+        // Clear search on input
+        lawyerSearchInput.addEventListener('input', function() {
+            if (this.value === '') {
+                performSearch();
+            }
+        });
+    }
+    
+    // Filter buttons
+    filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+            // Remove active class from all buttons
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            
+            // Add active class to clicked button
+            this.classList.add('active');
+            
+            // Perform search with new filter
+            performSearch();
+            
+            // Show toast notification
+            const specialization = this.dataset.specialization;
+            const filterName = this.textContent;
+            showToast(`Filtering by: ${filterName} 👨‍⚖️`, 'info');
+        });
+    });
+    
+    console.log("✅ Lawyer search and filter initialized");
+}
+
+// =============================================
 // EVENT LISTENERS SETUP
 // =============================================
 
@@ -6179,6 +6320,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize app for guest
     setTimeout(() => {
         initializeAppForGuest();
+        initializeLawyerSearch(); // Initialize lawyer search
         
         // Hide loading screen
         const loadingScreen = document.getElementById('loadingScreen');
@@ -6283,37 +6425,6 @@ document.addEventListener('DOMContentLoaded', function() {
             sidebar.classList.remove('active');
         }
     });
-
-    // Initialize filter buttons
-    document.querySelectorAll('.filter-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            document.querySelectorAll('.filter-btn').forEach(btn => btn.classList.remove('active'));
-            this.classList.add('active');
-            
-            const specialization = this.dataset.specialization;
-            showToast(`Filtering lawyers by: ${this.textContent} 👨‍⚖️`, 'info');
-        });
-    });
-
-    // Search functionality
-    const lawyerSearch = document.getElementById('lawyerSearch');
-    const btnSearch = document.querySelector('.btn-search');
-    
-    if (lawyerSearch && btnSearch) {
-        const performSearch = () => {
-            const query = lawyerSearch.value.trim();
-            if (query) {
-                showToast(`Searching for: "${query}" 🔍`, 'info');
-            }
-        };
-        
-        btnSearch.addEventListener('click', performSearch);
-        lawyerSearch.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                performSearch();
-            }
-        });
-    }
 
     // Typing dots animation
     const style = document.createElement('style');
