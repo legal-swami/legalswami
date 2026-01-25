@@ -127,17 +127,17 @@ body.light-mode {
     height: 100vh;
     background: var(--dark-bg);
     z-index: 999999;
-    display: block;
+    display: none;
     flex-direction: column;
     opacity: 0;
-    transition: opacity 0.3s ease;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s;
 }
 
 #chatInterface.active {
     display: flex !important;
     visibility: visible !important;
     opacity: 1 !important;
-    z-index: 999999 !important;
 }
 
 /* When chat is active, hide main content */
@@ -145,8 +145,10 @@ body.chat-active .main-container {
     display: none !important;
 }
 
-body:not(.chat-active) .main-container {
-    display: block !important;
+body.chat-active #chatInterface {
+    display: flex !important;
+    opacity: 1 !important;
+    visibility: visible !important;
 }
 
 /* Force chat container to be visible */
@@ -164,17 +166,6 @@ body:not(.chat-active) .main-container {
     height: 100%;
     width: 100%;
     background: var(--dark-bg);
-}
-
-/* EMERGENCY FIX - OVERRIDE ALL CONFLICTS */
-body.chat-active #chatInterface {
-    display: flex !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-}
-
-body:not(.chat-active) #chatInterface {
-    display: none !important;
 }
 
 /* Chat Header */
@@ -1215,7 +1206,6 @@ body:not(.chat-active) #chatInterface {
     cursor: pointer;
     display: flex;
     align-items: center;
-    justify-content: center;
     gap: 8px;
     width: 100%;
     transition: all 0.2s;
@@ -4375,6 +4365,8 @@ function closeChat() {
     if (chatInterface) {
         chatInterface.classList.remove('active');
         chatInterface.style.display = 'none';
+        chatInterface.style.visibility = 'hidden';
+        chatInterface.style.opacity = '0';
     }
     
     // Show main content
