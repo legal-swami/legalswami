@@ -27,8 +27,8 @@
     <!-- Open Graph / Social Media -->
     <meta property="og:title" content="LegalSwami - AI Legal Assistant">
     <meta property="og:description" content="Get instant legal advice, generate documents, and understand laws with AI">
-	
-	<!-- Google Client ID -->
+    
+    <!-- Google Client ID -->
     <meta name="google-client-id" 
           content="166511615962-bohur5q8d4i5hud6icr4185kcte9enk8.apps.googleusercontent.com">
     
@@ -299,6 +299,34 @@ body.light-mode {
     display: flex;
     gap: 12px;
     align-items: center;
+}
+
+/* Google Login Button */
+.google-login-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: white;
+    color: #5f6368;
+    border: 1px solid #dadce0;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    text-decoration: none;
+}
+
+.google-login-btn:hover {
+    background: #f8f9fa;
+    box-shadow: 0 1px 3px rgba(60,64,67,0.3);
+    transform: translateY(-1px);
+}
+
+.google-login-btn i {
+    color: #4285f4;
+    font-size: 1rem;
 }
 
 .mobile-toggle {
@@ -624,8 +652,7 @@ body.light-mode {
     position: relative;
     z-index: 10;
     min-height: 0;
-    /* FIXED: Chat box scrollbar issue */
-    height: calc(100% - 80px); /* Adjust based on input height */
+    height: calc(100% - 80px);
 }
 
 #chatMessages {
@@ -634,27 +661,35 @@ body.light-mode {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
+    padding-right: 15px; /* Space for scrollbar */
     padding-bottom: 1rem;
-    /* FIXED: Scroll bar visible */
     max-height: 100%;
+    /* FIXED: Scrollbar starts from right side */
+    scrollbar-gutter: stable;
 }
 
-/* FIXED: Proper scrollbar for chat */
+/* FIXED: Proper scrollbar for chat - positioned on right side */
 #chatMessages::-webkit-scrollbar {
     width: 8px;
+    position: absolute;
+    right: 0;
 }
 
 #chatMessages::-webkit-scrollbar-track {
     background: transparent;
+    margin: 10px 0;
 }
 
 #chatMessages::-webkit-scrollbar-thumb {
     background: var(--court-gold);
     border-radius: 4px;
+    border: 2px solid transparent;
+    background-clip: content-box;
 }
 
 #chatMessages::-webkit-scrollbar-thumb:hover {
     background: var(--court-maroon);
+    background-clip: content-box;
 }
 
 .message {
@@ -934,7 +969,6 @@ body.light-mode {
     position: relative;
     z-index: 100;
     box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
-    /* FIXED: Input area position */
     position: absolute;
     bottom: 0;
     left: 0;
@@ -964,7 +998,6 @@ body.light-mode {
     font-family: inherit;
     outline: none;
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    /* FIXED: Visible text */
     opacity: 1 !important;
     visibility: visible !important;
 }
@@ -3583,6 +3616,12 @@ body.light-mode {
 
                 <!-- User Actions -->
                 <div class="nav-actions">
+                    <!-- ADDED: Google Login Button -->
+                    <a href="#" class="google-login-btn" id="googleLoginBtn">
+                        <i class="fab fa-google"></i>
+                        <span>Sign in with Google</span>
+                    </a>
+                    
                     <!-- Mobile Menu Toggle -->
                     <button class="mobile-toggle" id="mobileToggle">
                         <i class="fas fa-bars"></i>
@@ -4729,8 +4768,8 @@ body.light-mode {
             <i class="fas fa-chevron-up"></i>
         </button>
     </div>
-	
-	<!-- Google Identity Services -->
+    
+    <!-- Google Identity Services -->
     <script src="https://accounts.google.com/gsi/client" async defer></script>
 
     <!-- Main App Script -->
@@ -6147,6 +6186,214 @@ function showToast(message, type = 'success') {
 }
 
 // =============================================
+// GOOGLE LOGIN FUNCTIONALITY
+// =============================================
+
+function initializeGoogleLogin() {
+    const googleLoginBtn = document.getElementById('googleLoginBtn');
+    
+    if (googleLoginBtn) {
+        googleLoginBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Google OAuth configuration
+            const clientId = '166511615962-bohur5q8d4i5hud6icr4185kcte9enk8.apps.googleusercontent.com';
+            const redirectUri = window.location.origin + window.location.pathname;
+            const scope = 'email profile';
+            const state = 'legal_swami_login_' + Date.now();
+            
+            // Build OAuth URL
+            const oauthUrl = 'https://accounts.google.com/o/oauth2/v2/auth?' +
+                'client_id=' + encodeURIComponent(clientId) +
+                '&redirect_uri=' + encodeURIComponent(redirectUri) +
+                '&response_type=token' +
+                '&scope=' + encodeURIComponent(scope) +
+                '&state=' + encodeURIComponent(state) +
+                '&prompt=select_account';
+            
+            // Open Google login in new window
+            const width = 500;
+            const height = 600;
+            const left = (window.innerWidth - width) / 2;
+            const top = (window.innerHeight - height) / 2;
+            
+            const loginWindow = window.open(
+                oauthUrl,
+                'Google Login',
+                `width=${width},height=${height},top=${top},left=${left},resizable=yes,scrollbars=yes`
+            );
+            
+            if (!loginWindow) {
+                showToast('Please allow popups for Google login', 'warning');
+                return;
+            }
+            
+            // Check for OAuth response
+            const checkOAuthResponse = setInterval(() => {
+                try {
+                    if (loginWindow.closed) {
+                        clearInterval(checkOAuthResponse);
+                        showToast('Login window closed', 'info');
+                        return;
+                    }
+                    
+                    // Check if URL contains access token
+                    const hash = loginWindow.location.hash;
+                    if (hash && hash.includes('access_token')) {
+                        clearInterval(checkOAuthResponse);
+                        
+                        // Parse access token from hash
+                        const params = new URLSearchParams(hash.substring(1));
+                        const accessToken = params.get('access_token');
+                        
+                        if (accessToken) {
+                            // Get user info from Google API
+                            fetch('https://www.googleapis.com/oauth2/v3/userinfo', {
+                                headers: {
+                                    'Authorization': `Bearer ${accessToken}`
+                                }
+                            })
+                            .then(response => response.json())
+                            .then(userInfo => {
+                                // Store user info
+                                localStorage.setItem('legalSwamiUser', JSON.stringify({
+                                    name: userInfo.name,
+                                    email: userInfo.email,
+                                    picture: userInfo.picture,
+                                    loggedIn: true,
+                                    loginTime: new Date().toISOString()
+                                }));
+                                
+                                // Update UI
+                                updateLoginUI(userInfo);
+                                showToast(`Welcome ${userInfo.name}! Successfully logged in. 👋`, 'success');
+                                
+                                // Close login window
+                                loginWindow.close();
+                            })
+                            .catch(error => {
+                                console.error('Error fetching user info:', error);
+                                showToast('Error fetching user information', 'error');
+                            });
+                        }
+                    }
+                } catch (error) {
+                    // Cross-origin errors are expected, ignore them
+                }
+            }, 100);
+            
+            // Timeout after 2 minutes
+            setTimeout(() => {
+                clearInterval(checkOAuthResponse);
+                if (!loginWindow.closed) {
+                    loginWindow.close();
+                    showToast('Login timeout. Please try again.', 'warning');
+                }
+            }, 120000);
+        });
+    }
+    
+    // Check for existing login
+    const savedUser = localStorage.getItem('legalSwamiUser');
+    if (savedUser) {
+        try {
+            const userInfo = JSON.parse(savedUser);
+            if (userInfo.loggedIn) {
+                updateLoginUI(userInfo);
+            }
+        } catch (error) {
+            console.error('Error parsing saved user:', error);
+        }
+    }
+}
+
+function updateLoginUI(userInfo) {
+    const googleLoginBtn = document.getElementById('googleLoginBtn');
+    if (!googleLoginBtn || !userInfo) return;
+    
+    // Update button to show user info
+    googleLoginBtn.innerHTML = `
+        <img src="${userInfo.picture || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(userInfo.name) + '&background=random'}" 
+             style="width: 20px; height: 20px; border-radius: 50%; margin-right: 8px;">
+        <span>${userInfo.name.split(' ')[0]}</span>
+    `;
+    
+    // Update tooltip
+    googleLoginBtn.title = `Logged in as ${userInfo.name}\n${userInfo.email}`;
+    
+    // Change click behavior to show profile menu
+    googleLoginBtn.onclick = function(e) {
+        e.preventDefault();
+        showProfileMenu(userInfo);
+    };
+}
+
+function showProfileMenu(userInfo) {
+    // Create profile menu
+    const profileMenu = document.createElement('div');
+    profileMenu.className = 'profile-menu';
+    profileMenu.style.cssText = `
+        position: absolute;
+        top: 60px;
+        right: 20px;
+        background: var(--dark-surface);
+        border: 2px solid var(--court-gold);
+        border-radius: 12px;
+        padding: 1rem;
+        min-width: 200px;
+        z-index: 1000;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        backdrop-filter: blur(10px);
+    `;
+    
+    profileMenu.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 1rem; padding-bottom: 1rem; border-bottom: 1px solid rgba(255,255,255,0.1);">
+            <img src="${userInfo.picture || 'https://ui-avatars.com/api/?name=' + encodeURIComponent(userInfo.name) + '&background=random'}" 
+                 style="width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--court-gold);">
+            <div>
+                <div style="font-weight: 600; color: var(--dark-text);">${userInfo.name}</div>
+                <div style="font-size: 0.75rem; color: var(--dark-text-secondary);">${userInfo.email}</div>
+            </div>
+        </div>
+        <button class="profile-menu-btn" style="display: flex; align-items: center; gap: 10px; width: 100%; padding: 0.75rem; background: rgba(30, 64, 175, 0.1); border: 1px solid rgba(30, 64, 175, 0.2); border-radius: 8px; color: var(--dark-text); cursor: pointer; transition: all 0.3s; margin-bottom: 0.5rem;" onmouseover="this.style.background='rgba(30, 64, 175, 0.2)'; this.style.transform='translateX(5px)'" onmouseout="this.style.background='rgba(30, 64, 175, 0.1)'; this.style.transform='translateX(0)'">
+            <i class="fas fa-user"></i>
+            <span>My Profile</span>
+        </button>
+        <button class="profile-menu-btn" style="display: flex; align-items: center; gap: 10px; width: 100%; padding: 0.75rem; background: rgba(30, 64, 175, 0.1); border: 1px solid rgba(30, 64, 175, 0.2); border-radius: 8px; color: var(--dark-text); cursor: pointer; transition: all 0.3s; margin-bottom: 0.5rem;" onmouseover="this.style.background='rgba(30, 64, 175, 0.2)'; this.style.transform='translateX(5px)'" onmouseout="this.style.background='rgba(30, 64, 175, 0.1)'; this.style.transform='translateX(0)'">
+            <i class="fas fa-history"></i>
+            <span>Chat History</span>
+        </button>
+        <button class="profile-menu-btn" style="display: flex; align-items: center; gap: 10px; width: 100%; padding: 0.75rem; background: rgba(212, 175, 55, 0.1); border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 8px; color: var(--dark-text); cursor: pointer; transition: all 0.3s;" id="logoutBtn">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Logout</span>
+        </button>
+    `;
+    
+    document.body.appendChild(profileMenu);
+    
+    // Add logout functionality
+    const logoutBtn = document.getElementById('logoutBtn');
+    if (logoutBtn) {
+        logoutBtn.onclick = function() {
+            localStorage.removeItem('legalSwamiUser');
+            location.reload(); // Reload to reset UI
+        };
+    }
+    
+    // Close menu when clicking outside
+    const closeMenu = function(e) {
+        if (!profileMenu.contains(e.target) && e.target.id !== 'googleLoginBtn') {
+            profileMenu.remove();
+            document.removeEventListener('click', closeMenu);
+        }
+    };
+    
+    setTimeout(() => {
+        document.addEventListener('click', closeMenu);
+    }, 100);
+}
+
+// =============================================
 // LAWYER SEARCH & FILTER FUNCTIONS
 // =============================================
 
@@ -6238,6 +6485,9 @@ function initializeLawyerSearch() {
 
 document.addEventListener('DOMContentLoaded', function() {
     console.log('🚀 LegalSwami AI Legal Assistant Initialized');
+    
+    // Initialize Google Login
+    initializeGoogleLogin();
     
     // Start chat buttons
     const startChatBtn = document.getElementById('startChatBtn');
