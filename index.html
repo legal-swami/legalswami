@@ -1247,48 +1247,26 @@ body {
 }
 
 /* ============================================= */
-/* FIXED: LEGAL TOPICS & HISTORY - Proper CSS */
+/* LEGAL TOPICS & HISTORY */
 /* ============================================= */
 
 #legal-topics-content {
     padding: 1.5rem;
     overflow-y: auto;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
 }
 
 #legal-topics-content .sidebar-header {
     padding: 0 0 1.5rem 0;
     margin-bottom: 1.5rem;
-    border-bottom: 1px solid var(--court-gold);
-    flex-shrink: 0;
+    border-bottom: 1px solid var(--dark-border);
 }
 
 #legal-topics-content .sidebar-header h2 {
     display: flex;
     align-items: center;
     gap: 10px;
-    font-size: 1.25rem;
+    font-size: 1.125rem;
     color: var(--court-gold);
-    margin: 0;
-}
-
-#legal-topics-content .sidebar-section {
-    flex: 1;
-    overflow-y: auto;
-    padding-right: 5px;
-}
-
-#legal-topics-content .sidebar-section h3 {
-    font-size: 1rem;
-    color: var(--dark-text);
-    margin-bottom: 1rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--dark-border);
-    display: flex;
-    align-items: center;
-    gap: 8px;
 }
 
 .topic-list {
@@ -1325,7 +1303,6 @@ body {
     color: var(--court-gold);
     width: 24px;
     font-size: 1rem;
-    flex-shrink: 0;
 }
 
 .topic-item .topic-badge {
@@ -1336,65 +1313,14 @@ body {
     border-radius: 4px;
     font-size: 0.75rem;
     font-weight: 600;
-    flex-shrink: 0;
 }
 
 /* History List */
-#chat-history-content {
-    padding: 0;
-    height: 100%;
-    display: flex;
-    flex-direction: column;
-}
-
-.history-header {
-    padding: 1.5rem;
-    border-bottom: 1px solid var(--court-gold);
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 1rem;
-    flex-shrink: 0;
-}
-
-.history-header h2 {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 1.25rem;
-    color: var(--court-gold);
-    margin: 0;
-}
-
-.new-chat-btn {
-    background: linear-gradient(135deg, var(--court-gold) 0%, var(--court-maroon) 100%);
-    color: white;
-    border: none;
-    border-radius: 8px;
-    padding: 8px 16px;
-    font-size: 0.875rem;
-    font-weight: 500;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    transition: all 0.3s;
-    white-space: nowrap;
-    flex-shrink: 0;
-}
-
-.new-chat-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
-}
-
 .history-list {
     padding: 1.5rem;
     display: flex;
     flex-direction: column;
     gap: 0.75rem;
-    flex: 1;
-    overflow-y: auto;
 }
 
 .history-item {
@@ -1488,15 +1414,50 @@ body {
     background: rgba(220, 38, 38, 0.3);
 }
 
+/* New Chat Button UI */
+.history-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--dark-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.history-header h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.125rem;
+    color: var(--court-gold);
+    margin: 0;
+}
+
+.new-chat-btn {
+    background: linear-gradient(135deg, var(--court-gold) 0%, var(--court-maroon) 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s;
+    white-space: nowrap;
+}
+
+.new-chat-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+}
+
 .empty-history {
     text-align: center;
     padding: 3rem 1.5rem;
     color: var(--dark-text-secondary);
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
 }
 
 .empty-history i {
@@ -5006,8 +4967,6 @@ let chatInitialized = false;
 let isGeneratingResponse = false;
 let currentResponseTimer = null;
 let stopResponseFlag = false;
-let userScrollHandler = null;
-let shouldAutoScroll = true;
 
 // Welcome message HTML
 const WELCOME_MESSAGE_HTML = `
@@ -5075,506 +5034,7 @@ const WELCOME_MESSAGE_HTML = `
 `;
 
 // =============================================
-// FIX 1: PROPER DOWNLOAD DOCUMENTS
-// =============================================
-
-function downloadChat(format) {
-    let content = `LEGALSWAMI - CHAT HISTORY\n`;
-    content += `Generated: ${new Date().toLocaleString('en-IN')}\n`;
-    content += `========================================\n\n`;
-    
-    conversationHistory.forEach((msg, index) => {
-        const role = msg.role === 'user' ? 'YOU' : 'LEGALSWAMI AI';
-        const time = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString('en-IN', { 
-            hour: '2-digit', 
-            minute: '2-digit' 
-        }) : new Date().toLocaleTimeString('en-IN', { 
-            hour: '2-digit', 
-            minute: '2-digit' 
-        });
-        
-        content += `${role} (${time}):\n`;
-        content += '─'.repeat(50) + '\n';
-        
-        // Clean HTML tags and format text
-        const cleanText = msg.content
-            .replace(/<br>/g, '\n')
-            .replace(/<\/?[^>]+(>|$)/g, '')
-            .replace(/\*\*(.*?)\*\*/g, '$1')
-            .replace(/\*([^*]+)\*/g, '$1')
-            .replace(/`([^`]+)`/g, '$1')
-            .replace(/#+/g, '')
-            .replace(/⚠️/g, '[IMPORTANT]')
-            .replace(/⚖️/g, '[LAW]')
-            .replace(/🔍/g, '[NOTE]')
-            .replace(/📚/g, '[REFERENCE]')
-            .replace(/⚡/g, '[TIP]')
-            .replace(/🔐/g, '[CONFIDENTIAL]')
-            .replace(/💼/g, '[BUSINESS]')
-            .replace(/🏠/g, '[PROPERTY]')
-            .replace(/💰/g, '[FINANCIAL]');
-        
-        content += cleanText + '\n\n';
-        content += '═'.repeat(60) + '\n\n';
-    });
-    
-    content += `\n\nDISCLAIMER:\n`;
-    content += `This chat history is generated by LegalSwami AI Legal Assistant.\n`;
-    content += `The information provided is for educational purposes only and not legal advice.\n`;
-    content += `Always consult with a qualified attorney for legal matters.\n`;
-    content += `\nGenerated by: LegalSwami (https://legalswami.com)\n`;
-    
-    const fileName = `LegalSwami-Chat-${formatDateForFilename(new Date())}`;
-    
-    if (format === 'txt') {
-        downloadAsTXT(content, fileName);
-    } else if (format === 'pdf') {
-        try {
-            downloadAsPDF(content, fileName);
-        } catch (error) {
-            console.error('PDF generation error:', error);
-            // Fallback to proper content download
-            const fallbackContent = createProperPDFContent(content);
-            downloadAsPDF(fallbackContent, fileName);
-        }
-    } else if (format === 'doc') {
-        downloadAsDOC(content, fileName);
-    }
-}
-
-function createProperPDFContent(originalContent) {
-    // Create proper PDF content with proper formatting
-    let pdfContent = originalContent;
-    
-    // Ensure proper line breaks and formatting for PDF
-    pdfContent = pdfContent.replace(/\n/g, '\n');
-    
-    return pdfContent;
-}
-
-function downloadAsTXT(content, filename) {
-    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${filename}.txt`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    showToast('Text file downloaded successfully 📥', 'success');
-}
-
-function downloadAsPDF(content, filename) {
-    try {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
-        
-        // Set document properties
-        doc.setProperties({
-            title: 'LegalSwami Chat History',
-            subject: 'AI Legal Assistant Conversation',
-            author: 'LegalSwami AI',
-            keywords: 'legal, ai, assistant, chat, history',
-            creator: 'LegalSwami'
-        });
-        
-        // Set font
-        doc.setFont('helvetica');
-        doc.setFontSize(12);
-        
-        // Split content into lines
-        const lines = doc.splitTextToSize(content, 180);
-        let y = 20;
-        
-        // Add content line by line
-        for (let i = 0; i < lines.length; i++) {
-            if (y > 280) {
-                doc.addPage();
-                y = 20;
-            }
-            doc.text(lines[i], 20, y);
-            y += 7;
-        }
-        
-        // Save the PDF
-        doc.save(`${filename}.pdf`);
-        showToast('PDF document downloaded successfully 📥', 'success');
-    } catch (error) {
-        console.error('PDF generation error:', error);
-        // Fallback to TXT download
-        downloadAsTXT(content, filename);
-        showToast('PDF generation failed. Text file downloaded instead.', 'warning');
-    }
-}
-
-function downloadAsDOC(content, filename) {
-    // Create HTML content for Word document
-    const htmlContent = `
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta charset="UTF-8">
-            <title>${filename}</title>
-            <style>
-                body { font-family: Arial, sans-serif; line-height: 1.6; margin: 40px; }
-                h1 { color: #1e40af; border-bottom: 2px solid #d4af37; padding-bottom: 10px; }
-                .header { text-align: center; margin-bottom: 30px; }
-                .message { margin-bottom: 20px; padding: 15px; border-left: 4px solid #d4af37; background: #f8fafc; }
-                .user { border-left-color: #1e40af; }
-                .ai { border-left-color: #059669; }
-                .timestamp { color: #64748b; font-size: 0.9em; margin-bottom: 5px; }
-                .disclaimer { margin-top: 40px; padding: 20px; background: #fef3c7; border: 1px solid #f59e0b; border-radius: 5px; }
-            </style>
-        </head>
-        <body>
-            <div class="header">
-                <h1>LegalSwami Chat History</h1>
-                <p>Generated on: ${new Date().toLocaleString()}</p>
-            </div>
-            
-            <div class="content">
-                <pre style="white-space: pre-wrap; font-family: 'Courier New', monospace;">${content}</pre>
-            </div>
-            
-            <div class="disclaimer">
-                <h3>Important Notice</h3>
-                <p>This document contains AI-generated information from LegalSwami AI Legal Assistant. The content is provided for educational and informational purposes only and does not constitute legal advice. Always consult with a qualified attorney for legal matters specific to your situation.</p>
-            </div>
-        </body>
-        </html>
-    `;
-    
-    const blob = new Blob(['\ufeff', htmlContent], { type: 'application/msword' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${filename}.doc`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    showToast('Word document downloaded successfully 📥', 'success');
-}
-
-// =============================================
-// FIX 2: SCROLL WHILE RESPONSE GENERATES
-// =============================================
-
-function setupScrollBehavior() {
-    const chatMessages = document.getElementById('chatMessages');
-    if (!chatMessages) return;
-    
-    // Remove existing handler if any
-    if (userScrollHandler) {
-        chatMessages.removeEventListener('scroll', userScrollHandler);
-    }
-    
-    // Add scroll event listener
-    userScrollHandler = function() {
-        const isAtBottom = chatMessages.scrollHeight - chatMessages.scrollTop - chatMessages.clientHeight < 50;
-        
-        if (isAtBottom) {
-            shouldAutoScroll = true;
-            hideScrollToBottomButton();
-        } else {
-            shouldAutoScroll = false;
-            showScrollToBottomButton();
-        }
-    };
-    
-    chatMessages.addEventListener('scroll', userScrollHandler);
-}
-
-function scrollToBottomIfNeeded() {
-    if (shouldAutoScroll) {
-        scrollToBottom();
-    }
-}
-
-// =============================================
-// FIX 3: EDIT REQUEST - SINGLE MESSAGE ONLY
-// =============================================
-
-let editMessageOriginalText = '';
-let editMessageElement = null;
-
-window.saveEditedMessage = function(button) {
-    const messageContent = button.closest('.message-content');
-    const textarea = messageContent.querySelector('textarea');
-    const messageText = messageContent.querySelector('.message-text');
-    const editControls = button.closest('div');
-    
-    if (textarea && messageText) {
-        const editedText = textarea.value.trim();
-        
-        if (!editedText) {
-            showToast('Message cannot be empty', 'error');
-            return;
-        }
-        
-        // Update the message in conversation history
-        const messageDiv = messageContent.closest('.message');
-        const isUserMessage = messageDiv.classList.contains('user-message');
-        
-        // Find and update in conversation history
-        const messageIndex = conversationHistory.findIndex(msg => 
-            msg.role === (isUserMessage ? 'user' : 'assistant')
-        );
-        
-        if (messageIndex !== -1) {
-            // Only update this specific message, don't duplicate
-            conversationHistory[messageIndex].content = editedText;
-            saveCurrentChat();
-        }
-        
-        // Update UI
-        messageText.textContent = editedText;
-        messageText.style.display = 'block';
-        textarea.remove();
-        editControls.remove();
-        
-        // Show all buttons again
-        const actionButtons = messageContent.querySelectorAll('.message-actions .action-btn');
-        actionButtons.forEach(btn => btn.style.display = 'flex');
-        
-        showToast('Message updated successfully ✏️', 'success');
-        
-        // Reset edit tracking
-        editMessageOriginalText = '';
-        editMessageElement = null;
-        
-        // If this is a user message, get new AI response
-        if (isUserMessage) {
-            // Find and remove the AI response that followed this message
-            const messageDivIndex = Array.from(messageDiv.parentNode.children).indexOf(messageDiv);
-            const nextMessageDiv = messageDiv.parentNode.children[messageDivIndex + 1];
-            
-            if (nextMessageDiv && nextMessageDiv.classList.contains('ai-message')) {
-                // Remove AI message from DOM
-                nextMessageDiv.remove();
-                
-                // Remove from conversation history
-                const aiMessageIndex = conversationHistory.findIndex((msg, idx) => 
-                    idx > messageIndex && msg.role === 'assistant'
-                );
-                
-                if (aiMessageIndex !== -1) {
-                    conversationHistory.splice(aiMessageIndex, 1);
-                }
-            }
-            
-            // Send the edited message to get new AI response
-            setTimeout(() => {
-                const userInput = document.getElementById('userInput');
-                const sendButton = document.getElementById('sendButton');
-                if (userInput && sendButton) {
-                    userInput.value = editedText;
-                    userInput.style.height = Math.min(userInput.scrollHeight, 200) + 'px';
-                    sendButton.disabled = false;
-                    sendMessage();
-                }
-            }, 500);
-        }
-    }
-};
-
-window.cancelEdit = function(button) {
-    const messageContent = button.closest('.message-content');
-    const textarea = messageContent.querySelector('textarea');
-    const messageText = messageContent.querySelector('.message-text');
-    const editControls = button.closest('div');
-    
-    if (textarea && messageText) {
-        // Restore original text
-        if (editMessageOriginalText && editMessageElement === messageText) {
-            messageText.textContent = editMessageOriginalText;
-        }
-        
-        messageText.style.display = 'block';
-        textarea.remove();
-        editControls.remove();
-        
-        // Show all buttons again
-        const actionButtons = messageContent.querySelectorAll('.message-actions .action-btn');
-        actionButtons.forEach(btn => btn.style.display = 'flex');
-        
-        // Reset edit tracking
-        editMessageOriginalText = '';
-        editMessageElement = null;
-    }
-};
-
-// =============================================
-// FIX 4: RESPONSE STOPPED BY USER - CLEAN UI
-// =============================================
-
-function handleResponseStopped(messageId) {
-    const messageElement = document.getElementById(messageId);
-    if (!messageElement) return;
-    
-    const messageText = messageElement.querySelector('.message-text');
-    if (messageText) {
-        // Add stopped indicator
-        messageText.innerHTML += '<br><br><em style="color: var(--error);">Response stopped by user.</em>';
-    }
-    
-    // Remove any action buttons that might have been added
-    const messageActions = messageElement.querySelector('.message-actions');
-    if (messageActions) {
-        messageActions.remove();
-    }
-    
-    // Add minimal action buttons: Copy only
-    const newMessageActions = document.createElement('div');
-    newMessageActions.className = 'message-actions';
-    newMessageActions.innerHTML = `
-        <button class="action-btn copy" onclick="copyMessage(this)" title="Copy message">
-            <i class="fas fa-copy"></i> <span class="hide-on-mobile">Copy</span>
-        </button>
-    `;
-    
-    messageElement.querySelector('.message-content').appendChild(newMessageActions);
-}
-
-// =============================================
-// FIX 5: SHOW ACTIONS AFTER RESPONSE COMPLETE
-// =============================================
-
-function addMessageActions(messageId, isUser) {
-    const messageElement = document.getElementById(messageId);
-    if (!messageElement) return;
-    
-    const messageContent = messageElement.querySelector('.message-content');
-    if (!messageContent) return;
-    
-    // Remove any existing actions
-    const existingActions = messageContent.querySelector('.message-actions');
-    if (existingActions) {
-        existingActions.remove();
-    }
-    
-    // Add appropriate actions
-    const messageActions = document.createElement('div');
-    messageActions.className = 'message-actions';
-    
-    if (isUser) {
-        messageActions.innerHTML = `
-            <button class="action-btn copy" onclick="copyMessage(this)" title="Copy message">
-                <i class="fas fa-copy"></i> <span class="hide-on-mobile">Copy</span>
-            </button>
-            <button class="action-btn edit" onclick="editMessage(this)" title="Edit message">
-                <i class="fas fa-edit"></i> <span class="hide-on-mobile">Edit</span>
-            </button>
-        `;
-    } else {
-        messageActions.innerHTML = `
-            <button class="action-btn copy" onclick="copyMessage(this)" title="Copy response">
-                <i class="fas fa-copy"></i> <span class="hide-on-mobile">Copy</span>
-            </button>
-            <button class="action-btn regenerate" onclick="regenerateMessage(this)" title="Regenerate response">
-                <i class="fas fa-redo"></i> <span class="hide-on-mobile">Regenerate</span>
-            </button>
-            <button class="action-btn like" onclick="rateMessage(this, 'helpful')" title="Mark as helpful">
-                <i class="far fa-thumbs-up"></i> <span class="hide-on-mobile">Helpful</span>
-            </button>
-            <button class="action-btn dislike" onclick="rateMessage(this, 'not-helpful')" title="Mark as not helpful">
-                <i class="far fa-thumbs-down"></i> <span class="hide-on-mobile">Not Helpful</span>
-            </button>
-            <button class="action-btn share" onclick="shareMessage(this)" title="Share response">
-                <i class="fas fa-share"></i> <span class="hide-on-mobile">Share</span>
-            </button>
-            <div class="download-dropdown">
-                <button class="action-btn download" onclick="toggleDownloadDropdown(this)" title="Download options">
-                    <i class="fas fa-download"></i> <span class="hide-on-mobile">Download</span>
-                </button>
-                <div class="download-options-menu">
-                    <button class="download-option-btn" onclick="downloadMessage(this, 'word')">
-                        <i class="fas fa-file-word"></i> Word (.doc)
-                    </button>
-                    <button class="download-option-btn" onclick="downloadMessage(this, 'pdf')">
-                        <i class="fas fa-file-pdf"></i> PDF (.pdf)
-                    </button>
-                    <button class="download-option-btn" onclick="downloadMessage(this, 'text')">
-                        <i class="fas fa-file-alt"></i> Text (.txt)
-                    </button>
-                </div>
-            </div>
-        `;
-    }
-    
-    messageContent.appendChild(messageActions);
-}
-
-// =============================================
-// FIX 6: PROPER CSS FOR LEGAL TOPICS & HISTORY
-// =============================================
-
-// CSS already fixed in style section above
-
-// =============================================
-// FIX 7: REGENERATE SHOWS STOP BUTTON
-// =============================================
-
-window.regenerateMessage = function(button) {
-    const messageDiv = button.closest('.message');
-    const messageContent = button.closest('.message-content');
-    const messageText = messageContent.querySelector('.message-text');
-    const originalText = messageText.textContent;
-    
-    // Find the user message that prompted this response
-    const messageIndex = Array.from(messageDiv.parentNode.children).indexOf(messageDiv);
-    const userMessageDiv = messageDiv.parentNode.children[messageIndex - 1];
-    
-    if (!userMessageDiv || !userMessageDiv.classList.contains('user-message')) {
-        showToast('Cannot find original query to regenerate.', 'error');
-        return;
-    }
-    
-    const userMessageText = userMessageDiv.querySelector('.message-text').textContent;
-    
-    // Show loading state
-    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Regenerating...';
-    button.disabled = true;
-    
-    // Remove current AI message from history
-    const aiMessageIndex = conversationHistory.findIndex(msg => 
-        msg.role === 'assistant' && msg.content === originalText
-    );
-    if (aiMessageIndex !== -1) {
-        conversationHistory.splice(aiMessageIndex, 1);
-    }
-    
-    // Remove from DOM
-    messageDiv.remove();
-    
-    // Show stop button
-    const sendButton = document.getElementById('sendButton');
-    if (sendButton) {
-        sendButton.innerHTML = '<i class="fas fa-stop"></i> <span class="hide-on-mobile">Stop</span>';
-        sendButton.onclick = stopResponse;
-    }
-    
-    // Simulate regeneration
-    simulateRegeneration(userMessageText);
-};
-
-function simulateRegeneration(userMessage) {
-    isGeneratingResponse = true;
-    stopResponseFlag = false;
-    
-    const typingIndicatorId = addMessageToChat('', false, false, true);
-    
-    setTimeout(() => {
-        const typingElement = document.getElementById(typingIndicatorId);
-        if (typingElement) typingElement.remove();
-        
-        simulateRealisticResponse(userMessage, typingIndicatorId, '');
-    }, 1000);
-}
-
-// =============================================
-// UPDATED CORE FUNCTIONS
+// CHAT FUNCTIONS
 // =============================================
 
 function openChat() {
@@ -5607,9 +5067,6 @@ function openChat() {
         }, 100);
     }
     
-    // Setup scroll behavior
-    setupScrollBehavior();
-    
     // Focus on input
     setTimeout(() => {
         const userInput = document.getElementById('userInput');
@@ -5626,102 +5083,6 @@ function openChat() {
         scrollToBottom();
     }, 500);
 }
-
-function simulateRealisticResponse(userMessage, typingIndicatorId, userMessageId) {
-    // Generate AI response
-    const aiResponse = generateAIResponse(userMessage);
-    
-    // Remove typing indicator
-    const typingElement = document.getElementById(typingIndicatorId);
-    if (typingElement) typingElement.remove();
-    
-    // Add AI message with typewriter effect
-    const aiMessageId = addMessageToChat('', false);
-    const aiMessageElement = document.getElementById(aiMessageId);
-    const messageText = aiMessageElement.querySelector('.message-text');
-    
-    let index = 0;
-    const speed = 20; // Typing speed in milliseconds
-    const aiResponseWithBreaks = aiResponse.replace(/\n/g, '<br>');
-    
-    function typeWriter() {
-        if (stopResponseFlag) {
-            // Handle stopped response
-            handleResponseStopped(aiMessageId);
-            finalizeAIResponse(aiMessageId, aiResponse, true);
-            return;
-        }
-        
-        if (index < aiResponseWithBreaks.length) {
-            const char = aiResponseWithBreaks.charAt(index);
-            if (char === '<') {
-                // Handle HTML tags
-                const tagEnd = aiResponseWithBreaks.indexOf('>', index);
-                if (tagEnd !== -1) {
-                    const tag = aiResponseWithBreaks.substring(index, tagEnd + 1);
-                    messageText.innerHTML += tag;
-                    index = tagEnd + 1;
-                } else {
-                    messageText.innerHTML += char;
-                    index++;
-                }
-            } else {
-                messageText.innerHTML += char;
-                index++;
-            }
-            
-            // Scroll to bottom during typing if user hasn't scrolled up
-            scrollToBottomIfNeeded();
-            
-            // Continue typing
-            currentResponseTimer = setTimeout(typeWriter, speed);
-        } else {
-            // Typing complete
-            finalizeAIResponse(aiMessageId, aiResponse, false);
-        }
-    }
-    
-    // Start typing
-    currentResponseTimer = setTimeout(typeWriter, 500); // Initial delay
-}
-
-function finalizeAIResponse(messageId, fullResponse, wasStopped) {
-    isGeneratingResponse = false;
-    
-    if (!wasStopped) {
-        // Add AI message to history
-        const aiMessage = {
-            role: 'assistant',
-            content: fullResponse,
-            timestamp: new Date().toISOString()
-        };
-        conversationHistory.push(aiMessage);
-        
-        // Add message actions
-        addMessageActions(messageId, false);
-    }
-    
-    // Change stop button back to send button
-    const sendButton = document.getElementById('sendButton');
-    if (sendButton) {
-        sendButton.innerHTML = '<i class="fas fa-paper-plane"></i> <span class="hide-on-mobile">Send</span>';
-        sendButton.onclick = sendMessage;
-        sendButton.disabled = true;
-    }
-    
-    // Save chat
-    saveCurrentChat();
-    
-    // Clear timer
-    if (currentResponseTimer) {
-        clearTimeout(currentResponseTimer);
-        currentResponseTimer = null;
-    }
-}
-
-// =============================================
-// REST OF THE FUNCTIONS (Unchanged from original)
-// =============================================
 
 function closeChat() {
     console.log("🔙 Closing chat...");
@@ -5742,12 +5103,15 @@ function closeChat() {
     }
 }
 
+// =============================================
+// SCROLL FUNCTIONS
+// =============================================
+
 function scrollToBottom() {
     const chatMessages = document.getElementById('chatMessages');
     if (chatMessages) {
         chatMessages.scrollTop = chatMessages.scrollHeight;
         hideScrollToBottomButton();
-        shouldAutoScroll = true;
     }
 }
 
@@ -5760,10 +5124,8 @@ function checkScrollPosition() {
         
         if (isAtBottom) {
             scrollToBottomBtn.classList.remove('visible');
-            shouldAutoScroll = true;
         } else {
             scrollToBottomBtn.classList.add('visible');
-            shouldAutoScroll = false;
         }
     }
 }
@@ -5775,12 +5137,9 @@ function hideScrollToBottomButton() {
     }
 }
 
-function showScrollToBottomButton() {
-    const scrollToBottomBtn = document.getElementById('scrollToBottomBtn');
-    if (scrollToBottomBtn) {
-        scrollToBottomBtn.classList.add('visible');
-    }
-}
+// =============================================
+// INITIALIZATION FUNCTIONS
+// =============================================
 
 function initializeAppForGuest() {
     console.log("👤 Initializing in guest mode...");
@@ -5790,6 +5149,10 @@ function initializeAppForGuest() {
     
     showToast('Welcome to LegalSwami! Start your free legal consultation now.', 'info');
 }
+
+// =============================================
+// CHAT HISTORY FUNCTIONS
+// =============================================
 
 function loadUserChatHistory() {
     try {
@@ -5820,6 +5183,10 @@ function saveUserChatHistory() {
         console.error('Error saving chat history:', error);
     }
 }
+
+// =============================================
+// MAIN CHAT APP INITIALIZATION
+// =============================================
 
 function initializeChatApp() {
     console.log("🤖 Initializing chat app...");
@@ -6068,6 +5435,10 @@ function initializeChatApp() {
     }
 }
 
+// =============================================
+// CHAT MESSAGE FUNCTIONS
+// =============================================
+
 function loadCurrentChatMessages() {
     const chatMessages = document.getElementById('chatMessages');
     if (!chatMessages) return;
@@ -6082,8 +5453,7 @@ function loadCurrentChatMessages() {
     }
     
     conversationHistory.forEach(msg => {
-        const messageId = addMessageToChat(msg.content, msg.role === 'user', true);
-        addMessageActions(messageId, msg.role === 'user');
+        addMessageToChat(msg.content, msg.role === 'user', true);
     });
     
     setTimeout(() => {
@@ -6157,6 +5527,62 @@ function addMessageToChat(content, isUser, fromHistory = false, isTyping = false
     }
     
     messageContent.appendChild(messageText);
+    
+    // Add action buttons (not for typing indicators)
+    if (!isTyping) {
+        const messageActions = document.createElement('div');
+        messageActions.className = 'message-actions';
+        
+        if (isUser) {
+            // User message actions: Copy and Edit
+            messageActions.innerHTML = `
+                <button class="action-btn copy" onclick="copyMessage(this)" title="Copy message">
+                    <i class="fas fa-copy"></i> <span class="hide-on-mobile">Copy</span>
+                </button>
+                <button class="action-btn edit" onclick="editMessage(this)" title="Edit message">
+                    <i class="fas fa-edit"></i> <span class="hide-on-mobile">Edit</span>
+                </button>
+            `;
+        } else {
+            // AI message actions: Copy, Regenerate, Helpful, Not Helpful, Share, Download
+            messageActions.innerHTML = `
+                <button class="action-btn copy" onclick="copyMessage(this)" title="Copy response">
+                    <i class="fas fa-copy"></i> <span class="hide-on-mobile">Copy</span>
+                </button>
+                <button class="action-btn regenerate" onclick="regenerateMessage(this)" title="Regenerate response">
+                    <i class="fas fa-redo"></i> <span class="hide-on-mobile">Regenerate</span>
+                </button>
+                <button class="action-btn like" onclick="rateMessage(this, 'helpful')" title="Mark as helpful">
+                    <i class="far fa-thumbs-up"></i> <span class="hide-on-mobile">Helpful</span>
+                </button>
+                <button class="action-btn dislike" onclick="rateMessage(this, 'not-helpful')" title="Mark as not helpful">
+                    <i class="far fa-thumbs-down"></i> <span class="hide-on-mobile">Not Helpful</span>
+                </button>
+                <button class="action-btn share" onclick="shareMessage(this)" title="Share response">
+                    <i class="fas fa-share"></i> <span class="hide-on-mobile">Share</span>
+                </button>
+                <div class="download-dropdown">
+                    <button class="action-btn download" onclick="toggleDownloadDropdown(this)" title="Download options">
+                        <i class="fas fa-download"></i> <span class="hide-on-mobile">Download</span>
+                    </button>
+                    <div class="download-options-menu">
+                        <button class="download-option-btn" onclick="downloadMessage(this, 'word')">
+                            <i class="fas fa-file-word"></i> Word (.doc)
+                        </button>
+                        <button class="download-option-btn" onclick="downloadMessage(this, 'pdf')">
+                            <i class="fas fa-file-pdf"></i> PDF (.pdf)
+                        </button>
+                        <button class="download-option-btn" onclick="downloadMessage(this, 'text')">
+                            <i class="fas fa-file-alt"></i> Text (.txt)
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+        
+        messageContent.appendChild(messageActions);
+    }
+    
     messageDiv.appendChild(avatar);
     messageDiv.appendChild(messageContent);
     
@@ -6165,7 +5591,8 @@ function addMessageToChat(content, isUser, fromHistory = false, isTyping = false
         
         // Scroll to bottom
         setTimeout(() => {
-            scrollToBottomIfNeeded();
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            checkScrollPosition();
         }, 100);
     }
     
@@ -6193,7 +5620,6 @@ function sendMessage() {
     stopResponseFlag = false;
     
     const messageId = addMessageToChat(message, true);
-    addMessageActions(messageId, true);
     userInput.value = '';
     userInput.style.height = '56px';
     sendButton.disabled = true;
@@ -6241,6 +5667,93 @@ function stopResponse() {
             clearTimeout(currentResponseTimer);
             currentResponseTimer = null;
         }
+    }
+}
+
+function simulateRealisticResponse(userMessage, typingIndicatorId, userMessageId) {
+    // Generate AI response
+    const aiResponse = generateAIResponse(userMessage);
+    
+    // Remove typing indicator
+    const typingElement = document.getElementById(typingIndicatorId);
+    if (typingElement) typingElement.remove();
+    
+    // Add AI message with typewriter effect
+    const aiMessageId = addMessageToChat('', false);
+    const aiMessageElement = document.getElementById(aiMessageId);
+    const messageText = aiMessageElement.querySelector('.message-text');
+    
+    let index = 0;
+    const speed = 20; // Typing speed in milliseconds
+    const aiResponseWithBreaks = aiResponse.replace(/\n/g, '<br>');
+    
+    function typeWriter() {
+        if (stopResponseFlag) {
+            // Add stopped indicator
+            messageText.innerHTML += '<br><br><em>Response stopped by user.</em>';
+            finalizeAIResponse(aiMessageId, aiResponse);
+            return;
+        }
+        
+        if (index < aiResponseWithBreaks.length) {
+            const char = aiResponseWithBreaks.charAt(index);
+            if (char === '<') {
+                // Handle HTML tags
+                const tagEnd = aiResponseWithBreaks.indexOf('>', index);
+                if (tagEnd !== -1) {
+                    const tag = aiResponseWithBreaks.substring(index, tagEnd + 1);
+                    messageText.innerHTML += tag;
+                    index = tagEnd + 1;
+                } else {
+                    messageText.innerHTML += char;
+                    index++;
+                }
+            } else {
+                messageText.innerHTML += char;
+                index++;
+            }
+            
+            // Scroll to bottom during typing
+            scrollToBottom();
+            
+            // Continue typing
+            currentResponseTimer = setTimeout(typeWriter, speed);
+        } else {
+            // Typing complete
+            finalizeAIResponse(aiMessageId, aiResponse);
+        }
+    }
+    
+    // Start typing
+    currentResponseTimer = setTimeout(typeWriter, 500); // Initial delay
+}
+
+function finalizeAIResponse(messageId, fullResponse) {
+    isGeneratingResponse = false;
+    
+    // Add AI message to history
+    const aiMessage = {
+        role: 'assistant',
+        content: fullResponse,
+        timestamp: new Date().toISOString()
+    };
+    conversationHistory.push(aiMessage);
+    
+    // Change stop button back to send button
+    const sendButton = document.getElementById('sendButton');
+    if (sendButton) {
+        sendButton.innerHTML = '<i class="fas fa-paper-plane"></i> <span class="hide-on-mobile">Send</span>';
+        sendButton.onclick = sendMessage;
+        sendButton.disabled = true;
+    }
+    
+    // Save chat
+    saveCurrentChat();
+    
+    // Clear timer
+    if (currentResponseTimer) {
+        clearTimeout(currentResponseTimer);
+        currentResponseTimer = null;
     }
 }
 
@@ -6591,8 +6104,7 @@ function loadChatFromHistory(chatId) {
     if (chatMessages) {
         chatMessages.innerHTML = '';
         chat.messages.forEach(msg => {
-            const messageId = addMessageToChat(msg.content, msg.role === 'user', true);
-            addMessageActions(messageId, msg.role === 'user');
+            addMessageToChat(msg.content, msg.role === 'user', true);
         });
     }
     
@@ -6621,6 +6133,10 @@ function deleteChatFromHistory(chatId) {
     loadHistoryList();
     showToast('Chat deleted successfully 🗑️', 'success');
 }
+
+// =============================================
+// MESSAGE ACTION FUNCTIONS
+// =============================================
 
 // Global function for copying messages
 window.copyMessage = function(button) {
@@ -6660,16 +6176,14 @@ window.copyMessage = function(button) {
     document.body.removeChild(textarea);
 };
 
-// Edit message function
+// Edit message function - FIXED: Now continues response after edit
 window.editMessage = function(button) {
-    const messageContent = button.closest('.message-content');
-    const messageText = messageContent.querySelector('.message-text');
-    editMessageOriginalText = messageText.textContent;
-    editMessageElement = messageText;
+    const messageText = button.closest('.message-content').querySelector('.message-text');
+    const originalText = messageText.textContent;
     
     // Create edit textarea
     const textarea = document.createElement('textarea');
-    textarea.value = editMessageOriginalText;
+    textarea.value = originalText;
     textarea.style.width = '100%';
     textarea.style.minHeight = '100px';
     textarea.style.padding = '0.75rem';
@@ -6704,6 +6218,154 @@ window.editMessage = function(button) {
     // Also hide other buttons
     const otherButtons = button.parentNode.querySelectorAll('.action-btn:not(.copy)');
     otherButtons.forEach(btn => btn.style.display = 'none');
+};
+
+window.saveEditedMessage = function(button) {
+    const messageContent = button.closest('.message-content');
+    const textarea = messageContent.querySelector('textarea');
+    const messageText = messageContent.querySelector('.message-text');
+    const editControls = button.closest('div');
+    
+    if (textarea && messageText) {
+        const editedText = textarea.value.trim();
+        
+        if (!editedText) {
+            showToast('Message cannot be empty', 'error');
+            return;
+        }
+        
+        // Update the message in conversation history
+        const messageDiv = messageContent.closest('.message');
+        const isUserMessage = messageDiv.classList.contains('user-message');
+        
+        // Find and update in conversation history
+        const messageIndex = conversationHistory.findIndex(msg => 
+            msg.role === (isUserMessage ? 'user' : 'assistant') && 
+            msg.content === messageText.textContent
+        );
+        
+        if (messageIndex !== -1) {
+            conversationHistory[messageIndex].content = editedText;
+            saveCurrentChat();
+        }
+        
+        // Update UI
+        messageText.textContent = editedText;
+        messageText.style.display = 'block';
+        textarea.remove();
+        editControls.remove();
+        
+        // Show all buttons again
+        const actionButtons = messageContent.querySelectorAll('.message-actions .action-btn');
+        actionButtons.forEach(btn => btn.style.display = 'flex');
+        
+        showToast('Message updated successfully ✏️', 'success');
+        
+        // If this is a user message, get new AI response
+        if (isUserMessage) {
+            // Find and remove the AI response that followed this message
+            const messageDivIndex = Array.from(messageDiv.parentNode.children).indexOf(messageDiv);
+            const nextMessageDiv = messageDiv.parentNode.children[messageDivIndex + 1];
+            
+            if (nextMessageDiv && nextMessageDiv.classList.contains('ai-message')) {
+                // Remove AI message from DOM
+                nextMessageDiv.remove();
+                
+                // Remove from conversation history
+                const aiMessageIndex = conversationHistory.findIndex((msg, idx) => 
+                    idx > messageIndex && msg.role === 'assistant'
+                );
+                
+                if (aiMessageIndex !== -1) {
+                    conversationHistory.splice(aiMessageIndex, 1);
+                }
+            }
+            
+            // Send the edited message to get new AI response
+            setTimeout(() => {
+                const userInput = document.getElementById('userInput');
+                const sendButton = document.getElementById('sendButton');
+                if (userInput && sendButton) {
+                    userInput.value = editedText;
+                    userInput.style.height = Math.min(userInput.scrollHeight, 200) + 'px';
+                    sendButton.disabled = false;
+                    sendMessage();
+                }
+            }, 500);
+        }
+    }
+};
+
+window.cancelEdit = function(button) {
+    const messageContent = button.closest('.message-content');
+    const textarea = messageContent.querySelector('textarea');
+    const messageText = messageContent.querySelector('.message-text');
+    const editControls = button.closest('div');
+    
+    if (textarea && messageText) {
+        messageText.style.display = 'block';
+        textarea.remove();
+        editControls.remove();
+        
+        // Show all buttons again
+        const actionButtons = messageContent.querySelectorAll('.message-actions .action-btn');
+        actionButtons.forEach(btn => btn.style.display = 'flex');
+    }
+};
+
+// Regenerate message function
+window.regenerateMessage = function(button) {
+    const messageDiv = button.closest('.message');
+    const messageContent = button.closest('.message-content');
+    const messageText = messageContent.querySelector('.message-text');
+    const originalText = messageText.textContent;
+    
+    // Find the user message that prompted this response
+    const messageIndex = Array.from(messageDiv.parentNode.children).indexOf(messageDiv);
+    const userMessageDiv = messageDiv.parentNode.children[messageIndex - 1];
+    
+    if (!userMessageDiv || !userMessageDiv.classList.contains('user-message')) {
+        showToast('Cannot find original query to regenerate.', 'error');
+        return;
+    }
+    
+    const userMessageText = userMessageDiv.querySelector('.message-text').textContent;
+    
+    // Show loading state
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Regenerating...';
+    button.disabled = true;
+    
+    // Remove current AI message from history
+    const aiMessageIndex = conversationHistory.findIndex(msg => 
+        msg.role === 'assistant' && msg.content === originalText
+    );
+    if (aiMessageIndex !== -1) {
+        conversationHistory.splice(aiMessageIndex, 1);
+    }
+    
+    // Remove from DOM
+    messageDiv.remove();
+    
+    // Simulate regeneration
+    const typingIndicatorId = addMessageToChat('', false, false, true);
+    
+    // Change send button to stop button
+    const sendButton = document.getElementById('sendButton');
+    if (sendButton) {
+        sendButton.innerHTML = '<i class="fas fa-stop"></i> <span class="hide-on-mobile">Stop</span>';
+        sendButton.onclick = stopResponse;
+    }
+    
+    isGeneratingResponse = true;
+    stopResponseFlag = false;
+    
+    // Simulate new response
+    setTimeout(() => {
+        const typingElement = document.getElementById(typingIndicatorId);
+        if (typingElement) typingElement.remove();
+        
+        simulateRealisticResponse(userMessageText, typingIndicatorId, '');
+    }, 1000);
 };
 
 // Rate message function with toggle functionality
@@ -6866,6 +6528,193 @@ window.downloadMessage = function(button, format) {
         downloadBtn.innerHTML = '<i class="fas fa-download"></i> Download';
     }, 2000);
 };
+
+function downloadChat(format) {
+    let content = `LEGALSWAMI - CHAT HISTORY\n`;
+    content += `Generated: ${new Date().toLocaleString('en-IN')}\n`;
+    content += `========================================\n\n`;
+    
+    conversationHistory.forEach((msg, index) => {
+        const role = msg.role === 'user' ? 'YOU' : 'LEGALSWAMI AI';
+        const time = msg.timestamp ? new Date(msg.timestamp).toLocaleTimeString('en-IN', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        }) : new Date().toLocaleTimeString('en-IN', { 
+            hour: '2-digit', 
+            minute: '2-digit' 
+        });
+        
+        content += `${role} (${time}):\n`;
+        content += '─'.repeat(50) + '\n';
+        
+        // Clean HTML tags and format text
+        const cleanText = msg.content
+            .replace(/<br>/g, '\n')
+            .replace(/<\/?[^>]+(>|$)/g, '')
+            .replace(/\*\*(.*?)\*\*/g, '$1')
+            .replace(/\*([^*]+)\*/g, '$1')
+            .replace(/`([^`]+)`/g, '$1')
+            .replace(/#+/g, '')
+            .replace(/⚠️/g, '[IMPORTANT]')
+            .replace(/⚖️/g, '[LAW]')
+            .replace(/🔍/g, '[NOTE]')
+            .replace(/📚/g, '[REFERENCE]')
+            .replace(/⚡/g, '[TIP]')
+            .replace(/🔐/g, '[CONFIDENTIAL]')
+            .replace(/💼/g, '[BUSINESS]')
+            .replace(/🏠/g, '[PROPERTY]')
+            .replace(/💰/g, '[FINANCIAL]');
+        
+        content += cleanText + '\n\n';
+        content += '═'.repeat(60) + '\n\n';
+    });
+    
+    content += `\n\nDISCLAIMER:\n`;
+    content += `This chat history is generated by LegalSwami AI Legal Assistant.\n`;
+    content += `The information provided is for educational purposes only and not legal advice.\n`;
+    content += `Always consult with a qualified attorney for legal matters.\n`;
+    content += `\nGenerated by: LegalSwami (https://legalswami.com)\n`;
+    
+    const fileName = `LegalSwami-Chat-${formatDateForFilename(new Date())}`;
+    
+    if (format === 'txt') {
+        downloadAsTXT(content, fileName);
+    } else if (format === 'pdf') {
+        try {
+            downloadAsPDF(content, fileName);
+        } catch (error) {
+            console.error('PDF generation error:', error);
+            downloadAsTXT(content, fileName);
+            showToast('PDF generation failed. Text file downloaded instead.', 'warning');
+        }
+    } else if (format === 'doc') {
+        downloadAsDOC(content, fileName);
+    }
+}
+
+function downloadAsTXT(content, filename) {
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${filename}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('Text file downloaded successfully 📥', 'success');
+}
+
+function downloadAsPDF(content, filename) {
+    try {
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        
+        // Set document properties
+        doc.setProperties({
+            title: 'LegalSwami Chat History',
+            subject: 'AI Legal Assistant Conversation',
+            author: 'LegalSwami AI',
+            keywords: 'legal, ai, assistant, chat, history',
+            creator: 'LegalSwami'
+        });
+        
+        // Add header
+        doc.setFontSize(16);
+        doc.setFont('helvetica', 'bold');
+        doc.setTextColor(30, 64, 175);
+        doc.text('LEGALSWAMI - CHAT HISTORY', 105, 20, null, null, 'center');
+        
+        doc.setFontSize(10);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(100, 100, 100);
+        doc.text(`Generated: ${new Date().toLocaleString()}`, 105, 28, null, null, 'center');
+        
+        // Add separator line
+        doc.setDrawColor(212, 175, 55);
+        doc.setLineWidth(0.5);
+        doc.line(20, 32, 190, 32);
+        
+        // Prepare content
+        doc.setFontSize(11);
+        doc.setFont('helvetica', 'normal');
+        doc.setTextColor(0, 0, 0);
+        
+        const lines = doc.splitTextToSize(content, 170);
+        let yPos = 42;
+        
+        // Add content with pagination
+        for (let i = 0; i < lines.length; i++) {
+            if (yPos > 280) {
+                doc.addPage();
+                yPos = 20;
+            }
+            doc.text(lines[i], 20, yPos);
+            yPos += 7;
+        }
+        
+        // Add footer
+        doc.setFontSize(9);
+        doc.setTextColor(100, 100, 100);
+        doc.text('Generated by LegalSwami AI Legal Assistant - https://legalswami.com', 105, 290, null, null, 'center');
+        doc.text('Disclaimer: This is AI-generated information, not legal advice. Consult a qualified attorney.', 105, 295, null, null, 'center');
+        
+        // Save PDF
+        doc.save(`${filename}.pdf`);
+        showToast('PDF document downloaded successfully 📥', 'success');
+    } catch (error) {
+        console.error('PDF generation error:', error);
+        throw error;
+    }
+}
+
+function downloadAsDOC(content, filename) {
+    const htmlContent = `
+        <!DOCTYPE html>
+        <html>
+        <head>
+            <meta charset="UTF-8">
+            <title>${filename}</title>
+            <style>
+                body { font-family: Arial, sans-serif; line-height: 1.6; margin: 40px; }
+                h1 { color: #1e40af; border-bottom: 2px solid #d4af37; padding-bottom: 10px; }
+                .header { text-align: center; margin-bottom: 30px; }
+                .message { margin-bottom: 20px; padding: 15px; border-left: 4px solid #d4af37; background: #f8fafc; }
+                .user { border-left-color: #1e40af; }
+                .ai { border-left-color: #059669; }
+                .timestamp { color: #64748b; font-size: 0.9em; margin-bottom: 5px; }
+                .disclaimer { margin-top: 40px; padding: 20px; background: #fef3c7; border: 1px solid #f59e0b; border-radius: 5px; }
+            </style>
+        </head>
+        <body>
+            <div class="header">
+                <h1>LegalSwami Chat History</h1>
+                <p>Generated on: ${new Date().toLocaleString()}</p>
+            </div>
+            
+            <div class="content">
+                <pre style="white-space: pre-wrap; font-family: 'Courier New', monospace;">${content.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>
+            </div>
+            
+            <div class="disclaimer">
+                <h3>Important Notice</h3>
+                <p>This document contains AI-generated information from LegalSwami AI Legal Assistant. The content is provided for educational and informational purposes only and does not constitute legal advice. Always consult with a qualified attorney for legal matters specific to your situation.</p>
+            </div>
+        </body>
+        </html>
+    `;
+    
+    const blob = new Blob([htmlContent], { type: 'application/msword' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${filename}.doc`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    showToast('Word document downloaded successfully 📥', 'success');
+}
 
 function formatDateForFilename(date) {
     return date.toISOString()
