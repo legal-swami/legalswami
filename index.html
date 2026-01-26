@@ -66,22 +66,6 @@
     --dark-text: #f1f5f9;
     --dark-text-secondary: #94a3b8;
     --dark-text-tertiary: #64748b;
-    
-    /* Light Mode */
-    --light-bg: #ffffff;
-    --light-surface: #f8fafc;
-    --light-surface-light: #f1f5f9;
-    --light-border: #e2e8f0;
-    --light-text: #1e293b;
-    --light-text-secondary: #475569;
-    --light-text-tertiary: #64748b;
-    
-    /* Legal Document Colors */
-    --legal-red: #b91c1c;
-    --legal-gold: #ca8a04;
-    --legal-seal: rgba(212, 175, 55, 0.1);
-    --legal-stamp: rgba(139, 0, 0, 0.05);
-    --legal-highlight: rgba(255, 215, 0, 0.1);
 }
 
 /* ============================================= */
@@ -102,11 +86,6 @@ body {
     min-height: 100vh;
     overflow-x: hidden;
     transition: background 0.3s ease;
-}
-
-body.light-mode {
-    background: var(--light-bg);
-    color: var(--light-text);
 }
 
 /* ============================================= */
@@ -137,10 +116,6 @@ body.light-mode {
     font-size: 0.875rem;
     color: var(--dark-text-secondary);
     font-style: italic;
-}
-
-.light-mode .legal-caption {
-    color: var(--light-text-secondary);
 }
 
 /* ============================================= */
@@ -175,11 +150,6 @@ body.light-mode {
     border-bottom: 2px solid var(--court-gold);
     z-index: 1000;
     height: 70px;
-}
-
-.light-mode .premium-navbar {
-    background: rgba(255, 255, 255, 0.95);
-    border-bottom-color: var(--court-gold);
 }
 
 .nav-container {
@@ -245,10 +215,6 @@ body.light-mode {
     text-transform: uppercase;
 }
 
-.light-mode .logo-subtitle {
-    color: var(--light-text-secondary);
-}
-
 .nav-menu {
     display: flex;
     gap: 2rem;
@@ -289,10 +255,6 @@ body.light-mode {
     height: 2px;
     background: var(--court-gold);
     border-radius: 1px;
-}
-
-.light-mode .nav-link {
-    color: var(--light-text-secondary);
 }
 
 .nav-actions {
@@ -343,14 +305,6 @@ body.light-mode {
 
 .mobile-toggle:hover {
     background: var(--dark-surface);
-}
-
-.light-mode .mobile-toggle {
-    color: var(--light-text);
-}
-
-.light-mode .mobile-toggle:hover {
-    background: var(--light-surface);
 }
 
 /* ============================================= */
@@ -526,25 +480,6 @@ body.light-mode {
     }
 }
 
-.theme-toggle {
-    background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 6px;
-    width: 36px;
-    height: 36px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.3s;
-    backdrop-filter: blur(10px);
-}
-
-.theme-toggle:hover {
-    transform: rotate(15deg);
-    border-color: var(--court-gold);
-}
-
 /* Chat Main Content - Courtroom Layout */
 #chatInterface .main-content {
     display: flex;
@@ -668,11 +603,10 @@ body.light-mode {
     padding-right: 15px; /* Space for scrollbar */
     padding-bottom: 1rem;
     max-height: 100%;
-    /* FIXED: Scrollbar starts from right side */
     scrollbar-gutter: stable;
 }
 
-/* FIXED: Proper scrollbar for chat - positioned on right side */
+/* FIXED: Proper scrollbar for chat */
 #chatMessages::-webkit-scrollbar {
     width: 8px;
     position: absolute;
@@ -964,7 +898,7 @@ body.light-mode {
     line-height: 1.5;
 }
 
-/* FIXED: Chat Input Area with proper visibility */
+/* FIXED: Chat Input Area */
 .input-container {
     padding: 1rem;
     background: linear-gradient(180deg, var(--dark-surface) 0%, var(--dark-bg) 100%);
@@ -985,7 +919,6 @@ body.light-mode {
     width: 100%;
 }
 
-/* FIXED: Text input field visibility - IMPORTANT FIX */
 .input-area textarea {
     width: 100%;
     padding: 1rem 7rem 1rem 1.25rem;
@@ -1004,7 +937,6 @@ body.light-mode {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     opacity: 1 !important;
     visibility: visible !important;
-    -webkit-text-fill-color: var(--dark-text) !important;
     caret-color: var(--court-gold);
 }
 
@@ -1017,17 +949,6 @@ body.light-mode {
 .input-area textarea::placeholder {
     color: var(--dark-text-secondary) !important;
     opacity: 0.8 !important;
-}
-
-.light-mode .input-area textarea {
-    color: var(--light-text) !important;
-    background: linear-gradient(135deg, var(--court-parchment) 0%, var(--light-surface) 100%);
-    border-color: var(--court-gold);
-    -webkit-text-fill-color: var(--light-text) !important;
-}
-
-.light-mode .input-area textarea::placeholder {
-    color: var(--light-text-secondary) !important;
 }
 
 .input-buttons {
@@ -1084,16 +1005,12 @@ body.light-mode {
     box-shadow: none !important;
 }
 
-/* FIXED: Message Action Buttons - Show only after full response */
+/* FIXED: Message Action Buttons - Always visible */
 .message-actions {
-    display: none; /* Hidden by default */
+    display: flex;
     gap: 0.75rem;
     margin-top: 1rem;
     flex-wrap: wrap;
-}
-
-.message-actions.visible {
-    display: flex; /* Shown when response is complete */
 }
 
 .action-btn {
@@ -1223,53 +1140,8 @@ body.light-mode {
     background: rgba(212, 175, 55, 0.1);
 }
 
-/* Light Mode Adjustments */
-.light-mode #chatInterface {
-    background: var(--light-bg);
-}
-
-.light-mode #chatInterface .container {
-    background: var(--light-bg);
-}
-
-.light-mode #chatInterface .chat-container {
-    background: var(--light-bg);
-}
-
-.light-mode #chatInterface header {
-    background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
-}
-
-.light-mode .user-message {
-    background: linear-gradient(135deg, rgba(30, 64, 175, 0.08) 0%, rgba(30, 64, 175, 0.15) 100%);
-    border-color: rgba(30, 64, 175, 0.2);
-}
-
-.light-mode .ai-message {
-    background: linear-gradient(135deg, rgba(212, 175, 55, 0.08) 0%, rgba(212, 175, 55, 0.15) 100%);
-    border-color: rgba(212, 175, 55, 0.2);
-}
-
-.light-mode .welcome-message {
-    background: linear-gradient(135deg, rgba(30, 64, 175, 0.05) 0%, rgba(212, 175, 55, 0.05) 100%);
-}
-
-.light-mode .draft-template {
-    background: linear-gradient(135deg, var(--light-surface) 0%, rgba(30, 64, 175, 0.05) 100%);
-    border-color: var(--light-border);
-}
-
-.light-mode .draft-template:hover {
-    background: linear-gradient(135deg, var(--light-surface-light) 0%, rgba(30, 64, 175, 0.1) 100%);
-}
-
-.light-mode .welcome-features .feature {
-    background: var(--light-surface);
-    border-color: var(--light-border);
-}
-
 /* ============================================= */
-/* MOBILE OPTIMIZATIONS - FIXED FOR ALL SCREENS */
+/* MOBILE OPTIMIZATIONS */
 /* ============================================= */
 
 @media (max-width: 768px) {
@@ -1280,7 +1152,7 @@ body.light-mode {
     
     #chatInterface .main-content {
         margin-top: 60px;
-        height: calc(100vh - 60px); /* Account for header */
+        height: calc(100vh - 60px);
     }
     
     .input-container {
@@ -1298,8 +1170,8 @@ body.light-mode {
     
     #chatMessages {
         padding: 1rem 0.75rem;
-        margin-bottom: 70px; /* Space for input container */
-        height: calc(100vh - 130px); /* 60px header + 70px input */
+        margin-bottom: 70px;
+        height: calc(100vh - 130px);
     }
     
     .chat-messages {
@@ -1352,7 +1224,6 @@ body.light-mode {
         display: none;
     }
     
-    /* Show text on larger mobile buttons */
     @media (min-width: 480px) {
         .action-btn span {
             display: inline;
@@ -1376,7 +1247,7 @@ body.light-mode {
 }
 
 /* ============================================= */
-/* LEGAL TOPICS & HISTORY - PROFESSIONAL STYLE */
+/* LEGAL TOPICS & HISTORY */
 /* ============================================= */
 
 #legal-topics-content {
@@ -2057,12 +1928,6 @@ body.light-mode {
     background: linear-gradient(180deg, var(--dark-bg) 0%, var(--court-dark-blue) 100%);
 }
 
-.light-mode .features-section,
-.light-mode .database-section,
-.light-mode .documents-section {
-    background: var(--light-bg);
-}
-
 .section-header {
     text-align: center;
     margin-bottom: 4rem;
@@ -2074,13 +1939,6 @@ body.light-mode {
     font-weight: 700;
     margin-bottom: 1.5rem;
     background: linear-gradient(135deg, #ffffff 0%, var(--court-gold) 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-}
-
-.light-mode .section-title {
-    background: linear-gradient(135deg, var(--court-dark-blue) 0%, var(--court-gold) 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -3012,11 +2870,6 @@ body.light-mode {
     background: linear-gradient(90deg, transparent, var(--court-gold), transparent);
 }
 
-.light-mode .premium-footer {
-    background: var(--light-bg);
-    border-top-color: var(--court-gold);
-}
-
 .footer-content {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -3813,14 +3666,6 @@ body.light-mode {
 
 ::-webkit-scrollbar-thumb:hover {
     background: linear-gradient(135deg, var(--court-maroon) 0%, var(--court-gold) 100%);
-}
-
-.light-mode ::-webkit-scrollbar-track {
-    background: var(--light-bg);
-}
-
-.light-mode ::-webkit-scrollbar-thumb {
-    border-color: var(--light-bg);
 }
 
 /* Print Styles */
@@ -5118,7 +4963,6 @@ let currentChatId = null;
 let conversationHistory = [];
 let isListening = false;
 let recognition = null;
-let isLightMode = false;
 let chatInitialized = false;
 let isGeneratingResponse = false;
 let currentResponseTimer = null;
@@ -5228,7 +5072,6 @@ function openChat() {
         const userInput = document.getElementById('userInput');
         if (userInput) {
             userInput.focus();
-            // FIX: Ensure text is visible
             userInput.style.color = 'var(--dark-text)';
             userInput.style.opacity = '1';
             userInput.style.visibility = 'visible';
@@ -5302,18 +5145,9 @@ function initializeAppForGuest() {
     console.log("👤 Initializing in guest mode...");
     
     // Load user preferences
-    loadThemePreference();
     loadUserChatHistory();
     
     showToast('Welcome to LegalSwami! Start your free legal consultation now.', 'info');
-}
-
-function updateUserUI() {
-    // Update theme toggle icon
-    const themeIcon = document.querySelector('.theme-toggle i');
-    if (themeIcon) {
-        themeIcon.className = isLightMode ? 'fas fa-moon' : 'fas fa-sun';
-    }
 }
 
 // =============================================
@@ -5587,7 +5421,6 @@ function initializeChatApp() {
         setTimeout(() => {
             if (userInput) {
                 userInput.focus();
-                // FIX: Ensure text is visible
                 userInput.style.color = 'var(--dark-text)';
                 userInput.style.opacity = '1';
                 userInput.style.visibility = 'visible';
@@ -5599,16 +5432,6 @@ function initializeChatApp() {
         
     } catch (error) {
         console.error("❌ Error initializing chat app:", error);
-    }
-}
-
-function loadThemePreference() {
-    const savedTheme = localStorage.getItem('legalSwamiTheme');
-    if (savedTheme === 'light') {
-        document.body.classList.add('light-mode');
-        const themeIcon = document.querySelector('.theme-toggle i');
-        if (themeIcon) themeIcon.className = 'fas fa-moon';
-        isLightMode = true;
     }
 }
 
@@ -5758,11 +5581,6 @@ function addMessageToChat(content, isUser, fromHistory = false, isTyping = false
         }
         
         messageContent.appendChild(messageActions);
-        
-        // Show action buttons immediately for user messages, after delay for AI messages
-        if (isUser) {
-            messageActions.classList.add('visible');
-        }
     }
     
     messageDiv.appendChild(avatar);
@@ -5920,15 +5738,6 @@ function finalizeAIResponse(messageId, fullResponse) {
         timestamp: new Date().toISOString()
     };
     conversationHistory.push(aiMessage);
-    
-    // Show action buttons for AI message
-    const messageElement = document.getElementById(messageId);
-    if (messageElement) {
-        const messageActions = messageElement.querySelector('.message-actions');
-        if (messageActions) {
-            messageActions.classList.add('visible');
-        }
-    }
     
     // Change stop button back to send button
     const sendButton = document.getElementById('sendButton');
@@ -6367,7 +6176,7 @@ window.copyMessage = function(button) {
     document.body.removeChild(textarea);
 };
 
-// Edit message function
+// Edit message function - FIXED: Now continues response after edit
 window.editMessage = function(button) {
     const messageText = button.closest('.message-content').querySelector('.message-text');
     const originalText = messageText.textContent;
@@ -6396,7 +6205,7 @@ window.editMessage = function(button) {
     editControls.style.gap = '0.5rem';
     editControls.innerHTML = `
         <button class="action-btn" onclick="saveEditedMessage(this)" style="background: var(--success); color: white;">
-            <i class="fas fa-check"></i> Save
+            <i class="fas fa-check"></i> Save & Send
         </button>
         <button class="action-btn" onclick="cancelEdit(this)" style="background: var(--error); color: white;">
             <i class="fas fa-times"></i> Cancel
@@ -6418,6 +6227,13 @@ window.saveEditedMessage = function(button) {
     const editControls = button.closest('div');
     
     if (textarea && messageText) {
+        const editedText = textarea.value.trim();
+        
+        if (!editedText) {
+            showToast('Message cannot be empty', 'error');
+            return;
+        }
+        
         // Update the message in conversation history
         const messageDiv = messageContent.closest('.message');
         const isUserMessage = messageDiv.classList.contains('user-message');
@@ -6429,11 +6245,12 @@ window.saveEditedMessage = function(button) {
         );
         
         if (messageIndex !== -1) {
-            conversationHistory[messageIndex].content = textarea.value;
+            conversationHistory[messageIndex].content = editedText;
             saveCurrentChat();
         }
         
-        messageText.textContent = textarea.value;
+        // Update UI
+        messageText.textContent = editedText;
         messageText.style.display = 'block';
         textarea.remove();
         editControls.remove();
@@ -6444,13 +6261,32 @@ window.saveEditedMessage = function(button) {
         
         showToast('Message updated successfully ✏️', 'success');
         
-        // If this is a user message, send it again
+        // If this is a user message, get new AI response
         if (isUserMessage) {
+            // Find and remove the AI response that followed this message
+            const messageDivIndex = Array.from(messageDiv.parentNode.children).indexOf(messageDiv);
+            const nextMessageDiv = messageDiv.parentNode.children[messageDivIndex + 1];
+            
+            if (nextMessageDiv && nextMessageDiv.classList.contains('ai-message')) {
+                // Remove AI message from DOM
+                nextMessageDiv.remove();
+                
+                // Remove from conversation history
+                const aiMessageIndex = conversationHistory.findIndex((msg, idx) => 
+                    idx > messageIndex && msg.role === 'assistant'
+                );
+                
+                if (aiMessageIndex !== -1) {
+                    conversationHistory.splice(aiMessageIndex, 1);
+                }
+            }
+            
+            // Send the edited message to get new AI response
             setTimeout(() => {
                 const userInput = document.getElementById('userInput');
                 const sendButton = document.getElementById('sendButton');
                 if (userInput && sendButton) {
-                    userInput.value = textarea.value;
+                    userInput.value = editedText;
                     userInput.style.height = Math.min(userInput.scrollHeight, 200) + 'px';
                     sendButton.disabled = false;
                     sendMessage();
