@@ -1133,6 +1133,7 @@ body {
     gap: 8px;
 }
 
+/* Draft Templates Grid */
 .draft-templates {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -1325,7 +1326,7 @@ body {
     box-shadow: none !important;
 }
 
-/* FIXED POINT 5: Send/Stop button - ALWAYS ENABLED FOR STOP */
+/* FIXED POINT 2: Send/Stop button - ALWAYS ENABLED FOR STOP */
 .send-button.stop-active {
     background: linear-gradient(135deg, var(--error) 0%, #b91c1c 100%);
     color: white;
@@ -1343,13 +1344,19 @@ body {
     cursor: not-allowed;
 }
 
-/* FIXED POINT 4: Message Action Buttons - Only show after completion */
+/* FIXED POINT 2: Message Action Buttons - Only show after completion */
 .message.generating .message-actions {
     display: none !important;
 }
 
 .message.completed .message-actions {
     display: flex !important;
+    animation: fadeInActions 0.5s ease;
+}
+
+@keyframes fadeInActions {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
 }
 
 .message.stopped .message-actions {
@@ -1377,6 +1384,14 @@ body {
     gap: 0.75rem;
     margin-top: 1rem;
     flex-wrap: wrap;
+    opacity: 0;
+    transform: translateY(10px);
+    transition: all 0.5s ease;
+}
+
+.message.completed .message-actions {
+    opacity: 1;
+    transform: translateY(0);
 }
 
 .action-btn {
@@ -1460,6 +1475,7 @@ body {
 
 .download-options-menu.show {
     display: block;
+    animation: fadeIn 0.3s ease;
 }
 
 .download-option-btn {
@@ -1479,6 +1495,218 @@ body {
 
 .download-option-btn:hover {
     background: rgba(212, 175, 55, 0.1);
+}
+
+/* ============================================= */
+/* FIXED POINT 3: DRAFTS FOLDER UI */
+/* ============================================= */
+
+#drafts-folder-content {
+    background: linear-gradient(180deg, var(--dark-surface) 0%, rgba(30, 41, 59, 0.8) 100%);
+    display: none;
+}
+
+#drafts-folder-content.active {
+    display: flex;
+    flex-direction: column;
+}
+
+.folder-view {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.folder-container {
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    border: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.folder-header {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.folder-header:hover {
+    background: rgba(212, 175, 55, 0.1);
+    border-radius: 6px;
+    padding: 0.75rem;
+    margin: -0.75rem;
+}
+
+.folder-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, var(--court-gold) 0%, var(--court-maroon) 100%);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.25rem;
+}
+
+.folder-info {
+    flex: 1;
+}
+
+.folder-title {
+    font-weight: 600;
+    color: var(--dark-text);
+    margin-bottom: 0.25rem;
+}
+
+.folder-details {
+    display: flex;
+    gap: 1rem;
+    font-size: 0.75rem;
+    color: var(--dark-text-secondary);
+}
+
+.folder-count {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.folder-date {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.folder-arrow {
+    transition: transform 0.3s;
+}
+
+.folder-header.open .folder-arrow {
+    transform: rotate(90deg);
+}
+
+.draft-files {
+    display: none;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 0.75rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(212, 175, 55, 0.2);
+}
+
+.folder-header.open + .draft-files {
+    display: grid;
+    animation: fadeIn 0.3s ease;
+}
+
+.draft-file {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 0.75rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+}
+
+.draft-file:hover {
+    background: rgba(212, 175, 55, 0.15);
+    border-color: var(--court-gold);
+    transform: translateY(-2px);
+}
+
+.draft-file-icon {
+    width: 40px;
+    height: 40px;
+    background: linear-gradient(135deg, rgba(30, 64, 175, 0.2) 0%, rgba(30, 64, 175, 0.4) 100%);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+    color: var(--primary-light);
+    font-size: 1rem;
+}
+
+.draft-file-info {
+    flex: 1;
+}
+
+.draft-file-name {
+    font-weight: 500;
+    color: var(--dark-text);
+    font-size: 0.8125rem;
+    margin-bottom: 0.25rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.draft-file-size {
+    font-size: 0.6875rem;
+    color: var(--dark-text-secondary);
+    margin-bottom: 0.5rem;
+}
+
+.draft-file-actions {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.draft-file-btn {
+    flex: 1;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    border: none;
+    font-size: 0.6875rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+}
+
+.draft-file-btn.view {
+    background: rgba(30, 64, 175, 0.15);
+    color: var(--primary-light);
+    border: 1px solid rgba(30, 64, 175, 0.3);
+}
+
+.draft-file-btn.view:hover {
+    background: rgba(30, 64, 175, 0.25);
+}
+
+.draft-file-btn.download {
+    background: rgba(212, 175, 55, 0.15);
+    color: var(--court-gold);
+    border: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.draft-file-btn.download:hover {
+    background: rgba(212, 175, 55, 0.25);
+}
+
+.empty-folder {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: var(--dark-text-secondary);
+    grid-column: 1 / -1;
+}
+
+.empty-folder i {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: var(--court-gold);
+    opacity: 0.5;
 }
 
 /* ============================================= */
@@ -1569,6 +1797,25 @@ body {
     
     .send-button span {
         display: none;
+    }
+    
+    /* Folder view mobile optimization */
+    .draft-files {
+        grid-template-columns: 1fr;
+    }
+    
+    .folder-details {
+        flex-direction: column;
+        gap: 0.25rem;
+    }
+    
+    .draft-file {
+        padding: 0.5rem;
+    }
+    
+    .draft-file-actions {
+        flex-direction: column;
+        gap: 0.25rem;
     }
     
     /* FIXED: New chat button in header for mobile */
@@ -3908,9 +4155,21 @@ body {
     margin-top: 1rem;
 }
 
-/* FIXED: Edit form styles */
+/* FIXED POINT 1: Edit form styles */
 .edit-form {
     margin-bottom: 1rem;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .edit-form textarea {
@@ -3918,13 +4177,21 @@ body {
     min-height: 100px;
     padding: 0.75rem;
     border-radius: 8px;
-    border: 1px solid var(--court-gold);
-    background: var(--dark-surface);
-    color: var(--dark-text);
+    border: 2px solid var(--court-gold);
+    background: var(--dark-surface) !important;
+    color: var(--dark-text) !important;
     font-family: inherit;
     font-size: 0.9375rem;
     resize: vertical;
     outline: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    margin-bottom: 0.75rem;
+    transition: all 0.3s;
+}
+
+.edit-form textarea:focus {
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.3);
 }
 
 .edit-form .action-btn.save-edit-btn {
@@ -3932,6 +4199,11 @@ body {
     color: white;
     border: none;
     cursor: pointer;
+    margin-right: 0.5rem;
+}
+
+.edit-form .action-btn.save-edit-btn:hover {
+    background: linear-gradient(135deg, #059669 0%, var(--success) 100%);
 }
 
 .edit-form .action-btn.cancel-edit-btn {
@@ -3939,6 +4211,16 @@ body {
     color: white;
     border: none;
     cursor: pointer;
+}
+
+.edit-form .action-btn.cancel-edit-btn:hover {
+    background: linear-gradient(135deg, #b91c1c 0%, var(--error) 100%);
+}
+
+/* Edit message highlight */
+.message.editing {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.2) 0%, rgba(212, 175, 55, 0.3) 100%);
+    border-color: var(--court-gold);
 }
     </style>
 </head>
@@ -4892,6 +5174,11 @@ body {
                                     <i class="fas fa-history"></i>
                                     <span class="hide-on-mobile">Chat History</span>
                                 </button>
+                                <!-- FIXED POINT 3: Added Drafts Folder Tab -->
+                                <button class="sidebar-tab" data-tab="drafts-folder">
+                                    <i class="fas fa-folder"></i>
+                                    <span class="hide-on-mobile">Drafts Folder</span>
+                                </button>
                             </div>
                             
                             <!-- Legal Topics Tab Content -->
@@ -4953,6 +5240,26 @@ body {
                                         <i class="fas fa-comments"></i>
                                         <p>No chat history yet</p>
                                         <p style="font-size: 0.8125rem; margin-top: 0.5rem;">Start a conversation to see it here</p>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- FIXED POINT 3: Drafts Folder Tab Content -->
+                            <div class="tab-content" id="drafts-folder-content">
+                                <div class="sidebar-header">
+                                    <h2><i class="fas fa-folder"></i> Drafts Folder</h2>
+                                    <button class="new-chat-btn" id="refreshDraftsBtn">
+                                        <i class="fas fa-sync-alt"></i>
+                                        <span>Refresh</span>
+                                    </button>
+                                </div>
+                                
+                                <div class="folder-view" id="folderView">
+                                    <!-- Folders will be loaded here dynamically -->
+                                    <div class="empty-history">
+                                        <i class="fas fa-folder-open"></i>
+                                        <p>Loading drafts folder...</p>
+                                        <p style="font-size: 0.8125rem; margin-top: 0.5rem;">Your GitHub drafts will appear here</p>
                                     </div>
                                 </div>
                             </div>
@@ -5411,6 +5718,7 @@ function initializeChatApp() {
         const scrollToBottomBtn = document.getElementById('scrollToBottomBtn');
         const inputMicrophoneBtn = document.getElementById('inputMicrophoneBtn');
         const attachmentBtn = document.getElementById('attachmentBtn');
+        const refreshDraftsBtn = document.getElementById('refreshDraftsBtn');
 
         // FIX: Ensure text input is visible and dark
         if (userInput) {
@@ -5536,6 +5844,8 @@ function initializeChatApp() {
                 
                 if (tabId === 'chat-history') {
                     loadHistoryList();
+                } else if (tabId === 'drafts-folder') {
+                    loadDraftsFolder();
                 }
             });
         });
@@ -5554,6 +5864,11 @@ function initializeChatApp() {
         // Scroll to bottom button - FIXED: position
         if (scrollToBottomBtn) {
             scrollToBottomBtn.addEventListener('click', scrollToBottom);
+        }
+        
+        // Refresh drafts button
+        if (refreshDraftsBtn) {
+            refreshDraftsBtn.addEventListener('click', loadDraftsFolder);
         }
         
         // Chat messages scroll event - FIXED POINT 2: Allow scrolling while generating
@@ -5822,59 +6137,53 @@ function addMessageToChat(content, isUser, fromHistory = false, isTyping = false
 }
 
 // =============================================
-// FIXED POINT 3: EDIT MESSAGE FUNCTION - SINGLE INSTANCE
+// FIXED POINT 1: EDIT MESSAGE FUNCTION - COMPLETELY REWORKED
 // =============================================
 
 window.editMessage = function(button) {
-    const messageText = button.closest('.message-content').querySelector('.message-text');
+    const messageDiv = button.closest('.message');
+    const messageContent = button.closest('.message-content');
+    const messageText = messageContent.querySelector('.message-text');
     const originalText = messageText.textContent || messageText.innerText;
     
-    // Remove any existing edit forms first (POINT 3)
-    const existingEditForm = document.querySelector('.edit-form');
-    if (existingEditForm) {
-        existingEditForm.remove();
+    // Check if already editing
+    if (messageDiv.classList.contains('editing')) {
+        return;
     }
     
-    // Create edit textarea
-    const textarea = document.createElement('textarea');
-    textarea.value = originalText;
-    textarea.style.width = '100%';
-    textarea.style.minHeight = '100px';
-    textarea.style.padding = '0.75rem';
-    textarea.style.borderRadius = '8px';
-    textarea.style.border = '1px solid var(--court-gold)';
-    textarea.style.background = 'var(--dark-surface)';
-    textarea.style.color = 'var(--dark-text)';
-    textarea.style.fontFamily = 'inherit';
-    textarea.style.fontSize = '0.9375rem';
-    textarea.style.marginBottom = '0.75rem';
-    textarea.className = 'edit-form';
+    // Add editing class
+    messageDiv.classList.add('editing');
     
-    // Replace message text with textarea
+    // Hide message text
     messageText.style.display = 'none';
-    const messageContent = messageText.parentNode;
-    messageContent.insertBefore(textarea, messageText);
     
-    // Create save/cancel buttons
-    const editControls = document.createElement('div');
-    editControls.style.marginTop = '0.75rem';
-    editControls.style.display = 'flex';
-    editControls.style.gap = '0.5rem';
-    editControls.innerHTML = `
-        <button class="action-btn save-edit-btn" style="background: var(--success); color: white; flex: 1;">
-            <i class="fas fa-check"></i> Save & Submit
-        </button>
-        <button class="action-btn cancel-edit-btn" style="background: var(--error); color: white; flex: 1;">
-            <i class="fas fa-times"></i> Cancel
-        </button>
-    `;
-    editControls.className = 'edit-form';
-    
-    messageContent.appendChild(editControls);
-    
-    // Hide all other buttons while editing
-    const actionButtons = messageContent.querySelectorAll('.action-btn:not(.save-edit-btn):not(.cancel-edit-btn)');
+    // Hide all action buttons
+    const actionButtons = messageContent.querySelectorAll('.action-btn');
     actionButtons.forEach(btn => btn.style.display = 'none');
+    
+    // Create edit container
+    const editContainer = document.createElement('div');
+    editContainer.className = 'edit-form';
+    editContainer.style.marginTop = '1rem';
+    
+    editContainer.innerHTML = `
+        <textarea class="edit-textarea" rows="4" style="width: 100%; padding: 0.75rem; border-radius: 8px; border: 2px solid var(--court-gold); background: var(--dark-surface); color: var(--dark-text); font-family: inherit; font-size: 0.9375rem; resize: vertical; outline: none; margin-bottom: 0.75rem;">${originalText}</textarea>
+        <div style="display: flex; gap: 0.5rem;">
+            <button class="action-btn save-edit-btn" style="flex: 1;">
+                <i class="fas fa-check"></i> Save & Submit
+            </button>
+            <button class="action-btn cancel-edit-btn" style="flex: 1;">
+                <i class="fas fa-times"></i> Cancel
+            </button>
+        </div>
+    `;
+    
+    messageContent.appendChild(editContainer);
+    
+    // Focus textarea
+    const textarea = editContainer.querySelector('.edit-textarea');
+    textarea.focus();
+    textarea.setSelectionRange(textarea.value.length, textarea.value.length);
     
     // Save edit function
     function saveEdit() {
@@ -5886,13 +6195,12 @@ window.editMessage = function(button) {
         }
         
         // Update the message in conversation history
-        const messageDiv = messageContent.closest('.message');
         const isUserMessage = messageDiv.classList.contains('user-message');
         
         // Find and update in conversation history
         const messageIndex = conversationHistory.findIndex(msg => 
             msg.role === (isUserMessage ? 'user' : 'assistant') && 
-            (msg.content === originalText || msg.content === messageText.textContent)
+            msg.content === originalText
         );
         
         if (messageIndex !== -1) {
@@ -5903,11 +6211,15 @@ window.editMessage = function(button) {
         // Update UI
         messageText.textContent = editedText;
         messageText.style.display = 'block';
-        textarea.remove();
-        editControls.remove();
+        
+        // Remove edit container
+        editContainer.remove();
         
         // Show all buttons again
         actionButtons.forEach(btn => btn.style.display = 'flex');
+        
+        // Remove editing class
+        messageDiv.classList.remove('editing');
         
         showToast('Message updated successfully ✏️', 'success');
         
@@ -5948,27 +6260,33 @@ window.editMessage = function(button) {
     // Cancel edit function
     function cancelEdit() {
         messageText.style.display = 'block';
-        textarea.remove();
-        editControls.remove();
+        editContainer.remove();
         
         // Show all buttons again
         actionButtons.forEach(btn => btn.style.display = 'flex');
+        
+        // Remove editing class
+        messageDiv.classList.remove('editing');
     }
     
     // Add event listeners
-    const saveBtn = editControls.querySelector('.save-edit-btn');
-    const cancelBtn = editControls.querySelector('.cancel-edit-btn');
+    const saveBtn = editContainer.querySelector('.save-edit-btn');
+    const cancelBtn = editContainer.querySelector('.cancel-edit-btn');
     
     saveBtn.addEventListener('click', saveEdit);
     cancelBtn.addEventListener('click', cancelEdit);
     
-    // Focus textarea
-    textarea.focus();
-    textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+    // Handle Enter key in textarea
+    textarea.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter' && e.ctrlKey) {
+            e.preventDefault();
+            saveEdit();
+        }
+    });
 };
 
 // =============================================
-// SEND MESSAGE FUNCTION - FIXED POINT 4 & 5
+// SEND MESSAGE FUNCTION - FIXED POINT 2
 // =============================================
 
 function sendMessage() {
@@ -6010,7 +6328,7 @@ function sendMessage() {
     const typingIndicatorId = addMessageToChat('', false, false, true);
     isGeneratingResponse = true;
     
-    // Change send button to stop button - FIXED POINT 5: ALWAYS ENABLED
+    // Change send button to stop button - FIXED POINT 2: ALWAYS ENABLED
     sendButton.innerHTML = '<i class="fas fa-stop"></i> <span class="hide-on-mobile">Stop</span>';
     sendButton.classList.add('stop-active');
     sendButton.onclick = stopResponse;
@@ -6168,10 +6486,18 @@ function finalizeAIResponse(messageId, fullResponse) {
         currentResponseTimer = null;
     }
     
-    // POINT 4: Add completed class to show action buttons
+    // POINT 2: Add completed class to show action buttons
     const aiMessageElement = document.getElementById(messageId);
     if (aiMessageElement) {
         aiMessageElement.classList.add('completed');
+        
+        // Add slight delay for smooth animation
+        setTimeout(() => {
+            const messageActions = aiMessageElement.querySelector('.message-actions');
+            if (messageActions) {
+                messageActions.style.display = 'flex';
+            }
+        }, 100);
     }
 }
 
@@ -6594,7 +6920,7 @@ window.copyMessage = function(button) {
     document.body.removeChild(textarea);
 };
 
-// Regenerate message function - FIXED POINT 5 & 7: Show stop button on regenerate
+// Regenerate message function - FIXED POINT 2 & 5: Show stop button on regenerate
 window.regenerateMessage = function(button) {
     const messageDiv = button.closest('.message');
     const messageContent = button.closest('.message-content');
@@ -6630,7 +6956,7 @@ window.regenerateMessage = function(button) {
     // Simulate regeneration
     const typingIndicatorId = addMessageToChat('', false, false, true);
     
-    // FIXED POINT 5 & 7: Change send button to stop button on regenerate
+    // FIXED POINT 2 & 5: Change send button to stop button on regenerate
     const sendButton = document.getElementById('sendButton');
     if (sendButton) {
         sendButton.innerHTML = '<i class="fas fa-stop"></i> <span class="hide-on-mobile">Stop</span>';
@@ -7146,6 +7472,272 @@ function formatDateForFilename(date) {
         .replace(/[:\-]/g, '')
         .replace('T', '_')
         .split('.')[0];
+}
+
+// =============================================
+// FIXED POINT 3: DRAFTS FOLDER FUNCTIONS
+// =============================================
+
+async function loadDraftsFolder() {
+    const folderView = document.getElementById('folderView');
+    if (!folderView) return;
+    
+    folderView.innerHTML = `
+        <div class="empty-history">
+            <i class="fas fa-spinner fa-spin"></i>
+            <p>Loading drafts from GitHub...</p>
+            <p style="font-size: 0.8125rem; margin-top: 0.5rem;">Fetching your legal documents</p>
+        </div>
+    `;
+    
+    try {
+        // In a real implementation, this would fetch from your GitHub repo
+        // For now, we'll simulate with mock data
+        const mockDrafts = await simulateGitHubFetch();
+        displayDraftsFolder(mockDrafts);
+        
+        showToast('Drafts folder loaded successfully 📁', 'success');
+    } catch (error) {
+        console.error('Error loading drafts:', error);
+        folderView.innerHTML = `
+            <div class="empty-history">
+                <i class="fas fa-exclamation-triangle"></i>
+                <p>Failed to load drafts</p>
+                <p style="font-size: 0.8125rem; margin-top: 0.5rem;">${error.message}</p>
+                <button class="draft-file-btn view" onclick="loadDraftsFolder()" style="margin-top: 1rem;">
+                    <i class="fas fa-redo"></i> Try Again
+                </button>
+            </div>
+        `;
+        showToast('Failed to load drafts folder', 'error');
+    }
+}
+
+async function simulateGitHubFetch() {
+    // Simulate API delay
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    
+    // Mock data - In real implementation, fetch from GitHub API
+    return {
+        folders: [
+            {
+                id: 'contracts',
+                name: 'Contracts',
+                description: 'Legal agreements and contracts',
+                fileCount: 8,
+                lastUpdated: '2024-01-15',
+                files: [
+                    { id: 'nda1', name: 'Non-Disclosure Agreement.docx', size: '45 KB', type: 'word', date: '2024-01-10' },
+                    { id: 'employment1', name: 'Employment Contract.docx', size: '52 KB', type: 'word', date: '2024-01-12' },
+                    { id: 'rental1', name: 'Rental Agreement.pdf', size: '38 KB', type: 'pdf', date: '2024-01-08' },
+                    { id: 'service1', name: 'Service Agreement.docx', size: '48 KB', type: 'word', date: '2024-01-14' },
+                    { id: 'partnership1', name: 'Partnership Agreement.pdf', size: '55 KB', type: 'pdf', date: '2024-01-15' }
+                ]
+            },
+            {
+                id: 'legal_notices',
+                name: 'Legal Notices',
+                description: 'Formal legal communications',
+                fileCount: 6,
+                lastUpdated: '2024-01-12',
+                files: [
+                    { id: 'notice1', name: 'Cease and Desist Notice.pdf', size: '32 KB', type: 'pdf', date: '2024-01-05' },
+                    { id: 'notice2', name: 'Legal Notice - Property.docx', size: '41 KB', type: 'word', date: '2024-01-08' },
+                    { id: 'notice3', name: 'Demand Letter.pdf', size: '28 KB', type: 'pdf', date: '2024-01-10' },
+                    { id: 'notice4', name: 'Consumer Complaint.docx', size: '36 KB', type: 'word', date: '2024-01-12' }
+                ]
+            },
+            {
+                id: 'personal_docs',
+                name: 'Personal Documents',
+                description: 'Individual and family legal documents',
+                fileCount: 5,
+                lastUpdated: '2024-01-10',
+                files: [
+                    { id: 'will1', name: 'Last Will and Testament.pdf', size: '62 KB', type: 'pdf', date: '2024-01-02' },
+                    { id: 'poa1', name: 'Power of Attorney.docx', size: '44 KB', type: 'word', date: '2024-01-05' },
+                    { id: 'affidavit1', name: 'Affidavit.pdf', size: '29 KB', type: 'pdf', date: '2024-01-08' },
+                    { id: 'gift1', name: 'Gift Deed.docx', size: '39 KB', type: 'word', date: '2024-01-10' }
+                ]
+            }
+        ]
+    };
+}
+
+function displayDraftsFolder(data) {
+    const folderView = document.getElementById('folderView');
+    if (!folderView) return;
+    
+    if (!data.folders || data.folders.length === 0) {
+        folderView.innerHTML = `
+            <div class="empty-history">
+                <i class="fas fa-folder-open"></i>
+                <p>No drafts found</p>
+                <p style="font-size: 0.8125rem; margin-top: 0.5rem;">Upload documents to your GitHub repo to see them here</p>
+            </div>
+        `;
+        return;
+    }
+    
+    let html = '';
+    
+    data.folders.forEach(folder => {
+        const lastUpdated = new Date(folder.lastUpdated).toLocaleDateString('en-IN', {
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric'
+        });
+        
+        html += `
+            <div class="folder-container" data-folder-id="${folder.id}">
+                <div class="folder-header" onclick="toggleFolder('${folder.id}')">
+                    <div class="folder-icon">
+                        <i class="fas fa-folder"></i>
+                    </div>
+                    <div class="folder-info">
+                        <div class="folder-title">${folder.name}</div>
+                        <div class="folder-details">
+                            <span class="folder-count">
+                                <i class="fas fa-file"></i> ${folder.fileCount} files
+                            </span>
+                            <span class="folder-date">
+                                <i class="far fa-calendar"></i> Updated ${lastUpdated}
+                            </span>
+                        </div>
+                    </div>
+                    <div class="folder-arrow">
+                        <i class="fas fa-chevron-right"></i>
+                    </div>
+                </div>
+                <div class="draft-files" id="files-${folder.id}">
+        `;
+        
+        folder.files.forEach(file => {
+            const fileDate = new Date(file.date).toLocaleDateString('en-IN', {
+                day: 'numeric',
+                month: 'short'
+            });
+            const fileIcon = file.type === 'pdf' ? 'fa-file-pdf' : 
+                           file.type === 'word' ? 'fa-file-word' : 'fa-file-alt';
+            const fileColor = file.type === 'pdf' ? 'var(--error)' : 
+                            file.type === 'word' ? 'var(--primary-light)' : 'var(--dark-text)';
+            
+            html += `
+                <div class="draft-file" data-file-id="${file.id}">
+                    <div class="draft-file-icon" style="background: linear-gradient(135deg, ${fileColor}20 0%, ${fileColor}40 100%); color: ${fileColor};">
+                        <i class="fas ${fileIcon}"></i>
+                    </div>
+                    <div class="draft-file-info">
+                        <div class="draft-file-name">${file.name}</div>
+                        <div class="draft-file-size">${file.size} • ${fileDate}</div>
+                        <div class="draft-file-actions">
+                            <button class="draft-file-btn view" onclick="viewDraftFile('${file.id}', '${file.name}')">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                            <button class="draft-file-btn download" onclick="downloadDraftFile('${file.id}', '${file.name}', '${file.type}')">
+                                <i class="fas fa-download"></i> Download
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        
+        html += `
+                </div>
+            </div>
+        `;
+    });
+    
+    folderView.innerHTML = html;
+}
+
+function toggleFolder(folderId) {
+    const folderHeader = document.querySelector(`[data-folder-id="${folderId}"] .folder-header`);
+    const draftFiles = document.getElementById(`files-${folderId}`);
+    
+    if (!folderHeader || !draftFiles) return;
+    
+    folderHeader.classList.toggle('open');
+    draftFiles.style.display = folderHeader.classList.contains('open') ? 'grid' : 'none';
+}
+
+function viewDraftFile(fileId, fileName) {
+    showToast(`Opening ${fileName} 👁️`, 'info');
+    
+    // In real implementation, this would fetch and display the file
+    // For now, we'll show a preview modal or open in chat
+    const userInput = document.getElementById('userInput');
+    if (userInput) {
+        userInput.value = `Open the document: ${fileName}`;
+        userInput.style.height = Math.min(userInput.scrollHeight, 200) + 'px';
+        const sendButton = document.getElementById('sendButton');
+        if (sendButton) sendButton.disabled = false;
+        
+        // Switch to chat tab
+        const chatTab = document.querySelector('[data-tab="legal-topics"]');
+        if (chatTab) {
+            chatTab.click();
+        }
+    }
+}
+
+function downloadDraftFile(fileId, fileName, fileType) {
+    // In real implementation, this would fetch from GitHub
+    // For now, we'll simulate download
+    
+    let content = '';
+    let mimeType = '';
+    let extension = '';
+    
+    switch(fileType) {
+        case 'pdf':
+            content = `%PDF-1.4\n1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj\n2 0 obj\n<< /Type /Pages /Kids [3 0 R] /Count 1 >>\nendobj\n3 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Contents 4 0 R >>\nendobj\n4 0 obj\n<< /Length 44 >>\nstream\nBT\n/F1 12 Tf\n72 720 Td\n(${fileName} - Legal Document) Tj\nET\nendstream\nendobj\nxref\n0 5\n0000000000 65535 f\n0000000010 00000 n\n0000000053 00000 n\n0000000102 00000 n\n0000000170 00000 n\ntrailer\n<< /Size 5 /Root 1 0 R >>\nstartxref\n238\n%%EOF`;
+            mimeType = 'application/pdf';
+            extension = 'pdf';
+            break;
+        case 'word':
+            content = `<?xml version="1.0" encoding="UTF-8"?>
+<?mso-application progid="Word.Document"?>
+<w:wordDocument xmlns:w="http://schemas.microsoft.com/office/word/2003/wordml">
+  <w:body>
+    <w:p>
+      <w:r>
+        <w:t>${fileName} - Legal Document</w:t>
+      </w:r>
+    </w:p>
+    <w:p>
+      <w:r>
+        <w:t>Generated by LegalSwami AI Legal Assistant</w:t>
+      </w:r>
+    </w:p>
+    <w:p>
+      <w:r>
+        <w:t>Date: ${new Date().toLocaleString()}</w:t>
+      </w:r>
+    </w:p>
+  </w:body>
+</w:wordDocument>`;
+            mimeType = 'application/msword';
+            extension = 'doc';
+            break;
+        default:
+            content = `${fileName}\n\nGenerated by LegalSwami AI Legal Assistant\nDate: ${new Date().toLocaleString()}\n\nThis is a sample legal document. In the actual implementation, this would be fetched from your GitHub repository.`;
+            mimeType = 'text/plain';
+            extension = 'txt';
+    }
+    
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${fileName.split('.')[0]}.${extension}`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    
+    showToast(`${fileName} downloaded successfully 📥`, 'success');
 }
 
 // =============================================
