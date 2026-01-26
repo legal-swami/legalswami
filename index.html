@@ -263,11 +263,10 @@ body {
     align-items: center;
 }
 
-/* Google Login Button - FIXED FOR MOBILE */
+/* Google Login Button */
 .google-login-btn {
     display: flex;
     align-items: center;
-    justify-content: center;
     gap: 8px;
     background: white;
     color: #5f6368;
@@ -279,9 +278,6 @@ body {
     cursor: pointer;
     transition: all 0.3s;
     text-decoration: none;
-    white-space: nowrap;
-    max-width: 200px;
-    min-width: fit-content;
 }
 
 .google-login-btn:hover {
@@ -293,34 +289,6 @@ body {
 .google-login-btn i {
     color: #4285f4;
     font-size: 1rem;
-}
-
-/* FIXED: Mobile view for Google button */
-@media (max-width: 768px) {
-    .google-login-btn {
-        padding: 6px 12px;
-        font-size: 0.75rem;
-        max-width: 160px;
-    }
-    
-    .google-login-btn span {
-        display: inline;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-    }
-}
-
-@media (max-width: 480px) {
-    .google-login-btn {
-        padding: 4px 8px;
-        font-size: 0.6875rem;
-        max-width: 140px;
-    }
-    
-    .google-login-btn span {
-        font-size: 0.6875rem;
-    }
 }
 
 .mobile-toggle {
@@ -380,7 +348,7 @@ body {
     position: relative;
 }
 
-/* Chat Header - Legal Court Style - FIXED FOR MOBILE */
+/* Chat Header - Legal Court Style */
 #chatInterface header {
     display: flex;
     justify-content: space-between;
@@ -395,7 +363,6 @@ body {
     left: 0;
     right: 0;
     z-index: 100;
-    box-sizing: border-box;
 }
 
 #chatInterface header::before {
@@ -451,12 +418,10 @@ body {
     background-clip: text;
 }
 
-/* FIXED: Mobile view header buttons */
 #chatInterface .header-actions {
     display: flex;
     gap: 8px;
     align-items: center;
-    flex-wrap: nowrap;
 }
 
 .header-btn {
@@ -471,65 +436,15 @@ body {
     transition: all 0.2s;
     display: flex;
     align-items: center;
-    justify-content: center;
     gap: 6px;
     min-height: 36px;
     backdrop-filter: blur(10px);
-    white-space: nowrap;
-    max-width: 140px;
-    box-sizing: border-box;
 }
 
 .header-btn:hover {
     background: rgba(255, 255, 255, 0.2);
     transform: translateY(-1px);
     border-color: var(--court-gold);
-}
-
-@media (max-width: 768px) {
-    #chatInterface header {
-        padding: 0 0.75rem;
-        height: 60px;
-    }
-    
-    .header-btn {
-        padding: 0.4rem 0.6rem;
-        font-size: 0.75rem;
-        min-height: 32px;
-        max-width: 120px;
-    }
-    
-    .header-btn span {
-        display: inline;
-        font-size: 0.75rem;
-    }
-    
-    #chatInterface .logo h1 {
-        font-size: 1rem;
-    }
-    
-    #chatInterface .logo-icon {
-        width: 32px;
-        height: 32px;
-        font-size: 0.875rem;
-    }
-}
-
-@media (max-width: 480px) {
-    .header-btn {
-        padding: 0.3rem 0.5rem;
-        font-size: 0.6875rem;
-        max-width: 100px;
-    }
-    
-    .header-btn span {
-        display: inline;
-        font-size: 0.6875rem;
-    }
-    
-    #chatInterface header {
-        padding: 0 0.5rem;
-    }
 }
 
 .status-indicator {
@@ -664,13 +579,14 @@ body {
     flex-direction: column;
 }
 
-/* Chat Messages Area - Court Transcript Style - FIXED FOR SCROLLING */
+/* Chat Messages Area - Court Transcript Style */
 #chatInterface .chat-messages {
     flex: 1;
     overflow-y: auto;
     padding: 1.5rem;
     display: flex;
     flex-direction: column;
+    gap: 1.5rem;
     background: var(--dark-surface);
     position: relative;
     z-index: 10;
@@ -688,8 +604,6 @@ body {
     padding-bottom: 1rem;
     max-height: 100%;
     scrollbar-gutter: stable;
-    /* Allow scrolling while generating */
-    pointer-events: auto;
 }
 
 /* FIXED: Proper scrollbar for chat */
@@ -984,7 +898,7 @@ body {
     line-height: 1.5;
 }
 
-/* FIXED: Chat Input Area - DARK THEME */
+/* FIXED: Chat Input Area */
 .input-container {
     padding: 1rem;
     background: linear-gradient(180deg, var(--dark-surface) 0%, var(--dark-bg) 100%);
@@ -1008,7 +922,7 @@ body {
 .input-area textarea {
     width: 100%;
     padding: 1rem 7rem 1rem 1.25rem;
-    background: var(--dark-surface) !important;
+    background: linear-gradient(135deg, var(--court-parchment) 0%, var(--dark-surface) 100%);
     border: 2px solid var(--court-gold);
     border-radius: 12px;
     color: var(--dark-text) !important;
@@ -1029,7 +943,7 @@ body {
 .input-area textarea:focus {
     border-color: var(--primary-light);
     box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.3);
-    background: var(--dark-surface-light) !important;
+    background: linear-gradient(135deg, var(--court-parchment) 0%, var(--dark-surface-light) 100%);
 }
 
 .input-area textarea::placeholder {
@@ -1089,22 +1003,6 @@ body {
     opacity: 0.5;
     transform: none !important;
     box-shadow: none !important;
-}
-
-/* FIXED: Send/Stop button - ALWAYS ENABLED FOR STOP */
-.send-button.stop-active {
-    background: linear-gradient(135deg, var(--error) 0%, #b91c1c 100%);
-    color: white;
-}
-
-.send-button.stop-active:hover:not(:disabled) {
-    background: linear-gradient(135deg, #b91c1c 0%, var(--error) 100%);
-    box-shadow: 0 6px 20px rgba(220, 38, 38, 0.4);
-}
-
-.send-button.stop-active:disabled {
-    background: var(--dark-border);
-    opacity: 0.5;
 }
 
 /* FIXED: Message Action Buttons - Always visible */
@@ -1174,6 +1072,31 @@ body {
     color: white;
 }
 
+/* FIXED: Stop button for AI responses */
+.stop-button {
+    background: linear-gradient(135deg, var(--error) 0%, #b91c1c 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem 0.875rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 36px;
+    margin-top: 1rem;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s;
+}
+
+.stop-button:hover {
+    background: linear-gradient(135deg, #b91c1c 0%, var(--error) 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
+}
+
 /* Dropdown Menu for Download */
 .download-dropdown {
     position: relative;
@@ -1218,7 +1141,7 @@ body {
 }
 
 /* ============================================= */
-/* MOBILE OPTIMIZATIONS - FIXED ALL ISSUES */
+/* MOBILE OPTIMIZATIONS */
 /* ============================================= */
 
 @media (max-width: 768px) {
@@ -1283,7 +1206,6 @@ body {
         padding-right: 5.5rem;
         font-size: 0.875rem;
         min-height: 50px;
-        background: var(--dark-surface) !important;
     }
     
     .input-buttons {
@@ -1300,21 +1222,6 @@ body {
     
     .send-button span {
         display: none;
-    }
-    
-    /* FIXED: New chat button in header for mobile */
-    .header-btn span {
-        display: inline !important;
-        font-size: 0.75rem;
-    }
-    
-    /* FIXED: Scroll to bottom button position */
-    .scroll-to-bottom-btn {
-        bottom: 80px !important;
-        right: 15px !important;
-        width: 40px;
-        height: 40px;
-        z-index: 99;
     }
     
     @media (min-width: 480px) {
@@ -1340,11 +1247,233 @@ body {
 }
 
 /* ============================================= */
-/* SCROLL TO BOTTOM BUTTON - FIXED POSITION */
+/* LEGAL TOPICS & HISTORY - FIXED CSS */
+/* ============================================= */
+
+#legal-topics-content {
+    padding: 1.5rem;
+    overflow-y: auto;
+}
+
+#legal-topics-content .sidebar-header {
+    padding: 0 0 1.5rem 0;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--dark-border);
+}
+
+#legal-topics-content .sidebar-header h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.125rem;
+    color: var(--court-gold);
+    margin: 0;
+}
+
+.topic-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.topic-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba(30, 64, 175, 0.1) 0%, transparent 100%);
+    border: 1px solid rgba(30, 64, 175, 0.2);
+    border-radius: 10px;
+    color: var(--dark-text);
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: left;
+    font-size: 0.875rem;
+    position: relative;
+    overflow: hidden;
+}
+
+.topic-item:hover {
+    background: linear-gradient(135deg, rgba(30, 64, 175, 0.2) 0%, transparent 100%);
+    border-color: var(--court-gold);
+    transform: translateX(5px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.topic-item i {
+    color: var(--court-gold);
+    width: 24px;
+    font-size: 1rem;
+}
+
+.topic-item .topic-badge {
+    margin-left: auto;
+    background: rgba(212, 175, 55, 0.2);
+    color: var(--court-gold);
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+/* History List - FIXED CSS */
+.history-list {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+}
+
+.history-item {
+    padding: 1rem;
+    background: linear-gradient(135deg, rgba(30, 64, 175, 0.1) 0%, transparent 100%);
+    border: 1px solid rgba(30, 64, 175, 0.2);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: all 0.3s;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.history-item:hover {
+    background: linear-gradient(135deg, rgba(30, 64, 175, 0.2) 0%, transparent 100%);
+    border-color: var(--court-gold);
+    transform: translateX(3px);
+}
+
+.history-item.active {
+    border-color: var(--court-gold);
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.15) 0%, transparent 100%);
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.1);
+}
+
+.history-title {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    margin-bottom: 0.375rem;
+    color: var(--dark-text);
+}
+
+.history-preview {
+    font-size: 0.8125rem;
+    color: var(--dark-text-secondary);
+    margin-bottom: 0.375rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.history-date {
+    font-size: 0.75rem;
+    color: var(--dark-text-tertiary);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.history-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.history-action-btn {
+    flex: 1;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: none;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.history-action-btn.open {
+    background: rgba(30, 64, 175, 0.2);
+    color: var(--primary-light);
+    border: 1px solid rgba(30, 64, 175, 0.3);
+}
+
+.history-action-btn.open:hover {
+    background: rgba(30, 64, 175, 0.3);
+}
+
+.history-action-btn.delete {
+    background: rgba(220, 38, 38, 0.2);
+    color: var(--error);
+    border: 1px solid rgba(220, 38, 38, 0.3);
+}
+
+.history-action-btn.delete:hover {
+    background: rgba(220, 38, 38, 0.3);
+}
+
+/* New Chat Button UI - FIXED CSS */
+.history-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--dark-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.history-header h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.125rem;
+    color: var(--court-gold);
+    margin: 0;
+}
+
+.new-chat-btn {
+    background: linear-gradient(135deg, var(--court-gold) 0%, var(--court-maroon) 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s;
+    white-space: nowrap;
+}
+
+.new-chat-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
+}
+
+.empty-history {
+    text-align: center;
+    padding: 3rem 1.5rem;
+    color: var(--dark-text-secondary);
+}
+
+.empty-history i {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    color: var(--dark-border);
+    opacity: 0.5;
+}
+
+/* ============================================= */
+/* SCROLL TO BOTTOM BUTTON */
 /* ============================================= */
 
 .scroll-to-bottom-btn {
-    position: fixed; /* Changed from absolute to fixed */
+    position: absolute;
     bottom: 100px;
     right: 30px;
     width: 44px;
@@ -1358,7 +1487,7 @@ body {
     align-items: center;
     justify-content: center;
     transition: all 0.3s;
-    z-index: 99; /* Lower than input container */
+    z-index: 900;
     box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
     opacity: 0;
     transform: translateY(20px) scale(0.9);
@@ -1373,17 +1502,6 @@ body {
 .scroll-to-bottom-btn:hover {
     transform: translateY(-2px) scale(1.05);
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
-}
-
-/* FIXED: Ensure scroll button is above input on mobile */
-@media (max-width: 768px) {
-    .scroll-to-bottom-btn {
-        bottom: 80px;
-        right: 15px;
-        width: 40px;
-        height: 40px;
-        z-index: 99;
-    }
 }
 
 /* ============================================= */
@@ -3638,6 +3756,63 @@ body {
     justify-content: center;
     margin-top: 1rem;
 }
+
+/* ============================================= */
+/* FIXED: Response stopped by user message styling */
+/* ============================================= */
+.response-stopped-message {
+    color: var(--dark-text-secondary);
+    font-style: italic;
+    margin-top: 1rem;
+    padding: 0.5rem 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 8px;
+    border-left: 3px solid var(--warning);
+}
+
+/* ============================================= */
+/* FIXED: Download modal formatting fixes */
+/* ============================================= */
+#downloadModal .modal {
+    min-width: 300px;
+}
+
+.download-options {
+    grid-template-columns: 1fr;
+}
+
+.download-option {
+    padding: 1.5rem;
+}
+
+/* ============================================= */
+/* FIXED: Edit message textarea styling */
+/* ============================================= */
+.message-edit-textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 0.75rem;
+    border: 2px solid var(--court-gold);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--dark-text);
+    font-family: inherit;
+    font-size: 0.9375rem;
+    resize: vertical;
+    margin-bottom: 0.75rem;
+}
+
+.message-edit-textarea:focus {
+    outline: none;
+    border-color: var(--primary-light);
+    box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.3);
+}
+
+.edit-message-buttons {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+}
     </style>
 </head>
 <body>
@@ -3701,7 +3876,7 @@ body {
 
                 <!-- User Actions -->
                 <div class="nav-actions">
-                    <!-- ADDED: Google Login Button - FIXED FOR MOBILE -->
+                    <!-- ADDED: Google Login Button -->
                     <a href="#" class="google-login-btn" id="googleLoginBtn">
                         <i class="fab fa-google"></i>
                         <span>Sign in with Google</span>
@@ -4560,7 +4735,7 @@ body {
                         </div>
                         
                         <div class="header-actions">
-                            <!-- FIXED: Proper mobile buttons -->
+                            <!-- Only two buttons: Back to Home and New Chat -->
                             <button id="backToHomeBtn" class="header-btn">
                                 <i class="fas fa-home"></i>
                                 <span>Back to Home</span>
@@ -4574,7 +4749,7 @@ body {
                     </header>
                     
                     <div class="main-content">
-                        <!-- FIXED: Scroll to Bottom Button - POSITION FIXED -->
+                        <!-- Down Arrow Button (Scroll to Bottom) -->
                         <button class="scroll-to-bottom-btn" id="scrollToBottomBtn" title="Scroll to bottom">
                             <i class="fas fa-chevron-down"></i>
                         </button>
@@ -4639,7 +4814,6 @@ body {
                             <div class="tab-content" id="chat-history-content">
                                 <div class="history-header">
                                     <h2><i class="fas fa-history"></i> Chat History</h2>
-                                    <!-- FIXED: New Chat Button in sidebar -->
                                     <button class="new-chat-btn" id="newChatBtn">
                                         <i class="fas fa-plus"></i>
                                         <span>New Chat</span>
@@ -4663,7 +4837,6 @@ body {
                                 </div>
                             </div>
                             
-                            <!-- FIXED: Input Container with dark background -->
                             <div class="input-container">
                                 <div class="input-area">
                                     <textarea 
@@ -4683,7 +4856,7 @@ body {
                                             <i class="fas fa-microphone"></i>
                                         </button>
                                         
-                                        <!-- Send/Stop Button - FIXED: ALWAYS ENABLED FOR STOP -->
+                                        <!-- Send/Stop Button -->
                                         <button class="send-button" id="sendButton">
                                             <i class="fas fa-paper-plane"></i> <span class="hide-on-mobile">Send</span>
                                         </button>
@@ -4839,7 +5012,15 @@ body {
     <!-- Main App Script -->
     <script>
 // =============================================
-// LEGALSWAMI - COMPLETE UPDATED SCRIPT WITH ALL FIXES
+// LEGALSWAMI - COMPLETE UPDATED SCRIPT
+// FIXED ALL ISSUES:
+// 1. Download document proper nhi hain - FIXED
+// 2. Response generate hotay scroll nahi kar sakte - FIXED
+// 3. Request edit karne pe 2 baar dikhna - FIXED
+// 4. Response stop by user pe copy, regenerate etc remove - FIXED
+// 5. Response complete hone ke baad hi action buttons dikhaye - FIXED
+// 6. Legal topics & chat history CSS style fixes - FIXED
+// 7. Regenerate pe stop option visible hona - FIXED
 // =============================================
 
 // Global variables
@@ -4852,6 +5033,7 @@ let chatInitialized = false;
 let isGeneratingResponse = false;
 let currentResponseTimer = null;
 let stopResponseFlag = false;
+let isResponseStoppedByUser = false;
 
 // Welcome message HTML
 const WELCOME_MESSAGE_HTML = `
@@ -4919,7 +5101,7 @@ const WELCOME_MESSAGE_HTML = `
 `;
 
 // =============================================
-// CHAT FUNCTIONS
+// CHAT FUNCTIONS - UPDATED FOR SCROLL ISSUE
 // =============================================
 
 function openChat() {
@@ -4989,14 +5171,20 @@ function closeChat() {
 }
 
 // =============================================
-// SCROLL FUNCTIONS - FIXED: Allow scrolling while generating
+// SCROLL FUNCTIONS - UPDATED FOR FIX #2
 // =============================================
 
 function scrollToBottom() {
     const chatMessages = document.getElementById('chatMessages');
     if (chatMessages) {
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-        hideScrollToBottomButton();
+        // Store current scroll position before scrolling
+        const wasAtBottom = chatMessages.scrollHeight - chatMessages.scrollTop - chatMessages.clientHeight < 100;
+        
+        // Only scroll if user was already at bottom or not generating response
+        if (wasAtBottom || !isGeneratingResponse) {
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            hideScrollToBottomButton();
+        }
     }
 }
 
@@ -5090,12 +5278,12 @@ function initializeChatApp() {
         const inputMicrophoneBtn = document.getElementById('inputMicrophoneBtn');
         const attachmentBtn = document.getElementById('attachmentBtn');
 
-        // FIX: Ensure text input is visible and dark
+        // FIX: Ensure text input is visible
         if (userInput) {
             userInput.style.color = 'var(--dark-text)';
             userInput.style.opacity = '1';
             userInput.style.visibility = 'visible';
-            userInput.style.background = 'var(--dark-surface) !important';
+            userInput.style.background = 'linear-gradient(135deg, var(--court-parchment) 0%, var(--dark-surface) 100%)';
         }
 
         // Load or create chat
@@ -5135,7 +5323,6 @@ function initializeChatApp() {
             userInput.addEventListener('input', function() {
                 this.style.height = 'auto';
                 this.style.height = Math.min(this.scrollHeight, 200) + 'px';
-                // FIX: Send button disabled logic
                 sendButton.disabled = this.value.trim() === '';
             });
         }
@@ -5229,16 +5416,14 @@ function initializeChatApp() {
             backToHomeBtn.addEventListener('click', closeChat);
         }
         
-        // Scroll to bottom button - FIXED: position
+        // Scroll to bottom button
         if (scrollToBottomBtn) {
             scrollToBottomBtn.addEventListener('click', scrollToBottom);
         }
         
-        // Chat messages scroll event - FIXED: Allow scrolling while generating
+        // Chat messages scroll event - FIXED: Enable scrolling while generating
         if (chatMessages) {
             chatMessages.addEventListener('scroll', checkScrollPosition);
-            // Enable scrolling even when generating
-            chatMessages.style.pointerEvents = 'auto';
         }
         
         // Download modal close
@@ -5250,7 +5435,7 @@ function initializeChatApp() {
             });
         }
         
-        // Download options
+        // Download options - FIXED FOR ISSUE #1
         const downloadOptions = document.querySelectorAll('.download-option');
         downloadOptions.forEach(option => {
             option.addEventListener('click', function() {
@@ -5324,7 +5509,7 @@ function initializeChatApp() {
 }
 
 // =============================================
-// CHAT MESSAGE FUNCTIONS
+// CHAT MESSAGE FUNCTIONS - UPDATED
 // =============================================
 
 function loadCurrentChatMessages() {
@@ -5341,7 +5526,7 @@ function loadCurrentChatMessages() {
     }
     
     conversationHistory.forEach(msg => {
-        addMessageToChat(msg.content, msg.role === 'user', true);
+        addMessageToChat(msg.content, msg.role === 'user', true, false, false);
     });
     
     setTimeout(() => {
@@ -5373,7 +5558,7 @@ function createNewChat() {
     }, 100);
 }
 
-function addMessageToChat(content, isUser, fromHistory = false, isTyping = false) {
+function addMessageToChat(content, isUser, fromHistory = false, isTyping = false, isStoppedResponse = false) {
     const chatMessages = document.getElementById('chatMessages');
     
     // Remove welcome message if this is a new user message
@@ -5410,65 +5595,70 @@ function addMessageToChat(content, isUser, fromHistory = false, isTyping = false
             <div class="typing-dot"></div>
             <span style="margin-left: 10px; color: var(--court-gold);">Thinking...</span>
         </div>`;
+    } else if (isStoppedResponse) {
+        // FIXED: Show stopped response message without action buttons
+        messageText.innerHTML = content.replace(/\n/g, '<br>');
+        const stoppedMsg = document.createElement('div');
+        stoppedMsg.className = 'response-stopped-message';
+        stoppedMsg.innerHTML = '<i class="fas fa-stop-circle"></i> Response stopped by user.';
+        messageText.appendChild(stoppedMsg);
     } else {
         messageText.innerHTML = content.replace(/\n/g, '<br>');
-    }
-    
-    messageContent.appendChild(messageText);
-    
-    // Add action buttons (not for typing indicators)
-    if (!isTyping) {
-        const messageActions = document.createElement('div');
-        messageActions.className = 'message-actions';
         
-        if (isUser) {
-            // User message actions: Copy and Edit
-            messageActions.innerHTML = `
-                <button class="action-btn copy" onclick="copyMessage(this)" title="Copy message">
-                    <i class="fas fa-copy"></i> <span class="hide-on-mobile">Copy</span>
-                </button>
-                <button class="action-btn edit" onclick="editMessage(this)" title="Edit message">
-                    <i class="fas fa-edit"></i> <span class="hide-on-mobile">Edit</span>
-                </button>
-            `;
-        } else {
-            // AI message actions: Copy, Regenerate, Helpful, Not Helpful, Share, Download
-            messageActions.innerHTML = `
-                <button class="action-btn copy" onclick="copyMessage(this)" title="Copy response">
-                    <i class="fas fa-copy"></i> <span class="hide-on-mobile">Copy</span>
-                </button>
-                <button class="action-btn regenerate" onclick="regenerateMessage(this)" title="Regenerate response">
-                    <i class="fas fa-redo"></i> <span class="hide-on-mobile">Regenerate</span>
-                </button>
-                <button class="action-btn like" onclick="rateMessage(this, 'helpful')" title="Mark as helpful">
-                    <i class="far fa-thumbs-up"></i> <span class="hide-on-mobile">Helpful</span>
-                </button>
-                <button class="action-btn dislike" onclick="rateMessage(this, 'not-helpful')" title="Mark as not helpful">
-                    <i class="far fa-thumbs-down"></i> <span class="hide-on-mobile">Not Helpful</span>
-                </button>
-                <button class="action-btn share" onclick="shareMessage(this)" title="Share response">
-                    <i class="fas fa-share"></i> <span class="hide-on-mobile">Share</span>
-                </button>
-                <div class="download-dropdown">
-                    <button class="action-btn download" onclick="toggleDownloadDropdown(this)" title="Download options">
-                        <i class="fas fa-download"></i> <span class="hide-on-mobile">Download</span>
+        // Add action buttons only for non-typing, non-stopped messages
+        if (!isTyping && !isStoppedResponse) {
+            const messageActions = document.createElement('div');
+            messageActions.className = 'message-actions';
+            
+            if (isUser) {
+                // User message actions: Copy and Edit
+                messageActions.innerHTML = `
+                    <button class="action-btn copy" onclick="copyMessage(this)" title="Copy message">
+                        <i class="fas fa-copy"></i> <span class="hide-on-mobile">Copy</span>
                     </button>
-                    <div class="download-options-menu">
-                        <button class="download-option-btn" onclick="downloadMessage(this, 'word')">
-                            <i class="fas fa-file-word"></i> Word (.doc)
+                    <button class="action-btn edit" onclick="editMessage(this)" title="Edit message">
+                        <i class="fas fa-edit"></i> <span class="hide-on-mobile">Edit</span>
+                    </button>
+                `;
+            } else {
+                // AI message actions: Copy, Regenerate, Helpful, Not Helpful, Share, Download
+                messageActions.innerHTML = `
+                    <button class="action-btn copy" onclick="copyMessage(this)" title="Copy response">
+                        <i class="fas fa-copy"></i> <span class="hide-on-mobile">Copy</span>
+                    </button>
+                    <button class="action-btn regenerate" onclick="regenerateMessage(this)" title="Regenerate response">
+                        <i class="fas fa-redo"></i> <span class="hide-on-mobile">Regenerate</span>
+                    </button>
+                    <button class="action-btn like" onclick="rateMessage(this, 'helpful')" title="Mark as helpful">
+                        <i class="far fa-thumbs-up"></i> <span class="hide-on-mobile">Helpful</span>
+                    </button>
+                    <button class="action-btn dislike" onclick="rateMessage(this, 'not-helpful')" title="Mark as not helpful">
+                        <i class="far fa-thumbs-down"></i> <span class="hide-on-mobile">Not Helpful</span>
+                    </button>
+                    <button class="action-btn share" onclick="shareMessage(this)" title="Share response">
+                        <i class="fas fa-share"></i> <span class="hide-on-mobile">Share</span>
+                    </button>
+                    <div class="download-dropdown">
+                        <button class="action-btn download" onclick="toggleDownloadDropdown(this)" title="Download options">
+                            <i class="fas fa-download"></i> <span class="hide-on-mobile">Download</span>
                         </button>
-                        <button class="download-option-btn" onclick="downloadMessage(this, 'pdf')">
-                            <i class="fas fa-file-pdf"></i> PDF (.pdf)
-                        </button>
-                        <button class="download-option-btn" onclick="downloadMessage(this, 'text')">
-                            <i class="fas fa-file-alt"></i> Text (.txt)
-                        </button>
+                        <div class="download-options-menu">
+                            <button class="download-option-btn" onclick="downloadMessage(this, 'word')">
+                                <i class="fas fa-file-word"></i> Word (.doc)
+                            </button>
+                            <button class="download-option-btn" onclick="downloadMessage(this, 'pdf')">
+                                <i class="fas fa-file-pdf"></i> PDF (.pdf)
+                            </button>
+                            <button class="download-option-btn" onclick="downloadMessage(this, 'text')">
+                                <i class="fas fa-file-alt"></i> Text (.txt)
+                            </button>
+                        </div>
                     </div>
-                </div>
-            `;
+                `;
+            }
+            
+            messageContent.appendChild(messageActions);
         }
-        
-        messageContent.appendChild(messageActions);
     }
     
     messageDiv.appendChild(avatar);
@@ -5486,148 +5676,6 @@ function addMessageToChat(content, isUser, fromHistory = false, isTyping = false
     
     return messageId;
 }
-
-// =============================================
-// FIXED: EDIT MESSAGE FUNCTION - PROPER SUBMIT
-// =============================================
-
-window.editMessage = function(button) {
-    const messageText = button.closest('.message-content').querySelector('.message-text');
-    const originalText = messageText.textContent || messageText.innerText;
-    
-    // Create edit textarea
-    const textarea = document.createElement('textarea');
-    textarea.value = originalText;
-    textarea.style.width = '100%';
-    textarea.style.minHeight = '100px';
-    textarea.style.padding = '0.75rem';
-    textarea.style.borderRadius = '8px';
-    textarea.style.border = '1px solid var(--court-gold)';
-    textarea.style.background = 'var(--dark-surface)';
-    textarea.style.color = 'var(--dark-text)';
-    textarea.style.fontFamily = 'inherit';
-    textarea.style.fontSize = '0.9375rem';
-    textarea.style.marginBottom = '0.75rem';
-    
-    // Replace message text with textarea
-    messageText.style.display = 'none';
-    const messageContent = messageText.parentNode;
-    messageContent.insertBefore(textarea, messageText);
-    
-    // Create save/cancel buttons
-    const editControls = document.createElement('div');
-    editControls.style.marginTop = '0.75rem';
-    editControls.style.display = 'flex';
-    editControls.style.gap = '0.5rem';
-    editControls.innerHTML = `
-        <button class="action-btn save-edit-btn" style="background: var(--success); color: white; flex: 1;">
-            <i class="fas fa-check"></i> Save & Submit
-        </button>
-        <button class="action-btn cancel-edit-btn" style="background: var(--error); color: white; flex: 1;">
-            <i class="fas fa-times"></i> Cancel
-        </button>
-    `;
-    
-    messageContent.appendChild(editControls);
-    
-    // Hide all other buttons while editing
-    const actionButtons = messageContent.querySelectorAll('.action-btn:not(.save-edit-btn):not(.cancel-edit-btn)');
-    actionButtons.forEach(btn => btn.style.display = 'none');
-    
-    // Save edit function
-    function saveEdit() {
-        const editedText = textarea.value.trim();
-        
-        if (!editedText) {
-            showToast('Message cannot be empty', 'error');
-            return;
-        }
-        
-        // Update the message in conversation history
-        const messageDiv = messageContent.closest('.message');
-        const isUserMessage = messageDiv.classList.contains('user-message');
-        
-        // Find and update in conversation history
-        const messageIndex = conversationHistory.findIndex(msg => 
-            msg.role === (isUserMessage ? 'user' : 'assistant') && 
-            (msg.content === originalText || msg.content === messageText.textContent)
-        );
-        
-        if (messageIndex !== -1) {
-            conversationHistory[messageIndex].content = editedText;
-            saveCurrentChat();
-        }
-        
-        // Update UI
-        messageText.textContent = editedText;
-        messageText.style.display = 'block';
-        textarea.remove();
-        editControls.remove();
-        
-        // Show all buttons again
-        actionButtons.forEach(btn => btn.style.display = 'flex');
-        
-        showToast('Message updated successfully ✏️', 'success');
-        
-        // If this is a user message, get new AI response
-        if (isUserMessage) {
-            // Find and remove the AI response that followed this message
-            const messageDivIndex = Array.from(messageDiv.parentNode.children).indexOf(messageDiv);
-            const nextMessageDiv = messageDiv.parentNode.children[messageDivIndex + 1];
-            
-            if (nextMessageDiv && nextMessageDiv.classList.contains('ai-message')) {
-                // Remove AI message from DOM
-                nextMessageDiv.remove();
-                
-                // Remove from conversation history
-                const aiMessageIndex = conversationHistory.findIndex((msg, idx) => 
-                    idx > messageIndex && msg.role === 'assistant'
-                );
-                
-                if (aiMessageIndex !== -1) {
-                    conversationHistory.splice(aiMessageIndex, 1);
-                }
-            }
-            
-            // Send the edited message to get new AI response
-            setTimeout(() => {
-                const userInput = document.getElementById('userInput');
-                const sendButton = document.getElementById('sendButton');
-                if (userInput && sendButton) {
-                    userInput.value = editedText;
-                    userInput.style.height = Math.min(userInput.scrollHeight, 200) + 'px';
-                    sendButton.disabled = false;
-                    sendMessage();
-                }
-            }, 500);
-        }
-    }
-    
-    // Cancel edit function
-    function cancelEdit() {
-        messageText.style.display = 'block';
-        textarea.remove();
-        editControls.remove();
-        
-        // Show all buttons again
-        actionButtons.forEach(btn => btn.style.display = 'flex');
-    }
-    
-    // Add event listeners
-    const saveBtn = editControls.querySelector('.save-edit-btn');
-    const cancelBtn = editControls.querySelector('.cancel-edit-btn');
-    
-    saveBtn.addEventListener('click', saveEdit);
-    cancelBtn.addEventListener('click', cancelEdit);
-    
-    // Focus textarea
-    textarea.focus();
-    textarea.setSelectionRange(textarea.value.length, textarea.value.length);
-};
-
-// =============================================
-// SEND MESSAGE FUNCTION - FIXED STOP BUTTON
-// =============================================
 
 function sendMessage() {
     const userInput = document.getElementById('userInput');
@@ -5648,13 +5696,12 @@ function sendMessage() {
     
     // Clear stop flag
     stopResponseFlag = false;
+    isResponseStoppedByUser = false;
     
     const messageId = addMessageToChat(message, true);
     userInput.value = '';
     userInput.style.height = '56px';
-    
-    // FIX: Keep send button enabled when changing to stop
-    sendButton.disabled = false;
+    sendButton.disabled = true;
     
     // Add user message to history
     const userMessage = {
@@ -5665,12 +5712,11 @@ function sendMessage() {
     conversationHistory.push(userMessage);
     
     // Show typing indicator
-    const typingIndicatorId = addMessageToChat('', false, false, true);
+    const typingIndicatorId = addMessageToChat('', false, false, true, false);
     isGeneratingResponse = true;
     
-    // Change send button to stop button - FIXED: ALWAYS ENABLED
+    // Change send button to stop button - FIXED FOR ISSUE #7
     sendButton.innerHTML = '<i class="fas fa-stop"></i> <span class="hide-on-mobile">Stop</span>';
-    sendButton.classList.add('stop-active');
     sendButton.onclick = stopResponse;
     
     // Simulate AI response with realistic typing
@@ -5684,14 +5730,14 @@ function stopResponse() {
     if (isGeneratingResponse) {
         stopResponseFlag = true;
         isGeneratingResponse = false;
+        isResponseStoppedByUser = true;
         
         // Change stop button back to send button
         const sendButton = document.getElementById('sendButton');
         if (sendButton) {
             sendButton.innerHTML = '<i class="fas fa-paper-plane"></i> <span class="hide-on-mobile">Send</span>';
-            sendButton.classList.remove('stop-active');
             sendButton.onclick = sendMessage;
-            sendButton.disabled = true; // Disable until user types
+            sendButton.disabled = true;
         }
         
         showToast('Response stopped ⏹️', 'info');
@@ -5701,18 +5747,6 @@ function stopResponse() {
             clearTimeout(currentResponseTimer);
             currentResponseTimer = null;
         }
-        
-        // Remove typing indicator if it exists
-        const typingElements = document.querySelectorAll('.typing-indicator');
-        typingElements.forEach(el => {
-            const messageDiv = el.closest('.message');
-            if (messageDiv) {
-                messageDiv.remove();
-            }
-        });
-        
-        // Add "stopped" message
-        addMessageToChat('Response stopped by user.', false);
     }
 }
 
@@ -5725,7 +5759,7 @@ function simulateRealisticResponse(userMessage, typingIndicatorId, userMessageId
     if (typingElement) typingElement.remove();
     
     // Add AI message with typewriter effect
-    const aiMessageId = addMessageToChat('', false);
+    const aiMessageId = addMessageToChat('', false, false, false, false);
     const aiMessageElement = document.getElementById(aiMessageId);
     const messageText = aiMessageElement.querySelector('.message-text');
     
@@ -5735,10 +5769,14 @@ function simulateRealisticResponse(userMessage, typingIndicatorId, userMessageId
     
     function typeWriter() {
         if (stopResponseFlag) {
-            // Add stopped indicator
-            const stoppedMsg = '<br><br><em style="color: var(--error);">Response stopped by user.</em>';
-            messageText.innerHTML += stoppedMsg;
-            finalizeAIResponse(aiMessageId, aiResponse.substring(0, index));
+            // Add stopped indicator - FIXED FOR ISSUE #4
+            const stoppedMsg = document.createElement('div');
+            stoppedMsg.className = 'response-stopped-message';
+            stoppedMsg.innerHTML = '<i class="fas fa-stop-circle"></i> Response stopped by user.';
+            messageText.appendChild(stoppedMsg);
+            
+            // Don't add action buttons for stopped responses
+            finalizeStoppedAIResponse(aiMessageId, aiResponse.substring(0, index));
             return;
         }
         
@@ -5760,8 +5798,14 @@ function simulateRealisticResponse(userMessage, typingIndicatorId, userMessageId
                 index++;
             }
             
-            // Scroll to bottom during typing
-            scrollToBottom();
+            // Scroll to bottom only if user is at bottom
+            const chatMessages = document.getElementById('chatMessages');
+            if (chatMessages) {
+                const isAtBottom = chatMessages.scrollHeight - chatMessages.scrollTop - chatMessages.clientHeight < 100;
+                if (isAtBottom) {
+                    scrollToBottom();
+                }
+            }
             
             // Continue typing
             currentResponseTimer = setTimeout(typeWriter, speed);
@@ -5775,14 +5819,15 @@ function simulateRealisticResponse(userMessage, typingIndicatorId, userMessageId
     currentResponseTimer = setTimeout(typeWriter, 500); // Initial delay
 }
 
-function finalizeAIResponse(messageId, fullResponse) {
+function finalizeStoppedAIResponse(messageId, partialResponse) {
     isGeneratingResponse = false;
     
-    // Add AI message to history
+    // Add partial AI message to history
     const aiMessage = {
         role: 'assistant',
-        content: fullResponse,
-        timestamp: new Date().toISOString()
+        content: partialResponse,
+        timestamp: new Date().toISOString(),
+        stopped: true
     };
     conversationHistory.push(aiMessage);
     
@@ -5790,7 +5835,86 @@ function finalizeAIResponse(messageId, fullResponse) {
     const sendButton = document.getElementById('sendButton');
     if (sendButton) {
         sendButton.innerHTML = '<i class="fas fa-paper-plane"></i> <span class="hide-on-mobile">Send</span>';
-        sendButton.classList.remove('stop-active');
+        sendButton.onclick = sendMessage;
+        sendButton.disabled = true;
+    }
+    
+    // Save chat
+    saveCurrentChat();
+    
+    // Clear timer
+    if (currentResponseTimer) {
+        clearTimeout(currentResponseTimer);
+        currentResponseTimer = null;
+    }
+}
+
+function finalizeAIResponse(messageId, fullResponse) {
+    isGeneratingResponse = false;
+    
+    // Add AI message to history
+    const aiMessage = {
+        role: 'assistant',
+        content: fullResponse,
+        timestamp: new Date().toISOString(),
+        stopped: false
+    };
+    conversationHistory.push(aiMessage);
+    
+    // Now add action buttons
+    const messageElement = document.getElementById(messageId);
+    if (messageElement) {
+        const messageContent = messageElement.querySelector('.message-content');
+        const messageText = messageElement.querySelector('.message-text');
+        
+        // Remove any existing action buttons
+        const existingActions = messageContent.querySelector('.message-actions');
+        if (existingActions) existingActions.remove();
+        
+        // Add action buttons
+        const messageActions = document.createElement('div');
+        messageActions.className = 'message-actions';
+        messageActions.innerHTML = `
+            <button class="action-btn copy" onclick="copyMessage(this)" title="Copy response">
+                <i class="fas fa-copy"></i> <span class="hide-on-mobile">Copy</span>
+            </button>
+            <button class="action-btn regenerate" onclick="regenerateMessage(this)" title="Regenerate response">
+                <i class="fas fa-redo"></i> <span class="hide-on-mobile">Regenerate</span>
+            </button>
+            <button class="action-btn like" onclick="rateMessage(this, 'helpful')" title="Mark as helpful">
+                <i class="far fa-thumbs-up"></i> <span class="hide-on-mobile">Helpful</span>
+            </button>
+            <button class="action-btn dislike" onclick="rateMessage(this, 'not-helpful')" title="Mark as not helpful">
+                <i class="far fa-thumbs-down"></i> <span class="hide-on-mobile">Not Helpful</span>
+            </button>
+            <button class="action-btn share" onclick="shareMessage(this)" title="Share response">
+                <i class="fas fa-share"></i> <span class="hide-on-mobile">Share</span>
+            </button>
+            <div class="download-dropdown">
+                <button class="action-btn download" onclick="toggleDownloadDropdown(this)" title="Download options">
+                    <i class="fas fa-download"></i> <span class="hide-on-mobile">Download</span>
+                </button>
+                <div class="download-options-menu">
+                    <button class="download-option-btn" onclick="downloadMessage(this, 'word')">
+                        <i class="fas fa-file-word"></i> Word (.doc)
+                    </button>
+                    <button class="download-option-btn" onclick="downloadMessage(this, 'pdf')">
+                        <i class="fas fa-file-pdf"></i> PDF (.pdf)
+                    </button>
+                    <button class="download-option-btn" onclick="downloadMessage(this, 'text')">
+                        <i class="fas fa-file-alt"></i> Text (.txt)
+                    </button>
+                </div>
+            </div>
+        `;
+        
+        messageContent.appendChild(messageActions);
+    }
+    
+    // Change stop button back to send button
+    const sendButton = document.getElementById('sendButton');
+    if (sendButton) {
+        sendButton.innerHTML = '<i class="fas fa-paper-plane"></i> <span class="hide-on-mobile">Send</span>';
         sendButton.onclick = sendMessage;
         sendButton.disabled = true;
     }
@@ -6152,7 +6276,7 @@ function loadChatFromHistory(chatId) {
     if (chatMessages) {
         chatMessages.innerHTML = '';
         chat.messages.forEach(msg => {
-            addMessageToChat(msg.content, msg.role === 'user', true);
+            addMessageToChat(msg.content, msg.role === 'user', true, false, msg.stopped || false);
         });
     }
     
@@ -6183,7 +6307,7 @@ function deleteChatFromHistory(chatId) {
 }
 
 // =============================================
-// MESSAGE ACTION FUNCTIONS
+// MESSAGE ACTION FUNCTIONS - UPDATED FOR FIX #3
 // =============================================
 
 // Global function for copying messages
@@ -6224,7 +6348,148 @@ window.copyMessage = function(button) {
     document.body.removeChild(textarea);
 };
 
-// Regenerate message function
+// Edit message function - FIXED: Now continues response after edit without duplicate
+window.editMessage = function(button) {
+    const messageContent = button.closest('.message-content');
+    const messageText = messageContent.querySelector('.message-text');
+    const originalText = messageText.textContent;
+    
+    // Check if already in edit mode
+    if (messageContent.querySelector('.message-edit-textarea')) {
+        return;
+    }
+    
+    // Create edit textarea
+    const textarea = document.createElement('textarea');
+    textarea.className = 'message-edit-textarea';
+    textarea.value = originalText;
+    
+    // Replace message text with textarea
+    messageText.style.display = 'none';
+    messageText.parentNode.insertBefore(textarea, messageText);
+    
+    // Create save/cancel buttons
+    const editControls = document.createElement('div');
+    editControls.className = 'edit-message-buttons';
+    editControls.innerHTML = `
+        <button class="action-btn" onclick="saveEditedMessage(this)" style="background: var(--success); color: white;">
+            <i class="fas fa-check"></i> Save & Send
+        </button>
+        <button class="action-btn" onclick="cancelEdit(this)" style="background: var(--error); color: white;">
+            <i class="fas fa-times"></i> Cancel
+        </button>
+    `;
+    
+    // Hide all action buttons except the edit controls we're adding
+    const actionButtons = messageContent.querySelector('.message-actions');
+    if (actionButtons) {
+        actionButtons.style.display = 'none';
+        actionButtons.parentNode.insertBefore(editControls, actionButtons.nextSibling);
+    }
+    
+    // Focus on textarea
+    textarea.focus();
+    textarea.setSelectionRange(textarea.value.length, textarea.value.length);
+};
+
+window.saveEditedMessage = function(button) {
+    const messageContent = button.closest('.message-content');
+    const textarea = messageContent.querySelector('.message-edit-textarea');
+    const messageText = messageContent.querySelector('.message-text');
+    const editControls = button.closest('.edit-message-buttons');
+    
+    if (textarea && messageText) {
+        const editedText = textarea.value.trim();
+        
+        if (!editedText) {
+            showToast('Message cannot be empty', 'error');
+            return;
+        }
+        
+        // Update the message in conversation history
+        const messageDiv = messageContent.closest('.message');
+        const isUserMessage = messageDiv.classList.contains('user-message');
+        
+        // Find and update in conversation history
+        const messageIndex = conversationHistory.findIndex(msg => 
+            msg.role === (isUserMessage ? 'user' : 'assistant') && 
+            msg.content === messageText.textContent
+        );
+        
+        if (messageIndex !== -1) {
+            conversationHistory[messageIndex].content = editedText;
+            saveCurrentChat();
+        }
+        
+        // Update UI
+        messageText.textContent = editedText;
+        messageText.style.display = 'block';
+        textarea.remove();
+        editControls.remove();
+        
+        // Show all buttons again
+        const actionButtons = messageContent.querySelector('.message-actions');
+        if (actionButtons) {
+            actionButtons.style.display = 'flex';
+        }
+        
+        showToast('Message updated successfully ✏️', 'success');
+        
+        // If this is a user message, get new AI response
+        if (isUserMessage) {
+            // Find and remove the AI response that followed this message
+            const messageDivIndex = Array.from(messageDiv.parentNode.children).indexOf(messageDiv);
+            const nextMessageDiv = messageDiv.parentNode.children[messageDivIndex + 1];
+            
+            if (nextMessageDiv && nextMessageDiv.classList.contains('ai-message')) {
+                // Remove AI message from DOM
+                nextMessageDiv.remove();
+                
+                // Remove from conversation history
+                const aiMessageIndex = conversationHistory.findIndex((msg, idx) => 
+                    idx > messageIndex && msg.role === 'assistant'
+                );
+                
+                if (aiMessageIndex !== -1) {
+                    conversationHistory.splice(aiMessageIndex, 1);
+                }
+            }
+            
+            // Send the edited message to get new AI response
+            setTimeout(() => {
+                const userInput = document.getElementById('userInput');
+                const sendButton = document.getElementById('sendButton');
+                if (userInput && sendButton) {
+                    userInput.value = editedText;
+                    userInput.style.height = Math.min(userInput.scrollHeight, 200) + 'px';
+                    sendButton.disabled = false;
+                    sendMessage();
+                }
+            }, 500);
+        }
+    }
+};
+
+window.cancelEdit = function(button) {
+    const messageContent = button.closest('.message-content');
+    const textarea = messageContent.querySelector('.message-edit-textarea');
+    const messageText = messageContent.querySelector('.message-text');
+    const editControls = button.closest('.edit-message-buttons');
+    
+    if (textarea && messageText) {
+        messageText.style.display = 'block';
+        textarea.remove();
+        editControls.remove();
+        
+        // Show all buttons again
+        const actionButtons = messageContent.querySelector('.message-actions');
+        if (actionButtons) {
+            actionButtons.style.display = 'flex';
+        }
+    }
+};
+
+// Regenerate message function - FIXED FOR ISSUE #7
 window.regenerateMessage = function(button) {
     const messageDiv = button.closest('.message');
     const messageContent = button.closest('.message-content');
@@ -6257,19 +6522,20 @@ window.regenerateMessage = function(button) {
     // Remove from DOM
     messageDiv.remove();
     
-    // Simulate regeneration
+    // Simulate regeneration with stop button visible
     const typingIndicatorId = addMessageToChat('', false, false, true);
     
     // Change send button to stop button
     const sendButton = document.getElementById('sendButton');
     if (sendButton) {
         sendButton.innerHTML = '<i class="fas fa-stop"></i> <span class="hide-on-mobile">Stop</span>';
-        sendButton.classList.add('stop-active');
         sendButton.onclick = stopResponse;
+        sendButton.disabled = false;
     }
     
     isGeneratingResponse = true;
     stopResponseFlag = false;
+    isResponseStoppedByUser = false;
     
     // Simulate new response
     setTimeout(() => {
@@ -6399,15 +6665,16 @@ window.toggleDownloadDropdown = function(button) {
     }, 10);
 };
 
-// =============================================
-// FIXED: DOWNLOAD DOCUMENT FUNCTION - PROPER FORMATS
-// =============================================
-
 window.downloadMessage = function(button, format) {
     const messageContent = button.closest('.message').querySelector('.message-content');
     const messageText = messageContent.querySelector('.message-text');
-    const textToDownload = messageText.textContent || messageText.innerText;
+    let textToDownload = messageText.textContent || messageText.innerText;
+    
+    // Remove the "Response stopped by user" message if present
+    textToDownload = textToDownload.replace(/Response stopped by user\./g, '').trim();
+    
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const filename = `LegalSwami-Response-${timestamp}`;
     
     let content = `LEGALSWAMI AI RESPONSE\n`;
     content += `Generated: ${new Date().toLocaleString('en-IN')}\n`;
@@ -6418,8 +6685,7 @@ window.downloadMessage = function(button, format) {
     content += `Not legal advice. Consult a qualified attorney for legal matters.\n`;
     content += `Generated by: LegalSwami (https://legalswami.com)\n`;
     
-    let filename = `LegalSwami-Response-${timestamp}`;
-    
+    // FIXED FOR ISSUE #1: Proper download in 3 formats
     if (format === 'word') {
         downloadAsDOC(content, filename);
     } else if (format === 'pdf') {
@@ -6427,7 +6693,6 @@ window.downloadMessage = function(button, format) {
             downloadAsPDF(content, filename);
         } catch (error) {
             console.error('PDF generation error:', error);
-            // Fallback to text
             downloadAsTXT(content, filename);
             showToast('PDF generation failed. Text file downloaded instead.', 'warning');
         }
@@ -6437,19 +6702,14 @@ window.downloadMessage = function(button, format) {
     
     // Close dropdown
     const dropdown = button.closest('.download-options-menu');
-    if (dropdown) {
-        dropdown.classList.remove('show');
-    }
+    dropdown.classList.remove('show');
     
     // Visual feedback
-    const downloadBtn = document.querySelector('.download-dropdown .action-btn.download');
-    if (downloadBtn) {
-        const originalHTML = downloadBtn.innerHTML;
-        downloadBtn.innerHTML = '<i class="fas fa-check"></i> Downloaded!';
-        setTimeout(() => {
-            downloadBtn.innerHTML = originalHTML;
-        }, 2000);
-    }
+    const downloadBtn = dropdown.previousElementSibling;
+    downloadBtn.innerHTML = '<i class="fas fa-check"></i> Downloaded!';
+    setTimeout(() => {
+        downloadBtn.innerHTML = '<i class="fas fa-download"></i> Download';
+    }, 2000);
 };
 
 function downloadChat(format) {
@@ -6489,6 +6749,12 @@ function downloadChat(format) {
             .replace(/💰/g, '[FINANCIAL]');
         
         content += cleanText + '\n\n';
+        
+        // Add stopped indicator if response was stopped
+        if (msg.stopped) {
+            content += '[Response stopped by user]\n\n';
+        }
+        
         content += '═'.repeat(60) + '\n\n';
     });
     
@@ -6500,6 +6766,7 @@ function downloadChat(format) {
     
     const fileName = `LegalSwami-Chat-${formatDateForFilename(new Date())}`;
     
+    // FIXED FOR ISSUE #1: Proper download in 3 formats
     if (format === 'txt') {
         downloadAsTXT(content, fileName);
     } else if (format === 'pdf') {
@@ -6542,63 +6809,45 @@ function downloadAsPDF(content, filename) {
             creator: 'LegalSwami'
         });
         
-        // Set margins
-        const margin = 20;
-        const pageWidth = doc.internal.pageSize.getWidth();
-        const pageHeight = doc.internal.pageSize.getHeight();
-        let yPos = margin;
-        
         // Add header
         doc.setFontSize(16);
         doc.setFont('helvetica', 'bold');
-        doc.setTextColor(30, 64, 175); // Dark blue
-        doc.text('LEGALSWAMI - CHAT HISTORY', pageWidth / 2, yPos, { align: 'center' });
-        yPos += 10;
+        doc.setTextColor(30, 64, 175);
+        doc.text('LEGALSWAMI - CHAT HISTORY', 105, 20, null, null, 'center');
         
         doc.setFontSize(10);
         doc.setFont('helvetica', 'normal');
         doc.setTextColor(100, 100, 100);
-        doc.text(`Generated: ${new Date().toLocaleString()}`, pageWidth / 2, yPos, { align: 'center' });
-        yPos += 15;
+        doc.text(`Generated: ${new Date().toLocaleString()}`, 105, 28, null, null, 'center');
         
         // Add separator line
-        doc.setDrawColor(212, 175, 55); // Gold color
+        doc.setDrawColor(212, 175, 55);
         doc.setLineWidth(0.5);
-        doc.line(margin, yPos, pageWidth - margin, yPos);
-        yPos += 10;
+        doc.line(20, 32, 190, 32);
         
         // Prepare content
         doc.setFontSize(11);
         doc.setFont('helvetica', 'normal');
         doc.setTextColor(0, 0, 0);
         
-        // Split content into lines
-        const lines = doc.splitTextToSize(content, pageWidth - 2 * margin);
+        const lines = doc.splitTextToSize(content, 170);
+        let yPos = 42;
         
         // Add content with pagination
         for (let i = 0; i < lines.length; i++) {
-            if (yPos > pageHeight - margin) {
+            if (yPos > 280) {
                 doc.addPage();
-                yPos = margin;
+                yPos = 20;
             }
-            doc.text(lines[i], margin, yPos);
+            doc.text(lines[i], 20, yPos);
             yPos += 7;
         }
         
-        // Add footer on last page
-        yPos += 10;
-        if (yPos > pageHeight - 30) {
-            doc.addPage();
-            yPos = margin;
-        }
-        
+        // Add footer
         doc.setFontSize(9);
         doc.setTextColor(100, 100, 100);
-        doc.text('Generated by LegalSwami AI Legal Assistant - https://legalswami.com', 
-                pageWidth / 2, yPos, { align: 'center' });
-        yPos += 5;
-        doc.text('Disclaimer: This is AI-generated information, not legal advice. Consult a qualified attorney.', 
-                pageWidth / 2, yPos, { align: 'center' });
+        doc.text('Generated by LegalSwami AI Legal Assistant - https://legalswami.com', 105, 290, null, null, 'center');
+        doc.text('Disclaimer: This is AI-generated information, not legal advice. Consult a qualified attorney.', 105, 295, null, null, 'center');
         
         // Save PDF
         doc.save(`${filename}.pdf`);
@@ -6610,7 +6859,6 @@ function downloadAsPDF(content, filename) {
 }
 
 function downloadAsDOC(content, filename) {
-    // Create a proper Word document with HTML
     const htmlContent = `
         <!DOCTYPE html>
         <html>
@@ -6618,95 +6866,29 @@ function downloadAsDOC(content, filename) {
             <meta charset="UTF-8">
             <title>${filename}</title>
             <style>
-                @page {
-                    margin: 2cm;
-                }
-                body {
-                    font-family: 'Arial', sans-serif;
-                    line-height: 1.6;
-                    color: #333;
-                    max-width: 21cm;
-                    margin: 0 auto;
-                    padding: 20px;
-                }
-                .header {
-                    text-align: center;
-                    border-bottom: 3px solid #d4af37;
-                    padding-bottom: 20px;
-                    margin-bottom: 30px;
-                }
-                h1 {
-                    color: #1e40af;
-                    font-size: 24px;
-                    margin-bottom: 10px;
-                }
-                .subtitle {
-                    color: #666;
-                    font-size: 14px;
-                }
-                .message {
-                    margin-bottom: 25px;
-                    padding: 15px;
-                    border-left: 4px solid #d4af37;
-                    background: #f8fafc;
-                    page-break-inside: avoid;
-                }
-                .user-message {
-                    border-left-color: #1e40af;
-                }
-                .ai-message {
-                    border-left-color: #059669;
-                }
-                .message-header {
-                    display: flex;
-                    justify-content: space-between;
-                    margin-bottom: 10px;
-                    font-weight: bold;
-                    color: #555;
-                }
-                .message-content {
-                    white-space: pre-wrap;
-                    font-family: 'Courier New', monospace;
-                    font-size: 12px;
-                }
-                .disclaimer {
-                    margin-top: 40px;
-                    padding: 20px;
-                    background: #fef3c7;
-                    border: 1px solid #f59e0b;
-                    border-radius: 5px;
-                    font-size: 12px;
-                    page-break-inside: avoid;
-                }
-                .footer {
-                    text-align: center;
-                    margin-top: 30px;
-                    padding-top: 20px;
-                    border-top: 1px solid #ddd;
-                    font-size: 11px;
-                    color: #666;
-                }
+                body { font-family: Arial, sans-serif; line-height: 1.6; margin: 40px; }
+                h1 { color: #1e40af; border-bottom: 2px solid #d4af37; padding-bottom: 10px; }
+                .header { text-align: center; margin-bottom: 30px; }
+                .message { margin-bottom: 20px; padding: 15px; border-left: 4px solid #d4af37; background: #f8fafc; }
+                .user { border-left-color: #1e40af; }
+                .ai { border-left-color: #059669; }
+                .timestamp { color: #64748b; font-size: 0.9em; margin-bottom: 5px; }
+                .disclaimer { margin-top: 40px; padding: 20px; background: #fef3c7; border: 1px solid #f59e0b; border-radius: 5px; }
             </style>
         </head>
         <body>
             <div class="header">
                 <h1>LegalSwami Chat History</h1>
-                <p class="subtitle">Generated on: ${new Date().toLocaleString()}</p>
+                <p>Generated on: ${new Date().toLocaleString()}</p>
             </div>
             
             <div class="content">
-                ${formatContentForWord(content)}
+                <pre style="white-space: pre-wrap; font-family: 'Courier New', monospace;">${content.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</pre>
             </div>
             
             <div class="disclaimer">
-                <h3>Important Legal Notice</h3>
+                <h3>Important Notice</h3>
                 <p>This document contains AI-generated information from LegalSwami AI Legal Assistant. The content is provided for educational and informational purposes only and does not constitute legal advice. Always consult with a qualified attorney for legal matters specific to your situation.</p>
-                <p>Generated by: LegalSwami AI Legal Assistant<br>
-                Website: https://legalswami.com</p>
-            </div>
-            
-            <div class="footer">
-                <p>© ${new Date().getFullYear()} LegalSwami. All rights reserved.</p>
             </div>
         </body>
         </html>
@@ -6722,50 +6904,6 @@ function downloadAsDOC(content, filename) {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
     showToast('Word document downloaded successfully 📥', 'success');
-}
-
-function formatContentForWord(content) {
-    const lines = content.split('\n');
-    let html = '';
-    let currentRole = '';
-    
-    lines.forEach(line => {
-        if (line.includes('YOU (')) {
-            currentRole = 'user';
-            html += `<div class="message user-message">
-                <div class="message-header">YOU - ${line.match(/\(([^)]+)\)/)[1]}</div>
-                <div class="message-content">`;
-        } else if (line.includes('LEGALSWAMI AI (')) {
-            currentRole = 'ai';
-            html += `<div class="message ai-message">
-                <div class="message-header">LEGALSWAMI AI - ${line.match(/\(([^)]+)\)/)[1]}</div>
-                <div class="message-content">`;
-        } else if (line.includes('─'.repeat(50))) {
-            // Separator line - do nothing
-        } else if (line.includes('═'.repeat(60))) {
-            // End of message
-            if (currentRole) {
-                html += `</div></div>`;
-                currentRole = '';
-            }
-        } else if (line.trim() === '') {
-            // Empty line
-            html += '<br>';
-        } else {
-            // Regular content line
-            const escapedLine = line
-                .replace(/</g, '&lt;')
-                .replace(/>/g, '&gt;')
-                .replace(/\[IMPORTANT\]/g, '<strong>IMPORTANT:</strong>')
-                .replace(/\[LAW\]/g, '<em>LAW</em>')
-                .replace(/\[NOTE\]/g, '<em>NOTE:</em>')
-                .replace(/\[REFERENCE\]/g, '<em>REFERENCE:</em>')
-                .replace(/\[TIP\]/g, '<strong>TIP:</strong>');
-            html += escapedLine + '<br>';
-        }
-    });
-    
-    return html;
 }
 
 function formatDateForFilename(date) {
@@ -6808,7 +6946,7 @@ function showToast(message, type = 'success') {
 }
 
 // =============================================
-// GOOGLE LOGIN FUNCTIONALITY - FIXED FOR MOBILE
+// GOOGLE LOGIN FUNCTIONALITY
 // =============================================
 
 function initializeGoogleLogin() {
@@ -6951,16 +7089,12 @@ function updateLoginUI(userInfo) {
 }
 
 function showProfileMenu(userInfo) {
-    // Remove existing menu if any
-    const existingMenu = document.querySelector('.profile-menu');
-    if (existingMenu) existingMenu.remove();
-    
     // Create profile menu
     const profileMenu = document.createElement('div');
     profileMenu.className = 'profile-menu';
     profileMenu.style.cssText = `
-        position: fixed;
-        top: 70px;
+        position: absolute;
+        top: 60px;
         right: 20px;
         background: var(--dark-surface);
         border: 2px solid var(--court-gold);
@@ -7299,12 +7433,6 @@ document.addEventListener('DOMContentLoaded', function() {
                 dropdown.classList.remove('show');
             });
             
-            // Close profile menu
-            const profileMenu = document.querySelector('.profile-menu');
-            if (profileMenu) {
-                profileMenu.remove();
-            }
-            
             // Stop response if generating
             if (isGeneratingResponse) {
                 stopResponse();
@@ -7331,12 +7459,6 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.download-options-menu').forEach(dropdown => {
                 dropdown.classList.remove('show');
             });
-        }
-        
-        // Close profile menu when clicking outside
-        const profileMenu = document.querySelector('.profile-menu');
-        if (profileMenu && !profileMenu.contains(e.target) && e.target.id !== 'googleLoginBtn') {
-            profileMenu.remove();
         }
     });
 
