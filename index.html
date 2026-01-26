@@ -960,7 +960,7 @@ body.light-mode {
     line-height: 1.5;
 }
 
-/* Chat Input Area - Legal Pad Style */
+/* Chat Input Area - Legal Pad Style - FIXED VISIBILITY */
 .input-container {
     padding: 1rem;
     background: linear-gradient(180deg, var(--dark-surface) 0%, var(--dark-bg) 100%);
@@ -982,6 +982,7 @@ body.light-mode {
     width: 100%;
 }
 
+/* FIXED: Text input field visibility */
 .input-area textarea {
     width: 100%;
     padding: 1rem 7rem 1rem 1.25rem;
@@ -1000,12 +1001,30 @@ body.light-mode {
     box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
     opacity: 1 !important;
     visibility: visible !important;
+    -webkit-text-fill-color: var(--dark-text) !important;
+    caret-color: var(--court-gold);
 }
 
 .input-area textarea:focus {
     border-color: var(--primary-light);
     box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.3);
     background: linear-gradient(135deg, var(--court-parchment) 0%, var(--dark-surface-light) 100%);
+}
+
+.input-area textarea::placeholder {
+    color: var(--dark-text-secondary) !important;
+    opacity: 0.8 !important;
+}
+
+.light-mode .input-area textarea {
+    color: var(--light-text) !important;
+    background: linear-gradient(135deg, var(--court-parchment) 0%, var(--light-surface) 100%);
+    border-color: var(--court-gold);
+    -webkit-text-fill-color: var(--light-text) !important;
+}
+
+.light-mode .input-area textarea::placeholder {
+    color: var(--light-text-secondary) !important;
 }
 
 .input-buttons {
@@ -1017,7 +1036,8 @@ body.light-mode {
     gap: 8px;
 }
 
-.emoji-picker-btn,
+/* REMOVED: emoji-picker-btn styles */
+
 .attachment-btn,
 .input-microphone-btn,
 .send-button {
@@ -1034,7 +1054,6 @@ body.light-mode {
     backdrop-filter: blur(10px);
 }
 
-.emoji-picker-btn:hover,
 .attachment-btn:hover,
 .input-microphone-btn:hover {
     background: rgba(30, 64, 175, 0.2);
@@ -1107,11 +1126,6 @@ body.light-mode {
 .light-mode .welcome-features .feature {
     background: var(--light-surface);
     border-color: var(--light-border);
-}
-
-.light-mode .input-area textarea {
-    background: linear-gradient(135deg, var(--court-parchment) 0%, var(--light-surface) 100%);
-    color: var(--light-text) !important;
 }
 
 /* ============================================= */
@@ -1200,6 +1214,9 @@ body.light-mode {
     transition: all 0.3s;
     position: relative;
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .history-item:hover {
@@ -1236,6 +1253,87 @@ body.light-mode {
     display: flex;
     align-items: center;
     gap: 4px;
+}
+
+.history-actions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.history-action-btn {
+    flex: 1;
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: none;
+    font-size: 0.75rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+}
+
+.history-action-btn.open {
+    background: rgba(30, 64, 175, 0.2);
+    color: var(--primary-light);
+    border: 1px solid rgba(30, 64, 175, 0.3);
+}
+
+.history-action-btn.open:hover {
+    background: rgba(30, 64, 175, 0.3);
+}
+
+.history-action-btn.delete {
+    background: rgba(220, 38, 38, 0.2);
+    color: var(--error);
+    border: 1px solid rgba(220, 38, 38, 0.3);
+}
+
+.history-action-btn.delete:hover {
+    background: rgba(220, 38, 38, 0.3);
+}
+
+/* New Chat Button UI */
+.history-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--dark-border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+}
+
+.history-header h2 {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.125rem;
+    color: var(--court-gold);
+    margin: 0;
+}
+
+.new-chat-btn {
+    background: linear-gradient(135deg, var(--court-gold) 0%, var(--court-maroon) 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: all 0.3s;
+    white-space: nowrap;
+}
+
+.new-chat-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(212, 175, 55, 0.3);
 }
 
 .empty-history {
@@ -4475,33 +4573,15 @@ body.light-mode {
                         </div>
                         
                         <div class="header-actions">
-                            <button id="backToHomeBtn" class="header-btn hide-on-mobile">
+                            <!-- Only two buttons: Back to Home and New Chat -->
+                            <button id="backToHomeBtn" class="header-btn">
                                 <i class="fas fa-home"></i>
                                 <span>Back to Home</span>
                             </button>
                             
-                            <div class="status-indicator hide-on-mobile">
-                                <div class="status-dot"></div>
-                                <span>AI Assistant Ready</span>
-                            </div>
-                            
-                            <button class="header-btn voice-search-btn" id="voiceSearchBtn" title="Voice Search">
-                                <i class="fas fa-microphone"></i>
-                            </button>
-                            <button class="header-btn theme-toggle" id="themeToggle" title="Toggle Theme">
-                                <i class="fas fa-sun"></i>
-                            </button>
-                            <button class="header-btn" id="clearChatBtn">
-                                <i class="fas fa-broom"></i>
-                                <span class="hide-on-mobile">Clear Chat</span>
-                            </button>
-                            <button class="header-btn" id="downloadCurrentBtn">
-                                <i class="fas fa-download"></i>
-                                <span class="hide-on-mobile">Download Chat</span>
-                            </button>
-                            <button class="header-btn" id="suggestionsBtn">
-                                <i class="fas fa-lightbulb"></i>
-                                <span class="hide-on-mobile">Suggestions</span>
+                            <button id="newChatBtnHeader" class="header-btn">
+                                <i class="fas fa-plus"></i>
+                                <span>New Chat</span>
                             </button>
                         </div>
                     </header>
@@ -4574,7 +4654,7 @@ body.light-mode {
                                     <h2><i class="fas fa-history"></i> Chat History</h2>
                                     <button class="new-chat-btn" id="newChatBtn">
                                         <i class="fas fa-plus"></i>
-                                        <span class="hide-on-mobile">New Chat</span>
+                                        <span>New Chat</span>
                                     </button>
                                 </div>
                                 
@@ -4604,10 +4684,7 @@ body.light-mode {
                                     ></textarea>
                                     
                                     <div class="input-buttons">
-                                        <!-- Emoji Picker Button -->
-                                        <button class="emoji-picker-btn" id="emojiPickerBtn" title="Insert emoji">
-                                            <i class="far fa-smile"></i>
-                                        </button>
+                                        <!-- REMOVED: emoji-picker-btn -->
                                         
                                         <!-- Attachment Button -->
                                         <button class="attachment-btn" id="attachmentBtn" title="Attach files (images, PDF, TXT)">
@@ -5020,19 +5097,15 @@ function initializeChatApp() {
         const chatMessages = document.getElementById('chatMessages');
         const userInput = document.getElementById('userInput');
         const sendButton = document.getElementById('sendButton');
-        const clearChatBtn = document.getElementById('clearChatBtn');
-        const downloadCurrentBtn = document.getElementById('downloadCurrentBtn');
-        const suggestionsBtn = document.getElementById('suggestionsBtn');
-        const voiceSearchBtn = document.getElementById('voiceSearchBtn');
-        const inputMicrophoneBtn = document.getElementById('inputMicrophoneBtn');
-        const themeToggle = document.getElementById('themeToggle');
+        const newChatBtn = document.getElementById('newChatBtn');
+        const newChatBtnHeader = document.getElementById('newChatBtnHeader');
+        const backToHomeBtn = document.getElementById('backToHomeBtn');
+        const sidebarToggle = document.getElementById('sidebarToggle');
         const topicItems = document.querySelectorAll('.topic-item');
         const sidebarTabs = document.querySelectorAll('.sidebar-tab');
-        const newChatBtn = document.getElementById('newChatBtn');
-        const backToHomeBtn = document.getElementById('backToHomeBtn');
-        const emojiPickerBtn = document.getElementById('emojiPickerBtn');
         const scrollToBottomBtn = document.getElementById('scrollToBottomBtn');
-        const sidebarToggle = document.getElementById('sidebarToggle');
+        const inputMicrophoneBtn = document.getElementById('inputMicrophoneBtn');
+        const attachmentBtn = document.getElementById('attachmentBtn');
 
         // Load or create chat
         if (!currentChatId || conversationHistory.length === 0) {
@@ -5073,6 +5146,11 @@ function initializeChatApp() {
                 this.style.height = Math.min(this.scrollHeight, 200) + 'px';
                 sendButton.disabled = this.value.trim() === '';
             });
+            
+            // Make text clearly visible
+            userInput.style.color = 'var(--dark-text)';
+            userInput.style.opacity = '1';
+            userInput.style.visibility = 'visible';
         }
 
         // Voice recognition setup
@@ -5086,7 +5164,6 @@ function initializeChatApp() {
             recognition.onstart = function() {
                 isListening = true;
                 showToast('Listening... Speak now 🎤', 'info');
-                if (voiceSearchBtn) voiceSearchBtn.classList.add('listening');
                 if (inputMicrophoneBtn) inputMicrophoneBtn.classList.add('listening');
             };
             
@@ -5103,25 +5180,13 @@ function initializeChatApp() {
                 console.error('Speech recognition error:', event.error);
                 isListening = false;
                 showToast('Voice recognition failed. Please try again. ❌', 'error');
-                if (voiceSearchBtn) voiceSearchBtn.classList.remove('listening');
                 if (inputMicrophoneBtn) inputMicrophoneBtn.classList.remove('listening');
             };
             
             recognition.onend = function() {
                 isListening = false;
-                if (voiceSearchBtn) voiceSearchBtn.classList.remove('listening');
                 if (inputMicrophoneBtn) inputMicrophoneBtn.classList.remove('listening');
             };
-            
-            if (voiceSearchBtn) {
-                voiceSearchBtn.addEventListener('click', function() {
-                    if (isListening) {
-                        recognition.stop();
-                    } else {
-                        recognition.start();
-                    }
-                });
-            }
             
             if (inputMicrophoneBtn) {
                 inputMicrophoneBtn.addEventListener('click', function() {
@@ -5133,26 +5198,7 @@ function initializeChatApp() {
                 });
             }
         } else {
-            if (voiceSearchBtn) voiceSearchBtn.style.display = 'none';
             if (inputMicrophoneBtn) inputMicrophoneBtn.style.display = 'none';
-        }
-
-        // Theme toggle
-        if (themeToggle) {
-            themeToggle.addEventListener('click', function() {
-                const themeIcon = this.querySelector('i');
-                if (isLightMode) {
-                    document.body.classList.remove('light-mode');
-                    if (themeIcon) themeIcon.className = 'fas fa-sun';
-                    localStorage.setItem('legalSwamiTheme', 'dark');
-                    isLightMode = false;
-                } else {
-                    document.body.classList.add('light-mode');
-                    if (themeIcon) themeIcon.className = 'fas fa-moon';
-                    localStorage.setItem('legalSwamiTheme', 'light');
-                    isLightMode = true;
-                }
-            });
         }
         
         // Sidebar toggle for mobile
@@ -5185,109 +5231,15 @@ function initializeChatApp() {
             });
         });
         
-        // New chat button
+        // New chat button in sidebar
         if (newChatBtn) newChatBtn.addEventListener('click', createNewChat);
         
-        // Clear chat button
-        if (clearChatBtn) {
-            clearChatBtn.addEventListener('click', function() {
-                if (confirm('Are you sure you want to clear the current chat? This action cannot be undone.')) {
-                    const chatMessages = document.getElementById('chatMessages');
-                    if (chatMessages) chatMessages.innerHTML = '';
-                    conversationHistory = [];
-                    createNewChat();
-                    showToast('Current chat cleared 🗑️', 'success');
-                }
-            });
-        }
-        
-        // Download chat button
-        if (downloadCurrentBtn) {
-            downloadCurrentBtn.addEventListener('click', function() {
-                if (conversationHistory.length === 0) {
-                    showToast('No chat content to download 📄', 'warning');
-                    return;
-                }
-                const downloadModal = document.getElementById('downloadModal');
-                if (downloadModal) downloadModal.classList.add('active');
-            });
-        }
-        
-        // Suggestions button
-        if (suggestionsBtn) {
-            suggestionsBtn.addEventListener('click', function() {
-                const suggestions = [
-                    "Create a non-disclosure agreement draft 📝",
-                    "I need an employment contract template 💼",
-                    "Generate a rental agreement for me 🏠",
-                    "Draft a loan agreement document 💰",
-                    "What are the essential elements of a valid contract? ⚖️"
-                ];
-                
-                addMessageToChat(
-                    `<h3 style="color: var(--court-gold); margin-bottom: 1rem;">Suggested Questions:</h3>
-                    <div style="display: flex; flex-direction: column; gap: 0.5rem;">
-                        ${suggestions.map(q => `
-                            <div style="cursor: pointer; padding: 0.75rem; background: rgba(212, 175, 55, 0.1); border: 1px solid rgba(212, 175, 55, 0.2); border-radius: 8px; transition: all 0.3s;" 
-                                onmouseover="this.style.background='rgba(212, 175, 55, 0.2)'; this.style.transform='translateX(5px)'" 
-                                onmouseout="this.style.background='rgba(212, 175, 55, 0.1)'; this.style.transform='translateX(0)'"
-                                onclick="document.getElementById('userInput').value = '${q}'; document.getElementById('userInput').focus(); document.getElementById('userInput').style.height = Math.min(document.getElementById('userInput').scrollHeight, 200) + 'px'; document.getElementById('sendButton').disabled = false;">
-                                ${q}
-                            </div>
-                        `).join('')}
-                    </div>
-                    <p style="margin-top: 1rem; color: var(--dark-text-secondary); font-size: 0.875rem;">Click any question to add it to the input field. 👆</p>`,
-                    false
-                );
-            });
-        }
-        
-        // Topic click handlers
-        topicItems.forEach(item => {
-            item.addEventListener('click', function() {
-                const topic = this.dataset.topic;
-                const topicName = this.querySelector('span').textContent;
-                const questions = {
-                    'contract': 'What are the essential elements of a valid contract under Indian law? ⚖️',
-                    'employment': 'What are the rights of employees regarding workplace harassment in India? 💼',
-                    'intellectual': 'How does copyright protection work for software in India? 🧠',
-                    'realestate': 'What documents are required for property registration in India? 🏠',
-                    'family': 'What are the grounds for divorce under Hindu Marriage Act? 👨‍👩‍👧',
-                    'criminal': 'What is the difference between bailable and non-bailable offenses? ⚖️'
-                };
-                if (userInput) {
-                    userInput.value = questions[topic] || `Tell me about ${topicName.toLowerCase()} in Indian law. ⚖️`;
-                    userInput.focus();
-                    userInput.style.height = Math.min(userInput.scrollHeight, 200) + 'px';
-                }
-                if (sendButton) sendButton.disabled = false;
-                showToast(`${topicName} topic selected 📂`, 'success');
-            });
-        });
+        // New chat button in header
+        if (newChatBtnHeader) newChatBtnHeader.addEventListener('click', createNewChat);
         
         // Back to home button
         if (backToHomeBtn) {
             backToHomeBtn.addEventListener('click', closeChat);
-        }
-        
-        // Emoji picker button
-        if (emojiPickerBtn) {
-            emojiPickerBtn.addEventListener('click', function() {
-                const userInput = document.getElementById('userInput');
-                if (userInput) {
-                    const emojis = ['⚖️', '📝', '🔍', '💼', '🏠', '💰', '👨‍👩‍👧', '⚡', '📚', '🔐', '👨‍⚖️', '🏛️', '📄', '✍️', '✅'];
-                    const emoji = emojis[Math.floor(Math.random() * emojis.length)];
-                    const cursorPos = userInput.selectionStart;
-                    const textBefore = userInput.value.substring(0, cursorPos);
-                    const textAfter = userInput.value.substring(cursorPos);
-                    userInput.value = textBefore + emoji + textAfter;
-                    userInput.focus();
-                    userInput.selectionStart = cursorPos + emoji.length;
-                    userInput.selectionEnd = cursorPos + emoji.length;
-                    userInput.style.height = Math.min(userInput.scrollHeight, 200) + 'px';
-                    sendButton.disabled = false;
-                }
-            });
         }
         
         // Scroll to bottom button
@@ -5317,6 +5269,29 @@ function initializeChatApp() {
                 downloadChat(format);
                 const downloadModal = document.getElementById('downloadModal');
                 if (downloadModal) downloadModal.classList.remove('active');
+            });
+        });
+        
+        // Topic click handlers
+        topicItems.forEach(item => {
+            item.addEventListener('click', function() {
+                const topic = this.dataset.topic;
+                const topicName = this.querySelector('span').textContent;
+                const questions = {
+                    'contract': 'What are the essential elements of a valid contract under Indian law? ⚖️',
+                    'employment': 'What are the rights of employees regarding workplace harassment in India? 💼',
+                    'intellectual': 'How does copyright protection work for software in India? 🧠',
+                    'realestate': 'What documents are required for property registration in India? 🏠',
+                    'family': 'What are the grounds for divorce under Hindu Marriage Act? 👨‍👩‍👧',
+                    'criminal': 'What is the difference between bailable and non-bailable offenses? ⚖️'
+                };
+                if (userInput) {
+                    userInput.value = questions[topic] || `Tell me about ${topicName.toLowerCase()} in Indian law. ⚖️`;
+                    userInput.focus();
+                    userInput.style.height = Math.min(userInput.scrollHeight, 200) + 'px';
+                }
+                if (sendButton) sendButton.disabled = false;
+                showToast(`${topicName} topic selected 📂`, 'success');
             });
         });
         
@@ -5859,25 +5834,19 @@ function loadHistoryList() {
                 <div class="history-title">${chat.title}</div>
                 <div class="history-preview">${chat.preview}</div>
                 <div class="history-date"><i class="far fa-clock"></i> ${formattedDate}</div>
+                <div class="history-actions">
+                    <button class="history-action-btn open" onclick="loadChatFromHistory('${chat.id}')">
+                        <i class="fas fa-external-link-alt"></i> Open
+                    </button>
+                    <button class="history-action-btn delete" onclick="deleteChatFromHistory('${chat.id}')">
+                        <i class="fas fa-trash"></i> Delete
+                    </button>
+                </div>
             </div>
         `;
     });
     
     historyList.innerHTML = html;
-    
-    // Add click handlers
-    document.querySelectorAll('.history-item').forEach(item => {
-        item.addEventListener('click', function() {
-            const chatId = this.dataset.chatId;
-            loadChatFromHistory(chatId);
-            
-            // Close sidebar on mobile
-            const sidebar = document.getElementById('sidebar');
-            if (sidebar && window.innerWidth <= 992) {
-                sidebar.classList.remove('active');
-            }
-        });
-    });
 }
 
 function loadChatFromHistory(chatId) {
@@ -5900,6 +5869,25 @@ function loadChatFromHistory(chatId) {
     setTimeout(() => {
         scrollToBottom();
     }, 100);
+}
+
+function deleteChatFromHistory(chatId) {
+    if (!confirm('Are you sure you want to delete this chat? This action cannot be undone.')) {
+        return;
+    }
+    
+    // If deleting current chat, create new one
+    if (currentChatId === chatId) {
+        createNewChat();
+    }
+    
+    // Remove from history
+    chatHistory = chatHistory.filter(chat => chat.id !== chatId);
+    saveUserChatHistory();
+    
+    // Update UI
+    loadHistoryList();
+    showToast('Chat deleted successfully 🗑️', 'success');
 }
 
 function downloadChat(format) {
