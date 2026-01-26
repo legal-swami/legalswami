@@ -964,7 +964,7 @@ body.light-mode {
     line-height: 1.5;
 }
 
-/* Chat Input Area - Legal Pad Style - FIXED VISIBILITY */
+/* FIXED: Chat Input Area with proper visibility */
 .input-container {
     padding: 1rem;
     background: linear-gradient(180deg, var(--dark-surface) 0%, var(--dark-bg) 100%);
@@ -985,7 +985,7 @@ body.light-mode {
     width: 100%;
 }
 
-/* FIXED: Text input field visibility */
+/* FIXED: Text input field visibility - IMPORTANT FIX */
 .input-area textarea {
     width: 100%;
     padding: 1rem 7rem 1rem 1.25rem;
@@ -1039,8 +1039,6 @@ body.light-mode {
     gap: 8px;
 }
 
-/* REMOVED: emoji-picker-btn styles */
-
 .attachment-btn,
 .input-microphone-btn,
 .send-button {
@@ -1086,12 +1084,16 @@ body.light-mode {
     box-shadow: none !important;
 }
 
-/* Message Action Buttons */
+/* FIXED: Message Action Buttons - Show only after full response */
 .message-actions {
-    display: flex;
+    display: none; /* Hidden by default */
     gap: 0.75rem;
     margin-top: 1rem;
     flex-wrap: wrap;
+}
+
+.message-actions.visible {
+    display: flex; /* Shown when response is complete */
 }
 
 .action-btn {
@@ -1127,13 +1129,19 @@ body.light-mode {
     color: white;
 }
 
-.action-btn.like:hover {
+.action-btn.regenerate:hover {
     background: linear-gradient(135deg, rgba(5, 150, 105, 0.3) 0%, rgba(5, 150, 105, 0.6) 100%);
     color: white;
 }
 
-.action-btn.save:hover {
-    background: linear-gradient(135deg, rgba(212, 175, 55, 0.3) 0%, rgba(212, 175, 55, 0.6) 100%);
+.action-btn.like.active,
+.action-btn.dislike.active {
+    background: linear-gradient(135deg, rgba(5, 150, 105, 0.3) 0%, rgba(5, 150, 105, 0.6) 100%);
+    color: white;
+}
+
+.action-btn.dislike:hover {
+    background: linear-gradient(135deg, rgba(220, 38, 38, 0.3) 0%, rgba(220, 38, 38, 0.6) 100%);
     color: white;
 }
 
@@ -1145,6 +1153,31 @@ body.light-mode {
 .action-btn.download:hover {
     background: linear-gradient(135deg, rgba(139, 0, 0, 0.3) 0%, rgba(139, 0, 0, 0.6) 100%);
     color: white;
+}
+
+/* FIXED: Stop button for AI responses */
+.stop-button {
+    background: linear-gradient(135deg, var(--error) 0%, #b91c1c 100%);
+    color: white;
+    border: none;
+    border-radius: 8px;
+    padding: 0.5rem 0.875rem;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 36px;
+    margin-top: 1rem;
+    backdrop-filter: blur(10px);
+    transition: all 0.3s;
+}
+
+.stop-button:hover {
+    background: linear-gradient(135deg, #b91c1c 0%, var(--error) 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(220, 38, 38, 0.3);
 }
 
 /* Dropdown Menu for Download */
@@ -1236,7 +1269,7 @@ body.light-mode {
 }
 
 /* ============================================= */
-/* MOBILE OPTIMIZATIONS */
+/* MOBILE OPTIMIZATIONS - FIXED FOR ALL SCREENS */
 /* ============================================= */
 
 @media (max-width: 768px) {
@@ -1247,16 +1280,31 @@ body.light-mode {
     
     #chatInterface .main-content {
         margin-top: 60px;
-        height: calc(100vh - 130px); /* Account for header and input */
+        height: calc(100vh - 60px); /* Account for header */
     }
     
     .input-container {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
         padding: 0.75rem;
-        height: 70px;
+        background: linear-gradient(180deg, var(--dark-surface) 0%, var(--dark-bg) 100%);
+        border-top: 2px solid var(--court-gold);
+        z-index: 100;
+        height: auto;
+        min-height: 70px;
     }
     
     #chatMessages {
         padding: 1rem 0.75rem;
+        margin-bottom: 70px; /* Space for input container */
+        height: calc(100vh - 130px); /* 60px header + 70px input */
+    }
+    
+    .chat-messages {
+        height: calc(100vh - 130px);
+        overflow-y: auto;
     }
     
     .message {
@@ -1282,6 +1330,28 @@ body.light-mode {
         margin: 0;
     }
     
+    .input-area textarea {
+        padding-right: 5.5rem;
+        font-size: 0.875rem;
+        min-height: 50px;
+    }
+    
+    .input-buttons {
+        right: 8px;
+    }
+    
+    .attachment-btn,
+    .input-microphone-btn,
+    .send-button {
+        padding: 6px;
+        width: 32px;
+        height: 32px;
+    }
+    
+    .send-button span {
+        display: none;
+    }
+    
     /* Show text on larger mobile buttons */
     @media (min-width: 480px) {
         .action-btn span {
@@ -1290,6 +1360,17 @@ body.light-mode {
         
         .action-btn {
             padding: 0.4rem 0.75rem;
+            font-size: 0.75rem;
+        }
+        
+        .send-button span {
+            display: inline;
+            margin-left: 4px;
+        }
+        
+        .send-button {
+            padding: 6px 12px;
+            width: auto;
         }
     }
 }
@@ -3768,6 +3849,67 @@ body.light-mode {
         break-inside: avoid;
     }
 }
+
+/* ============================================= */
+/* TYPING ANIMATION STYLES */
+/* ============================================= */
+
+.typing-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.5rem;
+}
+
+.typing-dot {
+    width: 8px;
+    height: 8px;
+    background: var(--court-gold);
+    border-radius: 50%;
+    animation: typing-bounce 1.4s infinite ease-in-out both;
+}
+
+.typing-dot:nth-child(1) {
+    animation-delay: -0.32s;
+}
+
+.typing-dot:nth-child(2) {
+    animation-delay: -0.16s;
+}
+
+@keyframes typing-bounce {
+    0%, 80%, 100% { 
+        transform: scale(0);
+        opacity: 0.4;
+    }
+    40% { 
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* ============================================= */
+/* REALISTIC TYPEWRITER EFFECT */
+/* ============================================= */
+
+.typewriter-text {
+    overflow: hidden;
+    white-space: pre-wrap;
+    border-right: 2px solid var(--court-gold);
+    animation: blink-caret 0.75s step-end infinite;
+}
+
+@keyframes blink-caret {
+    from, to { border-color: transparent }
+    50% { border-color: var(--court-gold); }
+}
+
+/* Stop button position fix */
+.stop-button-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 1rem;
+}
     </style>
 </head>
 <body>
@@ -4801,8 +4943,6 @@ body.light-mode {
                                     ></textarea>
                                     
                                     <div class="input-buttons">
-                                        <!-- REMOVED: emoji-picker-btn -->
-                                        
                                         <!-- Attachment Button -->
                                         <button class="attachment-btn" id="attachmentBtn" title="Attach files (images, PDF, TXT)">
                                             <i class="fas fa-paperclip"></i>
@@ -4980,6 +5120,9 @@ let isListening = false;
 let recognition = null;
 let isLightMode = false;
 let chatInitialized = false;
+let isGeneratingResponse = false;
+let currentResponseTimer = null;
+let stopResponseFlag = false;
 
 // Welcome message HTML
 const WELCOME_MESSAGE_HTML = `
@@ -5085,6 +5228,10 @@ function openChat() {
         const userInput = document.getElementById('userInput');
         if (userInput) {
             userInput.focus();
+            // FIX: Ensure text is visible
+            userInput.style.color = 'var(--dark-text)';
+            userInput.style.opacity = '1';
+            userInput.style.visibility = 'visible';
         }
     }, 300);
     
@@ -5224,6 +5371,14 @@ function initializeChatApp() {
         const inputMicrophoneBtn = document.getElementById('inputMicrophoneBtn');
         const attachmentBtn = document.getElementById('attachmentBtn');
 
+        // FIX: Ensure text input is visible
+        if (userInput) {
+            userInput.style.color = 'var(--dark-text)';
+            userInput.style.opacity = '1';
+            userInput.style.visibility = 'visible';
+            userInput.style.background = 'linear-gradient(135deg, var(--court-parchment) 0%, var(--dark-surface) 100%)';
+        }
+
         // Load or create chat
         if (!currentChatId || conversationHistory.length === 0) {
             createNewChat();
@@ -5263,11 +5418,6 @@ function initializeChatApp() {
                 this.style.height = Math.min(this.scrollHeight, 200) + 'px';
                 sendButton.disabled = this.value.trim() === '';
             });
-            
-            // Make text clearly visible
-            userInput.style.color = 'var(--dark-text)';
-            userInput.style.opacity = '1';
-            userInput.style.visibility = 'visible';
         }
 
         // Voice recognition setup
@@ -5435,7 +5585,13 @@ function initializeChatApp() {
         
         // Focus input on load
         setTimeout(() => {
-            if (userInput) userInput.focus();
+            if (userInput) {
+                userInput.focus();
+                // FIX: Ensure text is visible
+                userInput.style.color = 'var(--dark-text)';
+                userInput.style.opacity = '1';
+                userInput.style.visibility = 'visible';
+            }
         }, 300);
         
         console.log("✅ Chat app initialized successfully");
@@ -5506,7 +5662,7 @@ function createNewChat() {
     }, 100);
 }
 
-function addMessageToChat(content, isUser, fromHistory = false) {
+function addMessageToChat(content, isUser, fromHistory = false, isTyping = false) {
     const chatMessages = document.getElementById('chatMessages');
     
     // Remove welcome message if this is a new user message
@@ -5535,62 +5691,80 @@ function addMessageToChat(content, isUser, fromHistory = false) {
     
     const messageText = document.createElement('div');
     messageText.className = 'message-text';
-    messageText.innerHTML = content.replace(/\n/g, '<br>');
+    
+    if (isTyping) {
+        messageText.innerHTML = `<div class="typing-indicator">
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <div class="typing-dot"></div>
+            <span style="margin-left: 10px; color: var(--court-gold);">Thinking...</span>
+        </div>`;
+    } else {
+        messageText.innerHTML = content.replace(/\n/g, '<br>');
+    }
     
     messageContent.appendChild(messageText);
     
-    // Add action buttons
-    const messageActions = document.createElement('div');
-    messageActions.className = 'message-actions';
-    
-    if (isUser) {
-        // User message actions: Copy and Edit
-        messageActions.innerHTML = `
-            <button class="action-btn copy" onclick="copyMessage(this)" title="Copy message">
-                <i class="fas fa-copy"></i> Copy
-            </button>
-            <button class="action-btn edit" onclick="editMessage(this)" title="Edit message">
-                <i class="fas fa-edit"></i> Edit
-            </button>
-        `;
-    } else {
-        // AI message actions: Copy, Regenerate, Helpful, Not Helpful, Share, Download
-        messageActions.innerHTML = `
-            <button class="action-btn copy" onclick="copyMessage(this)" title="Copy response">
-                <i class="fas fa-copy"></i> Copy
-            </button>
-            <button class="action-btn regenerate" onclick="regenerateMessage(this)" title="Regenerate response">
-                <i class="fas fa-redo"></i> Regenerate
-            </button>
-            <button class="action-btn like" onclick="rateMessage(this, 'helpful')" title="Mark as helpful">
-                <i class="far fa-thumbs-up"></i> Helpful
-            </button>
-            <button class="action-btn dislike" onclick="rateMessage(this, 'not-helpful')" title="Mark as not helpful">
-                <i class="far fa-thumbs-down"></i> Not Helpful
-            </button>
-            <button class="action-btn share" onclick="shareMessage(this)" title="Share response">
-                <i class="fas fa-share"></i> Share
-            </button>
-            <div class="download-dropdown">
-                <button class="action-btn download" onclick="toggleDownloadDropdown(this)" title="Download options">
-                    <i class="fas fa-download"></i> Download
+    // Add action buttons (not for typing indicators)
+    if (!isTyping) {
+        const messageActions = document.createElement('div');
+        messageActions.className = 'message-actions';
+        
+        if (isUser) {
+            // User message actions: Copy and Edit
+            messageActions.innerHTML = `
+                <button class="action-btn copy" onclick="copyMessage(this)" title="Copy message">
+                    <i class="fas fa-copy"></i> <span class="hide-on-mobile">Copy</span>
                 </button>
-                <div class="download-options-menu">
-                    <button class="download-option-btn" onclick="downloadMessage(this, 'word')">
-                        <i class="fas fa-file-word"></i> Word (.doc)
+                <button class="action-btn edit" onclick="editMessage(this)" title="Edit message">
+                    <i class="fas fa-edit"></i> <span class="hide-on-mobile">Edit</span>
+                </button>
+            `;
+        } else {
+            // AI message actions: Copy, Regenerate, Helpful, Not Helpful, Share, Download
+            messageActions.innerHTML = `
+                <button class="action-btn copy" onclick="copyMessage(this)" title="Copy response">
+                    <i class="fas fa-copy"></i> <span class="hide-on-mobile">Copy</span>
+                </button>
+                <button class="action-btn regenerate" onclick="regenerateMessage(this)" title="Regenerate response">
+                    <i class="fas fa-redo"></i> <span class="hide-on-mobile">Regenerate</span>
+                </button>
+                <button class="action-btn like" onclick="rateMessage(this, 'helpful')" title="Mark as helpful">
+                    <i class="far fa-thumbs-up"></i> <span class="hide-on-mobile">Helpful</span>
+                </button>
+                <button class="action-btn dislike" onclick="rateMessage(this, 'not-helpful')" title="Mark as not helpful">
+                    <i class="far fa-thumbs-down"></i> <span class="hide-on-mobile">Not Helpful</span>
+                </button>
+                <button class="action-btn share" onclick="shareMessage(this)" title="Share response">
+                    <i class="fas fa-share"></i> <span class="hide-on-mobile">Share</span>
+                </button>
+                <div class="download-dropdown">
+                    <button class="action-btn download" onclick="toggleDownloadDropdown(this)" title="Download options">
+                        <i class="fas fa-download"></i> <span class="hide-on-mobile">Download</span>
                     </button>
-                    <button class="download-option-btn" onclick="downloadMessage(this, 'pdf')">
-                        <i class="fas fa-file-pdf"></i> PDF (.pdf)
-                    </button>
-                    <button class="download-option-btn" onclick="downloadMessage(this, 'text')">
-                        <i class="fas fa-file-alt"></i> Text (.txt)
-                    </button>
+                    <div class="download-options-menu">
+                        <button class="download-option-btn" onclick="downloadMessage(this, 'word')">
+                            <i class="fas fa-file-word"></i> Word (.doc)
+                        </button>
+                        <button class="download-option-btn" onclick="downloadMessage(this, 'pdf')">
+                            <i class="fas fa-file-pdf"></i> PDF (.pdf)
+                        </button>
+                        <button class="download-option-btn" onclick="downloadMessage(this, 'text')">
+                            <i class="fas fa-file-alt"></i> Text (.txt)
+                        </button>
+                    </div>
                 </div>
-            </div>
-        `;
+            `;
+        }
+        
+        messageContent.appendChild(messageActions);
+        
+        // Show action buttons immediately for user messages, after delay for AI messages
+        if (isUser) {
+            messageActions.classList.add('visible');
+        }
     }
     
-    messageContent.appendChild(messageActions);
     messageDiv.appendChild(avatar);
     messageDiv.appendChild(messageContent);
     
@@ -5624,6 +5798,9 @@ function sendMessage() {
         recognition.stop();
     }
     
+    // Clear stop flag
+    stopResponseFlag = false;
+    
     const messageId = addMessageToChat(message, true);
     userInput.value = '';
     userInput.style.height = '56px';
@@ -5638,30 +5815,137 @@ function sendMessage() {
     conversationHistory.push(userMessage);
     
     // Show typing indicator
-    const typingIndicator = addMessageToChat('<div style="display: flex; align-items: center; gap: 10px;"><div class="typing-dots"><span></span><span></span><span></span></div>Analyzing your legal query...</div>', false);
+    const typingIndicatorId = addMessageToChat('', false, false, true);
+    isGeneratingResponse = true;
     
-    // Simulate AI response after delay
-    setTimeout(() => {
-        // Remove typing indicator
-        const typingElement = document.getElementById(typingIndicator);
-        if (typingElement) typingElement.remove();
+    // Change send button to stop button
+    sendButton.innerHTML = '<i class="fas fa-stop"></i> <span class="hide-on-mobile">Stop</span>';
+    sendButton.onclick = stopResponse;
+    
+    // Simulate AI response with realistic typing
+    simulateRealisticResponse(message, typingIndicatorId, messageId);
+    
+    // Save chat
+    saveCurrentChat();
+}
+
+function stopResponse() {
+    if (isGeneratingResponse) {
+        stopResponseFlag = true;
+        isGeneratingResponse = false;
         
-        // Generate response
-        const aiResponse = generateAIResponse(message);
-        const aiMessageId = addMessageToChat(aiResponse, false);
+        // Change stop button back to send button
+        const sendButton = document.getElementById('sendButton');
+        if (sendButton) {
+            sendButton.innerHTML = '<i class="fas fa-paper-plane"></i> <span class="hide-on-mobile">Send</span>';
+            sendButton.onclick = sendMessage;
+            sendButton.disabled = true;
+        }
         
-        // Add AI message to history
-        const aiMessage = {
-            role: 'assistant',
-            content: aiResponse,
-            timestamp: new Date().toISOString()
-        };
-        conversationHistory.push(aiMessage);
+        showToast('Response stopped ⏹️', 'info');
         
-        // Save chat
-        saveCurrentChat();
+        // Clear any pending timers
+        if (currentResponseTimer) {
+            clearTimeout(currentResponseTimer);
+            currentResponseTimer = null;
+        }
+    }
+}
+
+function simulateRealisticResponse(userMessage, typingIndicatorId, userMessageId) {
+    // Generate AI response
+    const aiResponse = generateAIResponse(userMessage);
+    
+    // Remove typing indicator
+    const typingElement = document.getElementById(typingIndicatorId);
+    if (typingElement) typingElement.remove();
+    
+    // Add AI message with typewriter effect
+    const aiMessageId = addMessageToChat('', false);
+    const aiMessageElement = document.getElementById(aiMessageId);
+    const messageText = aiMessageElement.querySelector('.message-text');
+    
+    let index = 0;
+    const speed = 20; // Typing speed in milliseconds
+    const aiResponseWithBreaks = aiResponse.replace(/\n/g, '<br>');
+    
+    function typeWriter() {
+        if (stopResponseFlag) {
+            // Add stopped indicator
+            messageText.innerHTML += '<br><br><em>Response stopped by user.</em>';
+            finalizeAIResponse(aiMessageId, aiResponse);
+            return;
+        }
         
-    }, 1500 + Math.random() * 1000);
+        if (index < aiResponseWithBreaks.length) {
+            const char = aiResponseWithBreaks.charAt(index);
+            if (char === '<') {
+                // Handle HTML tags
+                const tagEnd = aiResponseWithBreaks.indexOf('>', index);
+                if (tagEnd !== -1) {
+                    const tag = aiResponseWithBreaks.substring(index, tagEnd + 1);
+                    messageText.innerHTML += tag;
+                    index = tagEnd + 1;
+                } else {
+                    messageText.innerHTML += char;
+                    index++;
+                }
+            } else {
+                messageText.innerHTML += char;
+                index++;
+            }
+            
+            // Scroll to bottom during typing
+            scrollToBottom();
+            
+            // Continue typing
+            currentResponseTimer = setTimeout(typeWriter, speed);
+        } else {
+            // Typing complete
+            finalizeAIResponse(aiMessageId, aiResponse);
+        }
+    }
+    
+    // Start typing
+    currentResponseTimer = setTimeout(typeWriter, 500); // Initial delay
+}
+
+function finalizeAIResponse(messageId, fullResponse) {
+    isGeneratingResponse = false;
+    
+    // Add AI message to history
+    const aiMessage = {
+        role: 'assistant',
+        content: fullResponse,
+        timestamp: new Date().toISOString()
+    };
+    conversationHistory.push(aiMessage);
+    
+    // Show action buttons for AI message
+    const messageElement = document.getElementById(messageId);
+    if (messageElement) {
+        const messageActions = messageElement.querySelector('.message-actions');
+        if (messageActions) {
+            messageActions.classList.add('visible');
+        }
+    }
+    
+    // Change stop button back to send button
+    const sendButton = document.getElementById('sendButton');
+    if (sendButton) {
+        sendButton.innerHTML = '<i class="fas fa-paper-plane"></i> <span class="hide-on-mobile">Send</span>';
+        sendButton.onclick = sendMessage;
+        sendButton.disabled = true;
+    }
+    
+    // Save chat
+    saveCurrentChat();
+    
+    // Clear timer
+    if (currentResponseTimer) {
+        clearTimeout(currentResponseTimer);
+        currentResponseTimer = null;
+    }
 }
 
 function generateAIResponse(message) {
@@ -6134,6 +6418,21 @@ window.saveEditedMessage = function(button) {
     const editControls = button.closest('div');
     
     if (textarea && messageText) {
+        // Update the message in conversation history
+        const messageDiv = messageContent.closest('.message');
+        const isUserMessage = messageDiv.classList.contains('user-message');
+        
+        // Find and update in conversation history
+        const messageIndex = conversationHistory.findIndex(msg => 
+            msg.role === (isUserMessage ? 'user' : 'assistant') && 
+            msg.content === messageText.textContent
+        );
+        
+        if (messageIndex !== -1) {
+            conversationHistory[messageIndex].content = textarea.value;
+            saveCurrentChat();
+        }
+        
         messageText.textContent = textarea.value;
         messageText.style.display = 'block';
         textarea.remove();
@@ -6144,6 +6443,20 @@ window.saveEditedMessage = function(button) {
         actionButtons.forEach(btn => btn.style.display = 'flex');
         
         showToast('Message updated successfully ✏️', 'success');
+        
+        // If this is a user message, send it again
+        if (isUserMessage) {
+            setTimeout(() => {
+                const userInput = document.getElementById('userInput');
+                const sendButton = document.getElementById('sendButton');
+                if (userInput && sendButton) {
+                    userInput.value = textarea.value;
+                    userInput.style.height = Math.min(userInput.scrollHeight, 200) + 'px';
+                    sendButton.disabled = false;
+                    sendMessage();
+                }
+            }, 500);
+        }
     }
 };
 
@@ -6166,44 +6479,115 @@ window.cancelEdit = function(button) {
 
 // Regenerate message function
 window.regenerateMessage = function(button) {
+    const messageDiv = button.closest('.message');
     const messageContent = button.closest('.message-content');
     const messageText = messageContent.querySelector('.message-text');
     const originalText = messageText.textContent;
+    
+    // Find the user message that prompted this response
+    const messageIndex = Array.from(messageDiv.parentNode.children).indexOf(messageDiv);
+    const userMessageDiv = messageDiv.parentNode.children[messageIndex - 1];
+    
+    if (!userMessageDiv || !userMessageDiv.classList.contains('user-message')) {
+        showToast('Cannot find original query to regenerate.', 'error');
+        return;
+    }
+    
+    const userMessageText = userMessageDiv.querySelector('.message-text').textContent;
     
     // Show loading state
     button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Regenerating...';
     button.disabled = true;
     
-    // Simulate regeneration delay
+    // Remove current AI message from history
+    const aiMessageIndex = conversationHistory.findIndex(msg => 
+        msg.role === 'assistant' && msg.content === originalText
+    );
+    if (aiMessageIndex !== -1) {
+        conversationHistory.splice(aiMessageIndex, 1);
+    }
+    
+    // Remove from DOM
+    messageDiv.remove();
+    
+    // Simulate regeneration
+    const typingIndicatorId = addMessageToChat('', false, false, true);
+    
+    // Change send button to stop button
+    const sendButton = document.getElementById('sendButton');
+    if (sendButton) {
+        sendButton.innerHTML = '<i class="fas fa-stop"></i> <span class="hide-on-mobile">Stop</span>';
+        sendButton.onclick = stopResponse;
+    }
+    
+    isGeneratingResponse = true;
+    stopResponseFlag = false;
+    
+    // Simulate new response
     setTimeout(() => {
-        const newResponse = generateAIResponse(originalText.split(' ').slice(0, 10).join(' '));
-        messageText.innerHTML = newResponse.replace(/\n/g, '<br>');
+        const typingElement = document.getElementById(typingIndicatorId);
+        if (typingElement) typingElement.remove();
         
-        // Reset button
-        button.innerHTML = '<i class="fas fa-redo"></i> Regenerate';
-        button.disabled = false;
-        
-        showToast('Response regenerated 🔄', 'success');
-    }, 1500);
+        simulateRealisticResponse(userMessageText, typingIndicatorId, '');
+    }, 1000);
 };
 
-// Rate message function
+// Rate message function with toggle functionality
 window.rateMessage = function(button, type) {
     const messageContent = button.closest('.message-content');
-    const messageText = messageContent.querySelector('.message-text');
+    const likeBtn = messageContent.querySelector('.action-btn.like');
+    const dislikeBtn = messageContent.querySelector('.action-btn.dislike');
     
     if (type === 'helpful') {
-        button.innerHTML = '<i class="fas fa-thumbs-up"></i> Thank you!';
-        button.style.background = 'linear-gradient(135deg, var(--success) 0%, #059669 100%)';
-        button.style.color = 'white';
-        button.disabled = true;
-        showToast('Thank you for your feedback! 👍', 'success');
+        if (likeBtn.classList.contains('active')) {
+            // Unselect
+            likeBtn.innerHTML = '<i class="far fa-thumbs-up"></i> <span class="hide-on-mobile">Helpful</span>';
+            likeBtn.classList.remove('active');
+            likeBtn.style.background = '';
+            likeBtn.style.color = '';
+            showToast('Helpful rating removed', 'info');
+        } else {
+            // Select helpful
+            likeBtn.innerHTML = '<i class="fas fa-thumbs-up"></i> <span class="hide-on-mobile">Helpful</span>';
+            likeBtn.classList.add('active');
+            likeBtn.style.background = 'linear-gradient(135deg, var(--success) 0%, #059669 100%)';
+            likeBtn.style.color = 'white';
+            
+            // Unselect not helpful if selected
+            if (dislikeBtn.classList.contains('active')) {
+                dislikeBtn.innerHTML = '<i class="far fa-thumbs-down"></i> <span class="hide-on-mobile">Not Helpful</span>';
+                dislikeBtn.classList.remove('active');
+                dislikeBtn.style.background = '';
+                dislikeBtn.style.color = '';
+            }
+            
+            showToast('Thank you for your feedback! 👍', 'success');
+        }
     } else {
-        button.innerHTML = '<i class="fas fa-thumbs-down"></i> Noted';
-        button.style.background = 'linear-gradient(135deg, var(--error) 0%, #dc2626 100%)';
-        button.style.color = 'white';
-        button.disabled = true;
-        showToast('Feedback received. We\'ll improve! 👎', 'info');
+        if (dislikeBtn.classList.contains('active')) {
+            // Unselect
+            dislikeBtn.innerHTML = '<i class="far fa-thumbs-down"></i> <span class="hide-on-mobile">Not Helpful</span>';
+            dislikeBtn.classList.remove('active');
+            dislikeBtn.style.background = '';
+            dislikeBtn.style.color = '';
+            showToast('Not helpful rating removed', 'info');
+        } else {
+            // Select not helpful
+            dislikeBtn.innerHTML = '<i class="fas fa-thumbs-down"></i> <span class="hide-on-mobile">Not Helpful</span>';
+            dislikeBtn.classList.add('active');
+            dislikeBtn.style.background = 'linear-gradient(135deg, var(--error) 0%, #dc2626 100%)';
+            dislikeBtn.style.color = 'white';
+            
+            // Unselect helpful if selected
+            if (likeBtn.classList.contains('active')) {
+                likeBtn.innerHTML = '<i class="far fa-thumbs-up"></i> <span class="hide-on-mobile">Helpful</span>';
+                likeBtn.classList.remove('active');
+                likeBtn.style.background = '';
+                likeBtn.style.color = '';
+            }
+            
+            showToast('Feedback received. We\'ll improve! 👎', 'info');
+        }
     }
 };
 
@@ -7022,6 +7406,11 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelectorAll('.download-options-menu').forEach(dropdown => {
                 dropdown.classList.remove('show');
             });
+            
+            // Stop response if generating
+            if (isGeneratingResponse) {
+                stopResponse();
+            }
         }
     });
 
@@ -7046,39 +7435,6 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     });
-
-    // Typing dots animation
-    const style = document.createElement('style');
-    style.textContent = `
-        .typing-dots {
-            display: inline-flex;
-            align-items: center;
-            height: 17px;
-        }
-        .typing-dots span {
-            width: 8px;
-            height: 8px;
-            margin: 0 2px;
-            background: var(--court-gold);
-            border-radius: 50%;
-            display: block;
-            opacity: 0.4;
-        }
-        .typing-dots span:nth-child(1) {
-            animation: typing-dot 1.5s infinite;
-        }
-        .typing-dots span:nth-child(2) {
-            animation: typing-dot 1.5s infinite 0.2s;
-        }
-        .typing-dots span:nth-child(3) {
-            animation: typing-dot 1.5s infinite 0.4s;
-        }
-        @keyframes typing-dot {
-            0%, 60%, 100% { opacity: 0.4; transform: scale(0.8); }
-            30% { opacity: 1; transform: scale(1); }
-        }
-    `;
-    document.head.appendChild(style);
 
     console.log('✅ App ready to use');
 });
