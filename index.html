@@ -404,7 +404,10 @@ body.light-mode {
     border-bottom: 3px solid var(--court-gold);
     height: 70px;
     flex-shrink: 0;
-    position: relative;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
     z-index: 100;
 }
 
@@ -550,6 +553,7 @@ body.light-mode {
     background: var(--dark-surface);
     overflow: hidden;
     position: relative;
+    margin-top: 70px; /* Offset for fixed header */
 }
 
 /* Chat Sidebar - Case File Style */
@@ -966,13 +970,12 @@ body.light-mode {
     background: linear-gradient(180deg, var(--dark-surface) 0%, var(--dark-bg) 100%);
     border-top: 2px solid var(--court-gold);
     flex-shrink: 0;
-    position: relative;
-    z-index: 100;
-    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
-    position: absolute;
+    position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
+    z-index: 100;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2);
 }
 
 .input-area {
@@ -1083,6 +1086,110 @@ body.light-mode {
     box-shadow: none !important;
 }
 
+/* Message Action Buttons */
+.message-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
+}
+
+.action-btn {
+    background: linear-gradient(135deg, rgba(30, 64, 175, 0.1) 0%, transparent 100%);
+    color: var(--dark-text-secondary);
+    border: 1px solid rgba(30, 64, 175, 0.2);
+    border-radius: 8px;
+    padding: 0.5rem 0.875rem;
+    cursor: pointer;
+    font-size: 0.8125rem;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-height: 36px;
+    font-weight: 500;
+    backdrop-filter: blur(10px);
+}
+
+.action-btn:hover {
+    background: linear-gradient(135deg, rgba(30, 64, 175, 0.2) 0%, transparent 100%);
+    border-color: var(--court-gold);
+    transform: translateY(-1px);
+}
+
+.action-btn.copy:hover {
+    background: linear-gradient(135deg, rgba(30, 64, 175, 0.3) 0%, rgba(30, 64, 175, 0.6) 100%);
+    color: white;
+}
+
+.action-btn.edit:hover {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.3) 0%, rgba(212, 175, 55, 0.6) 100%);
+    color: white;
+}
+
+.action-btn.like:hover {
+    background: linear-gradient(135deg, rgba(5, 150, 105, 0.3) 0%, rgba(5, 150, 105, 0.6) 100%);
+    color: white;
+}
+
+.action-btn.save:hover {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.3) 0%, rgba(212, 175, 55, 0.6) 100%);
+    color: white;
+}
+
+.action-btn.share:hover {
+    background: linear-gradient(135deg, rgba(14, 165, 233, 0.3) 0%, rgba(14, 165, 233, 0.6) 100%);
+    color: white;
+}
+
+.action-btn.download:hover {
+    background: linear-gradient(135deg, rgba(139, 0, 0, 0.3) 0%, rgba(139, 0, 0, 0.6) 100%);
+    color: white;
+}
+
+/* Dropdown Menu for Download */
+.download-dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.download-options-menu {
+    display: none;
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    background: var(--dark-surface);
+    border: 1px solid var(--court-gold);
+    border-radius: 8px;
+    padding: 0.5rem;
+    min-width: 150px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    z-index: 100;
+}
+
+.download-options-menu.show {
+    display: block;
+}
+
+.download-option-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+    padding: 0.5rem 0.75rem;
+    background: transparent;
+    border: none;
+    color: var(--dark-text);
+    cursor: pointer;
+    border-radius: 4px;
+    transition: all 0.3s;
+    font-size: 0.8125rem;
+}
+
+.download-option-btn:hover {
+    background: rgba(212, 175, 55, 0.1);
+}
+
 /* Light Mode Adjustments */
 .light-mode #chatInterface {
     background: var(--light-bg);
@@ -1126,6 +1233,65 @@ body.light-mode {
 .light-mode .welcome-features .feature {
     background: var(--light-surface);
     border-color: var(--light-border);
+}
+
+/* ============================================= */
+/* MOBILE OPTIMIZATIONS */
+/* ============================================= */
+
+@media (max-width: 768px) {
+    #chatInterface header {
+        padding: 0 0.75rem;
+        height: 60px;
+    }
+    
+    #chatInterface .main-content {
+        margin-top: 60px;
+        height: calc(100vh - 130px); /* Account for header and input */
+    }
+    
+    .input-container {
+        padding: 0.75rem;
+        height: 70px;
+    }
+    
+    #chatMessages {
+        padding: 1rem 0.75rem;
+    }
+    
+    .message {
+        padding: 1rem;
+        margin-left: 0 !important;
+        margin-right: 0 !important;
+    }
+    
+    .message-actions {
+        gap: 0.5rem;
+    }
+    
+    .action-btn {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.75rem;
+    }
+    
+    .action-btn span {
+        display: none;
+    }
+    
+    .action-btn i {
+        margin: 0;
+    }
+    
+    /* Show text on larger mobile buttons */
+    @media (min-width: 480px) {
+        .action-btn span {
+            display: inline;
+        }
+        
+        .action-btn {
+            padding: 0.4rem 0.75rem;
+        }
+    }
 }
 
 /* ============================================= */
@@ -1347,55 +1513,6 @@ body.light-mode {
     margin-bottom: 1rem;
     color: var(--dark-border);
     opacity: 0.5;
-}
-
-/* ============================================= */
-/* MESSAGE ACTIONS - LEGAL TOOLS */
-/* ============================================= */
-
-.message-actions {
-    display: flex;
-    gap: 0.75rem;
-    margin-top: 1rem;
-    flex-wrap: wrap;
-}
-
-.action-btn {
-    background: linear-gradient(135deg, rgba(30, 64, 175, 0.1) 0%, transparent 100%);
-    color: var(--dark-text-secondary);
-    border: 1px solid rgba(30, 64, 175, 0.2);
-    border-radius: 8px;
-    padding: 0.5rem 0.875rem;
-    cursor: pointer;
-    font-size: 0.8125rem;
-    transition: all 0.3s;
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    min-height: 36px;
-    font-weight: 500;
-    backdrop-filter: blur(10px);
-}
-
-.action-btn:hover {
-    background: linear-gradient(135deg, rgba(30, 64, 175, 0.2) 0%, transparent 100%);
-    border-color: var(--court-gold);
-    transform: translateY(-1px);
-}
-
-.action-btn.copy:hover {
-    background: linear-gradient(135deg, rgba(30, 64, 175, 0.3) 0%, rgba(30, 64, 175, 0.6) 100%);
-    color: white;
-}
-
-.action-btn.like:hover {
-    background: linear-gradient(135deg, rgba(5, 150, 105, 0.3) 0%, rgba(5, 150, 105, 0.6) 100%);
-    color: white;
-}
-
-.action-btn.save:hover {
-    background: linear-gradient(135deg, rgba(212, 175, 55, 0.3) 0%, rgba(212, 175, 55, 0.6) 100%);
-    color: white;
 }
 
 /* ============================================= */
@@ -5422,24 +5539,58 @@ function addMessageToChat(content, isUser, fromHistory = false) {
     
     messageContent.appendChild(messageText);
     
-    // Add action buttons for AI messages
-    if (!isUser && !fromHistory) {
-        const messageActions = document.createElement('div');
-        messageActions.className = 'message-actions';
+    // Add action buttons
+    const messageActions = document.createElement('div');
+    messageActions.className = 'message-actions';
+    
+    if (isUser) {
+        // User message actions: Copy and Edit
+        messageActions.innerHTML = `
+            <button class="action-btn copy" onclick="copyMessage(this)" title="Copy message">
+                <i class="fas fa-copy"></i> Copy
+            </button>
+            <button class="action-btn edit" onclick="editMessage(this)" title="Edit message">
+                <i class="fas fa-edit"></i> Edit
+            </button>
+        `;
+    } else {
+        // AI message actions: Copy, Regenerate, Helpful, Not Helpful, Share, Download
         messageActions.innerHTML = `
             <button class="action-btn copy" onclick="copyMessage(this)" title="Copy response">
                 <i class="fas fa-copy"></i> Copy
             </button>
-            <button class="action-btn like" onclick="likeMessage(this)" title="Mark as helpful">
+            <button class="action-btn regenerate" onclick="regenerateMessage(this)" title="Regenerate response">
+                <i class="fas fa-redo"></i> Regenerate
+            </button>
+            <button class="action-btn like" onclick="rateMessage(this, 'helpful')" title="Mark as helpful">
                 <i class="far fa-thumbs-up"></i> Helpful
             </button>
-            <button class="action-btn save" onclick="saveMessage(this)" title="Save to library">
-                <i class="far fa-bookmark"></i> Save
+            <button class="action-btn dislike" onclick="rateMessage(this, 'not-helpful')" title="Mark as not helpful">
+                <i class="far fa-thumbs-down"></i> Not Helpful
             </button>
+            <button class="action-btn share" onclick="shareMessage(this)" title="Share response">
+                <i class="fas fa-share"></i> Share
+            </button>
+            <div class="download-dropdown">
+                <button class="action-btn download" onclick="toggleDownloadDropdown(this)" title="Download options">
+                    <i class="fas fa-download"></i> Download
+                </button>
+                <div class="download-options-menu">
+                    <button class="download-option-btn" onclick="downloadMessage(this, 'word')">
+                        <i class="fas fa-file-word"></i> Word (.doc)
+                    </button>
+                    <button class="download-option-btn" onclick="downloadMessage(this, 'pdf')">
+                        <i class="fas fa-file-pdf"></i> PDF (.pdf)
+                    </button>
+                    <button class="download-option-btn" onclick="downloadMessage(this, 'text')">
+                        <i class="fas fa-file-alt"></i> Text (.txt)
+                    </button>
+                </div>
+            </div>
         `;
-        messageContent.appendChild(messageActions);
     }
     
+    messageContent.appendChild(messageActions);
     messageDiv.appendChild(avatar);
     messageDiv.appendChild(messageContent);
     
@@ -5890,6 +6041,274 @@ function deleteChatFromHistory(chatId) {
     showToast('Chat deleted successfully 🗑️', 'success');
 }
 
+// =============================================
+// MESSAGE ACTION FUNCTIONS
+// =============================================
+
+// Global function for copying messages
+window.copyMessage = function(button) {
+    const messageText = button.closest('.message-content').querySelector('.message-text');
+    let textToCopy = messageText.textContent || messageText.innerText;
+    
+    // Create a temporary textarea element
+    const textarea = document.createElement('textarea');
+    textarea.value = textToCopy;
+    textarea.style.position = 'fixed';
+    textarea.style.opacity = '0';
+    document.body.appendChild(textarea);
+    textarea.select();
+    textarea.setSelectionRange(0, 99999); // For mobile devices
+    
+    try {
+        const successful = document.execCommand('copy');
+        if (successful) {
+            showToast('Response copied to clipboard! 📋', 'success');
+            
+            // Visual feedback
+            button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+            button.style.background = 'linear-gradient(135deg, var(--success) 0%, #059669 100%)';
+            button.style.color = 'white';
+            
+            setTimeout(() => {
+                button.innerHTML = '<i class="fas fa-copy"></i> Copy';
+                button.style.background = '';
+                button.style.color = '';
+            }, 2000);
+        }
+    } catch (err) {
+        console.error('Copy failed:', err);
+        showToast('Copy failed. Please select and copy manually.', 'error');
+    }
+    
+    document.body.removeChild(textarea);
+};
+
+// Edit message function
+window.editMessage = function(button) {
+    const messageText = button.closest('.message-content').querySelector('.message-text');
+    const originalText = messageText.textContent;
+    
+    // Create edit textarea
+    const textarea = document.createElement('textarea');
+    textarea.value = originalText;
+    textarea.style.width = '100%';
+    textarea.style.minHeight = '100px';
+    textarea.style.padding = '0.75rem';
+    textarea.style.borderRadius = '8px';
+    textarea.style.border = '1px solid var(--court-gold)';
+    textarea.style.background = 'rgba(255, 255, 255, 0.05)';
+    textarea.style.color = 'var(--dark-text)';
+    textarea.style.fontFamily = 'inherit';
+    textarea.style.fontSize = '0.9375rem';
+    
+    // Replace message text with textarea
+    messageText.style.display = 'none';
+    messageText.parentNode.insertBefore(textarea, messageText);
+    
+    // Create save/cancel buttons
+    const editControls = document.createElement('div');
+    editControls.style.marginTop = '0.75rem';
+    editControls.style.display = 'flex';
+    editControls.style.gap = '0.5rem';
+    editControls.innerHTML = `
+        <button class="action-btn" onclick="saveEditedMessage(this)" style="background: var(--success); color: white;">
+            <i class="fas fa-check"></i> Save
+        </button>
+        <button class="action-btn" onclick="cancelEdit(this)" style="background: var(--error); color: white;">
+            <i class="fas fa-times"></i> Cancel
+        </button>
+    `;
+    
+    button.parentNode.appendChild(editControls);
+    button.style.display = 'none';
+    
+    // Also hide other buttons
+    const otherButtons = button.parentNode.querySelectorAll('.action-btn:not(.copy)');
+    otherButtons.forEach(btn => btn.style.display = 'none');
+};
+
+window.saveEditedMessage = function(button) {
+    const messageContent = button.closest('.message-content');
+    const textarea = messageContent.querySelector('textarea');
+    const messageText = messageContent.querySelector('.message-text');
+    const editControls = button.closest('div');
+    
+    if (textarea && messageText) {
+        messageText.textContent = textarea.value;
+        messageText.style.display = 'block';
+        textarea.remove();
+        editControls.remove();
+        
+        // Show all buttons again
+        const actionButtons = messageContent.querySelectorAll('.message-actions .action-btn');
+        actionButtons.forEach(btn => btn.style.display = 'flex');
+        
+        showToast('Message updated successfully ✏️', 'success');
+    }
+};
+
+window.cancelEdit = function(button) {
+    const messageContent = button.closest('.message-content');
+    const textarea = messageContent.querySelector('textarea');
+    const messageText = messageContent.querySelector('.message-text');
+    const editControls = button.closest('div');
+    
+    if (textarea && messageText) {
+        messageText.style.display = 'block';
+        textarea.remove();
+        editControls.remove();
+        
+        // Show all buttons again
+        const actionButtons = messageContent.querySelectorAll('.message-actions .action-btn');
+        actionButtons.forEach(btn => btn.style.display = 'flex');
+    }
+};
+
+// Regenerate message function
+window.regenerateMessage = function(button) {
+    const messageContent = button.closest('.message-content');
+    const messageText = messageContent.querySelector('.message-text');
+    const originalText = messageText.textContent;
+    
+    // Show loading state
+    button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Regenerating...';
+    button.disabled = true;
+    
+    // Simulate regeneration delay
+    setTimeout(() => {
+        const newResponse = generateAIResponse(originalText.split(' ').slice(0, 10).join(' '));
+        messageText.innerHTML = newResponse.replace(/\n/g, '<br>');
+        
+        // Reset button
+        button.innerHTML = '<i class="fas fa-redo"></i> Regenerate';
+        button.disabled = false;
+        
+        showToast('Response regenerated 🔄', 'success');
+    }, 1500);
+};
+
+// Rate message function
+window.rateMessage = function(button, type) {
+    const messageContent = button.closest('.message-content');
+    const messageText = messageContent.querySelector('.message-text');
+    
+    if (type === 'helpful') {
+        button.innerHTML = '<i class="fas fa-thumbs-up"></i> Thank you!';
+        button.style.background = 'linear-gradient(135deg, var(--success) 0%, #059669 100%)';
+        button.style.color = 'white';
+        button.disabled = true;
+        showToast('Thank you for your feedback! 👍', 'success');
+    } else {
+        button.innerHTML = '<i class="fas fa-thumbs-down"></i> Noted';
+        button.style.background = 'linear-gradient(135deg, var(--error) 0%, #dc2626 100%)';
+        button.style.color = 'white';
+        button.disabled = true;
+        showToast('Feedback received. We\'ll improve! 👎', 'info');
+    }
+};
+
+// Share message function
+window.shareMessage = function(button) {
+    const messageContent = button.closest('.message-content');
+    const messageText = messageContent.querySelector('.message-text');
+    const textToShare = messageText.textContent;
+    
+    if (navigator.share) {
+        navigator.share({
+            title: 'LegalSwami AI Response',
+            text: textToShare.substring(0, 100) + '...',
+            url: window.location.href
+        })
+        .then(() => {
+            button.innerHTML = '<i class="fas fa-check"></i> Shared!';
+            setTimeout(() => {
+                button.innerHTML = '<i class="fas fa-share"></i> Share';
+            }, 2000);
+        })
+        .catch(console.error);
+    } else {
+        // Fallback for browsers that don't support Web Share API
+        navigator.clipboard.writeText(textToShare.substring(0, 500))
+            .then(() => {
+                showToast('Response copied to clipboard for sharing! 📋', 'success');
+                button.innerHTML = '<i class="fas fa-check"></i> Copied!';
+                setTimeout(() => {
+                    button.innerHTML = '<i class="fas fa-share"></i> Share';
+                }, 2000);
+            })
+            .catch(() => {
+                showToast('Could not share message. Please copy manually.', 'error');
+            });
+    }
+};
+
+// Download message function
+window.toggleDownloadDropdown = function(button) {
+    const dropdown = button.nextElementSibling;
+    dropdown.classList.toggle('show');
+    
+    // Close other dropdowns
+    document.querySelectorAll('.download-options-menu').forEach(menu => {
+        if (menu !== dropdown) {
+            menu.classList.remove('show');
+        }
+    });
+    
+    // Close dropdown when clicking outside
+    const closeDropdown = function(e) {
+        if (!dropdown.contains(e.target) && e.target !== button) {
+            dropdown.classList.remove('show');
+            document.removeEventListener('click', closeDropdown);
+        }
+    };
+    
+    setTimeout(() => {
+        document.addEventListener('click', closeDropdown);
+    }, 10);
+};
+
+window.downloadMessage = function(button, format) {
+    const messageContent = button.closest('.message').querySelector('.message-content');
+    const messageText = messageContent.querySelector('.message-text');
+    const textToDownload = messageText.textContent;
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const filename = `LegalSwami-Response-${timestamp}`;
+    
+    let content = `LEGALSWAMI AI RESPONSE\n`;
+    content += `Generated: ${new Date().toLocaleString('en-IN')}\n`;
+    content += `========================================\n\n`;
+    content += textToDownload;
+    content += `\n\n========================================\n`;
+    content += `Disclaimer: This AI-generated information is for educational purposes only.\n`;
+    content += `Not legal advice. Consult a qualified attorney for legal matters.\n`;
+    content += `Generated by: LegalSwami (https://legalswami.com)\n`;
+    
+    if (format === 'word') {
+        downloadAsDOC(content, filename);
+    } else if (format === 'pdf') {
+        try {
+            downloadAsPDF(content, filename);
+        } catch (error) {
+            console.error('PDF generation error:', error);
+            downloadAsTXT(content, filename);
+            showToast('PDF generation failed. Text file downloaded instead.', 'warning');
+        }
+    } else if (format === 'text') {
+        downloadAsTXT(content, filename);
+    }
+    
+    // Close dropdown
+    const dropdown = button.closest('.download-options-menu');
+    dropdown.classList.remove('show');
+    
+    // Visual feedback
+    const downloadBtn = dropdown.previousElementSibling;
+    downloadBtn.innerHTML = '<i class="fas fa-check"></i> Downloaded!';
+    setTimeout(() => {
+        downloadBtn.innerHTML = '<i class="fas fa-download"></i> Download';
+    }, 2000);
+};
+
 function downloadChat(format) {
     let content = `LEGALSWAMI - CHAT HISTORY\n`;
     content += `Generated: ${new Date().toLocaleString('en-IN')}\n`;
@@ -6083,63 +6502,6 @@ function formatDateForFilename(date) {
         .replace('T', '_')
         .split('.')[0];
 }
-
-// =============================================
-// GLOBAL FUNCTIONS FOR MESSAGE ACTIONS
-// =============================================
-
-window.copyMessage = function(button) {
-    const messageText = button.closest('.message-content').querySelector('.message-text');
-    let textToCopy = messageText.textContent || messageText.innerText;
-    
-    // Create a temporary textarea element
-    const textarea = document.createElement('textarea');
-    textarea.value = textToCopy;
-    textarea.style.position = 'fixed';
-    textarea.style.opacity = '0';
-    document.body.appendChild(textarea);
-    textarea.select();
-    textarea.setSelectionRange(0, 99999); // For mobile devices
-    
-    try {
-        const successful = document.execCommand('copy');
-        if (successful) {
-            showToast('Response copied to clipboard! 📋', 'success');
-            
-            // Visual feedback
-            button.innerHTML = '<i class="fas fa-check"></i> Copied!';
-            button.style.background = 'linear-gradient(135deg, var(--success) 0%, #059669 100%)';
-            button.style.color = 'white';
-            
-            setTimeout(() => {
-                button.innerHTML = '<i class="fas fa-copy"></i> Copy';
-                button.style.background = '';
-                button.style.color = '';
-            }, 2000);
-        }
-    } catch (err) {
-        console.error('Copy failed:', err);
-        showToast('Copy failed. Please select and copy manually.', 'error');
-    }
-    
-    document.body.removeChild(textarea);
-};
-
-window.likeMessage = function(button) {
-    button.innerHTML = '<i class="fas fa-thumbs-up"></i> Thank you!';
-    button.style.background = 'linear-gradient(135deg, var(--success) 0%, #059669 100%)';
-    button.style.color = 'white';
-    button.disabled = true;
-    showToast('Thank you for your feedback! 👍', 'success');
-};
-
-window.saveMessage = function(button) {
-    button.innerHTML = '<i class="fas fa-bookmark"></i> Saved!';
-    button.style.background = 'linear-gradient(135deg, var(--court-gold) 0%, var(--court-maroon) 100%)';
-    button.style.color = 'white';
-    button.disabled = true;
-    showToast('Message saved to your library! 📚', 'success');
-};
 
 // =============================================
 // TOAST NOTIFICATION
@@ -6655,6 +7017,11 @@ document.addEventListener('DOMContentLoaded', function() {
             if (downloadModal && downloadModal.classList.contains('active')) {
                 downloadModal.classList.remove('active');
             }
+            
+            // Close dropdowns
+            document.querySelectorAll('.download-options-menu').forEach(dropdown => {
+                dropdown.classList.remove('show');
+            });
         }
     });
 
@@ -6668,6 +7035,15 @@ document.addEventListener('DOMContentLoaded', function() {
             !sidebar.contains(e.target) && 
             (!sidebarToggle || !sidebarToggle.contains(e.target))) {
             sidebar.classList.remove('active');
+        }
+    });
+
+    // Close dropdowns when clicking outside
+    document.addEventListener('click', function(e) {
+        if (!e.target.closest('.download-dropdown')) {
+            document.querySelectorAll('.download-options-menu').forEach(dropdown => {
+                dropdown.classList.remove('show');
+            });
         }
     });
 
