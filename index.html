@@ -906,6 +906,9 @@ body {
     z-index: 10;
     min-height: 0;
     height: calc(100% - 80px);
+    /* FIXED POINT 2: Allow scrolling while generating */
+    pointer-events: auto;
+    user-select: text;
 }
 
 #chatMessages {
@@ -918,8 +921,9 @@ body {
     padding-bottom: 1rem;
     max-height: 100%;
     scrollbar-gutter: stable;
-    /* Allow scrolling while generating */
+    /* FIXED POINT 2: Allow scrolling while generating */
     pointer-events: auto;
+    scroll-behavior: smooth;
 }
 
 /* FIXED: Proper scrollbar for chat */
@@ -1321,10 +1325,11 @@ body {
     box-shadow: none !important;
 }
 
-/* FIXED: Send/Stop button - ALWAYS ENABLED FOR STOP */
+/* FIXED POINT 5: Send/Stop button - ALWAYS ENABLED FOR STOP */
 .send-button.stop-active {
     background: linear-gradient(135deg, var(--error) 0%, #b91c1c 100%);
     color: white;
+    cursor: pointer;
 }
 
 .send-button.stop-active:hover:not(:disabled) {
@@ -1335,32 +1340,22 @@ body {
 .send-button.stop-active:disabled {
     background: var(--dark-border);
     opacity: 0.5;
+    cursor: not-allowed;
 }
 
-/* FIXED: Message Action Buttons - Updated for Point 4 & 5 */
-.message-actions {
-    display: flex;
-    gap: 0.75rem;
-    margin-top: 1rem;
-    flex-wrap: wrap;
-}
-
-/* Hide action buttons during generation */
+/* FIXED POINT 4: Message Action Buttons - Only show after completion */
 .message.generating .message-actions {
-    display: none;
+    display: none !important;
 }
 
-/* Show action buttons only for completed messages */
 .message.completed .message-actions {
-    display: flex;
+    display: flex !important;
 }
 
-/* Don't show action buttons for stopped messages */
 .message.stopped .message-actions {
-    display: none;
+    display: none !important;
 }
 
-/* Show only message for stopped response */
 .message.stopped-by-user {
     background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0.2) 100%);
     border: 1px solid rgba(59, 130, 246, 0.3);
@@ -1375,6 +1370,13 @@ body {
 
 .message.stopped-by-user .message-actions {
     display: none !important;
+}
+
+.message-actions {
+    display: flex;
+    gap: 0.75rem;
+    margin-top: 1rem;
+    flex-wrap: wrap;
 }
 
 .action-btn {
@@ -1511,11 +1513,16 @@ body {
         padding: 1rem 0.75rem;
         margin-bottom: 70px;
         height: calc(100vh - 130px);
+        /* FIXED POINT 2: Mobile scrolling fix */
+        -webkit-overflow-scrolling: touch;
+        overflow-y: scroll !important;
     }
     
     .chat-messages {
         height: calc(100vh - 130px);
         overflow-y: auto;
+        /* FIXED POINT 2: Mobile scrolling fix */
+        -webkit-overflow-scrolling: touch;
     }
     
     .message {
@@ -3900,6 +3907,39 @@ body {
     justify-content: center;
     margin-top: 1rem;
 }
+
+/* FIXED: Edit form styles */
+.edit-form {
+    margin-bottom: 1rem;
+}
+
+.edit-form textarea {
+    width: 100%;
+    min-height: 100px;
+    padding: 0.75rem;
+    border-radius: 8px;
+    border: 1px solid var(--court-gold);
+    background: var(--dark-surface);
+    color: var(--dark-text);
+    font-family: inherit;
+    font-size: 0.9375rem;
+    resize: vertical;
+    outline: none;
+}
+
+.edit-form .action-btn.save-edit-btn {
+    background: linear-gradient(135deg, var(--success) 0%, #059669 100%);
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.edit-form .action-btn.cancel-edit-btn {
+    background: linear-gradient(135deg, var(--error) 0%, #b91c1c 100%);
+    color: white;
+    border: none;
+    cursor: pointer;
+}
     </style>
 </head>
 <body>
@@ -5251,14 +5291,34 @@ function closeChat() {
 }
 
 // =============================================
-// SCROLL FUNCTIONS - FIXED: Allow scrolling while generating
+// SCROLL FUNCTIONS - FIXED POINT 2: Allow scrolling while generating
 // =============================================
 
 function scrollToBottom() {
     const chatMessages = document.getElementById('chatMessages');
     if (chatMessages) {
-        chatMessages.scrollTop = chatMessages.scrollHeight;
-        hideScrollToBottomButton();
+        // FIXED: Smooth scrolling with requestAnimationFrame
+        const scrollHeight = chatMessages.scrollHeight;
+        const startTime = performance.now();
+        const duration = 300; // milliseconds
+        
+        function animateScroll(currentTime) {
+            const elapsed = currentTime - startTime;
+            const progress = Math.min(elapsed / duration, 1);
+            
+            // Easing function for smooth scrolling
+            const easeInOutCubic = t => t < 0.5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+            
+            chatMessages.scrollTop = chatMessages.scrollTop + (scrollHeight - chatMessages.scrollTop) * easeInOutCubic(progress);
+            
+            if (progress < 1) {
+                requestAnimationFrame(animateScroll);
+            } else {
+                hideScrollToBottomButton();
+            }
+        }
+        
+        requestAnimationFrame(animateScroll);
     }
 }
 
@@ -5496,11 +5556,12 @@ function initializeChatApp() {
             scrollToBottomBtn.addEventListener('click', scrollToBottom);
         }
         
-        // Chat messages scroll event - FIXED: Allow scrolling while generating
+        // Chat messages scroll event - FIXED POINT 2: Allow scrolling while generating
         if (chatMessages) {
             chatMessages.addEventListener('scroll', checkScrollPosition);
             // Enable scrolling even when generating
             chatMessages.style.pointerEvents = 'auto';
+            chatMessages.style.userSelect = 'text';
         }
         
         // Download modal close
@@ -5705,7 +5766,7 @@ function addMessageToChat(content, isUser, fromHistory = false, isTyping = false
             `;
         } else {
             // AI message actions: Copy, Regenerate, Helpful, Not Helpful, Share, Download
-            // POINT 5: Only show actions for completed responses
+            // POINT 4 & 5: Only show actions for completed responses
             messageActions.innerHTML = `
                 <button class="action-btn copy" onclick="copyMessage(this)" title="Copy response">
                     <i class="fas fa-copy"></i> <span class="hide-on-mobile">Copy</span>
@@ -5761,7 +5822,7 @@ function addMessageToChat(content, isUser, fromHistory = false, isTyping = false
 }
 
 // =============================================
-// FIXED: EDIT MESSAGE FUNCTION - SINGLE INSTANCE (POINT 3)
+// FIXED POINT 3: EDIT MESSAGE FUNCTION - SINGLE INSTANCE
 // =============================================
 
 window.editMessage = function(button) {
@@ -5907,7 +5968,7 @@ window.editMessage = function(button) {
 };
 
 // =============================================
-// SEND MESSAGE FUNCTION - FIXED STOP BUTTON
+// SEND MESSAGE FUNCTION - FIXED POINT 4 & 5
 // =============================================
 
 function sendMessage() {
@@ -5949,7 +6010,7 @@ function sendMessage() {
     const typingIndicatorId = addMessageToChat('', false, false, true);
     isGeneratingResponse = true;
     
-    // Change send button to stop button - FIXED: ALWAYS ENABLED
+    // Change send button to stop button - FIXED POINT 5: ALWAYS ENABLED
     sendButton.innerHTML = '<i class="fas fa-stop"></i> <span class="hide-on-mobile">Stop</span>';
     sendButton.classList.add('stop-active');
     sendButton.onclick = stopResponse;
@@ -6107,7 +6168,7 @@ function finalizeAIResponse(messageId, fullResponse) {
         currentResponseTimer = null;
     }
     
-    // POINT 5: Add completed class to show action buttons
+    // POINT 4: Add completed class to show action buttons
     const aiMessageElement = document.getElementById(messageId);
     if (aiMessageElement) {
         aiMessageElement.classList.add('completed');
@@ -6533,7 +6594,7 @@ window.copyMessage = function(button) {
     document.body.removeChild(textarea);
 };
 
-// Regenerate message function - POINT 7: Show stop button on regenerate
+// Regenerate message function - FIXED POINT 5 & 7: Show stop button on regenerate
 window.regenerateMessage = function(button) {
     const messageDiv = button.closest('.message');
     const messageContent = button.closest('.message-content');
@@ -6569,12 +6630,13 @@ window.regenerateMessage = function(button) {
     // Simulate regeneration
     const typingIndicatorId = addMessageToChat('', false, false, true);
     
-    // POINT 7: Change send button to stop button on regenerate
+    // FIXED POINT 5 & 7: Change send button to stop button on regenerate
     const sendButton = document.getElementById('sendButton');
     if (sendButton) {
         sendButton.innerHTML = '<i class="fas fa-stop"></i> <span class="hide-on-mobile">Stop</span>';
         sendButton.classList.add('stop-active');
         sendButton.onclick = stopResponse;
+        sendButton.disabled = false; // Stop button should be enabled
     }
     
     isGeneratingResponse = true;
@@ -6709,7 +6771,7 @@ window.toggleDownloadDropdown = function(button) {
 };
 
 // =============================================
-// FIXED: DOWNLOAD DOCUMENT FUNCTION - PROPER FORMATS (POINT 1)
+// FIXED POINT 1: DOWNLOAD DOCUMENT FUNCTION - PROPER FORMATS
 // =============================================
 
 window.downloadMessage = function(button, format) {
@@ -6729,7 +6791,7 @@ window.downloadMessage = function(button, format) {
     
     let filename = `LegalSwami-Response-${timestamp}`;
     
-    // POINT 1: Ensure proper formats
+    // FIXED POINT 1: Ensure proper formats
     if (format === 'word') {
         downloadAsDOC(content, filename);
     } else if (format === 'pdf') {
@@ -6810,7 +6872,7 @@ function downloadChat(format) {
     
     const fileName = `LegalSwami-Chat-${formatDateForFilename(new Date())}`;
     
-    // POINT 1: Ensure proper format downloads
+    // FIXED POINT 1: Ensure proper format downloads
     if (format === 'txt') {
         downloadAsTXT(content, fileName);
     } else if (format === 'pdf') {
@@ -7148,7 +7210,7 @@ function initializeGoogleLogin() {
             const width = 500;
             const height = 600;
             const left = (window.innerWidth - width) / 2;
-            const top = (window.innerHeight - height) / 2;
+            const top = (window.innerWidth - height) / 2;
             
             const loginWindow = window.open(
                 oauthUrl,
@@ -7650,7 +7712,7 @@ document.addEventListener('DOMContentLoaded', function() {
             profileMenu.remove();
         }
         
-        // Remove edit form when clicking outside (POINT 3)
+        // Remove edit form when clicking outside (FIXED POINT 3)
         const editForms = document.querySelectorAll('.edit-form');
         editForms.forEach(form => {
             if (!form.contains(e.target)) {
