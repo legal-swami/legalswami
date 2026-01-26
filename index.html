@@ -576,7 +576,7 @@ body {
     margin-top: 70px; /* Offset for fixed header */
 }
 
-/* Chat Sidebar - Case File Style */
+/* Chat Sidebar - Case File Style - FIXED CSS */
 #chatInterface .sidebar {
     width: 280px;
     background: linear-gradient(180deg, var(--court-dark-blue) 0%, var(--dark-surface) 100%);
@@ -603,6 +603,7 @@ body {
     pointer-events: none;
 }
 
+/* FIXED: Legal Topics & Chat History Tab Styling */
 #chatInterface .sidebar-tabs {
     display: flex;
     border-bottom: 2px solid var(--court-gold);
@@ -657,11 +658,240 @@ body {
     overflow-y: auto;
     display: none;
     height: calc(100% - 55px);
+    padding: 1rem;
 }
 
 .tab-content.active {
     display: flex;
     flex-direction: column;
+}
+
+/* FIXED: Legal Topics Tab Content Styling */
+#legal-topics-content {
+    background: linear-gradient(180deg, var(--court-dark-blue) 0%, rgba(30, 41, 59, 0.8) 100%);
+}
+
+.sidebar-header {
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.sidebar-header h2 {
+    font-size: 1.125rem;
+    color: var(--court-gold);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.sidebar-section {
+    margin-bottom: 1.5rem;
+}
+
+.sidebar-section h3 {
+    font-size: 0.875rem;
+    color: var(--dark-text-secondary);
+    margin-bottom: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.topic-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.topic-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    color: var(--dark-text);
+    cursor: pointer;
+    transition: all 0.3s;
+    text-align: left;
+    font-size: 0.875rem;
+}
+
+.topic-item:hover {
+    background: rgba(212, 175, 55, 0.15);
+    border-color: var(--court-gold);
+    transform: translateX(5px);
+}
+
+.topic-item i {
+    color: var(--court-gold);
+    font-size: 1rem;
+    width: 20px;
+    text-align: center;
+}
+
+.topic-item span:first-of-type {
+    flex: 1;
+}
+
+.topic-badge {
+    background: rgba(212, 175, 55, 0.2);
+    color: var(--court-gold);
+    padding: 0.25rem 0.5rem;
+    border-radius: 12px;
+    font-size: 0.6875rem;
+    font-weight: 600;
+}
+
+/* FIXED: Chat History Tab Content Styling */
+#chat-history-content {
+    background: linear-gradient(180deg, var(--dark-surface) 0%, rgba(30, 41, 59, 0.8) 100%);
+}
+
+.history-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+}
+
+.history-header h2 {
+    font-size: 1.125rem;
+    color: var(--court-gold);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.new-chat-btn {
+    background: rgba(212, 175, 55, 0.15);
+    border: 1px solid var(--court-gold);
+    color: var(--court-gold);
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.8125rem;
+    font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: all 0.3s;
+}
+
+.new-chat-btn:hover {
+    background: rgba(212, 175, 55, 0.25);
+    transform: translateY(-2px);
+}
+
+.history-list {
+    flex: 1;
+    overflow-y: auto;
+}
+
+.history-item {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 8px;
+    padding: 0.75rem;
+    margin-bottom: 0.75rem;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.history-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(212, 175, 55, 0.3);
+}
+
+.history-item.active {
+    background: rgba(212, 175, 55, 0.15);
+    border-color: var(--court-gold);
+}
+
+.history-title {
+    font-weight: 600;
+    color: var(--dark-text);
+    margin-bottom: 0.25rem;
+    font-size: 0.875rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.history-preview {
+    color: var(--dark-text-secondary);
+    font-size: 0.8125rem;
+    margin-bottom: 0.5rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.history-date {
+    color: var(--dark-text-tertiary);
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-bottom: 0.75rem;
+}
+
+.history-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.history-action-btn {
+    flex: 1;
+    padding: 0.375rem;
+    border-radius: 4px;
+    border: none;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+}
+
+.history-action-btn.open {
+    background: rgba(30, 64, 175, 0.15);
+    color: var(--primary-light);
+    border: 1px solid rgba(30, 64, 175, 0.3);
+}
+
+.history-action-btn.open:hover {
+    background: rgba(30, 64, 175, 0.25);
+}
+
+.history-action-btn.delete {
+    background: rgba(220, 38, 38, 0.15);
+    color: var(--error);
+    border: 1px solid rgba(220, 38, 38, 0.3);
+}
+
+.history-action-btn.delete:hover {
+    background: rgba(220, 38, 38, 0.25);
+}
+
+.empty-history {
+    text-align: center;
+    padding: 2rem 1rem;
+    color: var(--dark-text-secondary);
+}
+
+.empty-history i {
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: var(--court-gold);
+    opacity: 0.5;
 }
 
 /* Chat Messages Area - Court Transcript Style - FIXED FOR SCROLLING */
@@ -1107,12 +1337,44 @@ body {
     opacity: 0.5;
 }
 
-/* FIXED: Message Action Buttons - Always visible */
+/* FIXED: Message Action Buttons - Updated for Point 4 & 5 */
 .message-actions {
     display: flex;
     gap: 0.75rem;
     margin-top: 1rem;
     flex-wrap: wrap;
+}
+
+/* Hide action buttons during generation */
+.message.generating .message-actions {
+    display: none;
+}
+
+/* Show action buttons only for completed messages */
+.message.completed .message-actions {
+    display: flex;
+}
+
+/* Don't show action buttons for stopped messages */
+.message.stopped .message-actions {
+    display: none;
+}
+
+/* Show only message for stopped response */
+.message.stopped-by-user {
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(59, 130, 246, 0.2) 100%);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+    color: var(--info);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    margin: 0.5rem 0;
+    font-size: 0.875rem;
+    text-align: center;
+    font-style: italic;
+}
+
+.message.stopped-by-user .message-actions {
+    display: none !important;
 }
 
 .action-btn {
@@ -5373,7 +5635,7 @@ function createNewChat() {
     }, 100);
 }
 
-function addMessageToChat(content, isUser, fromHistory = false, isTyping = false) {
+function addMessageToChat(content, isUser, fromHistory = false, isTyping = false, isStopped = false) {
     const chatMessages = document.getElementById('chatMessages');
     
     // Remove welcome message if this is a new user message
@@ -5388,6 +5650,12 @@ function addMessageToChat(content, isUser, fromHistory = false, isTyping = false
     messageDiv.className = `message ${isUser ? 'user-message' : 'ai-message'}`;
     const messageId = 'msg_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
     messageDiv.id = messageId;
+    
+    // Add class for stopped messages (POINT 4 & 5)
+    if (isStopped) {
+        messageDiv.classList.add('stopped');
+        messageDiv.classList.add('stopped-by-user');
+    }
     
     const avatar = document.createElement('div');
     avatar.className = 'avatar';
@@ -5410,14 +5678,18 @@ function addMessageToChat(content, isUser, fromHistory = false, isTyping = false
             <div class="typing-dot"></div>
             <span style="margin-left: 10px; color: var(--court-gold);">Thinking...</span>
         </div>`;
+    } else if (isStopped) {
+        // POINT 4: Show only message for stopped response
+        messageText.innerHTML = `<em>Response stopped by user</em>`;
+        messageDiv.classList.add('stopped-by-user');
     } else {
         messageText.innerHTML = content.replace(/\n/g, '<br>');
     }
     
     messageContent.appendChild(messageText);
     
-    // Add action buttons (not for typing indicators)
-    if (!isTyping) {
+    // Add action buttons (not for typing indicators or stopped messages)
+    if (!isTyping && !isStopped) {
         const messageActions = document.createElement('div');
         messageActions.className = 'message-actions';
         
@@ -5433,6 +5705,7 @@ function addMessageToChat(content, isUser, fromHistory = false, isTyping = false
             `;
         } else {
             // AI message actions: Copy, Regenerate, Helpful, Not Helpful, Share, Download
+            // POINT 5: Only show actions for completed responses
             messageActions.innerHTML = `
                 <button class="action-btn copy" onclick="copyMessage(this)" title="Copy response">
                     <i class="fas fa-copy"></i> <span class="hide-on-mobile">Copy</span>
@@ -5488,12 +5761,18 @@ function addMessageToChat(content, isUser, fromHistory = false, isTyping = false
 }
 
 // =============================================
-// FIXED: EDIT MESSAGE FUNCTION - PROPER SUBMIT
+// FIXED: EDIT MESSAGE FUNCTION - SINGLE INSTANCE (POINT 3)
 // =============================================
 
 window.editMessage = function(button) {
     const messageText = button.closest('.message-content').querySelector('.message-text');
     const originalText = messageText.textContent || messageText.innerText;
+    
+    // Remove any existing edit forms first (POINT 3)
+    const existingEditForm = document.querySelector('.edit-form');
+    if (existingEditForm) {
+        existingEditForm.remove();
+    }
     
     // Create edit textarea
     const textarea = document.createElement('textarea');
@@ -5508,6 +5787,7 @@ window.editMessage = function(button) {
     textarea.style.fontFamily = 'inherit';
     textarea.style.fontSize = '0.9375rem';
     textarea.style.marginBottom = '0.75rem';
+    textarea.className = 'edit-form';
     
     // Replace message text with textarea
     messageText.style.display = 'none';
@@ -5527,6 +5807,7 @@ window.editMessage = function(button) {
             <i class="fas fa-times"></i> Cancel
         </button>
     `;
+    editControls.className = 'edit-form';
     
     messageContent.appendChild(editControls);
     
@@ -5711,8 +5992,8 @@ function stopResponse() {
             }
         });
         
-        // Add "stopped" message
-        addMessageToChat('Response stopped by user.', false);
+        // POINT 4: Add "stopped" message without action buttons
+        addMessageToChat('', false, false, false, true);
     }
 }
 
@@ -5738,7 +6019,15 @@ function simulateRealisticResponse(userMessage, typingIndicatorId, userMessageId
             // Add stopped indicator
             const stoppedMsg = '<br><br><em style="color: var(--error);">Response stopped by user.</em>';
             messageText.innerHTML += stoppedMsg;
-            finalizeAIResponse(aiMessageId, aiResponse.substring(0, index));
+            
+            // Remove the AI message and replace with stopped message
+            aiMessageElement.remove();
+            
+            // Add stopped message without action buttons (POINT 4)
+            addMessageToChat('', false, false, false, true);
+            
+            // Save partial response
+            finalizeAIResponsePartial(aiResponse.substring(0, index));
             return;
         }
         
@@ -5775,6 +6064,20 @@ function simulateRealisticResponse(userMessage, typingIndicatorId, userMessageId
     currentResponseTimer = setTimeout(typeWriter, 500); // Initial delay
 }
 
+function finalizeAIResponsePartial(partialResponse) {
+    // Add partial response to history
+    if (partialResponse.trim()) {
+        const partialMessage = {
+            role: 'assistant',
+            content: partialResponse + ' [Response stopped by user]',
+            timestamp: new Date().toISOString()
+        };
+        conversationHistory.push(partialMessage);
+    }
+    
+    saveCurrentChat();
+}
+
 function finalizeAIResponse(messageId, fullResponse) {
     isGeneratingResponse = false;
     
@@ -5802,6 +6105,12 @@ function finalizeAIResponse(messageId, fullResponse) {
     if (currentResponseTimer) {
         clearTimeout(currentResponseTimer);
         currentResponseTimer = null;
+    }
+    
+    // POINT 5: Add completed class to show action buttons
+    const aiMessageElement = document.getElementById(messageId);
+    if (aiMessageElement) {
+        aiMessageElement.classList.add('completed');
     }
 }
 
@@ -6224,7 +6533,7 @@ window.copyMessage = function(button) {
     document.body.removeChild(textarea);
 };
 
-// Regenerate message function
+// Regenerate message function - POINT 7: Show stop button on regenerate
 window.regenerateMessage = function(button) {
     const messageDiv = button.closest('.message');
     const messageContent = button.closest('.message-content');
@@ -6260,7 +6569,7 @@ window.regenerateMessage = function(button) {
     // Simulate regeneration
     const typingIndicatorId = addMessageToChat('', false, false, true);
     
-    // Change send button to stop button
+    // POINT 7: Change send button to stop button on regenerate
     const sendButton = document.getElementById('sendButton');
     if (sendButton) {
         sendButton.innerHTML = '<i class="fas fa-stop"></i> <span class="hide-on-mobile">Stop</span>';
@@ -6400,7 +6709,7 @@ window.toggleDownloadDropdown = function(button) {
 };
 
 // =============================================
-// FIXED: DOWNLOAD DOCUMENT FUNCTION - PROPER FORMATS
+// FIXED: DOWNLOAD DOCUMENT FUNCTION - PROPER FORMATS (POINT 1)
 // =============================================
 
 window.downloadMessage = function(button, format) {
@@ -6420,6 +6729,7 @@ window.downloadMessage = function(button, format) {
     
     let filename = `LegalSwami-Response-${timestamp}`;
     
+    // POINT 1: Ensure proper formats
     if (format === 'word') {
         downloadAsDOC(content, filename);
     } else if (format === 'pdf') {
@@ -6500,6 +6810,7 @@ function downloadChat(format) {
     
     const fileName = `LegalSwami-Chat-${formatDateForFilename(new Date())}`;
     
+    // POINT 1: Ensure proper format downloads
     if (format === 'txt') {
         downloadAsTXT(content, fileName);
     } else if (format === 'pdf') {
@@ -7338,6 +7649,24 @@ document.addEventListener('DOMContentLoaded', function() {
         if (profileMenu && !profileMenu.contains(e.target) && e.target.id !== 'googleLoginBtn') {
             profileMenu.remove();
         }
+        
+        // Remove edit form when clicking outside (POINT 3)
+        const editForms = document.querySelectorAll('.edit-form');
+        editForms.forEach(form => {
+            if (!form.contains(e.target)) {
+                const messageContent = form.closest('.message-content');
+                if (messageContent) {
+                    const messageText = messageContent.querySelector('.message-text');
+                    const actionButtons = messageContent.querySelectorAll('.action-btn:not(.save-edit-btn):not(.cancel-edit-btn)');
+                    
+                    messageText.style.display = 'block';
+                    form.remove();
+                    
+                    // Show all buttons again
+                    actionButtons.forEach(btn => btn.style.display = 'flex');
+                }
+            }
+        });
     });
 
     console.log('✅ App ready to use');
