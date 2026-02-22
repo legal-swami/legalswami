@@ -1,19 +1,24 @@
 # LEGAL SWAMI BACKEND - PRODUCTION CONFIGURATION
 # WITH MULTIPLE GROQ MODELS & FALLBACK SUPPORT
+# UPDATED: 2026-02-22 - New Render Database
 
 spring:
   application:
     name: legal-swami-backend
   
   # ========== DATABASE CONFIGURATION ==========
+  # ✅ UPDATED with new Render PostgreSQL database
   datasource:
-    url: jdbc:postgresql://dpg-d53salali9vc73acgia0-a.singapore-postgres.render.com:5432/legalswami
+    url: jdbc:postgresql://dpg-d6dc7jggjchc73a3borg-a.singapore-postgres.render.com:5432/legalswami_o3rn?sslmode=require
     username: legalswami_user
-    password: T2YHqBezj3QJNKf7pnJJKUSk7A6BorNR
+    password: t3RDdIiTgN3kfOrr7EBnZOVsxkVCYhgj
     driver-class-name: org.postgresql.Driver
     hikari:
       maximum-pool-size: 10
       minimum-idle: 5
+      connection-timeout: 30000
+      validation-timeout: 5000
+      leak-detection-threshold: 60000
   
   # ========== JPA/HIBERNATE ==========
   jpa:
@@ -25,7 +30,10 @@ spring:
         format_sql: true
         jdbc:
           batch_size: 20
+        connection:
+          autocommit: false
     show-sql: true  # Debugging ke liye
+    open-in-view: false
   
   # ========== ⭐⭐⭐ LOGIN PAGE FIX ⭐⭐⭐ ==========
   security:
@@ -51,20 +59,32 @@ server:
   port: 8080
   servlet:
     context-path: /
+    session:
+      timeout: 30m
   compression:
     enabled: true
     mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/json,application/javascript
+    min-response-size: 1024
+  error:
+    include-message: always
+    include-binding-errors: always
+    include-stacktrace: never
+    include-exception: false
 
 # ========== JWT ==========
 jwt:
   secret: G3UF3OY6mWCjKbfa6l1S9pvIbKTt9cjr
-  expiration: 86400000  # 24 hours
+  expiration: 86400000  # 24 hours in milliseconds
+  refresh-expiration: 604800000  # 7 days in milliseconds
+  issuer: LegalSwami
+  header: Authorization
+  prefix: Bearer
 
 # ========== GROQ AI (WITH MULTIPLE MODELS) ==========
 # ⭐⭐ UPDATED: MULTIPLE MODELS WITH FALLBACK SUPPORT ⭐⭐
 groq:
   api:
-    # Your 3 API keys for rotation
+    # Your 5 API keys for rotation
     keys: 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,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,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,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,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
     
     # API URL
@@ -78,49 +98,74 @@ groq:
     timeout: 30000  # 30 seconds
     max-tokens: 4096
     temperature: 0.7
+    top-p: 0.9
+    frequency-penalty: 0.0
+    presence-penalty: 0.0
     
     # Fallback configuration
     fallback:
       enabled: true
       max-attempts: 3  # Max attempts per model
       retry-delay: 1000  # 1 second delay between retries
+      circuit-breaker:
+        enabled: true
+        failure-threshold: 5
+        timeout: 60000
     
     # Monitoring
     monitoring:
       log-failures: true
       track-usage: true
+      metrics-enabled: true
 
 # ========== ENCRYPTION ==========
 encryption:
   secret: DWZQtF07pNZGKfml1MZeCoUfiCq8wK7e
+  algorithm: AES/CBC/PKCS5Padding
+  key-size: 256
+  salt: LegalSwamiSalt2024
 
 # ========== GOOGLE OAUTH ==========
 google:
   client:
     id: 166511615962-bohur5q8d4i5hud6icr4185kcte9enk8.apps.googleusercontent.com
+    secret: ${GOOGLE_CLIENT_SECRET:}  # Set this in Render environment variables
   oauth:
     redirect-uri: ${server.servlet.context-path}/login/oauth2/code/google
     scope: profile,email
+    token-uri: https://oauth2.googleapis.com/token
+    user-info-uri: https://www.googleapis.com/oauth2/v3/userinfo
 
 # ========== APPLICATION SPECIFIC ==========
 app:
   name: LegalSwami
   version: 1.0.0
+  environment: production  # production, development, test
+  url: https://legal-swami-backend.onrender.com
+  
   chat:
     max-history: 50  # Max chat history per user
     default-user-id: guest
     streaming:
       enabled: false  # SSE streaming support
       timeout: 30000
+    history-cleanup-days: 30
   
   legal:
     default-jurisdiction: IN  # India
     disclaimer: "This is an AI assistant, not a licensed lawyer. Consult a professional for legal advice."
+    max-message-length: 5000
+    supported-countries: IN,US,UK,CA,AU
+  
+  cache:
+    enabled: true
+    ttl: 3600  # 1 hour in seconds
+    max-size: 1000
 
 # ========== CORS CONFIGURATION ========== ⭐ UPDATED WITH X-REQUEST-ID SUPPORT
 # ✅ UPDATED: Added x-request-id and X-Request-Id headers
 cors:
-  allowed-origins: "https://legal-swami.github.io,http://localhost:3000,https://legal-swami.github.io/legalswami,http://localhost:8080,http://127.0.0.1:3000"
+  allowed-origins: "https://legal-swami.github.io,http://localhost:3000,https://legal-swami.github.io/legalswami,http://localhost:8080,http://127.0.0.1:3000,https://legal-swami-backend.onrender.com"
   allowed-methods: "GET,POST,PUT,DELETE,OPTIONS,PATCH,HEAD"
   allowed-headers: "Content-Type,X-User-ID,X-User-Id,x-user-id,Authorization,Accept,Origin,X-Requested-With,x-request-id,X-Request-Id,Cache-Control,Pragma,Access-Control-Request-Method,Access-Control-Request-Headers"
   exposed-headers: "Authorization,X-User-Id,x-user-id,x-request-id,X-Request-Id"
@@ -133,10 +178,13 @@ logging:
     root: INFO
     com.legalswami: DEBUG
     org.springframework.web: INFO
+    org.springframework.security: WARN
     org.hibernate.SQL: WARN
     org.hibernate.type: WARN
     com.legalswami.service.GroqService: DEBUG  # Groq service logs
     com.legalswami.config: DEBUG  # CORS config logs
+    com.zaxxer.hikari: INFO  # HikariCP logs
+    org.postgresql: INFO  # PostgreSQL logs
   
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
@@ -144,14 +192,57 @@ logging:
   
   file:
     name: logs/legalswami.log
-  
+    path: logs
+    
   logback:
     rollingpolicy:
       max-file-size: 10MB
       max-history: 30
+      total-size-cap: 1GB
+
+# ========== MANAGEMENT ENDPOINTS (ACTUATOR) ==========
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+    enabled-by-default: false
+  endpoint:
+    health:
+      enabled: true
+      show-details: always
+    info:
+      enabled: true
+    metrics:
+      enabled: true
 
 # ========== RATE LIMITING ==========
 rate-limit:
   enabled: false
   requests-per-minute: 60
   burst-capacity: 100
+  whitelisted-ips: 127.0.0.1,0:0:0:0:0:0:0:1
+  blacklisted-ips: ""
+
+# ========== ACTIVE PROFILE ==========
+# production profile active hai
+---
+spring:
+  config:
+    activate:
+      on-profile: production
+  datasource:
+    hikari:
+      maximum-pool-size: 15
+      minimum-idle: 5
+      connection-timeout: 45000
+
+---
+spring:
+  config:
+    activate:
+      on-profile: development
+  jpa:
+    show-sql: true
+    hibernate:
+      ddl-auto: create-drop
